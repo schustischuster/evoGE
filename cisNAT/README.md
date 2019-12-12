@@ -34,7 +34,7 @@ library(rtracklayer)
 ```
   
 ### Data input
-Download 'data' folder to the working directory on your computer. Then, set file path for input and output files: 
+Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/data) folder to the working directory on your computer. Then, set file path for input and output files: 
 
 ```R
 in_dir <- "./data"
