@@ -1,4 +1,4 @@
-# Find overlapping genes
+# Find overlapping protein-coding genes
 # Data input: 1) GTF file | 2) Expression_data WITHOUT mito and chloroplast genes
 # Analysis can be performed on both whole single species datasets (ATH: 132 samples; AL: 36 samples)
 # OR on comparative data sets (27 samples)
@@ -30,27 +30,6 @@
 # gene_source / gene_biotype / transcript_id / transcript_source (araport11/DevSeq) / 
 # transcript_biotype / exon_number / gene_name
 
-
-
-#------------------- Load packages, set directories and read sample tables ---------------------
-
-
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(GenomicRanges)) install.packages('GenomicRanges')
-library(GenomicRanges)
-if (!require(rtracklayer)) install.packages('rtracklayer')
-library(rtracklayer)
-
-
-# Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/data"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
-
-
-
-# Define function to get overlapping protein-coding genes
 
 retrievePcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
 	experiment = c("single-species", "comparative")) {
@@ -487,20 +466,4 @@ retrievePcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 
 }
-
-
-
-# Execute getPcPc function
-retrievePcPc("ATH", "single-species")
-retrievePcPc("ATH", "comparative")
-retrievePcPc("AL", "single-species")
-retrievePcPc("AL", "comparative")
-retrievePcPc("CR", "comparative")
-retrievePcPc("ES", "comparative")
-retrievePcPc("TH", "comparative")
-retrievePcPc("MT", "comparative")
-retrievePcPc("BD", "comparative")
-
-
-
 
