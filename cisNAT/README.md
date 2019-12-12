@@ -34,7 +34,7 @@ library(rtracklayer)
 ```
   
 ### Data input
-Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/data) folder to the working directory on your computer. Then, set file path for input and output files: 
+Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/data) folder to the working directory on your computer. Then, set the file path for input and output files: 
 
 ```R
 in_dir <- "./data"
@@ -44,7 +44,7 @@ out_dir <- "."
 
 ## Data analysis
 
-### Get coding-coding gene overlapp
+### Retrieve coding-coding gene overlapp
 
 The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to an CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater 0.5 TPM in at least two out of three replicates in at least one sample type. 
 
@@ -67,7 +67,7 @@ getPcPc("BD", "comparative")
 
 ```
 
-### Get non-coding-coding gene overlapp
+### Retrieve non-coding-coding gene overlapp
 
 The following function will extract all non-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to an CSV file. A sense-antisense pair is considered as epressed if both non-coding antisense and coding sense transcript reach the threshold, which can be set to any value, in at least two out of three replicates in at least one sample type. 
 
