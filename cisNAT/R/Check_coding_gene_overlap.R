@@ -52,7 +52,7 @@ out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Anal
 
 # Define function to get overlapping protein-coding genes
 
-getGeneOverlapp <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
 	experiment = c("single-species", "comparative")) {
 	
 	# Show error message if no species is chosen
@@ -490,16 +490,16 @@ getGeneOverlapp <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD
 
 
 
-# Execute getGeneOverlapp function
-getGeneOverlapp("ATH", "single-species")
-getGeneOverlapp("ATH", "comparative")
-getGeneOverlapp("AL", "single-species")
-getGeneOverlapp("AL", "comparative")
-getGeneOverlapp("CR")
-getGeneOverlapp("ES")
-getGeneOverlapp("TH")
-getGeneOverlapp("MT")
-getGeneOverlapp("BD")
+# Execute getPcGeneOverlapp function
+getPcPc("ATH", "single-species")
+getPcPc("ATH", "comparative")
+getPcPc("AL", "single-species")
+getPcPc("AL", "comparative")
+getPcPc("CR")
+getPcPc("ES")
+getPcPc("TH")
+getPcPc("MT")
+getPcPc("BD")
 
 
 

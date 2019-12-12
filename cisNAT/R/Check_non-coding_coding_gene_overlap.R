@@ -50,9 +50,9 @@ out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Anal
 
 
 
-# Define function to get overlapping protein-coding genes
+# Define function to get overlapping non-coding / protein-coding genes
 
-getGeneOverlapp <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
 	experiment = c("single-species", "comparative"), threshold) {
 	
 	# Show error message if no species is chosen
@@ -543,36 +543,36 @@ getGeneOverlapp <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD
 
 
 
-# Execute getGeneOverlapp function
-getGeneOverlapp("ATH", "single-species", 0.5)
-getGeneOverlapp("ATH", "comparative", 0.5)
-getGeneOverlapp("AL", "single-species", 0.5)
-getGeneOverlapp("AL", "comparative", 0.5)
-getGeneOverlapp("CR", "comparative", 0.5)
-getGeneOverlapp("ES", "comparative", 0.5)
-getGeneOverlapp("TH", "comparative", 0.5)
-getGeneOverlapp("MT", "comparative", 0.5)
-getGeneOverlapp("BD", "comparative", 0.5)
+# Execute getNcPcOverlapp function
+getNcPc("ATH", "single-species", 0.5)
+getNcPc("ATH", "comparative", 0.5)
+getNcPc("AL", "single-species", 0.5)
+getNcPc("AL", "comparative", 0.5)
+getNcPc("CR", "comparative", 0.5)
+getNcPc("ES", "comparative", 0.5)
+getNcPc("TH", "comparative", 0.5)
+getNcPc("MT", "comparative", 0.5)
+getNcPc("BD", "comparative", 0.5)
 
-getGeneOverlapp("ATH", "single-species", 2)
-getGeneOverlapp("ATH", "comparative", 2)
-getGeneOverlapp("AL", "single-species", 2)
-getGeneOverlapp("AL", "comparative", 2)
-getGeneOverlapp("CR", "comparative", 2)
-getGeneOverlapp("ES", "comparative", 2)
-getGeneOverlapp("TH", "comparative", 2)
-getGeneOverlapp("MT", "comparative", 2)
-getGeneOverlapp("BD", "comparative", 2)
+getNcPc("ATH", "single-species", 2)
+getNcPc("ATH", "comparative", 2)
+getNcPc("AL", "single-species", 2)
+getNcPc("AL", "comparative", 2)
+getNcPc("CR", "comparative", 2)
+getNcPc("ES", "comparative", 2)
+getNcPc("TH", "comparative", 2)
+getNcPc("MT", "comparative", 2)
+getNcPc("BD", "comparative", 2)
 
-getGeneOverlapp("ATH", "single-species", 5)
-getGeneOverlapp("ATH", "comparative", 5)
-getGeneOverlapp("AL", "single-species", 5)
-getGeneOverlapp("AL", "comparative", 5)
-getGeneOverlapp("CR", "comparative", 5)
-getGeneOverlapp("ES", "comparative", 5)
-getGeneOverlapp("TH", "comparative", 5)
-getGeneOverlapp("MT", "comparative", 5)
-getGeneOverlapp("BD", "comparative", 5)
+getNcPc("ATH", "single-species", 5)
+getNcPc("ATH", "comparative", 5)
+getNcPc("AL", "single-species", 5)
+getNcPc("AL", "comparative", 5)
+getNcPc("CR", "comparative", 5)
+getNcPc("ES", "comparative", 5)
+getNcPc("TH", "comparative", 5)
+getNcPc("MT", "comparative", 5)
+getNcPc("BD", "comparative", 5)
 
-getGeneOverlapp("ATH", "single-species", 0)
+getNcPc("ATH", "single-species", 0)
 
