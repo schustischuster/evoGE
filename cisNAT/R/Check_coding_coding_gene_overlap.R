@@ -32,24 +32,6 @@
 
 
 
-#------------------- Load packages, set directories and read sample tables ---------------------
-
-
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(GenomicRanges)) install.packages('GenomicRanges')
-library(GenomicRanges)
-if (!require(rtracklayer)) install.packages('rtracklayer')
-library(rtracklayer)
-
-
-# Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/data"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
-
-
-
 # Define function to get overlapping protein-coding genes
 
 getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
@@ -488,18 +470,6 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 }
 
-
-
-# Execute getPcPc function
-getPcPc("ATH", "single-species")
-getPcPc("ATH", "comparative")
-getPcPc("AL", "single-species")
-getPcPc("AL", "comparative")
-getPcPc("CR")
-getPcPc("ES")
-getPcPc("TH")
-getPcPc("MT")
-getPcPc("BD")
 
 
 
