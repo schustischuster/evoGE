@@ -59,11 +59,11 @@ getPcPc("ATH", "single-species")
 getPcPc("ATH", "comparative")
 getPcPc("AL", "single-species")
 getPcPc("AL", "comparative")
-getPcPc("CR")
-getPcPc("ES")
-getPcPc("TH")
-getPcPc("MT")
-getPcPc("BD")
+getPcPc("CR", "comparative")
+getPcPc("ES", "comparative")
+getPcPc("TH", "comparative")
+getPcPc("MT", "comparative")
+getPcPc("BD", "comparative")
 
 ```
 
@@ -110,7 +110,7 @@ getNcPc("BD", "comparative", 5)
 
 ```
 
-## Data analysis
+## Visualization
 
 
 ---
