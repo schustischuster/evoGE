@@ -34,7 +34,7 @@ library(rtracklayer)
 ```
   
 ### Data input
-Download 'data' folder to the working directory on your computer. Then, set file path and input files: 
+Download 'data' folder to the working directory on your computer. Then, set file path for input and output files: 
 
 ```R
 in_dir <- "./data"
@@ -47,6 +47,12 @@ out_dir <- "."
 ### Get coding-coding gene overlapp
 
 ```R
-# Run pc-pc SAS analysis
+getPcPc(species = "ATH", experiment = "single-species")
+
 ```
 ### Get non-coding-coding gene overlapp
+
+```R
+getNcPc(species = "ATH", experiment = "single-species", threshold = 0.5)
+
+```
