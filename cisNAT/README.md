@@ -49,21 +49,21 @@ out_dir <- "."
 The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to an CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater 0.5 TPM in at least two out of three replicates in at least one sample type. 
 
 ```R
-getPcPc(species = "ATH", experiment = "single-species")
+retrievePcPc(species = "ATH", experiment = "single-species")
 
 ```
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
-getPcPc("ATH", "single-species")
-getPcPc("ATH", "comparative")
-getPcPc("AL", "single-species")
-getPcPc("AL", "comparative")
-getPcPc("CR", "comparative")
-getPcPc("ES", "comparative")
-getPcPc("TH", "comparative")
-getPcPc("MT", "comparative")
-getPcPc("BD", "comparative")
+retrievePcPc("ATH", "single-species")
+retrievePcPc("ATH", "comparative")
+retrievePcPc("AL", "single-species")
+retrievePcPc("AL", "comparative")
+retrievePcPc("CR", "comparative")
+retrievePcPc("ES", "comparative")
+retrievePcPc("TH", "comparative")
+retrievePcPc("MT", "comparative")
+retrievePcPc("BD", "comparative")
 
 ```
 
