@@ -31,27 +31,6 @@
 # transcript_biotype / exon_number / gene_name
 
 
-
-#------------------- Load packages, set directories and read sample tables ---------------------
-
-
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(GenomicRanges)) install.packages('GenomicRanges')
-library(GenomicRanges)
-if (!require(rtracklayer)) install.packages('rtracklayer')
-library(rtracklayer)
-
-
-# Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/data"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
-
-
-
-# Define function to get overlapping non-coding / protein-coding genes
-
 getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
 	experiment = c("single-species", "comparative"), threshold) {
 	
@@ -541,38 +520,4 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 }
 
-
-
-# Execute getNcPc function
-getNcPc("ATH", "single-species", 0.5)
-getNcPc("ATH", "comparative", 0.5)
-getNcPc("AL", "single-species", 0.5)
-getNcPc("AL", "comparative", 0.5)
-getNcPc("CR", "comparative", 0.5)
-getNcPc("ES", "comparative", 0.5)
-getNcPc("TH", "comparative", 0.5)
-getNcPc("MT", "comparative", 0.5)
-getNcPc("BD", "comparative", 0.5)
-
-getNcPc("ATH", "single-species", 2)
-getNcPc("ATH", "comparative", 2)
-getNcPc("AL", "single-species", 2)
-getNcPc("AL", "comparative", 2)
-getNcPc("CR", "comparative", 2)
-getNcPc("ES", "comparative", 2)
-getNcPc("TH", "comparative", 2)
-getNcPc("MT", "comparative", 2)
-getNcPc("BD", "comparative", 2)
-
-getNcPc("ATH", "single-species", 5)
-getNcPc("ATH", "comparative", 5)
-getNcPc("AL", "single-species", 5)
-getNcPc("AL", "comparative", 5)
-getNcPc("CR", "comparative", 5)
-getNcPc("ES", "comparative", 5)
-getNcPc("TH", "comparative", 5)
-getNcPc("MT", "comparative", 5)
-getNcPc("BD", "comparative", 5)
-
-getNcPc("ATH", "single-species", 0)
 
