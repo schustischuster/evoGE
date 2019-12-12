@@ -1,1 +1,1 @@
-## Coding-coding sense-antisense pair (SAS) and non-coding-coding SAS pair expression analysis. 
+## Coding-coding SAS and non-coding-coding SAS expression analysis. 
