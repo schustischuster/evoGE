@@ -46,10 +46,27 @@ out_dir <- "."
 
 ### Get coding-coding gene overlapp
 
+The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations, and write the results to an CSV file. The threshold is set as follows: an expression value greater 0.5 TPM in at least two out of three replicates in at least one sample type. 
+
 ```R
 getPcPc(species = "ATH", experiment = "single-species")
 
 ```
+To generate all data tables used in this study, execute the following function calls: 
+
+```R
+getPcPc("ATH", "single-species")
+getPcPc("ATH", "comparative")
+getPcPc("AL", "single-species")
+getPcPc("AL", "comparative")
+getPcPc("CR")
+getPcPc("ES")
+getPcPc("TH")
+getPcPc("MT")
+getPcPc("BD")
+
+```
+
 ### Get non-coding-coding gene overlapp
 
 ```R
