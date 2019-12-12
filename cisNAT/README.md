@@ -46,7 +46,7 @@ out_dir <- "."
 
 ### Get coding-coding gene overlapp
 
-The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations, and write the results to an CSV file. The threshold is set as follows: an expression value greater 0.5 TPM in at least two out of three replicates in at least one sample type. 
+The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to an CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater 0.5 TPM in at least two out of three replicates in at least one sample type. 
 
 ```R
 getPcPc(species = "ATH", experiment = "single-species")
@@ -69,7 +69,44 @@ getPcPc("BD")
 
 ### Get non-coding-coding gene overlapp
 
+The following function will extract all non-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to an CSV file. A sense-antisense pair is considered as epressed if both non-coding antisense and coding sense transcript reach the threshold, which can be set to any value, in at least two out of three replicates in at least one sample type. 
+
 ```R
 getNcPc(species = "ATH", experiment = "single-species", threshold = 0.5)
 
 ```
+To generate all data tables used in this study, execute the following function calls: 
+
+```R
+getNcPc("ATH", "single-species", 0.5)
+getNcPc("ATH", "comparative", 0.5)
+getNcPc("AL", "single-species", 0.5)
+getNcPc("AL", "comparative", 0.5)
+getNcPc("CR", "comparative", 0.5)
+getNcPc("ES", "comparative", 0.5)
+getNcPc("TH", "comparative", 0.5)
+getNcPc("MT", "comparative", 0.5)
+getNcPc("BD", "comparative", 0.5)
+
+getNcPc("ATH", "single-species", 2)
+getNcPc("ATH", "comparative", 2)
+getNcPc("AL", "single-species", 2)
+getNcPc("AL", "comparative", 2)
+getNcPc("CR", "comparative", 2)
+getNcPc("ES", "comparative", 2)
+getNcPc("TH", "comparative", 2)
+getNcPc("MT", "comparative", 2)
+getNcPc("BD", "comparative", 2)
+
+getNcPc("ATH", "single-species", 5)
+getNcPc("ATH", "comparative", 5)
+getNcPc("AL", "single-species", 5)
+getNcPc("AL", "comparative", 5)
+getNcPc("CR", "comparative", 5)
+getNcPc("ES", "comparative", 5)
+getNcPc("TH", "comparative", 5)
+getNcPc("MT", "comparative", 5)
+getNcPc("BD", "comparative", 5)
+
+```
+
