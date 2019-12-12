@@ -46,7 +46,7 @@ out_dir <- "."
 
 ### Retrieve coding-coding gene overlapp
 
-The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to an CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater 0.5 TPM in at least two out of three replicates in at least one sample type. 
+The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater than 0.5 TPM in at least two out of three replicates in at least one sample type. 
 
 ```R
 getPcPc(species = "ATH", experiment = "single-species")
@@ -69,7 +69,7 @@ getPcPc("BD", "comparative")
 
 ### Retrieve non-coding-coding gene overlapp
 
-The following function will extract all non-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to an CSV file. A sense-antisense pair is considered as epressed if both non-coding antisense and coding sense transcript reach the threshold, which can be set to any value, in at least two out of three replicates in at least one sample type. 
+The following function will extract all non-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. A sense-antisense pair is considered as expressed if both non-coding antisense and coding sense transcript reach the threshold, which can be set to any value, in at least two out of three replicates in at least one sample type. 
 
 ```R
 getNcPc(species = "ATH", experiment = "single-species", threshold = 0.5)
