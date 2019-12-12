@@ -1,4 +1,4 @@
-## Coding-coding SAS and non-coding-coding SAS expression analysis. 
+## Coding-coding SAS and non-coding-coding SAS expression analysis
 
 This code allows to reproduce the results of the protein-coding protein-coding sense-antisense (SAS) pair and non-coding protein-coding SAS pair expression analysis. 
 
@@ -10,7 +10,7 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Data input](#data-input)
 * [Data analysis](#data-analysis)
   * [Get coding-coding gene overlapp](#get-coding-coding-gene-overlapp)
-  * [Get non-coding-coding gene overlapp](#et-non-coding-coding-gene-overlapp)
+  * [Get non-coding-coding gene overlapp](#get-non-coding-coding-gene-overlapp)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -34,7 +34,13 @@ library(rtracklayer)
 ```
   
 ### Data input
-Download 'data' folder to the working directory on your computer.
+Download 'data' folder to the working directory on your computer. Then, set file path and input files: 
+
+```R
+in_dir <- "./data"
+out_dir <- "."
+
+```
 
 ## Data analysis
 
