@@ -1,2 +1,2 @@
 # evoGEx
-Reproducible scripts
+Reproducible scripts for transcriptome evolution study 
