@@ -124,7 +124,6 @@ The plotting functions will generate the panels for the following figure:
 
 ![SAS_expression](README_files/SAS_expression_cor.png)
 
-&nbsp;
 
 ---
 ## Session info
