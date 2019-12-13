@@ -57,7 +57,6 @@ To generate all data tables used in this study, execute the following function c
 ```R
 getPcPc("ATH", "single-species")
 getPcPc("ATH", "comparative")
-getPcPc("AL", "single-species")
 getPcPc("AL", "comparative")
 getPcPc("CR", "comparative")
 getPcPc("ES", "comparative")
@@ -80,7 +79,6 @@ To generate all data tables used in this study, execute the following function c
 ```R
 getNcPc("ATH", "single-species", 0.5)
 getNcPc("ATH", "comparative", 0.5)
-getNcPc("AL", "single-species", 0.5)
 getNcPc("AL", "comparative", 0.5)
 getNcPc("CR", "comparative", 0.5)
 getNcPc("ES", "comparative", 0.5)
@@ -90,7 +88,6 @@ getNcPc("BD", "comparative", 0.5)
 
 getNcPc("ATH", "single-species", 2)
 getNcPc("ATH", "comparative", 2)
-getNcPc("AL", "single-species", 2)
 getNcPc("AL", "comparative", 2)
 getNcPc("CR", "comparative", 2)
 getNcPc("ES", "comparative", 2)
@@ -100,7 +97,6 @@ getNcPc("BD", "comparative", 2)
 
 getNcPc("ATH", "single-species", 5)
 getNcPc("ATH", "comparative", 5)
-getNcPc("AL", "single-species", 5)
 getNcPc("AL", "comparative", 5)
 getNcPc("CR", "comparative", 5)
 getNcPc("ES", "comparative", 5)
