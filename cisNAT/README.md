@@ -32,11 +32,15 @@ library(rtracklayer)
 ```
   
 ### Data input
-Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/data) folder to the working directory on your computer. Then, set the file path for input and output files: 
+Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/data) folder and R scripts to the working directory on your computer. Then, set the file path for input and output files and source the scripts: 
 
 ```R
 in_dir <- "./data"
 out_dir <- "."
+
+source("getPcPc.R")
+source("getNcPc.R")
+source("SAS_plots.R")
 
 ```
 
