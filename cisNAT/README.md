@@ -40,7 +40,6 @@ out_dir <- "."
 
 source("getPcPc.R")
 source("getNcPc.R")
-source("SAS_plots.R")
 
 ```
 
@@ -109,6 +108,16 @@ getNcPc("BD", "comparative", 5)
 ```
 
 ## Visualization
+
+Set the file path for the data generated in the previous steps and source the R script:
+
+```R
+in_dir_cd <- "./output/overlapp_cd_genes"
+in_dir_nc <- "./output/overlapp_nc_genes"
+
+source("SAS_plots.R")
+
+```
 
 The plotting functions will generate the panels for the following figure:
 
