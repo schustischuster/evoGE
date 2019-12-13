@@ -24,8 +24,6 @@ Install and load the following R packages before running the reproducible script
 ```R
 if (!require(dplyr)) install.packages('dplyr')
 library(dplyr)
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
 if (!require(GenomicRanges)) install.packages('GenomicRanges')
 library(GenomicRanges)
 if (!require(rtracklayer)) install.packages('rtracklayer')
