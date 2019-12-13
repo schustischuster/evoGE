@@ -7,11 +7,6 @@
 #   Spearman / Pearson
 
 
-# Set file path and input files
-in_dir_cd <- "./output/overlapp_cd_genes"
-in_dir_nc <- "./output/overlapp_nc_genes"
-
-
 # Read all csv files in input file path
 readTable <- function(path, pattern = "*.csv") {
     files = list.files(path, pattern, full.names = TRUE)
