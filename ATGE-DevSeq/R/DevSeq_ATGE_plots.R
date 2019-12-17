@@ -117,9 +117,9 @@ plot_Gene_Corr <- function(data1, data2, data3) {
     ylim = c(-1, 1),
     names = c("Spearman", "Pearson", "Pearson_log"), 
     yaxt='n', 
-    cex.lab = 1.1, 
+    cex.lab = 1.2, 
     las = 1,
-    cex.axis = 1.1, #adapt size of axis labels
+    cex.axis = 1.2, #adapt size of axis labels
     ylab = "Correlation coefficient", 
     col = c("#d8a900", "#00bc1f", "#00c094"), 
     boxwex = 0.71, 
@@ -129,7 +129,7 @@ plot_Gene_Corr <- function(data1, data2, data3) {
     pars = list(outcol = "gray50"),
     notch = FALSE
     )
-    title("Pairwise gene correlation", adj = 0.5, line = 1.4, font.main = 1, cex.main = 1.2)
+    title("Pairwise gene correlation", adj = 0.5, line = 1.4, font.main = 1, cex.main = 1.3)
     box(lwd = 1.4)
     axis(side=2, lwd = 1.4, las = 2)
     par(xpd=TRUE)
@@ -151,9 +151,9 @@ plot_Sample_Corr <- function(data1, data2, data3) {
     ylim = c(0, 1),
     names = c("Spearman", "Pearson", "Pearson_log"), 
     yaxt='n', 
-    cex.lab = 1.1, 
+    cex.lab = 1.2, 
     las = 1,
-    cex.axis = 1.1, #adapt size of axis labels
+    cex.axis = 1.2, #adapt size of axis labels
     ylab = "Correlation coefficient", 
     col = c("#d8a900", "#00bc1f", "#00c094"), 
     boxwex = 0.71, 
@@ -163,7 +163,7 @@ plot_Sample_Corr <- function(data1, data2, data3) {
     pars = list(outcol = "gray50"),
     notch = FALSE
     )
-    title("Pairwise sample correlation", adj = 0.5, line = 1.4, font.main = 1, cex.main = 1.2)
+    title("Pairwise sample correlation", adj = 0.5, line = 1.4, font.main = 1, cex.main = 1.3)
     box(lwd = 1.4)
     axis(side=2, lwd = 1.4, las = 2)
     par(xpd=TRUE)
@@ -360,7 +360,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
     brc_col <- brc_col[order.dendrogram(df_dend)]
     brc_col <- factor(brc_col, unique(brc_col))
 
-    png(height = 1190, width = 1200, pointsize = 10.85, file = fname)
+    png(height = 1195, width = 1200, pointsize = 10.94, file = fname)
     par(mar = c(14.5, 4, 4, 1.5), lwd = 8.5, cex = 3, cex.axis = 1)
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
     if (dfname == "atge_re") {
