@@ -57,7 +57,7 @@ atge_names <- c('experiment','gene_id','symbol','gene_id_exp','Spearman','Pearso
     'flower_stg12_21d+_ATGE','flower_stg15_21d+_ATGE','flower_stg12_sepals_ATGE',
     'flower_stg15_sepals_ATGE','flower_stg12_petals_ATGE','flower_stg15_petals_ATGE',
     'flower_stg12_stamens_ATGE','flower_stg15_stamens_ATGE','flower_stg12_carpels_ATGE',
-    'flower_stg15_carpels_ATGE','fruit_stg16_siliques_ATGE')
+    'flower_stg15_carpels_ATGE','flower_stg16_siliques_ATGE')
 
 devseq_names <- c('experiment','gene_id','symbol','gene_id_exp','Spearman','Pearson','root_7d_DevSeq',
       'root_14d_DevSeq','root_21d_DevSeq','hypocotyl_10d_DevSeq','first_internode_28d_DevSeq',
@@ -67,7 +67,7 @@ devseq_names <- c('experiment','gene_id','symbol','gene_id_exp','Spearman','Pear
       'flower_stg12_21d+_DevSeq','flower_stg15_21d+_DevSeq','flower_stg12_sepals_DevSeq',
       'flower_stg15_sepals_DevSeq','flower_stg12_petals_DevSeq','flower_stg15_petals_DevSeq',
       'flower_stg12_stamens_DevSeq','flower_stg15_stamens_DevSeq','flower_stg12_carpels_DevSeq',
-      'flower_stg15_carpels_DevSeq','fruit_stg16_siliques_DevSeq')
+      'flower_stg15_carpels_DevSeq','flower_stg16_siliques_DevSeq')
 
 names(atge_re) <- atge_names
 names(devseq_re) <- devseq_names
@@ -111,7 +111,7 @@ message("Storing plots in: ", file.path("output", "plots"))
 plot_Gene_Corr <- function(data1, data2, data3) {
 
   png(file = file.path(out_dir, "output", "plots", "atge_devseq_gene_corr.png"), 
-    width = 4000, height = 3650, res = 825)
+    width = 4250, height = 3620, res = 825)
   par(mar = c(4.5, 5, 3, 1.5))
   boxplot(data1, data2, data3, 
     ylim = c(-1, 1),
@@ -145,7 +145,7 @@ plot_Gene_Corr(spearman_RE, pearson_RE, pearson_log2_RE)
 plot_Sample_Corr <- function(data1, data2, data3) {
 
   png(file = file.path(out_dir, "output", "plots", "atge_devseq_sample_corr.png"), 
-    width = 4000, height = 3650, res = 825)
+    width = 4250, height = 3620, res = 825)
   par(mar = c(4.5, 5, 3, 1.5))
   boxplot(data1, data2, data3, 
     ylim = c(0, 1),
@@ -222,8 +222,8 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("darkred", "red4", "red3", "yellow", "lightgoldenrodyellow")
-    pal <- color.palette(steps, c(20, 20, 20, 1), space = "rgb")
+    steps <- c("#600303", "#a80606", "#d20808", "yellow", "lightgoldenrodyellow")
+    pal <- color.palette(steps, c(20, 20, 33, 4), space = "rgb")
 
     # Set filename
     dfname <- deparse(substitute(x))
@@ -235,8 +235,8 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
     # Define column and row colors for color bars based on sample names and experiment
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
 
-    species_col <- c(se="palegreen4", fi="palegreen4", ap="orange2", hy="darkorchid4", fl="gold1", fr="gold1", 
-                     ro="orchid4", le="olivedrab3", co="olivedrab3", ca="olivedrab3")
+    species_col <- c(se="palegreen4", fi="palegreen4", ap="orange2", hy="darkorchid4", fl="gold1", ro="orchid4", 
+      le="olivedrab3", co="olivedrab3", ca="olivedrab3")
     
     exp_col <- c(GE="navajowhite2", eq="maroon4") # last two letters of experiment string
 
@@ -332,8 +332,8 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
               )
 
     # Define colors based on sample name
-    label_col <- c(se="gray30", fi="gray30", ap="blue", hy="purple", fl="red2", fr="red2", ro="gray50", 
-       fr="black", le="green3", co="green3", ca="green3")
+    label_col <- c(se="gray10", fi="gray10", ap="blue", hy="purple", fl="#e40000", ro="gray47", fr="black", 
+      le="green3", co="green3", ca="green3")
 
     # Build distance matrix
     if (is.element(coefficient, c("pearson"))) {
@@ -360,7 +360,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
     brc_col <- brc_col[order.dendrogram(df_dend)]
     brc_col <- factor(brc_col, unique(brc_col))
 
-    png(height = 1180, width = 1200, pointsize = 10.75, file = fname)
+    png(height = 1190, width = 1200, pointsize = 10.85, file = fname)
     par(mar = c(14.5, 4, 4, 1.5), lwd = 8.5, cex = 3, cex.axis = 1)
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
     if (dfname == "atge_re") {
