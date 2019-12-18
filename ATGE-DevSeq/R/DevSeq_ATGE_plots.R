@@ -332,8 +332,8 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
               )
 
     # Define colors based on sample name
-    label_col <- c(se="gray10", fi="gray10", ap="blue", hy="purple", fl="#e40000", ro="gray47", fr="black", 
-      le="green3", co="green3", ca="green3")
+    label_col <- c(se="gray10", fi="gray10", ap="blue", hy="purple", fl="#e40000", ro="gray47", le="green3", 
+      co="green3", ca="green3")
 
     # Build distance matrix
     if (is.element(coefficient, c("pearson"))) {
