@@ -25,27 +25,27 @@ out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Anal
 
 # Set input files
 devseq_re_vs_atge_re_input <- "DevSeq_RE_vs_ATGE_RE.csv"
-devseq_log_re_vs_atge_log_re_input <- "DevSeq_log2_RE_vs_ATGE_log2_RE.csv"
+devseq_log2_re_vs_atge_log2_re_input <- "DevSeq_log2_RE_vs_ATGE_log2_RE.csv"
 
 
 # Read data tables
 message("Reading data tables: input files, sample information, symbol list")
 devseq_re_vs_atge_re <- read.table(file=file.path(in_dir, devseq_re_vs_atge_re_input), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
-devseq_log_re_vs_atge_log_re <- read.table(file=file.path(in_dir, devseq_log_re_vs_atge_log_re_input), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
+devseq_log2_re_vs_atge_log2_re <- read.table(file=file.path(in_dir, devseq_log2_re_vs_atge_log2_re_input), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
 
 # Prepare data
 # Add experiment information to data tables
 experiment <- gsub(".*_","",devseq_re_vs_atge_re[,3])
 devseq_re_vs_atge_re <- cbind(as.data.frame(experiment),devseq_re_vs_atge_re)
-experiment_log <- gsub(".*_","",devseq_log_re_vs_atge_log_re[,3])
-devseq_log_re_vs_atge_log_re <- cbind(as.data.frame(experiment),devseq_log_re_vs_atge_log_re)
+experiment_log <- gsub(".*_","",devseq_log2_re_vs_atge_log2_re[,3])
+devseq_log2_re_vs_atge_log2_re <- cbind(as.data.frame(experiment),devseq_log2_re_vs_atge_log2_re)
 
 # Seperate ATGE and DevSeq data
 atge_re <- subset(devseq_re_vs_atge_re, experiment == "ATGE")
 devseq_re <- subset(devseq_re_vs_atge_re, experiment == "DevSeq")
-atge_log2_re <- subset(devseq_log_re_vs_atge_log_re, experiment_log == "ATGE")
-devseq_log2_re <- subset(devseq_log_re_vs_atge_log_re, experiment_log == "DevSeq")
+atge_log2_re <- subset(devseq_log2_re_vs_atge_log2_re, experiment_log == "ATGE")
+devseq_log2_re <- subset(devseq_log2_re_vs_atge_log2_re, experiment_log == "DevSeq")
 
 
 # Set ATGE and DevSeq sample names
