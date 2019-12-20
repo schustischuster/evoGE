@@ -3,23 +3,7 @@
 # tables generated in the previous step.
 
 
-#------------ Load packages, set directories, read sample tables and prepare data --------------
-
-
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(gplots)) install.packages('gplots')
-library(gplots)
-if (!require(factoextra)) install.packages('factoextra')
-library(factoextra)
-if (!require(dendextend)) install.packages('dendextend')
-library(dendextend)
-
-
-# Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/DevSeq_ATGE_comparative_analysis_20190626/R_DevSeq_ATGE_integrative_analysis/ATGE-DevSeq-master/output/data_tables"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/DevSeq_ATGE_comparative_analysis_20190626/R_DevSeq_ATGE_integrative_analysis/ATGE-DevSeq-master"
+#---------------------------- Read sample tables and prepare data -----------------------------
 
 
 # Set input files
@@ -103,9 +87,6 @@ message("Storing plots in: ", file.path("output", "plots"))
 #-------------------------------------- Generate plots -----------------------------------------
 
 
-
-
-
 # Boxplot of pairwise ATGE-DevSeq gene correlations
 plot_Gene_Corr <- function(data1, data2, data3) {
 
@@ -134,9 +115,6 @@ plot_Gene_Corr <- function(data1, data2, data3) {
     par(xpd=TRUE)
   dev.off()
 }
-
-
-plot_Gene_Corr(spearman_RE, pearson_RE, pearson_log2_RE)
 
 
 
@@ -168,12 +146,6 @@ plot_Sample_Corr <- function(data1, data2, data3) {
     par(xpd=TRUE)
   dev.off()
 }
-
-
-plot_Sample_Corr(atge_devseq_spearman, atge_devseq_pearson, atge_devseq_log_pearson)
-
-
-
 
 
 
@@ -304,8 +276,6 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
     dev.off()
 }
 
-makeCorrplot(atge_devseq_re, coefficient = "pearson")
-makeCorrplot(atge_devseq_re_log, coefficient = "pearson")
 
 
 # Generate hclust dendrogram using relative expression data
@@ -370,12 +340,4 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
     axis(side = 2, lwd = 3.5)
     dev.off()
 }
-
-makeDendrogram(atge_re, coefficient = "pearson")
-makeDendrogram(devseq_re, coefficient = "pearson")
-
-
-
-
-
 
