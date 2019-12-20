@@ -21,34 +21,48 @@ Install and load the following R packages before running the reproducible script
 ```R
 if (!require(dplyr)) install.packages('dplyr')
 library(dplyr)
-if (!require(GenomicRanges)) install.packages('GenomicRanges')
-library(GenomicRanges)
-if (!require(rtracklayer)) install.packages('rtracklayer')
-library(rtracklayer)
+if (!require(gplots)) install.packages('gplots')
+library(gplots)
+if (!require(factoextra)) install.packages('factoextra')
+library(factoextra)
+if (!require(dendextend)) install.packages('dendextend')
+library(dendextend)
 
 ```
   
 ### Data input
-Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/data) folder and R scripts to the working directory on your computer. Then, set the file path for input and output files and source the scripts: 
+Download the [data](https://github.com/schustischuster/evoGEx/tree/master/ATGE-DevSeq/data) folder and R script to the working directory on your computer. Then, set the file path for input and output files and source the script: 
 
 ```R
 in_dir <- "./data"
 out_dir <- "."
 
-source("getPcPc.R")
-source("getNcPc.R")
+# Store plots in /out_dir/output/plots
+if (!dir.exists(file.path(out_dir, "output", "plots"))) 
+  dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
+
+source("DevSeq_ATGE_plots.R")
 
 ```
 
 ## Visualization
 
-Set the file path for the data generated in the previous steps and source the R script:
+After loading the data and sourcing the R script, run the following commands to generate the plots:
 
 ```R
-in_dir_cd <- "./output/overlapp_cd_genes"
-in_dir_nc <- "./output/overlapp_nc_genes"
+# Boxplot showing pairwise ATGE-DevSeq gene correlations 
+plot_Gene_Corr(spearman_RE, pearson_RE, pearson_log2_RE)
 
-source("SAS_plots.R")
+# Boxplot showing ATGE-DevSeq sample correlations
+plot_Sample_Corr(atge_devseq_spearman, atge_devseq_pearson, atge_devseq_log_pearson)
+
+# Correlation heatmap of merged ATGE-DevSeq data
+makeCorrplot(atge_devseq_re, coefficient = "pearson")
+makeCorrplot(atge_devseq_re_log, coefficient = "pearson")
+
+# hclust dendrogram of ATGE and DevSeq data
+makeDendrogram(atge_re, coefficient = "pearson")
+makeDendrogram(devseq_re, coefficient = "pearson")
 
 ```
 
