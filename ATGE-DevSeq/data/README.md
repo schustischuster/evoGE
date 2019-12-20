@@ -1,1 +1,1 @@
-These data tables are generated using the reproducible scripts for the [ATGE-DevSeq](https://github.com/schustischuster/ATGE-DevSeq) comparative analysis. When running this analysis, the data tables will be saved in /DevSeq-ATGE/output/data_tables. 
+These data tables are generated using the reproducible scripts for the [ATGE-DevSeq](https://github.com/schustischuster/ATGE-DevSeq) comparative analysis.
