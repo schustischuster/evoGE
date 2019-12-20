@@ -1,10 +1,25 @@
+# This script loads gene expression correlation tables of sense-antisense (SAS) gene pairs for 
+# both coding/cisNATs SAS and coding-coding SAS, defines TPM ranges, performs a Wilcox test
+# and generates the plots for the sense-antisense pair expression correlation figure
 
-# This script loads gene expression correlation tables of sense-antisense (SAS) gene pairs 
-# both coding/cisNATs SAS and coding-coding SAS
+# Expression correlation tables have the following format:
+# id_plus_strand / start_plus / end_plus / strand_query / biotype_subject / id_minus_strand 
+# / start_minus / end_minus / strand_subject / biotype_subject / Spearman / Pearson
 
-# coding_genes_tables of coding SAS have the following format:
-# id_plus_strand / start_plus / end_plus / id_minus_strand / start_minus / end_minus / biotype / 
-#   Spearman / Pearson
+
+#------------------- Load packages, set directories and read sample tables ---------------------
+
+
+# Install and load packages
+if (!require(dplyr)) install.packages('dplyr')
+library(dplyr)
+
+
+
+# Set file path and input files
+in_dir_cd <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/overlapp_cd_genes"
+in_dir_nc <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/overlapp_nc_genes"
+out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
 
 
 # Read all csv files in input file path
@@ -252,15 +267,14 @@ boxplot(ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pe
 	las = 2,
 	cex.axis = 1.1, #adapt size of axis labels
 	ylab = "Pearson ρ", 
-	col = c("darkseagreen", "gold2", "darkseagreen", "gold2", "darkseagreen", "gold2", "darkseagreen", 
-		"gold2", "darkseagreen", "gold2", "darkseagreen", "gold2", "darkseagreen", "gold2"), 
+	col = c("#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900"), 
 	boxwex = 0.85, 
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2,3.5,4.5), 
 	notch = FALSE
 	)
-	title("SAS pairs in ATH", adj = 0.50, line = 1.3)
+	title("SAS pairs in ATH", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.2)
 	rug(x = c(2.75), ticksize = -0.13, side = 1, lwd = 1.35, col = "gray60") #x-axis ticks
 	abline(v = c(2.75), col = "gray60")
 	box(lwd = 1.35)
@@ -275,7 +289,7 @@ boxplot(ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pe
 	mtext('ATH_comp', side = 1, line = 0.55, at = 4)
 	par(xpd=TRUE)
 	legend(-0.35,-1.6,c("cd-cd SAS", "nc-cd SAS"),  
-	bty='n', horiz = TRUE, fill = c("darkseagreen", "gold2"), cex = 1.1, x.intersp = 0.5)
+	bty='n', horiz = TRUE, fill = c("#a8a8a8", "#d8a900"), cex = 1.1, x.intersp = 0.5)
 dev.off()
 
 
@@ -314,15 +328,15 @@ boxplot(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_n
 	las = 2,
 	cex.axis = 1.1, #adapt size of axis labels
 	ylab = "Pearson ρ", 
-	col = c("darkseagreen", "gold2", "darkseagreen", "gold2", "darkseagreen", "gold2", "darkseagreen", 
-		"gold2", "darkseagreen", "gold2", "darkseagreen", "gold2", "darkseagreen", "gold2"), 
+	col = c("#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900", "#a8a8a8", 
+		"#d8a900", "#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900"), 
 	boxwex = 0.85, 
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2,4,5,7,8,10,11,13,14,16,17,19,20), 
 	notch = FALSE
 	)
-	title("SAS pairs in all species", adj = 0.5, line = 1.3)
+	title("SAS pairs in all species", adj = 0.5, line = 1.3, font.main = 1, cex.main = 1.2)
 	rug(x = c(3, 6, 9, 12, 15, 18), ticksize = -0.08, side = 1, lwd=1.35, col="gray60") #x-axis ticks
 	abline(v = c(3, 6, 9, 12, 15, 18), col="gray60")
 	box(lwd = 1.35)
@@ -357,7 +371,7 @@ boxplot(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_n
 	mtext('BD', side=1, line=0.5, at=19.5)
 	par(xpd=TRUE)
 	legend(6.55,-1.6,c("cd-cd SAS", "nc-cd SAS"),  
-	bty='n', horiz=TRUE, fill=c("darkseagreen", "gold2"), cex=1.1, x.intersp = 0.5)
+	bty='n', horiz=TRUE, fill=c("#a8a8a8", "#d8a900"), cex=1.1, x.intersp = 0.5)
 dev.off()
 
 
@@ -382,8 +396,8 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
     fname <- sprintf('%s.png', paste(title_plot, "thresholds", sep="_")) 
 
 	png(file = file.path(out_dir, "output", "plots", fname), 
-		width = 2900, height = 4000, res = 825)
-	par(mar = c(5.725, 4.5, 4, 2.5))
+		width = 2620, height = 4000, res = 825)
+	par(mar = c(5.725, 4.5, 4, 1))
 	boxplot(threshold_05, threshold_05_2, threshold_2_5, threshold_greater5,
 		ylim = c(-1.1, 1.1), 
 		yaxt='n', 
@@ -392,7 +406,7 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
 		cex.axis = 1.1, #adapt size of axis labels
 		xlab = "cis-NAT expression (TPM)", 
 		ylab = "Pearson ρ", 
-		col = c("gold2", "orange1", "orange2", "orange3"), 
+		col = c("#d8a900", "#00bc1f", "#00c094", "#00beda"), 
 		boxwex = 0.71, 
 		lwd = 1.35, 
 		whisklty = 1, 
@@ -400,7 +414,7 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
 		pars = list(outcol = "gray50"),
 		notch = FALSE
 		)
-		title(title_plot, adj = 0.5, line = 1.25)
+		title(title_plot, adj = 0.5, line = 1.25, font.main = 1, cex.main = 1.2)
 		box(lwd = 1.35)
 		axis(side=2, lwd = 1.35, las = 2)
 		text(x= 1, y= -1.05, labels= n_values_05, col= "gray40", cex=0.97) #threshold_>0.5
@@ -436,8 +450,8 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
     fname <- sprintf('%s.png', paste(title_plot, "thresholds", sep="_")) 
 
 	png(file = file.path(out_dir, "output", "plots", fname), 
-		width = 2900, height = 4000, res = 825)
-	par(mar = c(5.725, 4.5, 4, 2.5))
+		width = 2620, height = 4000, res = 825)
+	par(mar = c(5.725, 4.5, 4, 1))
 	boxplot(threshold_05, threshold_05_2, threshold_2_5, threshold_greater5,
 		ylim = c(-1.1, 1.1), 
 		yaxt='n', 
@@ -445,7 +459,7 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
 		las = 1,
 		cex.axis = 1.1, #adapt size of axis labels
 		xlab = "cis-NAT expression (TPM)", 
-		col = c("gold2", "orange1", "orange2", "orange3"), 
+		col = c("#d8a900", "#00bc1f", "#00c094", "#00beda"), 
 		boxwex = 0.71, 
 		lwd = 1.35, 
 		whisklty = 1, 
@@ -453,7 +467,7 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
 		pars = list(outcol = "gray50"),
 		notch = FALSE
 		)
-		title(title_plot, adj = 0.5, line = 1.25)
+		title(title_plot, adj = 0.5, line = 1.25, font.main = 1, cex.main = 1.2)
 		box(lwd = 1.35)
 		axis(side=2, lwd = 1.35, las = 2)
 		text(x= 1, y= -1.05, labels= n_values_05, col= "gray40", cex=0.97) #threshold_>0.5
@@ -467,4 +481,106 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
 		par(xpd=TRUE)
 	dev.off()
 }
+
+
+
+# ATH all samples
+make_Boxplot_All_Thresholds_Labels(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_05_2_pearson, 
+	ATH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_5_pearson, samples = "all")
+
+# ATH comparative samples
+make_Boxplot_All_Thresholds(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_5_pearson, 
+	samples = "comparative")
+
+# AL comparative samples
+make_Boxplot_All_Thresholds(AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_5_pearson)
+
+# CR
+make_Boxplot_All_Thresholds(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+	CR_cd_nc_SAS_cor_wo_pollen_2_5_pearson, CR_cd_nc_SAS_cor_wo_pollen_5_pearson)
+
+# ES
+make_Boxplot_All_Thresholds_Labels(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+	ES_cd_nc_SAS_cor_wo_pollen_2_5_pearson, ES_cd_nc_SAS_cor_wo_pollen_5_pearson)
+
+# TH
+make_Boxplot_All_Thresholds(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+	TH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, TH_cd_nc_SAS_cor_wo_pollen_5_pearson)
+
+# MT
+make_Boxplot_All_Thresholds(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+	MT_cd_nc_SAS_cor_wo_pollen_2_5_pearson, MT_cd_nc_SAS_cor_wo_pollen_5_pearson)
+
+# BD
+make_Boxplot_All_Thresholds(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+	BD_cd_nc_SAS_cor_wo_pollen_2_5_pearson, BD_cd_nc_SAS_cor_wo_pollen_5_pearson)
+
+
+
+
+
+
+#------------------------------ Scripts for some additional plots ------------------------------
+
+
+
+# Prepare data for ggplot2 boxplot
+combine_Species_Data <- function(cd_cd, nc_cd) {
+
+	number_values <- length(cd_cd)+length(nc_cd)
+	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(cd_cd)))),each=number_values))
+	names(species_name) <- "species"
+
+	class_1 = as.data.frame(rep(c("cd-cd"),each=length(cd_cd)))
+	names(class_1) <- "class"
+	class_2 = as.data.frame(rep(c("nc-cd"),each=length(nc_cd)))
+	names(class_2) <- "class"
+
+	cor_values_1 = as.data.frame(cd_cd)
+	names(cor_values_1) <- "cor_values"
+	cor_values_2 = as.data.frame(nc_cd)
+	names(cor_values_2) <- "cor_values"
+
+	species_df = data.frame(species_name, rbind(class_1, class_2) , rbind(cor_values_1, cor_values_2))
+
+	return(species_df)
+}
+
+ATH_avg_cdcd_nccd_SAS <- combine_Species_Data(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, 
+	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+AL_avg_cdcd_nccd_SAS <- combine_Species_Data(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, 
+	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+CR_avg_cdcd_nccd_SAS <- combine_Species_Data(CR_coding_SAS_cor_wo_pollen_pearson, 
+	CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+ES_avg_cdcd_nccd_SAS <- combine_Species_Data(ES_coding_SAS_cor_wo_pollen_pearson, 
+	ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+TH_avg_cdcd_nccd_SAS <- combine_Species_Data(TH_coding_SAS_cor_wo_pollen_pearson, 
+	TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+MT_avg_cdcd_nccd_SAS <- combine_Species_Data(MT_coding_SAS_cor_wo_pollen_pearson, 
+	MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+BD_avg_cdcd_nccd_SAS <- combine_Species_Data(BD_coding_SAS_cor_wo_pollen_pearson, 
+	BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+
+cdcd_nccd_SAS_avg_data <- rbind(ATH_avg_cdcd_nccd_SAS, AL_avg_cdcd_nccd_SAS, CR_avg_cdcd_nccd_SAS, 
+	ES_avg_cdcd_nccd_SAS, TH_avg_cdcd_nccd_SAS, MT_avg_cdcd_nccd_SAS, BD_avg_cdcd_nccd_SAS)
+cdcd_nccd_SAS_avg_data <- na.omit(cdcd_nccd_SAS_avg_data)
+
+
+# ggplot2 boxplot version
+# Pearson plot of cd-cd SAS / nc-cd SAS pairs all species comparative samples
+png(file = file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_wo_pollen.png"), 
+	width = 6400, height = 4000, res = 825)
+par(mar = c(4.5, 4.5, 4, 1.5))
+p <- ggplot(cdcd_nccd_SAS_avg_data, aes(x=species, y=cor_values, fill=class)) + 
+geom_boxplot(position=position_dodge(1))
+p + scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))
+p + theme_minimal()
+p + box(lwd = 1.35)
+dev.off()
+
+
+
+
 
