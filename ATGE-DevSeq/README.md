@@ -1,6 +1,6 @@
 ## Comparative Analysis of ATGE and DevSeq data sets
 
-This code visualizes the results of the AtGenExpress (ATGE) and DevSeq comparative analysis. 
+This code visualizes the results of the AtGenExpress (ATGE) and DevSeq comparative analysis, which can be found [here](https://github.com/schustischuster/ATGE-DevSeq).
 
 
 ## Contents
