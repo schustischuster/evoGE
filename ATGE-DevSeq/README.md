@@ -37,10 +37,6 @@ Download the [data](https://github.com/schustischuster/evoGEx/tree/master/ATGE-D
 in_dir <- "./data"
 out_dir <- "."
 
-# Store plots in /out_dir/output/plots
-if (!dir.exists(file.path(out_dir, "output", "plots"))) 
-  dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
-
 source("DevSeq_ATGE_plots.R")
 
 ```
@@ -66,7 +62,7 @@ makeDendrogram(devseq_re, coefficient = "pearson")
 
 ```
 
-The plotting functions will generate the panels for the following figure:
+The plotting functions will create the panels for the following figure:
 
 
 ![ATGE-DevSeq](README_files/ATGE-DevSeq.png)
