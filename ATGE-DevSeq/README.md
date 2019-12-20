@@ -31,7 +31,7 @@ library(dendextend)
 ```
   
 ### Data input
-Download the [data](https://github.com/schustischuster/evoGEx/tree/master/ATGE-DevSeq/data) folder and R script to the working directory on your computer. Then, set the file path for input and output files and source the script: 
+Download the [data](https://github.com/schustischuster/evoGEx/tree/master/ATGE-DevSeq/data) folder and [R script](https://github.com/schustischuster/evoGEx/tree/master/ATGE-DevSeq/R) to the working directory on your computer. Then, set the file path for input and output files and source the script: 
 
 ```R
 in_dir <- "./data"
