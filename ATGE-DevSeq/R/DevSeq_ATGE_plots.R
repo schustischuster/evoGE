@@ -1,7 +1,6 @@
 
 # Vizualize the results of the DevSeq-ATGE comparative analysis using the relative expression
-# tables generated in the previous step. Make sure running DevSeq_ATGE_analysis.R first
-
+# tables generated in the previous step.
 
 
 #------------ Load packages, set directories, read sample tables and prepare data --------------
@@ -29,7 +28,7 @@ devseq_log2_re_vs_atge_log2_re_input <- "DevSeq_log2_RE_vs_ATGE_log2_RE.csv"
 
 
 # Read data tables
-message("Reading data tables: input files, sample information, symbol list")
+message("Reading ATGE-DevSeq cor data tables")
 devseq_re_vs_atge_re <- read.table(file=file.path(in_dir, devseq_re_vs_atge_re_input), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 devseq_log2_re_vs_atge_log2_re <- read.table(file=file.path(in_dir, devseq_log2_re_vs_atge_log2_re_input), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
@@ -93,7 +92,7 @@ atge_devseq_log_pearson <- diag(cor(atge_log2_re[-1:-6], devseq_log2_re[-1:-6], 
 atge_devseq_spearman <- diag(cor(atge_re[-1:-6], devseq_re[-1:-6], method="spearman"))
 
 
-# Write final data tables to csv files and store them in /out_dir/output/data_tables
+# Store results in /out_dir/output/plots
 if (!dir.exists(file.path(out_dir, "output", "plots"))) 
   dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
 message("Storing plots in: ", file.path("output", "plots"))
@@ -107,7 +106,7 @@ message("Storing plots in: ", file.path("output", "plots"))
 
 
 
-# Pearson plot of nc-cd SAS pairs with all thresholds
+# Boxplot of pairwise ATGE-DevSeq gene correlations
 plot_Gene_Corr <- function(data1, data2, data3) {
 
   png(file = file.path(out_dir, "output", "plots", "atge_devseq_gene_corr.png"), 
@@ -141,7 +140,7 @@ plot_Gene_Corr(spearman_RE, pearson_RE, pearson_log2_RE)
 
 
 
-# Pearson plot of nc-cd SAS pairs with all thresholds
+# Boxplot of ATGE-DevSeq sample correlations
 plot_Sample_Corr <- function(data1, data2, data3) {
 
   png(file = file.path(out_dir, "output", "plots", "atge_devseq_sample_corr.png"), 
@@ -178,7 +177,7 @@ plot_Sample_Corr(atge_devseq_spearman, atge_devseq_pearson, atge_devseq_log_pear
 
 
 
-# Generate corrplot of merged ATGE_DevSeq data
+# Generate correlation heatmap of merged ATGE_DevSeq data
 makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
 
     # Show error message if no scaling is chosen
