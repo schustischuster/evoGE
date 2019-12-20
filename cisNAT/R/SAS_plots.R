@@ -7,19 +7,7 @@
 # / start_minus / end_minus / strand_subject / biotype_subject / Spearman / Pearson
 
 
-#------------------- Load packages, set directories and read sample tables ---------------------
-
-
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-
-
-
-# Set file path and input files
-in_dir_cd <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/overlapp_cd_genes"
-in_dir_nc <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/overlapp_nc_genes"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
+#----------------------------------- Read sample tables --------------------------------------
 
 
 # Read all csv files in input file path
@@ -516,71 +504,6 @@ make_Boxplot_All_Thresholds(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS
 # BD
 make_Boxplot_All_Thresholds(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
 	BD_cd_nc_SAS_cor_wo_pollen_2_5_pearson, BD_cd_nc_SAS_cor_wo_pollen_5_pearson)
-
-
-
-
-
-
-#------------------------------ Scripts for some additional plots ------------------------------
-
-
-
-# Prepare data for ggplot2 boxplot
-combine_Species_Data <- function(cd_cd, nc_cd) {
-
-	number_values <- length(cd_cd)+length(nc_cd)
-	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(cd_cd)))),each=number_values))
-	names(species_name) <- "species"
-
-	class_1 = as.data.frame(rep(c("cd-cd"),each=length(cd_cd)))
-	names(class_1) <- "class"
-	class_2 = as.data.frame(rep(c("nc-cd"),each=length(nc_cd)))
-	names(class_2) <- "class"
-
-	cor_values_1 = as.data.frame(cd_cd)
-	names(cor_values_1) <- "cor_values"
-	cor_values_2 = as.data.frame(nc_cd)
-	names(cor_values_2) <- "cor_values"
-
-	species_df = data.frame(species_name, rbind(class_1, class_2) , rbind(cor_values_1, cor_values_2))
-
-	return(species_df)
-}
-
-ATH_avg_cdcd_nccd_SAS <- combine_Species_Data(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, 
-	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-AL_avg_cdcd_nccd_SAS <- combine_Species_Data(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, 
-	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-CR_avg_cdcd_nccd_SAS <- combine_Species_Data(CR_coding_SAS_cor_wo_pollen_pearson, 
-	CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-ES_avg_cdcd_nccd_SAS <- combine_Species_Data(ES_coding_SAS_cor_wo_pollen_pearson, 
-	ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-TH_avg_cdcd_nccd_SAS <- combine_Species_Data(TH_coding_SAS_cor_wo_pollen_pearson, 
-	TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-MT_avg_cdcd_nccd_SAS <- combine_Species_Data(MT_coding_SAS_cor_wo_pollen_pearson, 
-	MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-BD_avg_cdcd_nccd_SAS <- combine_Species_Data(BD_coding_SAS_cor_wo_pollen_pearson, 
-	BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-
-cdcd_nccd_SAS_avg_data <- rbind(ATH_avg_cdcd_nccd_SAS, AL_avg_cdcd_nccd_SAS, CR_avg_cdcd_nccd_SAS, 
-	ES_avg_cdcd_nccd_SAS, TH_avg_cdcd_nccd_SAS, MT_avg_cdcd_nccd_SAS, BD_avg_cdcd_nccd_SAS)
-cdcd_nccd_SAS_avg_data <- na.omit(cdcd_nccd_SAS_avg_data)
-
-
-# ggplot2 boxplot version
-# Pearson plot of cd-cd SAS / nc-cd SAS pairs all species comparative samples
-png(file = file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_wo_pollen.png"), 
-	width = 6400, height = 4000, res = 825)
-par(mar = c(4.5, 4.5, 4, 1.5))
-p <- ggplot(cdcd_nccd_SAS_avg_data, aes(x=species, y=cor_values, fill=class)) + 
-geom_boxplot(position=position_dodge(1))
-p + scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))
-p + theme_minimal()
-p + box(lwd = 1.35)
-dev.off()
-
-
 
 
 
