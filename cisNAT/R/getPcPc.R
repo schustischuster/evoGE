@@ -34,7 +34,7 @@
 getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
 	experiment = c("single-species", "comparative")) {
 	
-	# Show error message if no species is chosen
+    # Show error message if no species is chosen
     if (missing(species))
    
        stop(
@@ -43,7 +43,7 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   call. = TRUE
        )
 
-   	# Show error message for ATH and AL if no experiment is chosen
+    # Show error message for ATH and AL if no experiment is chosen
     if (missing(experiment) && (is.element("ATH", species) | is.element("AL", species)))
    
        stop(
@@ -52,10 +52,10 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   call. = TRUE
        )
 
-   	if (!is.element(experiment, c("comparative", "single-species")) 
-   		&& (is.element("ATH", species) | is.element("AL", species)))
+    if (!is.element(experiment, c("comparative", "single-species")) 
+   	&& (is.element("ATH", species) | is.element("AL", species)))
 
-   		stop(
+       stop(
        "Please choose one of the available experiments: 
 	   'single-species', 'comparative'",
 	   call. = TRUE
@@ -71,11 +71,11 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
        )
 
 
-	# Set GTF input gtf file
+    # Set GTF input gtf file
     if (is.element("ATH", species)) {
-    	GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
-        genesTPM = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_tpm_sample_names.csv")
-        species_id <- "ATH"
+    		GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
+        	genesTPM = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_tpm_sample_names.csv")
+        	species_id <- "ATH"
 
     } else if (is.element("AL", species)) {
 		GTFfile = file.path(in_dir, "GTF", "AL_final_annotation.gtf")
@@ -109,15 +109,15 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     }
 
 
-	# Import gtf file
-	GTF = import.gff(GTFfile, format="gtf", feature.type="gene")
+    # Import gtf file
+    GTF = import.gff(GTFfile, format="gtf", feature.type="gene")
 
-	# Read expression data
-	all_genes_tpm <- read.table(genesTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
-	colnames(all_genes_tpm)[1] <- "gene_id"
+    # Read expression data
+    all_genes_tpm <- read.table(genesTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+    colnames(all_genes_tpm)[1] <- "gene_id"
 
 
-	# Format expression data and rename pollen samples
+    # Format expression data and rename pollen samples
     if ((is.element("ATH", species)) && (is.element("comparative", experiment))) {
 
 		all_genes_tpm <- dplyr::select(all_genes_tpm, c(
@@ -183,12 +183,12 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_3'] <- 'flowers_mature_pollen_3'
 
     } else if (is.element("AL", species)) {
-    	colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_1'] <- 'flowers_mature_pollen_1'
+    		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_1'] <- 'flowers_mature_pollen_1'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_2'] <- 'flowers_mature_pollen_2'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_3'] <- 'flowers_mature_pollen_3'
 
     } else if (is.element("CR", species)) {
-    	colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_1'] <- 'flowers_mature_pollen_1'
+    		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_1'] <- 'flowers_mature_pollen_1'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_2'] <- 'flowers_mature_pollen_2'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_3'] <- 'flowers_mature_pollen_3'
 
@@ -452,7 +452,7 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Set filename
-    fname <- sprintf('%s.csv', paste(species_id, "coding_SAS_cor", sep="_"))
+    	fname <- sprintf('%s.csv', paste(species_id, "coding_SAS_cor", sep="_"))
 	fname_wo_pollen <- sprintf('%s.csv', paste(species_id, "coding_SAS_cor_wo_pollen", sep="_"))
 
 
