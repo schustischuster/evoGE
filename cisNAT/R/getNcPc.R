@@ -70,19 +70,19 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   call. = TRUE
        )
 
-   	# Add an error if threshold < 0
-  	if (threshold < 0)
-    	stop(
-        "'threshold' must be >= 0",
-	   	call. = TRUE
-    	)
+    # Add an error if threshold < 0
+    if (threshold < 0)
+       stop(
+       "'threshold' must be >= 0",
+	   call. = TRUE
+       )
 
 
     # Set GTF input gtf file
     if (is.element("ATH", species)) {
-    	GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
-        genesTPM = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_tpm_sample_names.csv")
-        species_id <- "ATH"
+    		GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
+        	genesTPM = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_tpm_sample_names.csv")
+        	species_id <- "ATH"
 
     } else if (is.element("AL", species)) {
 		GTFfile = file.path(in_dir, "GTF", "AL_final_annotation.gtf")
