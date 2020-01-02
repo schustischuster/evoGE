@@ -366,9 +366,9 @@ dev.off()
 
 # Pearson plot of nc-cd SAS pairs with all thresholds
 make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, threshold_2_5, 
-	threshold_greater5, samples=c("all","comparative")) {
+  threshold_greater5, samples=c("all","comparative")) {
 
-	species <- sub("\\_.*", "", deparse(substitute(threshold_05)))
+    species <- sub("\\_.*", "", deparse(substitute(threshold_05)))
     n_values_05 <- length(threshold_05)
     n_values_05_2 <- length(threshold_05_2)
     n_values_2_5 <- length(threshold_2_5)
@@ -420,9 +420,9 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
 
 # Pearson plot of nc-cd SAS pairs with all thresholds
 make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_2_5, 
-	threshold_greater5, samples=c("all","comparative")) {
+  threshold_greater5, samples=c("all","comparative")) {
 
-	species <- sub("\\_.*", "", deparse(substitute(threshold_05)))
+    species <- sub("\\_.*", "", deparse(substitute(threshold_05)))
     n_values_05 <- length(threshold_05)
     n_values_05_2 <- length(threshold_05_2)
     n_values_2_5 <- length(threshold_2_5)
