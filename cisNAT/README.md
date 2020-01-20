@@ -11,7 +11,7 @@ This code allows to reproduce the results of the protein-coding protein-coding s
 * [Data analysis](#data-analysis)
   * [Retrieve coding-coding gene overlapp](#retrieve-coding-coding-gene-overlapp)
   * [Retrieve non-coding-coding gene overlapp](#retrieve-non-coding-coding-gene-overlapp)
-  * [Retrieve DevSeq-ATGE non-coding-coding gene overlapp](#retrieve-devseq-atge-non-coding-coding-gene-overlapp)
+  * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -108,9 +108,9 @@ getNcPc("BD", "comparative", 5)
 
 ```
 
-### Retrieve DevSeq-ATGE non-coding-coding gene overlapp
+### Get DevSeq-ATGE non-coding-coding SAS pairs
 
-The following function will select all non-coding protein-coding sense-antisense pairs from the DevSeq Arabidopsis thaliana data table (single-species, threshold = 0.5) that have previously been identified in the AtGenExpress data set ([Henz et al., 2007](https://www.ncbi.nlm.nih.gov/pubmed/17496106)). The results will be written to a CSV file. 
+The following function will select all non-coding protein-coding sense-antisense pairs from the DevSeq A.thaliana data table (single-species, threshold = 0.5) that have previously been identified in the AtGenExpress data set ([Henz et al., 2007](https://www.ncbi.nlm.nih.gov/pubmed/17496106)). The results will be written to a CSV file. 
 
 ```R
 getDevSeq_ATGE()
