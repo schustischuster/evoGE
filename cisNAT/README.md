@@ -41,6 +41,7 @@ out_dir <- "."
 
 source("getPcPc.R")
 source("getNcPc.R")
+source("getDevSeq_ATGE.R")
 
 ```
 
