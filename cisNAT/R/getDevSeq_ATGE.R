@@ -12,7 +12,7 @@ getDevSeq_ATGE <- function() {
 
 
 
-#-------------- Find 'ATGE_NAT_ID' and 'ATH_cd_nc_SAS_cor_wo_pollen_0.5' overlap ----------------
+	#-------------- Find 'ATGE_NAT_ID' and 'ATH_cd_nc_SAS_cor_wo_pollen_0.5' overlap ----------------
 
 
 	# Work only with ATGE protein-coding gene IDs since lncRNA IDs may have changed
@@ -45,7 +45,7 @@ getDevSeq_ATGE <- function() {
 
 
 
-#---------------------------------------- Write output -----------------------------------------
+	#---------------------------------------- Write output -----------------------------------------
 
 
 	# Write final data tables to csv files and store them in /out_dir/output/data_tables
@@ -54,8 +54,7 @@ getDevSeq_ATGE <- function() {
 
 	write.table(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE, 
 		file=file.path(out_dir, "output", "SAS_DevSeq_ATGE", "ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE.csv"), 
-		sep=";", dec=".", row.names=FALSE, col.names=TRUE, col.names=NA)
+		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 
 }
-
 
