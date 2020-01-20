@@ -54,7 +54,7 @@ getDevSeq_ATGE <- function() {
 
 	write.table(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE, 
 		file=file.path(out_dir, "output", "SAS_DevSeq_ATGE", "ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE.csv"), 
-		sep=";", dec=".", row.names=TRUE, col.names=NA)
+		sep=";", dec=".", row.names=FALSE, col.names=TRUE, col.names=NA)
 
 }
 
