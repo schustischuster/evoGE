@@ -6,18 +6,9 @@
 
 getDevSeq_ATGE <- function() {
 
-
-	# Set file path and input files
-	in_dir_ATGE <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/data/ATGE_NAT"
-	ATGE_NAT_data <- "ATGE_NAT.csv"
-	in_dir_DevSeq <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/overlapp_nc_genes"
-	DevSeq_NAT_data_0_05 <- "ATH_cd_nc_SAS_cor_wo_pollen_0.5.csv"
-	out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
-
-
 	# Read ATGE_NAT ID table
-	ATGE_NAT_ID <- read.table(file=file.path(in_dir_ATGE, ATGE_NAT_data), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
-	ATH_cd_nc_SAS_cor_wo_pollen_0.5 <- read.table(file=file.path(in_dir_DevSeq, DevSeq_NAT_data_0_05), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
+	ATGE_NAT_ID <- read.table(file=file.path(in_dir, "ATGE_NAT", "ATGE_NAT.csv"), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
+	ATH_cd_nc_SAS_cor_wo_pollen_0.5 <- read.table(file=file.path(out_dir, "output", "overlapp_nc_genes", "ATH_cd_nc_SAS_cor_wo_pollen_0.5.csv"), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
 
 
