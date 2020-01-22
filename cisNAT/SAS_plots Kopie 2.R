@@ -13,7 +13,8 @@
 # Install and load packages
 if (!require(dplyr)) install.packages('dplyr')
 library(dplyr)
-
+if (!require(ggplot2)) install.packages('dplyr')
+library(ggplot2)
 
 
 # Set file path and input files
@@ -224,7 +225,6 @@ names(SAS_pairs_list_spearman)
 
 list2env(SAS_pairs_list_pearson, envir = .GlobalEnv)
 list2env(SAS_pairs_list_spearman, envir = .GlobalEnv)
-
 
 
 
@@ -547,14 +547,83 @@ make_Boxplot_All_Thresholds(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS
 
 
 
-
-
-
-
-
-
-
 #------------------------------ Spearman - Pearson density plots ------------------------------
+
+
+
+
+# Make boxplot of result
+# Pearson plot of cd-cd SAS / nc-cd SAS pairs ATH all samples and comparative samples
+DevSeq_pearson <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+ATGE_pearson <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson)
+DevSeq_spearman <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ATGE_spearman <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_spearman)
+
+png(file=file.path(out_dir, "output", "plots", "nccd_SAS_pearson_ATH_all_DevSeq_all.png"), 
+	width = 3620, height = 4000, res = 825)
+par(mar = c(4.5, 4.5, 4, 2.5))
+boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson, 
+	ylim = c(-1.0, 1.2), 
+	names = FALSE, 
+	xaxt = 'n', 
+	yaxt = 'n', 
+	cex.lab = 1.1, 
+	las = 2,
+	cex.axis = 1.1, #adapt size of axis labels
+	ylab = "Pearson ρ", 
+	col = c("#d8a900", "#d8a900"), 
+	boxwex = 0.8, 
+	lwd = 1.35, 
+	whisklty = 1, 
+	at = c(1,2), 
+	notch = FALSE
+	)
+	title("NATs in DevSeq vs ATGE", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.2)
+	rug(x = c(1,2), ticksize = -0.035, side = 1, lwd = 1.35, col = "black") #x-axis ticks
+	box(lwd = 1.35)
+	axis(side = 2, lwd = 1.35, las = 2)
+	text(x= 1.5, y = 1.15, labels= "n.s.", col = "black", cex = 1.05) #ATH_all p-value
+	text(x= 1, y= - 0.9, labels= DevSeq_pearson, col= "gray40", cex= 1.05) #ATH_all no.genes
+	text(x= 2, y= - 0.9, labels= ATGE_pearson, col= "gray40", cex= 1.05)
+	mtext('DevSeq', side = 1, line = 0.83, at = 1)
+	mtext('ATGE', side = 1, line = 0.83, at = 2)
+	par(xpd=TRUE)
+dev.off()
+
+png(file=file.path(out_dir, "output", "plots", "nccd_SAS_spearman_ATH_all_DevSeq_all.png"), 
+	width = 3620, height = 4000, res = 825)
+par(mar = c(4.5, 4.5, 4, 2.5))
+boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman, ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_spearman, 
+	ylim = c(-1.0, 1.2), 
+	names = FALSE, 
+	xaxt = 'n', 
+	yaxt = 'n', 
+	cex.lab = 1.1, 
+	las = 2,
+	cex.axis = 1.1, #adapt size of axis labels
+	ylab = "Spearman ρ", 
+	col = c("#d8a900", "#d8a900"), 
+	boxwex = 0.8, 
+	lwd = 1.35, 
+	whisklty = 1, 
+	at = c(1,2), 
+	notch = FALSE,
+	pars = list(outcol = "gray50")
+	)
+	title("NATs in DevSeq vs ATGE", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.2)
+	rug(x = c(1,2), ticksize = -0.035, side = 1, lwd = 1.35, col = "black") #x-axis ticks
+	box(lwd = 1.35)
+	axis(side = 2, lwd = 1.35, las = 2)
+	text(x= 1.5, y = 1.15, labels= "p=3e-6", col = "black", cex = 1.05) #ATH_all p-value
+	text(x= 1, y= - 0.9, labels= DevSeq_spearman, col= "gray40", cex= 1.05) #ATH_all no.genes
+	text(x= 2, y= - 0.9, labels= ATGE_spearman, col= "gray40", cex= 1.05)
+	mtext('DevSeq', side = 1, line = 0.83, at = 1)
+	mtext('ATGE', side = 1, line = 0.83, at = 2)
+	par(xpd=TRUE)
+dev.off()
+
+
+
 
 
 # Prepare data for ggplot2 boxplot
@@ -575,35 +644,32 @@ combine_Species_Data <- function(pearson, spearman) {
 	names(cor_values_2) <- "correlation"
 
 	species_df = data.frame(species_name, rbind(class_1, class_2) , rbind(cor_values_1, cor_values_2))
+	species_df <- na.omit(species_df)
 
 	return(species_df)
 }
 
-ATH_avg_cdcd_nccd_SAS <- combine_Species_Data(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
+ATH_comp_nccd_spearman_pearson <- combine_Species_Data(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
 	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 
-ATH_avg_cdcd_nccd_SAS <- na.omit(ATH_avg_cdcd_nccd_SAS)
 
-
-
-
-
-png(file = file.path(out_dir, "output", "plots", "test_cd_cd_SAS_NAT_cd_SAS_pearson_wo_pollen.png"), 
+png(file = file.path(out_dir, "output", "plots", "ATH_comp_nccd_spearman_pearson.png"), 
 	width = 4000, height = 4700, res = 825)
-p <- ggplot(ATH_avg_cdcd_nccd_SAS, aes(x=correlation, group=class, fill=class, colour=class)) +
-geom_density(adjust=1.5, alpha=0.35, size=1.25) + 
+p <- ggplot(ATH_comp_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class)) +
+geom_density(adjust=1.5, alpha=0.25, size=1.5) + 
 scale_x_continuous(expand = c(0, 0)) +
 scale_y_continuous(limits = c(0,1.125), expand = c(0, 0))
 p + ggtitle("ATH_comp") + theme_bw() + scale_fill_manual(values = c("#52b540", "#00468b")) +
   scale_color_manual(values = c("#52b540", "#00468b")) +
   theme(text=element_text(size=16), 
-  	axis.text.x=element_text(size=14, angle=0), 
-  	axis.text.y=element_text(size=14, angle=0),
+  	axis.ticks.length=unit(.3, "cm"),
+  	axis.text.x=element_text(size=14.2, angle=0, margin = margin(t = 8.5, r = 0, b = 0, l = 0)), 
+  	axis.text.y=element_text(size=14.2, angle=0, margin = margin(t = 0, r = 8.5, b = 0, l = 0)),
   	axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
   	axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
-  	plot.title = element_text(size=18, margin = margin(t = 10, r = 0, b = 17, l = 0), hjust = 0.5),
+  	plot.title = element_text(size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
   	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1))
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.1))
 dev.off()
 
 
