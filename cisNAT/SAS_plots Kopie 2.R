@@ -227,17 +227,11 @@ list2env(SAS_pairs_list_pearson, envir = .GlobalEnv)
 list2env(SAS_pairs_list_spearman, envir = .GlobalEnv)
 
 
-
 # Extract pearson and spearman correlations from DevSeq-ATGE expression cor tables
 ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_spearman <- as.numeric(unlist(
 	ATGE_NAT_ID[, 11]))
 ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson <- as.numeric(unlist(
 	ATGE_NAT_ID[, 12]))
-
-
-
-
-
 
 
 # Write final data tables to csv files and store them in /out_dir/output/data_tables
@@ -264,7 +258,7 @@ write.table(wilcox_spearman_cor, file=file.path(out_dir, "output", "plots", "wil
 
 
 
-#----------------------------------- Generate pearson plots ------------------------------------
+#---------------------------- Generate pearson plots for figure 1 -----------------------------
 
 
 # Make boxplot of result
@@ -540,26 +534,17 @@ make_Boxplot_All_Thresholds(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS
 
 
 
+#------------- ATGE/DevSeq, NAT_length and Spearman - Pearson plots for figure 2 -------------
 
 
-
-
-
-
-
-#------------------------------ Spearman - Pearson density plots ------------------------------
-
-
-
-
-# Make boxplot of result
-# Pearson plot of cd-cd SAS / nc-cd SAS pairs ATH all samples and comparative samples
+# Correlation plots of cd-cd SAS / nc-cd SAS pairs ATH_all_samples in DevSeq and ATGE
 DevSeq_pearson <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
 ATGE_pearson <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson)
 DevSeq_spearman <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 ATGE_spearman <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_spearman)
 
-png(file=file.path(out_dir, "output", "plots", "nccd_SAS_pearson_ATH_all_DevSeq_all.png"), 
+# Pearson boxplot
+jpeg(file=file.path(out_dir, "output", "plots", "nccd_SAS_pearson_ATH_all_DevSeq_all.jpeg"), 
 	width = 3620, height = 4000, res = 825)
 par(mar = c(4.5, 4.5, 4, 2.5))
 boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson, 
@@ -570,27 +555,31 @@ boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5
 	cex.lab = 1.1, 
 	las = 2,
 	cex.axis = 1.1, #adapt size of axis labels
-	ylab = "Pearson ρ", 
-	col = c("#d8a900", "#d8a900"), 
+	xlab = "", 
+	ylab = "", 
+	col = c("#99d6e1", "#dee2e2"), 
 	boxwex = 0.8, 
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2), 
 	notch = FALSE
 	)
-	title("NATs in DevSeq vs ATGE", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.2)
+	title("nc-cd SAS correlation in DevSeq", adj = 0.50, line = 1.175, font.main = 1, cex.main = 1.2)
+	title(xlab = "nc-cd SAS from data set", line = 2.45, cex.lab = 1.1)
+	title(ylab = "Pearson ρ", line = 3.22, cex.lab = 1.1)
 	rug(x = c(1,2), ticksize = -0.035, side = 1, lwd = 1.35, col = "black") #x-axis ticks
 	box(lwd = 1.35)
 	axis(side = 2, lwd = 1.35, las = 2)
-	text(x= 1.5, y = 1.15, labels= "n.s.", col = "black", cex = 1.05) #ATH_all p-value
-	text(x= 1, y= - 0.9, labels= DevSeq_pearson, col= "gray40", cex= 1.05) #ATH_all no.genes
-	text(x= 2, y= - 0.9, labels= ATGE_pearson, col= "gray40", cex= 1.05)
+	text(x= 1.5, y = 1.135, labels= "p = 0.06", col = "black", cex = 1.075) #ATH_all p-value
+	text(x= 1, y= - 0.9, labels= DevSeq_pearson, col= "gray40", cex= 1.075) #ATH_all no.genes
+	text(x= 2, y= - 0.9, labels= ATGE_pearson, col= "gray40", cex= 1.075)
 	mtext('DevSeq', side = 1, line = 0.83, at = 1)
 	mtext('ATGE', side = 1, line = 0.83, at = 2)
 	par(xpd=TRUE)
 dev.off()
 
-png(file=file.path(out_dir, "output", "plots", "nccd_SAS_spearman_ATH_all_DevSeq_all.png"), 
+# Spearman boxplot
+jpeg(file=file.path(out_dir, "output", "plots", "nccd_SAS_spearman_ATH_all_DevSeq_all.jpeg"), 
 	width = 3620, height = 4000, res = 825)
 par(mar = c(4.5, 4.5, 4, 2.5))
 boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman, ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_spearman, 
@@ -601,8 +590,9 @@ boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman, ATH_cd_nc_SAS_cor_wo_pollen_0.
 	cex.lab = 1.1, 
 	las = 2,
 	cex.axis = 1.1, #adapt size of axis labels
+	xlab = "", 
 	ylab = "Spearman ρ", 
-	col = c("#d8a900", "#d8a900"), 
+	col = c("white", "white"), 
 	boxwex = 0.8, 
 	lwd = 1.35, 
 	whisklty = 1, 
@@ -610,13 +600,14 @@ boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman, ATH_cd_nc_SAS_cor_wo_pollen_0.
 	notch = FALSE,
 	pars = list(outcol = "gray50")
 	)
-	title("NATs in DevSeq vs ATGE", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.2)
+	title("nc-cd SAS correlation in DevSeq", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.2)
+	title(xlab = "nc-cd SAS from data set", line = 2.88, cex.lab = 1.1)
 	rug(x = c(1,2), ticksize = -0.035, side = 1, lwd = 1.35, col = "black") #x-axis ticks
 	box(lwd = 1.35)
 	axis(side = 2, lwd = 1.35, las = 2)
-	text(x= 1.5, y = 1.15, labels= "p=3e-6", col = "black", cex = 1.05) #ATH_all p-value
-	text(x= 1, y= - 0.9, labels= DevSeq_spearman, col= "gray40", cex= 1.05) #ATH_all no.genes
-	text(x= 2, y= - 0.9, labels= ATGE_spearman, col= "gray40", cex= 1.05)
+	text(x= 1.5, y = 1.135, labels= "p=3e-6", col = "black", cex = 1.075) #ATH_all p-value
+	text(x= 1, y= - 0.9, labels= DevSeq_spearman, col= "gray40", cex= 1.075) #ATH_all no.genes
+	text(x= 2, y= - 0.9, labels= ATGE_spearman, col= "gray40", cex= 1.075)
 	mtext('DevSeq', side = 1, line = 0.83, at = 1)
 	mtext('ATGE', side = 1, line = 0.83, at = 2)
 	par(xpd=TRUE)
@@ -624,53 +615,662 @@ dev.off()
 
 
 
+# Compute rsqr cor value
+testRsq <- function(x, y) { 
+	test <- cor(x, y) ^ 2
+  	test <- round(test, digits=2)
+  	return(test)
+}
+
+ATH_all_cor <- testRsq(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ATH_comp_cor <- testRsq(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+AL_comp_cor <- testRsq(AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+CR_cor <- testRsq(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ES_cor <- testRsq(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+TH_cor <- testRsq(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+MT_cor <- testRsq(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+BD_cor <- testRsq(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 
 
-# Prepare data for ggplot2 boxplot
-combine_Species_Data <- function(pearson, spearman) {
 
-	number_values <- length(pearson)+length(spearman)
+# Prepare data for catter plots of spearman and pearson correlations
+makeDf <- function(df1, df2) {
+	df <- data.frame(Pearson=df1, Spearman=df2)
+	df <- na.omit(df)
+}
+
+ATH_all <- makeDf(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ATH_comp <- makeDf(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+AL_comp <- makeDf(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+CR_comp <- makeDf(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ES_comp <- makeDf(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+TH_comp <- makeDf(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+MT_comp <- makeDf(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+BD_comp <- makeDf(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+
+
+
+# Prepare data for nc-cd SAS pair overlap length distribution in relation to pearson correlation
+
+plus_strand_overlap = ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% select(id_plus_strand, start_plus, 
+	end_plus, strand_query, biotype_query, Spearman, Pearson, width_overlap)
+plus_strand_NAT_overlap <- subset(plus_strand_overlap, 
+	biotype_query == "lnc_exonic_antisense" | biotype_query == "lnc_intronic_antisense")
+names(plus_strand_NAT_overlap) <- c("id", "start", "end", "strand", "biotype", "Spearman", "Pearson", "overlap")
+
+minus_strand_overlap = ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% select(id_minus_strand, start_minus, 
+	end_minus, strand_subject, biotype_subject, Spearman, Pearson, width_overlap)
+minus_strand_NAT_overlap <- subset(minus_strand_overlap, 
+	biotype_subject == "lnc_exonic_antisense" | biotype_subject == "lnc_intronic_antisense")
+names(minus_strand_NAT_overlap) <- c("id", "start", "end", "strand", "biotype", "Spearman", "Pearson", "overlap")
+
+plus_minus_NAT_overlap <- rbind(plus_strand_NAT_overlap, minus_strand_NAT_overlap)
+
+plus_minus_NAT_overlap$length <- (plus_minus_NAT_overlap$end - plus_minus_NAT_overlap$start) + 1
+plus_minus_NAT_overlap$percent_overlap <- (plus_minus_NAT_overlap$overlap / plus_minus_NAT_overlap$length) * 100
+
+
+
+# Make scatter plot showing percent_overlap in relation to pearson correlation in ATH_all 
+perc_overlap_pearson <- data.frame(plus_minus_NAT_overlap$percent_overlap, plus_minus_NAT_overlap$Pearson)
+names(perc_overlap_pearson) <- c("NAT_perc_overlap", "Pearson")
+NAT_perc_cor <- testRsq(plus_minus_NAT_overlap$percent_overlap, plus_minus_NAT_overlap$Pearson)
+
+jpeg(file = file.path(out_dir, "output", "plots", "perc_overlap_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+rsrt_label = paste("R ^ 2", "==", ".")
+p <- ggplot(perc_overlap_pearson, aes(x = Pearson, y = NAT_perc_overlap)) + 
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,101), expand = c(0, 0)) + 
+geom_smooth(method="lm" , color="red", fill="#69b3a2", se=FALSE, , size=1) +  # use linear regression model
+annotate("text", x = -Inf, y = Inf, hjust = -0.38, vjust = 1.6, size=5.35, label = rsrt_label, parse = TRUE) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.49, vjust = 3.8, size=5.35, label = NAT_perc_cor, parse = FALSE) 
+p + ggtitle("ATH_all") + theme_bw() + ylab("NAT overlap (%)") + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(3.0, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = 15.5, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+
+# Make scatter plot showing absolute overlap (bp) in relation to pearson correlation in ATH_all 
+abs_overlap_pearson <- data.frame(plus_minus_NAT_overlap$overlap, plus_minus_NAT_overlap$Pearson)
+names(abs_overlap_pearson) <- c("NAT_overlap_bp", "Pearson")
+NAT_abs_cor <- testRsq(plus_minus_NAT_overlap$overlap, plus_minus_NAT_overlap$Pearson)
+
+jpeg(file = file.path(out_dir, "output", "plots", "abs_overlap_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R ^ 2"," == ", NAT_abs_cor)
+p <- ggplot(abs_overlap_pearson, aes(x = Pearson, y = NAT_overlap_bp)) + 
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,4030), expand = c(0, 0)) + 
+geom_smooth(method="lm" , color="red", fill="#69b3a2", se=FALSE, , size=1) +  # use linear regression model
+annotate("text", x = -Inf, y = Inf, hjust = -0.335, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
+p + ggtitle("ATH_all") + theme_bw() + ylab("NAT overlap (bp)") + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(3.0, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = 15.5, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+
+
+# Make Spearman-Pearson scatter plots
+
+jpeg(file = file.path(out_dir, "output", "plots", "ATH_cor.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R ^ 2"," == ", ATH_comp_cor)
+p <- ggplot(ATH_comp, aes(x=Pearson, y=Spearman)) +
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
+geom_smooth(method=lm , color="red", fill="#69b3a2", se=FALSE) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
+p + ggtitle("ATH") + theme_bw() +
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "AL_cor.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R ^ 2"," == ", AL_comp_cor)
+p <- ggplot(AL_comp, aes(x=Pearson, y=Spearman)) +
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
+geom_smooth(method=lm , color="red", fill="#69b3a2", se=FALSE) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
+p + ggtitle("AL") + theme_bw() +
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "CR_cor.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R ^ 2"," == ", CR_cor)
+p <- ggplot(CR_comp, aes(x=Pearson, y=Spearman)) +
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
+geom_smooth(method=lm , color="red", fill="#69b3a2", se=FALSE) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
+p + ggtitle("CR") + theme_bw() +
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "ES_cor.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R ^ 2"," == ", ES_cor)
+p <- ggplot(ES_comp, aes(x=Pearson, y=Spearman)) +
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
+geom_smooth(method=lm , color="red", fill="#69b3a2", se=FALSE) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
+p + ggtitle("ES") + theme_bw() +
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "TH_cor.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R ^ 2"," == ", TH_cor)
+p <- ggplot(TH_comp, aes(x=Pearson, y=Spearman)) +
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
+geom_smooth(method=lm , color="red", fill="#69b3a2", se=FALSE) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
+p + ggtitle("TH") + theme_bw() +
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "MT_cor.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R ^ 2"," == ", MT_cor)
+p <- ggplot(MT_comp, aes(x=Pearson, y=Spearman)) +
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
+geom_smooth(method=lm , color="red", fill="#69b3a2", se=FALSE) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
+p + ggtitle("MT") + theme_bw() +
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "BD_cor.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R ^ 2"," == ", BD_cor)
+p <- ggplot(BD_comp, aes(x=Pearson, y=Spearman)) +
+geom_point(size = 1.4) + 
+scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
+geom_smooth(method=lm , color="red", fill="#69b3a2", se=FALSE) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
+p + ggtitle("BD") + theme_bw() +
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------ Older density plots used for figure V1 --------------------------
+
+
+# Prepare data for ggplot2 ATH density plot cd-cd, nc-cd_spearman, nc-cd_pearson V2
+combine_Species_Data <- function(coding, pearson, spearman) {
+
+	number_values <- length(coding)+length(pearson)+length(spearman)
 	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(pearson)))),each=number_values))
 	names(species_name) <- "species"
 
+	class_0 = as.data.frame(rep(c("coding"),each=length(coding)))
+	names(class_0) <- "class"
 	class_1 = as.data.frame(rep(c("pearson"),each=length(pearson)))
 	names(class_1) <- "class"
 	class_2 = as.data.frame(rep(c("spearman"),each=length(spearman)))
 	names(class_2) <- "class"
 
+	cor_values_0 = as.data.frame(coding)
+	names(cor_values_0) <- "correlation"
 	cor_values_1 = as.data.frame(pearson)
 	names(cor_values_1) <- "correlation"
 	cor_values_2 = as.data.frame(spearman)
 	names(cor_values_2) <- "correlation"
 
-	species_df = data.frame(species_name, rbind(class_1, class_2) , rbind(cor_values_1, cor_values_2))
+	species_df = data.frame(species_name, rbind(class_0, class_1, class_2) , 
+		rbind(cor_values_0, cor_values_1, cor_values_2))
 	species_df <- na.omit(species_df)
 
 	return(species_df)
 }
 
-ATH_comp_nccd_spearman_pearson <- combine_Species_Data(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
-	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ATH_all_nccd_spearman_pearson <- combine_Species_Data(ATH_coding_SAS_cor_wo_pollen_pearson, 
+	ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 
 
-png(file = file.path(out_dir, "output", "plots", "ATH_comp_nccd_spearman_pearson.png"), 
+# Make cd-cd, nc-cd_spearman, nc-cd_pearson density plot
+
+jpeg(file = file.path(out_dir, "output", "plots", "ATH_all_nccd_spearman_pearson_V2.jpg"), 
 	width = 4000, height = 4700, res = 825)
-p <- ggplot(ATH_comp_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class)) +
-geom_density(adjust=1.5, alpha=0.25, size=1.5) + 
-scale_x_continuous(expand = c(0, 0)) +
-scale_y_continuous(limits = c(0,1.125), expand = c(0, 0))
-p + ggtitle("ATH_comp") + theme_bw() + scale_fill_manual(values = c("#52b540", "#00468b")) +
-  scale_color_manual(values = c("#52b540", "#00468b")) +
+p <- ggplot(ATH_all_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.28), expand = c(0, 0))
+p + ggtitle("ATH_all") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
   theme(text=element_text(size=16), 
-  	axis.ticks.length=unit(.3, "cm"),
-  	axis.text.x=element_text(size=14.2, angle=0, margin = margin(t = 8.5, r = 0, b = 0, l = 0)), 
-  	axis.text.y=element_text(size=14.2, angle=0, margin = margin(t = 0, r = 8.5, b = 0, l = 0)),
-  	axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
-  	axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
-  	plot.title = element_text(size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 3.0, 3.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 15.75, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 15.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 10.25, r = 0, b = 16.75, l = 0), hjust = 0.5),
   	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.1))
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
 dev.off()
+
+
+
+# Prepare data for ggplot2 boxplot
+combine_Species_Data <- function(coding, pearson, spearman) {
+
+	number_values <- length(coding)+length(pearson)+length(spearman)
+	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(pearson)))),each=number_values))
+	names(species_name) <- "species"
+
+	class_0 = as.data.frame(rep(c("coding"),each=length(coding)))
+	names(class_0) <- "class"
+	class_1 = as.data.frame(rep(c("pearson"),each=length(pearson)))
+	names(class_1) <- "class"
+	class_2 = as.data.frame(rep(c("spearman"),each=length(spearman)))
+	names(class_2) <- "class"
+
+	cor_values_0 = as.data.frame(coding)
+	names(cor_values_0) <- "correlation"
+	cor_values_1 = as.data.frame(pearson)
+	names(cor_values_1) <- "correlation"
+	cor_values_2 = as.data.frame(spearman)
+	names(cor_values_2) <- "correlation"
+
+	species_df = data.frame(species_name, rbind(class_0, class_1, class_2) , 
+		rbind(cor_values_0, cor_values_1, cor_values_2))
+	species_df <- na.omit(species_df)
+
+	return(species_df)
+}
+
+ATH_all_nccd_spearman_pearson <- combine_Species_Data(ATH_coding_SAS_cor_wo_pollen_pearson, 
+	ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ATH_comp_nccd_spearman_pearson <- combine_Species_Data(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, 
+	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+AL_comp_nccd_spearman_pearson <- combine_Species_Data(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, 
+	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+CR_nccd_spearman_pearson <- combine_Species_Data(CR_coding_SAS_cor_wo_pollen_pearson, 
+	CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ES_nccd_spearman_pearson <- combine_Species_Data(ES_coding_SAS_cor_wo_pollen_pearson, 
+	ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+TH_nccd_spearman_pearson <- combine_Species_Data(TH_coding_SAS_cor_wo_pollen_pearson, 
+	TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+MT_nccd_spearman_pearson <- combine_Species_Data(MT_coding_SAS_cor_wo_pollen_pearson, 
+	MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+BD_nccd_spearman_pearson <- combine_Species_Data(BD_coding_SAS_cor_wo_pollen_pearson, 
+	BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+
+
+
+
+jpeg(file = file.path(out_dir, "output", "plots", "ATH_all_nccd_spearman_pearson_V2.jpg"), 
+	width = 4000, height = 4700, res = 825)
+p <- ggplot(ATH_all_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.28), expand = c(0, 0))
+p + ggtitle("ATH_all") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 3.0, 3.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 15.75, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 15.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 10.25, r = 0, b = 16.75, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+
+
+jpeg(file = file.path(out_dir, "output", "plots", "ATH_all_nccd_spearman_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R = ", ATH_all_cor)
+p <- ggplot(ATH_all_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.28), expand = c(0, 0)) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 2.1, size=5.35, label = corr_label)
+p + ggtitle("ATH_all") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 5.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 13.25, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 13.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "ATH_comp_nccd_spearman_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R = ", ATH_comp_cor)
+p <- ggplot(ATH_comp_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.1315), expand = c(0, 0)) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 2.1, size=5.35, label = corr_label)
+p + ggtitle("ATH_comp") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 5.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 13.25, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 13.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "AL_comp_nccd_spearman_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R = ", AL_comp_cor)
+p <- ggplot(AL_comp_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.002), expand = c(0, 0)) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 2.1, size=5.35, label = corr_label)
+p + ggtitle("AL") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 5.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 13.25, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 13.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "CR_nccd_spearman_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R = ", CR_cor)
+p <- ggplot(CR_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.263), expand = c(0, 0)) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 2.1, size=5.35, label = corr_label)
+p + ggtitle("CR") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 5.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 13.25, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 13.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "ES_nccd_spearman_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R = ", ES_cor)
+p <- ggplot(ES_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.158), expand = c(0, 0)) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 2.1, size=5.35, label = corr_label)
+p + ggtitle("ES") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 5.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 13.25, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 13.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "TH_nccd_spearman_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R = ", TH_cor)
+p <- ggplot(TH_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,0.8565), expand = c(0, 0)) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 2.1, size=5.35, label = corr_label)
+p + ggtitle("TH") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 5.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 13.25, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 13.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "MT_nccd_spearman_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R = ", MT_cor)
+p <- ggplot(MT_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.2158), expand = c(0, 0)) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 2.1, size=5.35, label = corr_label)
+p + ggtitle("MT") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 5.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 13.25, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 13.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+jpeg(file = file.path(out_dir, "output", "plots", "BD_nccd_spearman_pearson.jpg"), 
+	width = 4000, height = 4700, res = 825)
+corr_label = paste("R = ", BD_cor)
+p <- ggplot(BD_nccd_spearman_pearson, aes(x=correlation, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(-1,1), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,1.078), expand = c(0, 0)) + 
+annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 2.1, size=5.35, label = corr_label)
+p + ggtitle("BD") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 5.5, 5.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 13.25, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 13.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 8, r = 0, b = 19, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
 
 
 
