@@ -418,7 +418,7 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
 		cex.lab = 1.1, 
 		las = 1,
 		cex.axis = 1.1, #adapt size of axis labels
-		xlab = "cis-NAT expression (TPM)", 
+		xlab = "", 
 		ylab = "Pearson ρ", 
 		col = c("#d8a900", "#00bc1f", "#00c094", "#00beda"), 
 		boxwex = 0.71, 
@@ -429,16 +429,17 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
 		notch = FALSE
 		)
 		title(title_plot, adj = 0.5, line = 1.25, font.main = 1, cex.main = 1.2)
+		title(xlab = "cis-NAT expression (TPM)", line = 2.65, cex.lab = 1.1)
 		box(lwd = 1.35)
 		axis(side=2, lwd = 1.35, las = 2)
 		text(x= 1, y= -1.05, labels= n_values_05, col= "gray40", cex=0.97) #threshold_>0.5
 		text(x= 2, y= -1.05, labels= n_values_05_2, col= "gray40", cex=0.97) #threshold_0.5-2
 		text(x= 3, y= -1.05, labels= n_values_2_5, col= "gray40", cex=0.97) #threshold_2-5
 		text(x= 4, y= -1.05, labels= n_values_greater5, col= "gray40", cex=0.97) #threshold_greater5
-		mtext('>0.5', side=1, line=1, at=1)
-		mtext('>0.5-2', side=1, line=1, at=2)
-		mtext('>2-5', side=1, line=1, at=3)
-		mtext('>5', side=1, line=1, at=4)
+		mtext('>0.5', side=1, line=0.85, at=1)
+		mtext('>0.5-2', side=1, line=0.85, at=2)
+		mtext('>2-5', side=1, line=0.85, at=3)
+		mtext('>5', side=1, line=0.85, at=4)
 		par(xpd=TRUE)
 	dev.off()
 }
@@ -472,7 +473,7 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
 		cex.lab = 1.1, 
 		las = 1,
 		cex.axis = 1.1, #adapt size of axis labels
-		xlab = "cis-NAT expression (TPM)", 
+		xlab = "", 
 		col = c("#d8a900", "#00bc1f", "#00c094", "#00beda"), 
 		boxwex = 0.71, 
 		lwd = 1.35, 
@@ -482,16 +483,17 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
 		notch = FALSE
 		)
 		title(title_plot, adj = 0.5, line = 1.25, font.main = 1, cex.main = 1.2)
+		title(xlab = "cis-NAT expression (TPM)", line = 2.65, cex.lab = 1.1)
 		box(lwd = 1.35)
 		axis(side=2, lwd = 1.35, las = 2)
 		text(x= 1, y= -1.05, labels= n_values_05, col= "gray40", cex=0.97) #threshold_>0.5
 		text(x= 2, y= -1.05, labels= n_values_05_2, col= "gray40", cex=0.97) #threshold_0.5-2
 		text(x= 3, y= -1.05, labels= n_values_2_5, col= "gray40", cex=0.97) #threshold_2-5
 		text(x= 4, y= -1.05, labels= n_values_greater5, col= "gray40", cex=0.97) #threshold_greater5
-		mtext('>0.5', side=1, line=1, at=1)
-		mtext('>0.5-2', side=1, line=1, at=2)
-		mtext('>2-5', side=1, line=1, at=3)
-		mtext('>5', side=1, line=1, at=4)
+		mtext('>0.5', side=1, line=0.85, at=1)
+		mtext('>0.5-2', side=1, line=0.85, at=2)
+		mtext('>2-5', side=1, line=0.85, at=3)
+		mtext('>5', side=1, line=0.85, at=4)
 		par(xpd=TRUE)
 	dev.off()
 }
@@ -516,11 +518,11 @@ make_Boxplot_All_Thresholds(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS
 	CR_cd_nc_SAS_cor_wo_pollen_2_5_pearson, CR_cd_nc_SAS_cor_wo_pollen_5_pearson)
 
 # ES
-make_Boxplot_All_Thresholds_Labels(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+make_Boxplot_All_Thresholds(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
 	ES_cd_nc_SAS_cor_wo_pollen_2_5_pearson, ES_cd_nc_SAS_cor_wo_pollen_5_pearson)
 
 # TH
-make_Boxplot_All_Thresholds(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
+make_Boxplot_All_Thresholds_Labels(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
 	TH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, TH_cd_nc_SAS_cor_wo_pollen_5_pearson)
 
 # MT
@@ -545,8 +547,8 @@ ATGE_spearman <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_spearman)
 
 # Pearson boxplot
 jpeg(file=file.path(out_dir, "output", "plots", "nccd_SAS_pearson_ATH_all_DevSeq_all.jpeg"), 
-	width = 3620, height = 4000, res = 825)
-par(mar = c(4.5, 4.5, 4, 2.5))
+	width = 2620, height = 4000, res = 825)
+par(mar = c(5.725, 5.92, 4, 1))
 boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson, 
 	ylim = c(-1.0, 1.2), 
 	names = FALSE, 
@@ -557,24 +559,24 @@ boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5
 	cex.axis = 1.1, #adapt size of axis labels
 	xlab = "", 
 	ylab = "", 
-	col = c("#99d6e1", "#dee2e2"), 
+	col = c("#d8a900", "#d8a900"), 
 	boxwex = 0.8, 
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2), 
 	notch = FALSE
 	)
-	title("nc-cd SAS correlation in DevSeq", adj = 0.50, line = 1.175, font.main = 1, cex.main = 1.2)
-	title(xlab = "nc-cd SAS from data set", line = 2.45, cex.lab = 1.1)
-	title(ylab = "Pearson ρ", line = 3.22, cex.lab = 1.1)
+	title("nc-cd SAS pairs", adj = 0.50, line = 1.25, font.main = 1, cex.main = 1.2)
+	title(xlab = "present in data set", line = 2.65, cex.lab = 1.1)
+	title(ylab = "Pearson ρ", line = 3.0, cex.lab = 1.1)
 	rug(x = c(1,2), ticksize = -0.035, side = 1, lwd = 1.35, col = "black") #x-axis ticks
 	box(lwd = 1.35)
 	axis(side = 2, lwd = 1.35, las = 2)
-	text(x= 1.5, y = 1.135, labels= "p = 0.06", col = "black", cex = 1.075) #ATH_all p-value
-	text(x= 1, y= - 0.9, labels= DevSeq_pearson, col= "gray40", cex= 1.075) #ATH_all no.genes
-	text(x= 2, y= - 0.9, labels= ATGE_pearson, col= "gray40", cex= 1.075)
-	mtext('DevSeq', side = 1, line = 0.83, at = 1)
-	mtext('ATGE', side = 1, line = 0.83, at = 2)
+	text(x= 1.5, y = 1.135, labels= "p = 0.06", col = "black", cex = 1) #ATH_all p-value
+	text(x= 1, y= -0.95, labels= DevSeq_pearson, col= "gray40", cex= 0.97) #ATH_all no.genes
+	text(x= 2, y= -0.95, labels= ATGE_pearson, col= "gray40", cex= 0.97)
+	mtext('DevSeq', side = 1, line = 0.85, at = 1)
+	mtext('ATGE', side = 1, line = 0.85, at = 2)
 	par(xpd=TRUE)
 dev.off()
 
