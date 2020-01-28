@@ -135,7 +135,7 @@ The plotting functions will generate the panels for the following figure:
 
 ![SAS_expression](README_files/SAS_expression_cor.png)
 
-![SAS_pair_scatter](README_filesSAS_expression_scatter.png)
+![SAS_pair_scatter](README_files/SAS_expression_scatter.png)
 
 
 
