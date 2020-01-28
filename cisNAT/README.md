@@ -130,7 +130,7 @@ source("SAS_plots.R")
 
 ```
 
-The plotting functions will generate the panels for the following figure:
+The plotting functions will generate the panels for the following figures:
 
 
 ![SAS_expression](README_files/SAS_expression_cor.png)
