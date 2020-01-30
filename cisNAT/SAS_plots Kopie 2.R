@@ -202,12 +202,12 @@ names(coding_genes_tables_wo_pollen_list_pearson) <- paste(names(
 
 # non-coding NAT / protein-coding SAS pairs
 NAT_genes_tables_wo_pollen_list_spearman <- lapply(NAT_genes_tables_wo_pollen_list, function(x) {
-	as.numeric(unlist(x[, 11]))})
+	as.numeric(unlist(x[, 19]))})
 names(NAT_genes_tables_wo_pollen_list_spearman) <- paste(names(
 	NAT_genes_tables_wo_pollen_list_spearman),"_spearman", sep="")
 
 NAT_genes_tables_wo_pollen_list_pearson <- lapply(NAT_genes_tables_wo_pollen_list, function(x) {
-	as.numeric(unlist(x[, 12]))})
+	as.numeric(unlist(x[, 20]))})
 names(NAT_genes_tables_wo_pollen_list_pearson) <- paste(names(
 	NAT_genes_tables_wo_pollen_list_pearson),"_pearson", sep="")
 
@@ -229,9 +229,9 @@ list2env(SAS_pairs_list_spearman, envir = .GlobalEnv)
 
 # Extract pearson and spearman correlations from DevSeq-ATGE expression cor tables
 ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_spearman <- as.numeric(unlist(
-	ATGE_NAT_ID[, 11]))
+	ATGE_NAT_ID[, 19]))
 ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson <- as.numeric(unlist(
-	ATGE_NAT_ID[, 12]))
+	ATGE_NAT_ID[, 20]))
 
 
 # Write final data tables to csv files and store them in /out_dir/output/data_tables
@@ -602,21 +602,20 @@ BD_cor <- testRsq(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_po
 
 # Prepare data for nc-cd SAS pair overlap length distribution in relation to pearson correlation
 plus_strand_overlap = ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% select(id_plus_strand, start_plus, 
-	end_plus, strand_query, biotype_query, Spearman, Pearson, width_overlap)
+	end_plus, width_query, strand_query, biotype_query, Spearman, Pearson, NAT_overlap_width)
 plus_strand_NAT_overlap <- subset(plus_strand_overlap, 
 	biotype_query == "lnc_exonic_antisense" | biotype_query == "lnc_intronic_antisense")
-names(plus_strand_NAT_overlap) <- c("id", "start", "end", "strand", "biotype", "Spearman", "Pearson", "overlap")
+names(plus_strand_NAT_overlap) <- c("id", "start", "end", "width", "strand", "biotype", "Spearman", "Pearson", "overlap")
 
 minus_strand_overlap = ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% select(id_minus_strand, start_minus, 
-	end_minus, strand_subject, biotype_subject, Spearman, Pearson, width_overlap)
+	end_minus, width_subject, strand_subject, biotype_subject, Spearman, Pearson, NAT_overlap_width)
 minus_strand_NAT_overlap <- subset(minus_strand_overlap, 
 	biotype_subject == "lnc_exonic_antisense" | biotype_subject == "lnc_intronic_antisense")
-names(minus_strand_NAT_overlap) <- c("id", "start", "end", "strand", "biotype", "Spearman", "Pearson", "overlap")
+names(minus_strand_NAT_overlap) <- c("id", "start", "end", "width", "strand", "biotype", "Spearman", "Pearson", "overlap")
 
 plus_minus_NAT_overlap <- rbind(plus_strand_NAT_overlap, minus_strand_NAT_overlap)
 
-plus_minus_NAT_overlap$length <- (plus_minus_NAT_overlap$end - plus_minus_NAT_overlap$start) + 1
-plus_minus_NAT_overlap$percent_overlap <- (plus_minus_NAT_overlap$overlap / plus_minus_NAT_overlap$length) * 100
+plus_minus_NAT_overlap$percent_overlap <- (plus_minus_NAT_overlap$overlap / plus_minus_NAT_overlap$width) * 100
 
 
 
@@ -652,7 +651,7 @@ BD_comp <- scatterPlot(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_
 
 
 # Make scatter plot showing relative overlap (%) in relation to pearson correlation in ATH_all 
-NAT_perc_cor <- testRsq(plus_minus_NAT_overlap$Pearson, plus_minus_NAT_overlap$percent_overlap)
+NAT_perc_cor <- round((cor(plus_minus_NAT_overlap$Pearson, plus_minus_NAT_overlap$percent_overlap)^2), digits=3)
 
 jpeg(file = file.path(out_dir, "output", "plots", "perc_overlap_pearson.jpg"), 
 	width = 4000, height = 4700, res = 825)
@@ -663,7 +662,7 @@ scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
 scale_y_continuous(limits = c(0,101), expand = c(0, 0)) + 
 geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
 annotate("text", x = -Inf, y = Inf, hjust = -0.38, vjust = 1.6, size=5.35, label = rsrt_label, parse = TRUE) + 
-annotate("text", x = -Inf, y = Inf, hjust = -0.49, vjust = 3.8, size=5.35, label = NAT_perc_cor, parse = FALSE) 
+annotate("text", x = -Inf, y = Inf, hjust = -0.38, vjust = 3.8, size=5.35, label = NAT_perc_cor, parse = FALSE) 
 p + ggtitle("ATH_all") + theme_bw() + xlab("Pearson") + ylab("NAT overlap (%)") + 
   theme(text=element_text(size=16), 
   	axis.ticks.length = unit(.3, "cm"),
