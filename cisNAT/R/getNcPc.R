@@ -474,6 +474,10 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		df1$Spearman <- sapply(1:nrow(df1), function(i) 
 	    	cor(as.numeric(df1[i, 11:df1_col]), as.numeric(df2[i, 11:df2_col]), method=c("spearman")))
 
+		# log2-transform TPM values before computing Pearson
+		df1[, 11:df1_col] <- log2(df1[, 11:df1_col] + 1)
+		df2[, 11:df1_col] <- log2(df2[, 11:df2_col] + 1)
+
 		df1$Pearson <- sapply(1:nrow(df1), function(i) 
 	    	cor(as.numeric(df1[i, 11:df1_col]), as.numeric(df2[i, 11:df2_col]), method=c("pearson")))
 
