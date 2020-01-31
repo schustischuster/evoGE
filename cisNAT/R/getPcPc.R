@@ -235,6 +235,15 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     }
 
 
+    # Stop function here to allow specific analysis of a single species
+    # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_tpm" = all_genes_tpm)
+    # return(return_list)
+    # }
+    # return_objects <- getPcPc("ATH", "single-species") # read in GTF and expression data for A.thaliana
+    # list2env(return_objects, envir = .GlobalEnv)
+
+
+
     
     #--------- Extract protein-coding genes, seperate them by strand and find overlap ----------
 
@@ -413,8 +422,8 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	    	cor(as.numeric(df1[i, 7:df1_col]), as.numeric(df2[i, 7:df2_col]), method=c("spearman")))
 
 		# log2-transform TPM values before computing Pearson
-		df1[, 11:df1_col] <- log2(df1[, 11:df1_col] + 1)
-		df2[, 11:df1_col] <- log2(df2[, 11:df2_col] + 1)
+		df1[, 7:df1_col] <- log2(df1[, 7:df1_col] + 1)
+		df2[, 7:df1_col] <- log2(df2[, 7:df2_col] + 1)
 
 		df1$Pearson <- sapply(1:nrow(df1), function(i) 
 	    	cor(as.numeric(df1[i, 7:df1_col]), as.numeric(df2[i, 7:df2_col]), method=c("pearson")))
