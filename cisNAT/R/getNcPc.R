@@ -288,7 +288,7 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	names(overlap_with_strand_df) = c("key_plus", "key_minus")
 
 
-	# Compute percentage overlap betwenn cd and nc genes
+	# Compute overlap length between cd and nc genes
 	overlaps <- pintersect(strand_plus_granges[queryHits(overlap_with_strand)], 
 						   strand_minus_granges[subjectHits(overlap_with_strand)], 
 						   ignore.strand = TRUE)
@@ -346,7 +346,7 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	#---------- Merge plus_strand/minus_strand data tables with DevSeq expression data ---------
 
-	## Replace strand_width by "0" if gene_biotype is "protein-coding" - only keept antisense overlap
+	## Replace strand_width by "0" if gene_biotype is "protein-coding" - only keep antisense overlap
 
 
 	strand_plus_overlapp_genes_tpm <- merge(strand_plus_overlapp_genes, all_genes_tpm, by="gene_id")
@@ -589,6 +589,7 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	# Write final data tables to csv files and store them in /out_dir/output/data_tables
 	if (!dir.exists(file.path(out_dir, "output", "overlapp_nc_genes"))) 
 		dir.create(file.path(out_dir, "output", "overlapp_nc_genes"), recursive = TRUE)
+	message("Storing results in: ", file.path("output", "overlapp_nc_genes"))
 
 	write.table(overlapp_cd_nc_genes_cor, file=file.path(out_dir, "output", "overlapp_nc_genes", fname), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
@@ -596,6 +597,105 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 	write.table(NATs_above_threshold, file=file.path(out_dir, "output", "overlapp_nc_genes", fname_NATs_above_th), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+
+
+
+
+#----- Create ATH_all w/o pollen data tables containing expression values and write csv file ------
+
+
+	# Create data table containing both strand plus and minus genes, their expression data and cor values
+	if ((is.element("ATH", species)) && (is.element("single-species", experiment))) {
+
+		strand_minus_overlapp_genes_wo_pollen <- getCor(
+			strand_minus_overlapp_genes_tpm_th_wo_pollen, strand_plus_overlapp_genes_tpm_th_wo_pollen)
+
+		strand_plus_overlapp_genes_descript_wo_pollen = strand_plus_overlapp_genes_tpm_th_wo_pollen %>% select(
+		gene_id, id, gene_source, gene_biotype, seqnames, start, end, strand, width, width_overlap)
+		names(strand_plus_overlapp_genes_descript_wo_pollen) <- c(
+		"id_plus_strand", "id_plus", "gene_source_query", "biotype_query", "seqnames", 
+		"start_plus", "end_plus", "strand_query", "width_query", "width_overlap_query")
+		strand_minus_overlapp_genes_wo_pollen <- dplyr::select(strand_minus_overlapp_genes_wo_pollen, -c(seqnames))
+		names(strand_minus_overlapp_genes_wo_pollen)[1:9] <- c("id_minus_strand", "id_minus", "gene_source_subject", 
+		"biotype_subject", "start_minus", "end_minus", "strand_subject", "width_subject", "width_overlap_subject")
+		overlapp_cd_nc_genes_cor_wo_pollen_subject_expr <- cbind(strand_minus_overlapp_genes_wo_pollen, 
+		strand_plus_overlapp_genes_descript_wo_pollen)
+
+		overlapp_cd_nc_genes_cor_wo_pollen_subject_expr$NAT_overlap_width <- 
+			overlapp_cd_nc_genes_cor_wo_pollen_subject_expr$width_overlap_query + overlapp_cd_nc_genes_cor_wo_pollen_subject_expr$width_overlap_subject
+	
+		overlapp_cd_nc_genes_cor_wo_pollen_subject_expr = overlapp_cd_nc_genes_cor_wo_pollen_subject_expr %>% select(
+			id_minus_strand, 
+			id_minus, 
+			seqnames, 
+			start_minus, 
+			end_minus, 
+			width_subject, 
+			strand_subject, 
+			biotype_subject, 
+			gene_source_subject,
+			id_plus_strand, 
+			id_plus, 
+			start_plus, 
+			end_plus, 
+			width_query, 
+			strand_query, 
+			biotype_query, 
+			gene_source_query, 
+			NAT_overlap_width, 
+			Spearman, 
+			Pearson,
+			everything())
+
+		overlapp_cd_nc_genes_cor_wo_pollen_subject_expr	<- dplyr::select(
+			overlapp_cd_nc_genes_cor_wo_pollen_subject_expr, -c(width_overlap_subject, width_overlap_query))
+
+		overlapp_cd_nc_genes_cor_wo_pollen_query_expr <- cbind(strand_plus_overlapp_genes_wo_pollen, 
+		strand_minus_overlapp_genes_descript_wo_pollen)
+
+		overlapp_cd_nc_genes_cor_wo_pollen_query_expr$NAT_overlap_width <- 
+		overlapp_cd_nc_genes_cor_wo_pollen_query_expr$width_overlap_query + overlapp_cd_nc_genes_cor_wo_pollen_query_expr$width_overlap_subject
+
+		overlapp_cd_nc_genes_cor_wo_pollen_query_expr = overlapp_cd_nc_genes_cor_wo_pollen_query_expr %>% select(
+		id_plus_strand, 
+		id_plus, 
+		seqnames, 
+		start_plus, 
+		end_plus, 
+		width_query, 
+		strand_query, 
+		biotype_query, 
+		gene_source_query,
+		id_minus_strand, 
+		id_minus, 
+		start_minus, 
+		end_minus, 
+		width_subject, 
+		strand_subject, 
+		biotype_subject, 
+		gene_source_subject, 
+		NAT_overlap_width, 
+		Spearman, 
+		Pearson,
+		everything())
+
+		overlapp_cd_nc_genes_cor_wo_pollen_query_expr	<- dplyr::select(
+			overlapp_cd_nc_genes_cor_wo_pollen_query_expr, -c(width_overlap_subject, width_overlap_query))
+
+		# Remove coding-coding SAS pairs from data
+		overlapp_cd_nc_genes_cor_wo_pollen_query_expr <- overlapp_cd_nc_genes_cor_wo_pollen_query_expr %>% filter(biotype_query != biotype_subject)
+		overlapp_cd_nc_genes_cor_wo_pollen_subject_expr <- overlapp_cd_nc_genes_cor_wo_pollen_subject_expr %>% filter(biotype_subject != biotype_query)
+
+		# Set filename
+		fname_wo_pollen_query <- sprintf('%s.csv', paste(species_id, "cd_nc_SAS_cor_wo_pollen_query_expr", threshold, sep="_"))
+		fname_wo_pollen_subject <- sprintf('%s.csv', paste(species_id, "cd_nc_SAS_cor_wo_pollen_subject_expr", threshold, sep="_"))
+
+		# Write data tables to csv files and store them in /out_dir/output/data_tables
+		write.table(overlapp_cd_nc_genes_cor_wo_pollen_query_expr, file=file.path(out_dir, "output", "overlapp_nc_genes", fname_wo_pollen_query), 
+		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+		write.table(overlapp_cd_nc_genes_cor_wo_pollen_subject_expr, file=file.path(out_dir, "output", "overlapp_nc_genes", fname_wo_pollen_subject), 
+		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+	}
 
 }
 
