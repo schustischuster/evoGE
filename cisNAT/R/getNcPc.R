@@ -312,7 +312,7 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	strand_minus$key_minus <- seq(1, nrow(strand_minus), 1)
 
 
-	# Generate strand plus and strand minus GTF data frames with overlaping genes based on keys
+	# Generate strand plus and strand minus GTF data frames with overlapping genes based on keys
 	strand_plus_overlap_genes <- merge(overlap_with_strand_df, strand_plus, by="key_plus")
 	strand_plus_overlap_genes$id  <- seq(1, nrow(strand_plus_overlap_genes), 1)
 	strand_plus_overlap_genes = strand_plus_overlap_genes %>% select(
