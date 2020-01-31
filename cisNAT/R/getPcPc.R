@@ -1,4 +1,4 @@
-# Find overlapping genes
+# Find overlapping protein-coding genes
 # Data input: 1) GTF file | 2) Expression_data WITHOUT mito and chloroplast genes
 # Analysis can be performed on both whole single species datasets (ATH: 132 samples; AL: 36 samples)
 # OR on comparative data sets (27 samples)
@@ -264,7 +264,7 @@ getPcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	overlap_with_strand = findOverlaps(strand_plus_granges, strand_minus_granges, ignore.strand = TRUE)
 	overlap_with_strand_df = as.data.frame(overlap_with_strand)
 	names(overlap_with_strand_df) = c("key_plus", "key_minus")
-	dim(overlap_with_strand) #number of protein-coding genes that overlap
+	dim(overlap_with_strand) #number of protein-coding genes that overlapp
 
 
 
