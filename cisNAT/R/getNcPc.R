@@ -31,10 +31,31 @@
 # transcript_biotype / exon_number / gene_name
 
 
+
+#------------------- Load packages, set directories and read sample tables ---------------------
+
+
+# Install and load packages
+if (!require(dplyr)) install.packages('dplyr')
+library(dplyr)
+if (!require(GenomicRanges)) install.packages('GenomicRanges')
+library(GenomicRanges)
+if (!require(rtracklayer)) install.packages('rtracklayer')
+library(rtracklayer)
+
+
+# Set file path and input files
+in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/data"
+out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
+
+
+
+# Define function to get overlapping non-coding / protein-coding genes
+
 getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
 	experiment = c("single-species", "comparative"), threshold) {
 	
-    # Show error message if no species is chosen
+	# Show error message if no species is chosen
     if (missing(species))
    
        stop(
@@ -43,7 +64,7 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   call. = TRUE
        )
 
-    # Show error message for ATH and AL if no experiment is chosen
+   	# Show error message for ATH and AL if no experiment is chosen
     if (missing(experiment) && (is.element("ATH", species) | is.element("AL", species)))
    
        stop(
@@ -52,10 +73,10 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   call. = TRUE
        )
 
-    if (!is.element(experiment, c("comparative", "single-species")) 
+   	if (!is.element(experiment, c("comparative", "single-species")) 
    		&& (is.element("ATH", species) | is.element("AL", species)))
 
-       stop(
+   		stop(
        "Please choose one of the available experiments: 
 	   'single-species', 'comparative'",
 	   call. = TRUE
@@ -70,19 +91,19 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   call. = TRUE
        )
 
-    # Add an error if threshold < 0
-    if (threshold < 0)
-       stop(
-       "'threshold' must be >= 0",
-	   call. = TRUE
-       )
+   	# Add an error if threshold < 0
+  	if (threshold < 0)
+    	stop(
+        "'threshold' must be >= 0",
+	   	call. = TRUE
+    	)
 
 
-    # Set GTF input gtf file
+	# Set GTF input gtf file
     if (is.element("ATH", species)) {
-    		GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
-        	genesTPM = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_tpm_sample_names.csv")
-        	species_id <- "ATH"
+    	GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
+        genesTPM = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_tpm_sample_names.csv")
+        species_id <- "ATH"
 
     } else if (is.element("AL", species)) {
 		GTFfile = file.path(in_dir, "GTF", "AL_final_annotation.gtf")
@@ -116,18 +137,18 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     }
 
 
-    # Import gtf file
-    GTF = import.gff(GTFfile, format="gtf", feature.type="gene")
+	# Import gtf file
+	GTF = import.gff(GTFfile, format="gtf", feature.type="gene")
 
-    # Read expression data
-    all_genes_tpm <- read.table(genesTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
-    colnames(all_genes_tpm)[1] <- "gene_id"
+	# Read expression data
+	all_genes_tpm <- read.table(genesTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+	colnames(all_genes_tpm)[1] <- "gene_id"
 
-    # Save threshold in variable
-    threshold <- threshold
+	# Save threshold in variable
+	threshold <- threshold
 
 
-    # Format expression data and rename pollen samples
+	# Format expression data and rename pollen samples
     if ((is.element("ATH", species)) && (is.element("comparative", experiment))) {
 
 		all_genes_tpm <- dplyr::select(all_genes_tpm, c(
@@ -193,12 +214,12 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_3'] <- 'flowers_mature_pollen_3'
 
     } else if (is.element("AL", species)) {
-    		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_1'] <- 'flowers_mature_pollen_1'
+    	colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_1'] <- 'flowers_mature_pollen_1'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_2'] <- 'flowers_mature_pollen_2'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_3'] <- 'flowers_mature_pollen_3'
 
     } else if (is.element("CR", species)) {
-    		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_1'] <- 'flowers_mature_pollen_1'
+    	colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_1'] <- 'flowers_mature_pollen_1'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_2'] <- 'flowers_mature_pollen_2'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_3'] <- 'flowers_mature_pollen_3'
 
@@ -229,7 +250,7 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_tpm" = all_genes_tpm, "threshold" = threshold)
     # return(return_list)
     # }
-    # return_objects <- getGeneOverlapp("ATH", "single-species", 0.5) # read in GTF and expression data for A.thaliana
+    # return_objects <- getNcPc("ATH", "single-species", 0.5) # read in GTF and expression data for A.thaliana
     # list2env(return_objects, envir = .GlobalEnv)
 
 
@@ -267,17 +288,28 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	names(overlap_with_strand_df) = c("key_plus", "key_minus")
 
 
+	# Compute percentage overlap betwenn cd and nc genes
+	overlaps <- pintersect(strand_plus_granges[queryHits(overlap_with_strand)], 
+						   strand_minus_granges[subjectHits(overlap_with_strand)], 
+						   ignore.strand = TRUE)
+
+
+	widthOverlap <- width(overlaps)
+	widthOverlap_df <- as.data.frame(widthOverlap)
+	names(widthOverlap_df) <- "width_overlap"
+
+
+	# Bind "width_overlap" and "percent_overlap" columns to "overlap_with_strand_df"
+	overlap_with_strand_df <- cbind(overlap_with_strand_df, widthOverlap_df)
+
 
 
 	#--- Extract overlapping protein coding genes from plus_strand/minus_strand data frames ----
 
 
 	# Add key to plus and minus strand data frames
-	key_plus <- seq(1, nrow(strand_plus), 1)
-	strand_plus <- cbind(as.data.frame(key_plus), strand_plus)
-
-	key_minus <- seq(1, nrow(strand_minus), 1)
-	strand_minus <- cbind(as.data.frame(key_minus), strand_minus)
+	strand_plus$key_plus <- seq(1, nrow(strand_plus), 1)
+	strand_minus$key_minus <- seq(1, nrow(strand_minus), 1)
 
 
 	# Generate strand plus and strand minus GTF data frames with overlapping genes based on keys
@@ -286,33 +318,50 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	strand_plus_overlapp_genes = strand_plus_overlapp_genes %>% select(
 		id,
 		gene_id,
+		gene_source,
+		gene_biotype,
 		seqnames, 
 		start, 
 		end, 
-		strand)
+		strand,
+		width,
+		width_overlap)
 
 	strand_minus_overlapp_genes <- merge(overlap_with_strand_df, strand_minus, by="key_minus")
+	strand_minus_overlapp_genes <- strand_minus_overlapp_genes[order(strand_minus_overlapp_genes$key_plus),]
 	strand_minus_overlapp_genes$id  <- seq(1, nrow(strand_minus_overlapp_genes), 1)
 	strand_minus_overlapp_genes = strand_minus_overlapp_genes %>% select(
 		id,
 		gene_id,
+		gene_source,
+		gene_biotype,
 		seqnames, 
 		start, 
 		end, 
-		strand)
+		strand,
+		width,
+		width_overlap)
+
 
 
 	#---------- Merge plus_strand/minus_strand data tables with DevSeq expression data ---------
 
+	## Replace strand_width by "0" if gene_biotype is "protein-coding" - only keept antisense overlap
+
+
 	strand_plus_overlapp_genes_tpm <- merge(strand_plus_overlapp_genes, all_genes_tpm, by="gene_id")
 	strand_plus_overlapp_genes_tpm <- strand_plus_overlapp_genes_tpm[order(strand_plus_overlapp_genes_tpm$id),]
 	strand_plus_overlapp_genes_tpm <- dplyr::select(strand_plus_overlapp_genes_tpm, -c(
-		seqnames, source))
+		biotype, source))
+	strand_plus_overlapp_genes_tpm <- strand_plus_overlapp_genes_tpm %>% mutate(
+		width_overlap = ifelse(gene_biotype == "protein_coding", 0, width_overlap))
+
 	strand_minus_overlapp_genes_tpm <- merge(strand_minus_overlapp_genes, all_genes_tpm, by="gene_id")
 	strand_minus_overlapp_genes_tpm <- strand_minus_overlapp_genes_tpm[order(strand_minus_overlapp_genes_tpm$id),]
 	strand_minus_overlapp_genes_tpm <- dplyr::select(strand_minus_overlapp_genes_tpm, -c(
-		seqnames, source))
-
+		biotype, source))
+	strand_minus_overlapp_genes_tpm <- strand_minus_overlapp_genes_tpm %>% mutate(
+		width_overlap = ifelse(gene_biotype == "protein_coding", 0, width_overlap))
 
 
 
@@ -356,19 +405,19 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 			# Split data frame by sample replicates into a list then apply threshold for each subset
 	
-			th_replicates <- do.call(cbind, lapply(split.default(df[8:ncol(df)], #adjust columns
-								rep(seq_along(df), each = 3, length.out = ncol(df)-7)), #adjust columns
+			th_replicates <- do.call(cbind, lapply(split.default(df[12:ncol(df)], #adjust columns
+								rep(seq_along(df), each = 3, length.out = ncol(df)-11)), #adjust columns
 								function(x) {
 									x[rowSums(x > threshold) < 2, ] <- 0; 
 									x
 								}
 							))
 
-			# Bind key/id/prt_id/symbol/biotype/source columns to thresholded data frame
-			th_replicates <- cbind(df[1:7], th_replicates)
+			# Bind key/gene_id/id/gene_source/gene_biotype/seqnames/start/end/strand/width/width_overlap columns to thresholded data frame
+			th_replicates <- cbind(df[1:11], th_replicates)
 
 			# Remove all rows that only contain "0"
-			th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-7, drop = FALSE] > 0) > 0),]
+			th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-11, drop = FALSE] > 0) > 0),]
 
 			return(th_replicates)
 		}
@@ -380,7 +429,6 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 		# Generate thresholded data frame based on keys
 		th_df <- merge(keys_data, df, by="key")
-		th_df <- th_df[order(th_df$key),]
 		th_df <- th_df[-1:-2]
 
 		return(th_df)
@@ -424,10 +472,10 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		message("Computing correlation...")
 
 		df1$Spearman <- sapply(1:nrow(df1), function(i) 
-	    	cor(as.numeric(df1[i, 7:df1_col]), as.numeric(df2[i, 7:df2_col]), method=c("spearman")))
+	    	cor(as.numeric(df1[i, 11:df1_col]), as.numeric(df2[i, 11:df2_col]), method=c("spearman")))
 
 		df1$Pearson <- sapply(1:nrow(df1), function(i) 
-	    	cor(as.numeric(df1[i, 7:df1_col]), as.numeric(df2[i, 7:df2_col]), method=c("pearson")))
+	    	cor(as.numeric(df1[i, 11:df1_col]), as.numeric(df2[i, 11:df2_col]), method=c("pearson")))
 
 		return(df1)
 	}
@@ -445,43 +493,74 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Create data table containing both strand plus and minus genes and cor values
-	strand_minus_overlapp_genes_descript = strand_minus_overlapp_genes_tpm_th %>% select(gene_id, start, end, strand, biotype)
-	names(strand_minus_overlapp_genes_descript) <- c("id_minus_strand", "start_minus", "end_minus", "strand_subject", "biotype_subject")
-	strand_plus_overlapp_genes <- strand_plus_overlapp_genes[-2]
-	names(strand_plus_overlapp_genes)[1:5] <- c("id_plus_strand", "start_plus", "end_plus", "strand_query", "biotype_query")
+
+	strand_minus_overlapp_genes_descript = strand_minus_overlapp_genes_tpm_th %>% select(
+		gene_id, id, gene_source, gene_biotype, seqnames, start, end, strand, width, width_overlap)
+	names(strand_minus_overlapp_genes_descript) <- c(
+		"id_minus_strand", "id_minus", "gene_source_subject", "biotype_subject", "seqnames", 
+		"start_minus", "end_minus", "strand_subject", "width_subject", "width_overlap_subject")
+	strand_plus_overlapp_genes <- dplyr::select(strand_plus_overlapp_genes, -c(seqnames))
+	names(strand_plus_overlapp_genes)[1:9] <- c("id_plus_strand", "id_plus", "gene_source_query", 
+		"biotype_query", "start_plus", "end_plus", "strand_query", "width_query", "width_overlap_query")
 	overlapp_cd_nc_genes_cor <- cbind(strand_plus_overlapp_genes, strand_minus_overlapp_genes_descript)
+	overlapp_cd_nc_genes_cor$NAT_overlap_width <- 
+		overlapp_cd_nc_genes_cor$width_overlap_query + overlapp_cd_nc_genes_cor$width_overlap_subject
 	overlapp_cd_nc_genes_cor = overlapp_cd_nc_genes_cor %>% select(
 		id_plus_strand, 
+		id_plus, 
+		seqnames, 
 		start_plus, 
 		end_plus, 
+		width_query, 
 		strand_query, 
 		biotype_query, 
+		gene_source_query,
 		id_minus_strand, 
+		id_minus, 
 		start_minus, 
 		end_minus, 
+		width_subject, 
 		strand_subject, 
 		biotype_subject, 
+		gene_source_subject, 
+		NAT_overlap_width, 
 		Spearman, 
 		Pearson)
 
 
-	strand_minus_overlapp_genes_descript_wo_pollen = strand_minus_overlapp_genes_tpm_th_wo_pollen %>% select(gene_id, start, end, strand, biotype)
-	names(strand_minus_overlapp_genes_descript_wo_pollen) <- c("id_minus_strand", "start_minus", "end_minus",  "strand_subject", "biotype_subject")
-	strand_plus_overlapp_genes_wo_pollen <- strand_plus_overlapp_genes_wo_pollen[-2]
-	names(strand_plus_overlapp_genes_wo_pollen)[1:5] <- c("id_plus_strand", "start_plus", "end_plus", "strand_query", "biotype_query")
+	strand_minus_overlapp_genes_descript_wo_pollen = strand_minus_overlapp_genes_tpm_th_wo_pollen %>% select(
+		gene_id, id, gene_source, gene_biotype, seqnames, start, end, strand, width, width_overlap)
+	names(strand_minus_overlapp_genes_descript_wo_pollen) <- c(
+		"id_minus_strand", "id_minus", "gene_source_subject", "biotype_subject", "seqnames", 
+		"start_minus", "end_minus", "strand_subject", "width_subject", "width_overlap_subject")
+	strand_plus_overlapp_genes_wo_pollen <- dplyr::select(strand_plus_overlapp_genes_wo_pollen, -c(seqnames))
+	names(strand_plus_overlapp_genes_wo_pollen)[1:9] <- c("id_plus_strand", "id_plus", "gene_source_query", 
+		"biotype_query", "start_plus", "end_plus", "strand_query", "width_query", "width_overlap_query")
 	overlapp_cd_nc_genes_cor_wo_pollen <- cbind(strand_plus_overlapp_genes_wo_pollen, 
 		strand_minus_overlapp_genes_descript_wo_pollen)
+
+	overlapp_cd_nc_genes_cor_wo_pollen$NAT_overlap_width <- 
+		overlapp_cd_nc_genes_cor_wo_pollen$width_overlap_query + overlapp_cd_nc_genes_cor_wo_pollen$width_overlap_subject
+	
 	overlapp_cd_nc_genes_cor_wo_pollen = overlapp_cd_nc_genes_cor_wo_pollen %>% select(
 		id_plus_strand, 
+		id_plus, 
+		seqnames, 
 		start_plus, 
 		end_plus, 
+		width_query, 
 		strand_query, 
 		biotype_query, 
+		gene_source_query,
 		id_minus_strand, 
+		id_minus, 
 		start_minus, 
 		end_minus, 
+		width_subject, 
 		strand_subject, 
 		biotype_subject, 
+		gene_source_subject, 
+		NAT_overlap_width, 
 		Spearman, 
 		Pearson)
 
@@ -502,7 +581,7 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Set filename
-    	fname <- sprintf('%s.csv', paste(species_id, "cd_nc_SAS_cor", threshold, sep="_"))
+    fname <- sprintf('%s.csv', paste(species_id, "cd_nc_SAS_cor", threshold, sep="_"))
 	fname_wo_pollen <- sprintf('%s.csv', paste(species_id, "cd_nc_SAS_cor_wo_pollen", threshold, sep="_"))
 	fname_NATs_above_th <- sprintf('%s.csv', paste(species_id, "NATs_above", threshold, "TPM", sep="_"))
 
@@ -520,4 +599,38 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 }
 
+
+
+# Execute getNcPc function
+getNcPc("ATH", "single-species", 0.5)
+getNcPc("ATH", "comparative", 0.5)
+getNcPc("AL", "single-species", 0.5)
+getNcPc("AL", "comparative", 0.5)
+getNcPc("CR", "comparative", 0.5)
+getNcPc("ES", "comparative", 0.5)
+getNcPc("TH", "comparative", 0.5)
+getNcPc("MT", "comparative", 0.5)
+getNcPc("BD", "comparative", 0.5)
+
+getNcPc("ATH", "single-species", 2)
+getNcPc("ATH", "comparative", 2)
+getNcPc("AL", "single-species", 2)
+getNcPc("AL", "comparative", 2)
+getNcPc("CR", "comparative", 2)
+getNcPc("ES", "comparative", 2)
+getNcPc("TH", "comparative", 2)
+getNcPc("MT", "comparative", 2)
+getNcPc("BD", "comparative", 2)
+
+getNcPc("ATH", "single-species", 5)
+getNcPc("ATH", "comparative", 5)
+getNcPc("AL", "single-species", 5)
+getNcPc("AL", "comparative", 5)
+getNcPc("CR", "comparative", 5)
+getNcPc("ES", "comparative", 5)
+getNcPc("TH", "comparative", 5)
+getNcPc("MT", "comparative", 5)
+getNcPc("BD", "comparative", 5)
+
+getNcPc("ATH", "single-species", 0)
 
