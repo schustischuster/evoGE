@@ -4,11 +4,23 @@
 #------------------- Load packages, set directories and read sample tables ---------------------
 
 
+
+# Install and load packages
+if (!require(dplyr)) install.packages('dplyr')
+library(dplyr)
+
+
+# Set file path and input files
+in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/data"
+out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
+
+
+
 getDevSeq_ATGE <- function() {
 
 	# Read ATGE_NAT ID table
 	ATGE_NAT_ID <- read.table(file=file.path(in_dir, "ATGE_NAT", "ATGE_NAT.csv"), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
-	ATH_cd_nc_SAS_cor_wo_pollen_0.5 <- read.table(file=file.path(out_dir, "output", "overlapp_nc_genes", "ATH_cd_nc_SAS_cor_wo_pollen_0.5.csv"), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
+	ATH_cd_nc_SAS_cor_wo_pollen_0.5 <- read.table(file=file.path(out_dir, "output", "overlap_nc_genes", "ATH_cd_nc_SAS_cor_wo_pollen_0.5.csv"), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
 
 
@@ -57,4 +69,5 @@ getDevSeq_ATGE <- function() {
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 
 }
+
 
