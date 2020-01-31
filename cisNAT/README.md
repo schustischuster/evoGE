@@ -123,8 +123,8 @@ getDevSeq_ATGE()
 Set the file path for the data generated in the previous steps and source the R script:
 
 ```R
-in_dir_cd <- "./output/overlapp_cd_genes"
-in_dir_nc <- "./output/overlapp_nc_genes"
+in_dir_cd <- "./output/overlap_cd_genes"
+in_dir_nc <- "./output/overlap_nc_genes"
 
 source("SAS_plots.R")
 
