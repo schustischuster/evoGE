@@ -283,6 +283,7 @@ boxplot(ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pe
 	ylab = "Pearson ρ", 
 	col = c("#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900"), 
 	boxwex = 0.85, 
+	pars = list(outcol = "gray50"), 
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2,3.5,4.5), 
@@ -345,6 +346,7 @@ boxplot(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_n
 	col = c("#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900", "#a8a8a8", 
 		"#d8a900", "#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900"), 
 	boxwex = 0.85, 
+	pars = list(outcol = "gray50"), 
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2,4,5,7,8,10,11,13,14,16,17,19,20), 
@@ -358,10 +360,10 @@ boxplot(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_n
 	text(x= 1.5, y= 1.15, labels= "p<1e-50", col= "black", cex=1) #ATH p-value
 	text(x= 4.5, y= 1.15, labels= "p<1e-30", col= "black", cex=1) #AL p-value
 	text(x= 7.5, y= 1.15, labels= "p<1e-50", col= "black", cex=1) #CR p-value
-	text(x= 10.5, y= 1.15, labels= "p<1e-50", col= "black", cex=1) #ES p-value
+	text(x= 10.5, y= 1.15, labels= "p<1e-40", col= "black", cex=1) #ES p-value
 	text(x= 13.5, y= 1.15, labels= "p<1e-15", col= "black", cex=1) #TH p-value
 	text(x= 16.5, y= 1.15, labels= "p<1e-50", col= "black", cex=1) #MT p-value
-	text(x= 19.5, y= 1.15, labels= "p<1e-50", col= "black", cex=1) #BD p-value
+	text(x= 19.5, y= 1.15, labels= "p<1e-40", col= "black", cex=1) #BD p-value
 	text(x= 1, y= -1.175, labels= n_ATH_pc_comp_wo_pollen, col= "gray40", cex=0.97) #ATH no.genes
 	text(x= 2, y= -1.04, labels= n_ATH_nc_comp_wo_pollen, col= "gray40", cex=0.97)
 	text(x= 4, y= -1.175, labels= n_AL_pc_comp_wo_pollen, col= "gray40", cex=0.97) #AL no.genes
@@ -422,10 +424,10 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
 		ylab = "Pearson ρ", 
 		col = c("#d8a900", "#00bc1f", "#00c094", "#00beda"), 
 		boxwex = 0.71, 
+		pars = list(outcol = "gray50"), 
 		lwd = 1.35, 
 		whisklty = 1, 
 		at = c(1,2,3,4), 
-		pars = list(outcol = "gray50"),
 		notch = FALSE
 		)
 		title(title_plot, adj = 0.5, line = 1.25, font.main = 1, cex.main = 1.2)
