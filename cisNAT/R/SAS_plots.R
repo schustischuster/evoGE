@@ -566,6 +566,7 @@ boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2), 
+	pars = list(outcol = "gray50"), 
 	notch = FALSE
 	)
 	title("nc-cd SAS pairs", adj = 0.50, line = 1.25, font.main = 1, cex.main = 1.2)
@@ -574,7 +575,7 @@ boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5
 	rug(x = c(1,2), ticksize = -0.035, side = 1, lwd = 1.35, col = "black") #x-axis ticks
 	box(lwd = 1.35)
 	axis(side = 2, lwd = 1.35, las = 2)
-	text(x= 1.5, y = 1.135, labels= "p = 0.06", col = "black", cex = 1) #ATH_all p-value
+	text(x= 1.5, y = 1.135, labels= "p < 0.01", col = "black", cex = 1) #ATH_all p-value
 	text(x= 1, y= -0.95, labels= DevSeq_pearson, col= "gray40", cex= 0.97) #ATH_all no.genes
 	text(x= 2, y= -0.95, labels= ATGE_pearson, col= "gray40", cex= 0.97)
 	mtext('DevSeq', side = 1, line = 0.85, at = 1)
