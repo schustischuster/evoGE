@@ -603,27 +603,45 @@ BD_cor <- testRsq(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_po
 
 
 
-# Prepare data for nc-cd SAS pair overlap length distribution in relation to pearson correlation
-plus_strand_overlap = ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% select(id_plus_strand, start_plus, 
-	end_plus, width_query, strand_query, biotype_query, Spearman, Pearson, NAT_overlap_width)
-plus_strand_NAT_overlap <- subset(plus_strand_overlap, 
-	biotype_query == "lnc_exonic_antisense" | biotype_query == "lnc_intronic_antisense")
-names(plus_strand_NAT_overlap) <- c("id", "start", "end", "width", "strand", "biotype", "Spearman", "Pearson", "overlap")
+# Function to prepare data for nc-cd SAS pair overlap length in relation to pearson correlation
+list_for_overlap <- list(
+	ATH_cd_nc_SAS_wo_pollen_0.5_cor_length = ATH_cd_nc_SAS_cor_wo_pollen_0.5,
+	ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length = ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5,
+	AL_cd_nc_SAS_wo_pollen_0.5_cor_length = AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5,
+	BD_cd_nc_SAS_wo_pollen_0.5_cor_length = BD_cd_nc_SAS_cor_wo_pollen_0.5,
+	CR_cd_nc_SAS_wo_pollen_0.5_cor_length = CR_cd_nc_SAS_cor_wo_pollen_0.5,
+	ES_cd_nc_SAS_wo_pollen_0.5_cor_length = ES_cd_nc_SAS_cor_wo_pollen_0.5,
+	MT_cd_nc_SAS_wo_pollen_0.5_cor_length = MT_cd_nc_SAS_cor_wo_pollen_0.5,
+	TH_cd_nc_SAS_wo_pollen_0.5_cor_length = TH_cd_nc_SAS_cor_wo_pollen_0.5)
 
-minus_strand_overlap = ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% select(id_minus_strand, start_minus, 
-	end_minus, width_subject, strand_subject, biotype_subject, Spearman, Pearson, NAT_overlap_width)
-minus_strand_NAT_overlap <- subset(minus_strand_overlap, 
-	biotype_subject == "lnc_exonic_antisense" | biotype_subject == "lnc_intronic_antisense")
-names(minus_strand_NAT_overlap) <- c("id", "start", "end", "width", "strand", "biotype", "Spearman", "Pearson", "overlap")
+getPearsonPercOverlap <- function(x) {
 
-plus_minus_NAT_overlap <- rbind(plus_strand_NAT_overlap, minus_strand_NAT_overlap)
+	plus_strand_overlap <- x %>% select(id_plus_strand, width_query, biotype_query, Spearman, 
+		Pearson, NAT_overlap_width)
+	plus_strand_NAT_overlap <- subset(plus_strand_overlap, 
+		biotype_query == "lnc_exonic_antisense" | biotype_query == "lnc_intronic_antisense")
+	names(plus_strand_NAT_overlap) <- c("id", "width", "biotype", "Spearman", "Pearson", "overlap")
 
-plus_minus_NAT_overlap$percent_overlap <- (plus_minus_NAT_overlap$overlap / plus_minus_NAT_overlap$width) * 100
+	minus_strand_overlap <- x %>% select(id_minus_strand, width_subject, biotype_subject, 
+		Spearman, Pearson, NAT_overlap_width)
+	minus_strand_NAT_overlap <- subset(minus_strand_overlap, 
+		biotype_subject == "lnc_exonic_antisense" | biotype_subject == "lnc_intronic_antisense")
+	names(minus_strand_NAT_overlap) <- c("id", "width", "biotype", "Spearman", "Pearson", "overlap")
 
+	plus_minus_NAT_overlap <- rbind(plus_strand_NAT_overlap, minus_strand_NAT_overlap)
+
+	plus_minus_NAT_overlap$percent_overlap <- (
+		plus_minus_NAT_overlap$overlap / plus_minus_NAT_overlap$width) * 100
+
+	return(plus_minus_NAT_overlap)
+}
+
+percent_overlap_pearson_list <- lapply(list_for_overlap, getPearsonPercOverlap)
+list2env(percent_overlap_pearson_list, envir = .GlobalEnv)
 
 
 # Function to prepare data frame and encode data density as color
-scatterPlot <- function(x, y) {
+scatterDensity <- function(x, y) {
 	plot_data <- data.frame(x, y)
 	names(plot_data) <- c("x_data", "y_data")
 	
@@ -639,266 +657,144 @@ scatterPlot <- function(x, y) {
 }
 
 
-# Apply scatterPlot function
-perc_overlap_pearson <- scatterPlot(plus_minus_NAT_overlap$Pearson, plus_minus_NAT_overlap$percent_overlap)
-abs_overlap_pearson <- scatterPlot(plus_minus_NAT_overlap$Pearson, plus_minus_NAT_overlap$overlap)
-ATH_all <- scatterPlot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-ATH_comp <- scatterPlot(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-AL_comp <- scatterPlot(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
-CR_comp <- scatterPlot(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-ES_comp <- scatterPlot(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-TH_comp <- scatterPlot(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-MT_comp <- scatterPlot(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-BD_comp <- scatterPlot(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+# Apply scatterDensity function
+# for percent overlap vs pearson plots
+perc_overlap_ATH_all <- scatterDensity(ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+perc_overlap_ATH_comp <- scatterDensity(ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+perc_overlap_AL <- scatterDensity(AL_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, AL_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+perc_overlap_CR <- scatterDensity(CR_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, CR_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+perc_overlap_ES <- scatterDensity(ES_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ES_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+perc_overlap_TH <- scatterDensity(TH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, TH_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+perc_overlap_MT <- scatterDensity(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+perc_overlap_BD <- scatterDensity(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+
+# for absolute overlap vs pearson plot
+abs_overlap_ATH_all <- scatterDensity(ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+abs_overlap_ATH_comp <- scatterDensity(ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+abs_overlap_AL <- scatterDensity(AL_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, AL_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+abs_overlap_CR <- scatterDensity(CR_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, CR_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+abs_overlap_ES <- scatterDensity(ES_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ES_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+abs_overlap_TH <- scatterDensity(TH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, TH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+abs_overlap_MT <- scatterDensity(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+abs_overlap_BD <- scatterDensity(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+
+# for pearson vs spearman plots
+ATH_all <- scatterDensity(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ATH_comp <- scatterDensity(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+AL_comp <- scatterDensity(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+CR_comp <- scatterDensity(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ES_comp <- scatterDensity(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+TH_comp <- scatterDensity(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+MT_comp <- scatterDensity(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+BD_comp <- scatterDensity(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+
+# Calculate R squared value for relative overlap vs pearson data
+rsqd_ATH_all_perc <- testRsq(ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+rsqd_ATH_comp_perc <- testRsq(ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+rsqd_AL_perc <- testRsq(AL_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, AL_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+rsqd_CR_perc <- testRsq(CR_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, CR_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+rsqd_ES_perc <- testRsq(ES_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ES_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+rsqd_TH_perc <- testRsq(TH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, TH_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+rsqd_MT_perc <- testRsq(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+rsqd_BD_perc <- testRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
+
+# Calculate R squared value for absolute overlap vs pearson data
+rsqd_ATH_all_abs <- testRsq(ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_ATH_comp_abs <- testRsq(ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_AL_abs <- testRsq(AL_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, AL_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_CR_abs <- testRsq(CR_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, CR_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_ES_abs <- testRsq(ES_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ES_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_TH_abs <- testRsq(TH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, TH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_MT_abs <- testRsq(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_BD_abs <- testRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
 
 
 
-# Make scatter plot showing relative overlap (%) in relation to pearson correlation in ATH_all 
-NAT_perc_cor <- round((cor(plus_minus_NAT_overlap$Pearson, plus_minus_NAT_overlap$percent_overlap)^2), digits=3)
+# Function to scatter plot relative overlap (%) versus pearson correlation
 
-jpeg(file = file.path(out_dir, "output", "plots", "perc_overlap_pearson.jpg"), 
-	width = 4000, height = 4700, res = 825)
-rsrt_label = paste("R ^ 2", "==", ".")
-p <- ggplot(perc_overlap_pearson, aes(x = x_data, y = y_data)) + 
-geom_point(size = 1.25, colour = perc_overlap_pearson$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(0,101), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.38, vjust = 1.6, size=5.35, label = rsrt_label, parse = TRUE) + 
-annotate("text", x = -Inf, y = Inf, hjust = -0.38, vjust = 3.8, size=5.35, label = NAT_perc_cor, parse = FALSE) 
-p + ggtitle("ATH_all") + theme_bw() + xlab("Pearson") + ylab("NAT overlap (%)") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(3.0, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = 15.5, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
+makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
+	"ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD"), rsgd_pos) {
 
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+	
+	rsrt_label = paste("R ^ 2", "==", ".")
+	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
+	geom_point(size = 1.25, colour = data$col) + 
+	scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+	scale_y_continuous(limits = c(0,101), expand = c(0, 0)) + 
+	geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
+	annotate("text", x = -Inf, y = Inf, hjust = -0.38, vjust = 1.6, size=5.35, label = rsrt_label, parse = TRUE) + 
+	annotate("text", x = -Inf, y = Inf, hjust = rsgd_pos, vjust = 3.8, size=5.35, label = rsqd, parse = FALSE) 
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (%)") + 
+		theme(text=element_text(size=16), 
+		axis.ticks.length = unit(.3, "cm"),
+		plot.margin = unit(c(3.0, 10.5, 42.5, 5.5), "points"),
+		axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+		axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+		plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = 15.5, l = 0), hjust = 0.5),
+		legend.position = "bottom",
+		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
 
-# Make scatter plot showing absolute overlap (bp) in relation to pearson correlation in ATH_all 
-NAT_abs_cor <- testRsq(plus_minus_NAT_overlap$overlap, plus_minus_NAT_overlap$Pearson)
-
-jpeg(file = file.path(out_dir, "output", "plots", "abs_overlap_pearson.jpg"), 
-	width = 4000, height = 4700, res = 825)
-corr_label = paste("R ^ 2"," == ", NAT_abs_cor)
-p <- ggplot(abs_overlap_pearson, aes(x = x_data, y = y_data)) + 
-geom_point(size = 1.25, colour = abs_overlap_pearson$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(0,4030), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.335, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
-p + ggtitle("ATH_all") + theme_bw() + xlab("Pearson") + ylab("NAT overlap (bp)") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(3.0, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = 15.5, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+		scale = 1, width = 4.848485, height = 5.69697, units = c("in"), 
+		dpi = 825, limitsize = FALSE)
+}
 
 
-
-# Make Spearman-Pearson scatter plots
-
-jpeg(file = file.path(out_dir, "output", "plots", "ATH_cor.jpg"), 
-	width = 4000, height = 4700, res = 825)
-corr_label = paste("R ^ 2"," == ", ATH_comp_cor)
-p <- ggplot(ATH_comp, aes(x = x_data, y = y_data)) +
-geom_point(size = 1.25, colour = ATH_comp$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
-p + ggtitle("ATH") + theme_bw() + xlab("Pearson") + ylab("Spearman") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
-
-jpeg(file = file.path(out_dir, "output", "plots", "AL_cor.jpg"), 
-	width = 4000, height = 4700, res = 825)
-corr_label = paste("R ^ 2"," == ", AL_comp_cor)
-p <- ggplot(AL_comp, aes(x = x_data, y = y_data)) +
-geom_point(size = 1.25, colour = AL_comp$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
-p + ggtitle("AL") + theme_bw() + xlab("Pearson") + ylab("Spearman") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
-
-jpeg(file = file.path(out_dir, "output", "plots", "CR_cor.jpg"), 
-	width = 4000, height = 4700, res = 825)
-corr_label = paste("R ^ 2"," == ", CR_cor)
-p <- ggplot(CR_comp, aes(x = x_data, y = y_data)) +
-geom_point(size = 1.25, colour = CR_comp$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
-p + ggtitle("CR") + theme_bw() + xlab("Pearson") + ylab("Spearman") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
-
-jpeg(file = file.path(out_dir, "output", "plots", "ES_cor.jpg"), 
-	width = 4000, height = 4700, res = 825)
-corr_label = paste("R ^ 2"," == ", ES_cor)
-p <- ggplot(ES_comp, aes(x = x_data, y = y_data)) +
-geom_point(size = 1.25, colour = ES_comp$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
-p + ggtitle("ES") + theme_bw() + xlab("Pearson") + ylab("Spearman") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
-
-jpeg(file = file.path(out_dir, "output", "plots", "TH_cor.jpg"), 
-	width = 4000, height = 4700, res = 825)
-corr_label = paste("R ^ 2"," == ", TH_cor)
-p <- ggplot(TH_comp, aes(x = x_data, y = y_data)) +
-geom_point(size = 1.25, colour = TH_comp$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
-p + ggtitle("TH") + theme_bw() + xlab("Pearson") + ylab("Spearman") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
-
-jpeg(file = file.path(out_dir, "output", "plots", "MT_cor.jpg"), 
-	width = 4000, height = 4700, res = 825)
-corr_label = paste("R ^ 2"," == ", MT_cor)
-p <- ggplot(MT_comp, aes(x = x_data, y = y_data)) +
-geom_point(size = 1.25, colour = MT_comp$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
-p + ggtitle("MT") + theme_bw() + xlab("Pearson") + ylab("Spearman") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
-
-jpeg(file = file.path(out_dir, "output", "plots", "BD_cor.jpg"), 
-	width = 4000, height = 4700, res = 825)
-corr_label = paste("R ^ 2"," == ", BD_cor)
-p <- ggplot(BD_comp, aes(x = x_data, y = y_data)) +
-geom_point(size = 1.25, colour = BD_comp$col) + 
-scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
-scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
-geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-annotate("text", x = -Inf, y = Inf, hjust = -0.225, vjust = 1.6, size=5.35, label = corr_label, parse = TRUE)
-p + ggtitle("BD") + theme_bw() + xlab("Pearson") + ylab("Spearman") + 
-  theme(text=element_text(size=16), 
-  	axis.ticks.length = unit(.3, "cm"),
-  	plot.margin = unit(c(5.5, 10.5, 42.5, 5.5), "points"),
-  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  	axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 9, r = 0, b = 18, l = 0), hjust = 0.5),
-  	legend.position = "bottom",
-  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
-dev.off()
+makeScrPlotRelOverlap(data=perc_overlap_ATH_all, rsqd=rsqd_ATH_all_perc, plot_title="ATH_all", rsgd_pos= -0.48)
+makeScrPlotRelOverlap(data=perc_overlap_ATH_comp, rsqd=rsqd_ATH_comp_perc, plot_title="ATH", rsgd_pos= -0.48)
+makeScrPlotRelOverlap(data=perc_overlap_AL, rsqd=rsqd_AL_perc, plot_title="AL", rsgd_pos= -0.48)
+makeScrPlotRelOverlap(data=perc_overlap_CR, rsqd=rsqd_CR_perc, plot_title="CR", rsgd_pos= -0.48)
+makeScrPlotRelOverlap(data=perc_overlap_ES, rsqd=rsqd_ES_perc, plot_title="ES", rsgd_pos= -0.48)
+makeScrPlotRelOverlap(data=perc_overlap_TH, rsqd=rsqd_TH_perc, plot_title="TH", rsgd_pos= -0.48)
+makeScrPlotRelOverlap(data=perc_overlap_MT, rsqd=rsqd_MT_perc, plot_title="MT", rsgd_pos= -0.48)
+makeScrPlotRelOverlap(data=perc_overlap_BD, rsqd=rsqd_BD_perc, plot_title="BD", rsgd_pos= -0.48)
 
 
 
 
+# Function to scatter plot absolute overlap (bp) versus pearson correlation
+
+makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
+	"ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD")) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+	
+	rsrt_label = paste("R ^ 2"," == ", rsqd)
+	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
+	geom_point(size = 1.25, colour = data$col) + 
+	scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+	scale_y_continuous(limits = c(0,4030), expand = c(0, 0)) + 
+	geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
+	annotate("text", x = -Inf, y = Inf, hjust = -0.335, vjust = 1.6, size=5.35, label = rsrt_label, parse = TRUE)
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (bp)") + 
+  		theme(text=element_text(size=16), 
+  		axis.ticks.length = unit(.3, "cm"),
+  		plot.margin = unit(c(3.0, 10.5, 42.5, 5.5), "points"),
+  		axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = 15.5, l = 0), hjust = 0.5),
+  		legend.position = "bottom",
+  		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+		scale = 1, width = 4.848485, height = 5.69697, units = c("in"), 
+		dpi = 825, limitsize = FALSE)
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+makeScrPlotAbsOverlap(data=abs_overlap_ATH_all, rsqd=rsqd_ATH_all_abs, plot_title="ATH_all")
+makeScrPlotAbsOverlap(data=abs_overlap_ATH_comp, rsqd=rsqd_ATH_comp_abs, plot_title="ATH")
+makeScrPlotAbsOverlap(data=abs_overlap_AL, rsqd=rsqd_AL_abs, plot_title="AL")
+makeScrPlotAbsOverlap(data=abs_overlap_CR, rsqd=rsqd_CR_abs, plot_title="CR")
+makeScrPlotAbsOverlap(data=abs_overlap_ES, rsqd=rsqd_ES_abs, plot_title="ES")
+makeScrPlotAbsOverlap(data=abs_overlap_TH, rsqd=rsqd_TH_abs, plot_title="TH")
+makeScrPlotAbsOverlap(data=abs_overlap_MT, rsqd=rsqd_MT_abs, plot_title="MT")
+makeScrPlotAbsOverlap(data=abs_overlap_BD, rsqd=rsqd_BD_abs, plot_title="BD")
 
 
 
