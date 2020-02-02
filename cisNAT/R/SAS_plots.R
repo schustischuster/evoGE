@@ -713,7 +713,7 @@ rsqd_BD_abs <- testRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_S
 # Function to scatter plot relative overlap (%) versus pearson correlation
 
 makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
-	"ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD"), rsgd_pos) {
+	"ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD"), rsgd_pos, vjust_1, vjust_2) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 	
@@ -723,8 +723,8 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 	scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
 	scale_y_continuous(limits = c(0,101), expand = c(0, 0)) + 
 	geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
-	annotate("text", x = -Inf, y = Inf, hjust = -0.38, vjust = 1.6, size=5.35, label = rsrt_label, parse = TRUE) + 
-	annotate("text", x = -Inf, y = Inf, hjust = rsgd_pos, vjust = 3.8, size=5.35, label = rsqd, parse = FALSE) 
+	annotate("text", x = -Inf, y = Inf, hjust = -0.38, vjust = vjust_1, size=5.35, label = rsrt_label, parse = TRUE) + 
+	annotate("text", x = -Inf, y = Inf, hjust = rsgd_pos, vjust = vjust_2, size=5.35, label = rsqd, parse = FALSE) 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (%)") + 
 		theme(text=element_text(size=16), 
 		axis.ticks.length = unit(.3, "cm"),
@@ -743,14 +743,14 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 }
 
 
-makeScrPlotRelOverlap(data=perc_overlap_ATH_all, rsqd=rsqd_ATH_all_perc, plot_title="ATH_all", rsgd_pos= -0.48)
-makeScrPlotRelOverlap(data=perc_overlap_ATH_comp, rsqd=rsqd_ATH_comp_perc, plot_title="ATH", rsgd_pos= -0.48)
-makeScrPlotRelOverlap(data=perc_overlap_AL, rsqd=rsqd_AL_perc, plot_title="AL", rsgd_pos= -0.48)
-makeScrPlotRelOverlap(data=perc_overlap_CR, rsqd=rsqd_CR_perc, plot_title="CR", rsgd_pos= -0.48)
-makeScrPlotRelOverlap(data=perc_overlap_ES, rsqd=rsqd_ES_perc, plot_title="ES", rsgd_pos= -0.48)
-makeScrPlotRelOverlap(data=perc_overlap_TH, rsqd=rsqd_TH_perc, plot_title="TH", rsgd_pos= -0.48)
-makeScrPlotRelOverlap(data=perc_overlap_MT, rsqd=rsqd_MT_perc, plot_title="MT", rsgd_pos= -0.48)
-makeScrPlotRelOverlap(data=perc_overlap_BD, rsqd=rsqd_BD_perc, plot_title="BD", rsgd_pos= -0.48)
+makeScrPlotRelOverlap(data=perc_overlap_ATH_all, rsqd=rsqd_ATH_all_perc, plot_title="ATH_all", rsgd_pos= -0.48, vjust_1=1.8, vjust_2=4)
+makeScrPlotRelOverlap(data=perc_overlap_ATH_comp, rsqd=rsqd_ATH_comp_perc, plot_title="ATH_comp", rsgd_pos= -0.48, vjust_1=11.5, vjust_2=17.55)
+makeScrPlotRelOverlap(data=perc_overlap_AL, rsqd=rsqd_AL_perc, plot_title="AL", rsgd_pos= -1.7, vjust_1=8.25, vjust_2=13)
+makeScrPlotRelOverlap(data=perc_overlap_CR, rsqd=rsqd_CR_perc, plot_title="CR", rsgd_pos= -0.48, vjust_1=3.68, vjust_2=6.65)
+makeScrPlotRelOverlap(data=perc_overlap_ES, rsqd=rsqd_ES_perc, plot_title="ES", rsgd_pos= -0.48, vjust_1=13.68, vjust_2=20.59)
+makeScrPlotRelOverlap(data=perc_overlap_TH, rsqd=rsqd_TH_perc, plot_title="TH", rsgd_pos= -0.48, vjust_1=7.6, vjust_2=12.1)
+makeScrPlotRelOverlap(data=perc_overlap_MT, rsqd=rsqd_MT_perc, plot_title="MT", rsgd_pos= -0.48, vjust_1=2, vjust_2=4.33)
+makeScrPlotRelOverlap(data=perc_overlap_BD, rsqd=rsqd_BD_perc, plot_title="BD", rsgd_pos= -0.48, vjust_1=1.8, vjust_2=4)
 
 
 
@@ -788,7 +788,7 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 
 
 makeScrPlotAbsOverlap(data=abs_overlap_ATH_all, rsqd=rsqd_ATH_all_abs, plot_title="ATH_all")
-makeScrPlotAbsOverlap(data=abs_overlap_ATH_comp, rsqd=rsqd_ATH_comp_abs, plot_title="ATH")
+makeScrPlotAbsOverlap(data=abs_overlap_ATH_comp, rsqd=rsqd_ATH_comp_abs, plot_title="ATH_comp")
 makeScrPlotAbsOverlap(data=abs_overlap_AL, rsqd=rsqd_AL_abs, plot_title="AL")
 makeScrPlotAbsOverlap(data=abs_overlap_CR, rsqd=rsqd_CR_abs, plot_title="CR")
 makeScrPlotAbsOverlap(data=abs_overlap_ES, rsqd=rsqd_ES_abs, plot_title="ES")
