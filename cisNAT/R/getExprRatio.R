@@ -1,5 +1,8 @@
-# This script loads and processes gene expression correlation table of sense-antisense (SAS) 
-# gene pairs for coding/cisNATs SAS of the ATGE data set
+# This script loads and processes gene expression correlation tables of sense-antisense (SAS) 
+# gene pairs for coding/cisNATs SAS of the DevSeq data set
+# It computes maximum expression level and average expression level for both coding and 
+# non-coding SAS, and calculates the ratio between coding and non-coding gene expression
+# Input expression values are in log2 TPM
 
 #------------------- Load packages, set directories and read sample tables ---------------------
 
