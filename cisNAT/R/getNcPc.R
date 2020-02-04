@@ -605,25 +605,25 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
-#----- Create ATH_all w/o pollen data tables containing expression values and write csv file ------
+#-- Create data tables containing expression values for all species w/o pollen and write csv file ---
 
 
 	# Create data table containing both strand plus and minus genes, their expression data and cor values
-	if ((is.element("ATH", species)) && (is.element("single-species", experiment))) {
+	if (threshold==0.5) {
 
 		strand_minus_overlap_genes_wo_pollen <- getCor(
 			strand_minus_overlap_genes_tpm_th_wo_pollen, strand_plus_overlap_genes_tpm_th_wo_pollen)
 
 		strand_plus_overlap_genes_descript_wo_pollen = strand_plus_overlap_genes_tpm_th_wo_pollen %>% select(
-		gene_id, id, gene_source, gene_biotype, seqnames, start, end, strand, width, width_overlap)
+			gene_id, id, gene_source, gene_biotype, seqnames, start, end, strand, width, width_overlap)
 		names(strand_plus_overlap_genes_descript_wo_pollen) <- c(
-		"id_plus_strand", "id_plus", "gene_source_query", "biotype_query", "seqnames", 
-		"start_plus", "end_plus", "strand_query", "width_query", "width_overlap_query")
+			"id_plus_strand", "id_plus", "gene_source_query", "biotype_query", "seqnames", 
+			"start_plus", "end_plus", "strand_query", "width_query", "width_overlap_query")
 		strand_minus_overlap_genes_wo_pollen <- dplyr::select(strand_minus_overlap_genes_wo_pollen, -c(seqnames))
 		names(strand_minus_overlap_genes_wo_pollen)[1:9] <- c("id_minus_strand", "id_minus", "gene_source_subject", 
-		"biotype_subject", "start_minus", "end_minus", "strand_subject", "width_subject", "width_overlap_subject")
+			"biotype_subject", "start_minus", "end_minus", "strand_subject", "width_subject", "width_overlap_subject")
 		overlap_cd_nc_genes_cor_wo_pollen_subject_expr <- cbind(strand_minus_overlap_genes_wo_pollen, 
-		strand_plus_overlap_genes_descript_wo_pollen)
+			strand_plus_overlap_genes_descript_wo_pollen)
 
 		overlap_cd_nc_genes_cor_wo_pollen_subject_expr$NAT_overlap_width <- 
 			overlap_cd_nc_genes_cor_wo_pollen_subject_expr$width_overlap_query + overlap_cd_nc_genes_cor_wo_pollen_subject_expr$width_overlap_subject
@@ -655,35 +655,35 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 			overlap_cd_nc_genes_cor_wo_pollen_subject_expr, -c(width_overlap_subject, width_overlap_query))
 
 		overlap_cd_nc_genes_cor_wo_pollen_query_expr <- cbind(strand_plus_overlap_genes_wo_pollen, 
-		strand_minus_overlap_genes_descript_wo_pollen)
+			strand_minus_overlap_genes_descript_wo_pollen)
 
 		overlap_cd_nc_genes_cor_wo_pollen_query_expr$NAT_overlap_width <- 
-		overlap_cd_nc_genes_cor_wo_pollen_query_expr$width_overlap_query + overlap_cd_nc_genes_cor_wo_pollen_query_expr$width_overlap_subject
+			overlap_cd_nc_genes_cor_wo_pollen_query_expr$width_overlap_query + overlap_cd_nc_genes_cor_wo_pollen_query_expr$width_overlap_subject
 
 		overlap_cd_nc_genes_cor_wo_pollen_query_expr = overlap_cd_nc_genes_cor_wo_pollen_query_expr %>% select(
-		id_plus_strand, 
-		id_plus, 
-		seqnames, 
-		start_plus, 
-		end_plus, 
-		width_query, 
-		strand_query, 
-		biotype_query, 
-		gene_source_query,
-		id_minus_strand, 
-		id_minus, 
-		start_minus, 
-		end_minus, 
-		width_subject, 
-		strand_subject, 
-		biotype_subject, 
-		gene_source_subject, 
-		NAT_overlap_width, 
-		Spearman, 
-		Pearson,
-		everything())
+			id_plus_strand, 
+			id_plus, 
+			seqnames, 
+			start_plus, 
+			end_plus, 
+			width_query, 
+			strand_query, 
+			biotype_query, 
+			gene_source_query,
+			id_minus_strand, 
+			id_minus, 
+			start_minus, 
+			end_minus, 
+			width_subject, 
+			strand_subject, 
+			biotype_subject, 
+			gene_source_subject, 
+			NAT_overlap_width, 
+			Spearman, 
+			Pearson,
+			everything())
 
-		overlap_cd_nc_genes_cor_wo_pollen_query_expr	<- dplyr::select(
+		overlap_cd_nc_genes_cor_wo_pollen_query_expr <- dplyr::select(
 			overlap_cd_nc_genes_cor_wo_pollen_query_expr, -c(width_overlap_subject, width_overlap_query))
 
 		# Remove coding-coding SAS pairs from data
@@ -696,9 +696,9 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 		# Write data tables to csv files and store them in /out_dir/output/data_tables
 		write.table(overlap_cd_nc_genes_cor_wo_pollen_query_expr, file=file.path(out_dir, "output", "overlap_nc_genes", fname_wo_pollen_query), 
-		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+			sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 		write.table(overlap_cd_nc_genes_cor_wo_pollen_subject_expr, file=file.path(out_dir, "output", "overlap_nc_genes", fname_wo_pollen_subject), 
-		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+			sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 	}
 
 }
