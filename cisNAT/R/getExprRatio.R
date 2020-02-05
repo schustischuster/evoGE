@@ -150,43 +150,6 @@ getExprRatio <- function() {
 		TH_cd_nc_SAS_cor_wo_pollen_subject_expr_0.5_cd)
 
 
-	# Make sure there are only matching id's in NAT and coding tables
-	AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT <- AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT[(
-		AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id %in% AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id),]
-	ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT <- ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT[(
-		ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id %in% ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id),]
-	ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT <- ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT[(
-		ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id %in% ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id),]
-	BD_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT <- BD_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT[(
-		BD_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id %in% BD_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id),]
-	CR_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT <- CR_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT[(
-		CR_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id %in% CR_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id),]
-	ES_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT <- ES_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT[(
-		ES_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id %in% ES_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id),]
-	MT_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT <- MT_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT[(
-		MT_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id %in% MT_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id),]
-	TH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT <- TH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT[(
-		TH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id %in% TH_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id),]
-
-
-	AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd <- AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd[(
-		AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id %in% AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id),]
-	ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd <- ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd[(
-		ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id %in% ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id),]
-	ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd <- ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd[(
-		ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id %in% ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id),]
-	BD_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd <- BD_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd[(
-		BD_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id %in% BD_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id),]
-	CR_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd <- CR_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd[(
-		CR_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id %in% CR_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id),]
-	ES_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd <- ES_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd[(
-		ES_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id %in% ES_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id),]
-	MT_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd <- MT_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd[(
-		MT_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id %in% MT_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id),]
-	TH_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd <- TH_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd[(
-		TH_cd_nc_SAS_cor_wo_pollen_expr_0.5_cd$id %in% TH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT$id),]
-
-
 	# Create NAT and coding lists
 	NAT_list_all_spec <- list("AL_NAT"=AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT,
 		"ATH_all_NAT"=ATH_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT, "ATH_comp_NAT"=ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_expr_0.5_NAT,
@@ -255,13 +218,32 @@ getExprRatio <- function() {
 	cd_list_all_spec_avg_max_avg <- lapply(cd_list_all_spec_avg_max, getMean)
 
 
-	list2env(NAT_list_all_spec_avg_max_avg, envir = .GlobalEnv)
-	list2env(cd_list_all_spec_avg_max_avg, envir = .GlobalEnv)
+	# Rename columns and add "NAT" and "cd" tags to sample names
+	renameNATList <- function(x) {
+		colnames(x) <- paste0(colnames(x), "_NAT")
+		x <- dplyr::rename(x, id=id_NAT, seqnames=seqnames_NAT, biotype_nc=biotype_NAT, 
+			Spearman=Spearman_NAT, Pearson=Pearson_NAT)
+		x <- dplyr::select(x, -c(width_NAT, NAT_overlap_width_NAT))
+	}
+
+	renameCdList <- function(x) {
+		colnames(x) <- paste0(colnames(x), "_coding")
+		x <- dplyr::rename(x, id=id_coding, biotype_cd=biotype_coding)
+		x <- dplyr::select(x, -c(seqnames_coding, width_coding, NAT_overlap_width_coding, 
+			Spearman_coding, Pearson_coding))
+	}
+
+	NAT_list_all_spec_avg_max_avg_rn <- lapply(NAT_list_all_spec_avg_max_avg, renameNATList)
+	cd_list_all_spec_avg_max_avg_rn <- lapply(cd_list_all_spec_avg_max_avg, renameCdList)
+
+
+	list2env(NAT_list_all_spec_avg_max_avg_rn, envir = .GlobalEnv)
+	list2env(cd_list_all_spec_avg_max_avg_rn, envir = .GlobalEnv)
 
 
 
 
-	#------- Generate NAT tables containing relative (max)NAT-coding gene expression levels --------
+	#----- Merge coding and non-coding data by gene id and compute NAT-coding expression ratio -----
 
 
 
