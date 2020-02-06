@@ -21,6 +21,9 @@ out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Anal
 
 getExprRatio <- function() {
 
+	# Startup message
+	message("Computing expression max/avg/ratio...")
+
 	# Read all csv files in input file path
 	readTableQuery <- function(path, pattern = "*query_expr_0.5.csv") {
 		files = list.files(path, pattern, full.names = TRUE)
@@ -46,15 +49,13 @@ getExprRatio <- function() {
 	names(query_gene_tables) <- query_gene_tables_names
 	names(subject_gene_tables) <- subject_gene_tables_names
 
-	# list2env(query_gene_tables, envir = .GlobalEnv)
-	# list2env(subject_gene_tables, envir = .GlobalEnv)
 
 	# Stop function here to allow specific analysis of a single species
-    return_list <- list("query_gene_tables" = query_gene_tables, "subject_gene_tables" = subject_gene_tables)
-    return(return_list)
-	}
-	genes_tables <- getExprRatio()
-	list2env(genes_tables, envir = .GlobalEnv)
+    # return_list <- list("query_gene_tables" = query_gene_tables, "subject_gene_tables" = subject_gene_tables)
+    # return(return_list)
+	# }
+	# genes_tables <- getExprRatio()
+	# list2env(genes_tables, envir = .GlobalEnv)
 
 
 
@@ -246,20 +247,35 @@ getExprRatio <- function() {
 	#----- Merge coding and non-coding data by gene id and compute NAT-coding expression ratio -----
 
 
+	AL_cd_nc_expr <- merge(AL_NAT, AL_cd, by="id")
+	ATH_all_cd_nc_expr <- merge(ATH_all_NAT, ATH_all_cd, by="id")
+	ATH_comp_cd_nc_expr <- merge(ATH_comp_NAT, ATH_comp_cd, by="id")
+	BD_cd_nc_expr <- merge(BD_NAT, BD_cd, by="id")
+	CR_cd_nc_expr <- merge(CR_NAT, CR_cd, by="id")
+	ES_cd_nc_expr <- merge(ES_NAT, ES_cd, by="id")
+	MT_cd_nc_expr <- merge(MT_NAT, MT_cd, by="id")
+	TH_cd_nc_expr <- merge(TH_NAT, TH_cd, by="id")
 
 
+	cd_nc_expr_list <- list(AL_cd_nc_expr=AL_cd_nc_expr, ATH_all_cd_nc_expr=ATH_all_cd_nc_expr, 
+		ATH_comp_cd_nc_expr=ATH_comp_cd_nc_expr, BD_cd_nc_expr=BD_cd_nc_expr, 
+		CR_cd_nc_expr=CR_cd_nc_expr, ES_cd_nc_expr=ES_cd_nc_expr, MT_cd_nc_expr=MT_cd_nc_expr, 
+		TH_cd_nc_expr=TH_cd_nc_expr)
 
 
+	getExpressRatio <- function(x) {
+		x$max_ratio_nc_cd <- x$max_NAT/x$max_coding
+		x$max_ratio_nc_cd_log10 <- log10(x$max_ratio_nc_cd + 0.0001)
+		x$means_ratio_nc_cd <- x$means_NAT/x$means_coding
+		x$means_ratio_nc_cd_log10 <- log10(x$means_ratio_nc_cd + 0.0001)
+		x <- dplyr::select(x, c(id, gene_id_NAT, gene_id_coding, strand_NAT, strand_coding, 
+			start_NAT, end_NAT, start_coding, end_coding, seqnames, biotype_nc, biotype_cd, 
+			gene_source_NAT, gene_source_coding, Spearman, Pearson, max_NAT, max_coding, 
+			means_NAT, means_coding, max_ratio_nc_cd, means_ratio_nc_cd, max_ratio_nc_cd_log10, 
+			means_ratio_nc_cd_log10))
+	}
 
-
-
-
-
-
-
-
-
-
+	cd_nc_expr_list_ratio <- lapply(cd_nc_expr_list, getExpressRatio)
 
 
 
@@ -268,11 +284,14 @@ getExprRatio <- function() {
 
 
 	# Write final data tables to csv files and store them in /out_dir/output/data_tables
-	if (!dir.exists(file.path(out_dir, "output", "SAS_DevSeq_ATGE"))) 
-		dir.create(file.path(out_dir, "output", "SAS_DevSeq_ATGE"), recursive = TRUE)
+	if (!dir.exists(file.path(out_dir, "output", "NAT_expr_cor"))) 
+		dir.create(file.path(out_dir, "output", "NAT_expr_cor"), recursive = TRUE)
+	message("Storing results in: ", file.path("output", "NAT_expr_cor"))
 
-	write.table(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE, 
-		file=file.path(out_dir, "output", "SAS_DevSeq_ATGE", "ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE.csv"), 
+
+	for (x in names(cd_nc_expr_list_ratio))
+		write.table(cd_nc_expr_list_ratio[[x]], 
+			file=file.path(out_dir, "output", "NAT_expr_cor", paste(x,".csv", sep='')), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 
 }
