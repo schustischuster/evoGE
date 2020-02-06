@@ -21,6 +21,7 @@ library(ggplot2)
 in_dir_cd <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/overlap_cd_genes"
 in_dir_nc <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/overlap_nc_genes"
 in_dir_ATGE <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/SAS_DevSeq_ATGE"
+in_dir_expr <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/NAT_expr_cor"
 out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
 
 
@@ -32,6 +33,7 @@ readTable <- function(path, pattern = "*.csv") {
 
 coding_genes_tables <- readTable(in_dir_cd)
 NAT_genes_tables <- readTable(in_dir_nc)
+NAT_expr_cor <- readTable(in_dir_expr)
 
 
 # Get file names and save them in character vector
@@ -41,6 +43,9 @@ coding_genes_table_names <- gsub('\\.csv$', '', coding_genes_table_list)
 NAT_genes_table_list <- as.character(list.files(in_dir_nc, pattern = "*.csv"))
 NAT_genes_table_names <- gsub('\\.csv$', '', NAT_genes_table_list)
 
+NAT_expr_cor_list <- as.character(list.files(in_dir_expr, pattern = "*.csv"))
+NAT_expr_cor_names <- gsub('\\.csv$', '', NAT_expr_cor_list)
+
 
 # Change data frame names in list
 names(coding_genes_tables) <- coding_genes_table_names
@@ -48,6 +53,9 @@ list2env(coding_genes_tables, envir = .GlobalEnv)
 
 names(NAT_genes_tables) <- NAT_genes_table_names
 list2env(NAT_genes_tables, envir = .GlobalEnv)
+
+names(NAT_expr_cor) <- NAT_expr_cor_names
+list2env(NAT_expr_cor, envir = .GlobalEnv)
 
 
 # Read ATGE_NAT ID table
@@ -234,9 +242,111 @@ ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson <- as.numeric(unlist(
 	ATGE_NAT_ID[, 20]))
 
 
-# Write final data tables to csv files and store them in /out_dir/output/data_tables
+# Create "plots" folder in /out_dir/output/plots
 if (!dir.exists(file.path(out_dir, "output", "plots"))) 
 	dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
+
+
+
+
+#--------------- Prepare data for plotting NAT expression intensities and ratios ---------------
+
+
+# Generate data tables that are classified by cisNAT-coding gene correlation ranges
+cd_nc_expr_below_min03_list <- lapply(NAT_expr_cor, function(x) {
+	dplyr::filter(x, x$Pearson < -0.3)})
+cd_nc_expr_betw_min02_02_list <- lapply(NAT_expr_cor, function(x) {
+	dplyr::filter(x, ((x$Pearson > -0.2) & (x$Pearson < 0.2)))})
+cd_nc_expr_above_05_list <- lapply(NAT_expr_cor, function(x) {
+	dplyr::filter(x, x$Pearson > 0.5)})
+
+
+# Set names in NAT expression lists
+element_names <- names(NAT_expr_cor)
+cd_nc_expr_below_min03_list_names <- paste(element_names,"below_min03", sep='_')
+cd_nc_expr_betw_min02_02_list_names <- paste(element_names,"betw_min02_02", sep='_')
+cd_nc_expr_above_05_list_names <- paste(element_names,"above_05", sep='_')
+
+names(cd_nc_expr_below_min03_list) <- cd_nc_expr_below_min03_list_names
+names(cd_nc_expr_betw_min02_02_list) <- cd_nc_expr_betw_min02_02_list_names
+names(cd_nc_expr_above_05_list) <- cd_nc_expr_above_05_list_names
+
+list2env(cd_nc_expr_below_min03_list, envir = .GlobalEnv)
+list2env(cd_nc_expr_betw_min02_02_list, envir = .GlobalEnv)
+list2env(cd_nc_expr_above_05_list, envir = .GlobalEnv)
+
+
+
+# Prepare data for ggplot2 ATH density plot below_min03, between_min02_02, above_05
+combine_Expr_Data <- function(below_min03, between_min02_02, above_05) {
+
+	number_values <- nrow(below_min03)+nrow(between_min02_02)+nrow(above_05)
+	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(below_min03)))),each=number_values))
+	names(species_name) <- "species"
+
+	class_0 = as.data.frame(rep(c("<-0.3"),each=nrow(below_min03)))
+	names(class_0) <- "class"
+	class_1 = as.data.frame(rep(c(">-02 <02"),each=nrow(between_min02_02)))
+	names(class_1) <- "class"
+	class_2 = as.data.frame(rep(c(">0.5"),each=nrow(above_05)))
+	names(class_2) <- "class"
+
+	expr_values_0 = as.data.frame(below_min03$max_NAT)
+	names(expr_values_0) <- "max_NAT_expression"
+	expr_values_1 = as.data.frame(between_min02_02$max_NAT)
+	names(expr_values_1) <- "max_NAT_expression"
+	expr_values_2 = as.data.frame(above_05$max_NAT)
+	names(expr_values_2) <- "max_NAT_expression"
+
+	expression_df = data.frame(species_name, rbind(class_0, class_1, class_2) , 
+		rbind(expr_values_0, expr_values_1, expr_values_2))
+	expression_df <- na.omit(expression_df)
+
+	return(expression_df)
+}
+
+
+ATH_all_cd_nc_expr_ranges <- combine_Expr_Data(ATH_all_cd_nc_expr_below_min03, 
+	ATH_all_cd_nc_expr_betw_min02_02, ATH_all_cd_nc_expr_above_05)
+ATH_comp_cd_nc_expr_ranges <- combine_Expr_Data(ATH_comp_cd_nc_expr_below_min03, 
+	ATH_comp_cd_nc_expr_betw_min02_02, ATH_comp_cd_nc_expr_above_05)
+AL_cd_nc_expr_ranges <- combine_Expr_Data(AL_cd_nc_expr_below_min03, 
+	AL_cd_nc_expr_betw_min02_02, AL_cd_nc_expr_above_05)
+CR_cd_nc_expr_ranges <- combine_Expr_Data(CR_cd_nc_expr_below_min03, 
+	CR_cd_nc_expr_betw_min02_02, CR_cd_nc_expr_above_05)
+ES_cd_nc_expr_ranges <- combine_Expr_Data(ES_cd_nc_expr_below_min03, 
+	ES_cd_nc_expr_betw_min02_02, ES_cd_nc_expr_above_05)
+TH_cd_nc_expr_ranges <- combine_Expr_Data(TH_cd_nc_expr_below_min03, 
+	TH_cd_nc_expr_betw_min02_02, TH_cd_nc_expr_above_05)
+MT_cd_nc_expr_ranges <- combine_Expr_Data(MT_cd_nc_expr_below_min03, 
+	MT_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
+BD_cd_nc_expr_ranges <- combine_Expr_Data(BD_cd_nc_expr_below_min03, 
+	BD_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
+
+
+# Make cd-cd, nc-cd_spearman, nc-cd_pearson density plot
+jpeg(file = file.path(out_dir, "output", "plots", "AL_expr_test.jpg"), 
+	width = 4000, height = 4700, res = 825)
+p <- ggplot(AL_cd_nc_expr_ranges, aes(x=max_NAT_expression, group=class, fill=class, colour=class, linetype=class)) +
+geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+scale_x_continuous(limits = c(0,10), expand = c(0, 0)) +
+scale_y_continuous(limits = c(0,0.6), expand = c(0, 0))
+p + ggtitle("AL") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
+  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+  scale_linetype_manual(values = c("dotted","solid","solid")) + 
+  theme(text=element_text(size=16), 
+  	axis.ticks.length = unit(.3, "cm"),
+  	plot.margin = unit(c(5.5, 10.5, 3.0, 3.5), "points"),
+  	axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  	axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  	axis.title.x = element_text(colour = "black", margin = margin(t = 15.75, r = 0, b = 0, l = 0)),
+  	axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 15.25, b = 0, l = 0)),
+  	plot.title = element_text(colour = "black", size=17, margin = margin(t = 10.25, r = 0, b = 16.75, l = 0), hjust = 0.5),
+  	legend.position = "bottom",
+  	panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+dev.off()
+
+
 
 
 
