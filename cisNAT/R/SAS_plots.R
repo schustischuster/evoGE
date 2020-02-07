@@ -276,9 +276,37 @@ list2env(cd_nc_expr_betw_min02_02_list, envir = .GlobalEnv)
 list2env(cd_nc_expr_above_05_list, envir = .GlobalEnv)
 
 
+# Prepare data for ggplot2 density plot w/ expression data below_min03, between_min02_02, above_05
+# Max coding gene expression
+combineExprDataCd <- function(below_min03, between_min02_02, above_05) {
 
-# Prepare data for ggplot2 ATH density plot below_min03, between_min02_02, above_05
-combine_Expr_Data <- function(below_min03, between_min02_02, above_05) {
+	number_values <- nrow(below_min03)+nrow(between_min02_02)+nrow(above_05)
+	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(below_min03)))),each=number_values))
+	names(species_name) <- "species"
+
+	class_0 = as.data.frame(rep(c("<-0.3"),each=nrow(below_min03)))
+	names(class_0) <- "class"
+	class_1 = as.data.frame(rep(c(">-02 <02"),each=nrow(between_min02_02)))
+	names(class_1) <- "class"
+	class_2 = as.data.frame(rep(c(">0.5"),each=nrow(above_05)))
+	names(class_2) <- "class"
+
+	expr_values_0 = as.data.frame(below_min03$max_coding)
+	names(expr_values_0) <- "max_coding_expression"
+	expr_values_1 = as.data.frame(between_min02_02$max_coding)
+	names(expr_values_1) <- "max_coding_expression"
+	expr_values_2 = as.data.frame(above_05$max_coding)
+	names(expr_values_2) <- "max_coding_expression"
+
+	expression_df = data.frame(species_name, rbind(class_0, class_1, class_2) , 
+		rbind(expr_values_0, expr_values_1, expr_values_2))
+	expression_df <- na.omit(expression_df)
+
+	return(expression_df)
+}
+
+# Prepare data for NAT max expression
+combineExprDataNc <- function(below_min03, between_min02_02, above_05) {
 
 	number_values <- nrow(below_min03)+nrow(between_min02_02)+nrow(above_05)
 	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(below_min03)))),each=number_values))
@@ -305,34 +333,50 @@ combine_Expr_Data <- function(below_min03, between_min02_02, above_05) {
 	return(expression_df)
 }
 
-
-ATH_all_cd_nc_expr_ranges <- combine_Expr_Data(ATH_all_cd_nc_expr_below_min03, 
+ATH_all_cd_nc_expr_ranges_cd <- combineExprDataCd(ATH_all_cd_nc_expr_below_min03, 
 	ATH_all_cd_nc_expr_betw_min02_02, ATH_all_cd_nc_expr_above_05)
-ATH_comp_cd_nc_expr_ranges <- combine_Expr_Data(ATH_comp_cd_nc_expr_below_min03, 
+ATH_comp_cd_nc_expr_ranges_cd <- combineExprDataCd(ATH_comp_cd_nc_expr_below_min03, 
 	ATH_comp_cd_nc_expr_betw_min02_02, ATH_comp_cd_nc_expr_above_05)
-AL_cd_nc_expr_ranges <- combine_Expr_Data(AL_cd_nc_expr_below_min03, 
+AL_cd_nc_expr_ranges_cd <- combineExprDataCd(AL_cd_nc_expr_below_min03, 
 	AL_cd_nc_expr_betw_min02_02, AL_cd_nc_expr_above_05)
-CR_cd_nc_expr_ranges <- combine_Expr_Data(CR_cd_nc_expr_below_min03, 
+CR_cd_nc_expr_ranges_cd <- combineExprDataCd(CR_cd_nc_expr_below_min03, 
 	CR_cd_nc_expr_betw_min02_02, CR_cd_nc_expr_above_05)
-ES_cd_nc_expr_ranges <- combine_Expr_Data(ES_cd_nc_expr_below_min03, 
+ES_cd_nc_expr_ranges_cd <- combineExprDataCd(ES_cd_nc_expr_below_min03, 
 	ES_cd_nc_expr_betw_min02_02, ES_cd_nc_expr_above_05)
-TH_cd_nc_expr_ranges <- combine_Expr_Data(TH_cd_nc_expr_below_min03, 
+TH_cd_nc_expr_ranges_cd <- combineExprDataCd(TH_cd_nc_expr_below_min03, 
 	TH_cd_nc_expr_betw_min02_02, TH_cd_nc_expr_above_05)
-MT_cd_nc_expr_ranges <- combine_Expr_Data(MT_cd_nc_expr_below_min03, 
+MT_cd_nc_expr_ranges_cd <- combineExprDataCd(MT_cd_nc_expr_below_min03, 
 	MT_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
-BD_cd_nc_expr_ranges <- combine_Expr_Data(BD_cd_nc_expr_below_min03, 
+BD_cd_nc_expr_ranges_cd <- combineExprDataCd(BD_cd_nc_expr_below_min03, 
+	BD_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
+
+ATH_all_cd_nc_expr_ranges_nc <- combineExprDataNc(ATH_all_cd_nc_expr_below_min03, 
+	ATH_all_cd_nc_expr_betw_min02_02, ATH_all_cd_nc_expr_above_05)
+ATH_comp_cd_nc_expr_ranges_nc <- combineExprDataNc(ATH_comp_cd_nc_expr_below_min03, 
+	ATH_comp_cd_nc_expr_betw_min02_02, ATH_comp_cd_nc_expr_above_05)
+AL_cd_nc_expr_ranges_nc <- combineExprDataNc(AL_cd_nc_expr_below_min03, 
+	AL_cd_nc_expr_betw_min02_02, AL_cd_nc_expr_above_05)
+CR_cd_nc_expr_ranges_nc <- combineExprDataNc(CR_cd_nc_expr_below_min03, 
+	CR_cd_nc_expr_betw_min02_02, CR_cd_nc_expr_above_05)
+ES_cd_nc_expr_ranges_nc <- combineExprDataNc(ES_cd_nc_expr_below_min03, 
+	ES_cd_nc_expr_betw_min02_02, ES_cd_nc_expr_above_05)
+TH_cd_nc_expr_ranges_nc <- combineExprDataNc(TH_cd_nc_expr_below_min03, 
+	TH_cd_nc_expr_betw_min02_02, TH_cd_nc_expr_above_05)
+MT_cd_nc_expr_ranges_nc <- combineExprDataNc(MT_cd_nc_expr_below_min03, 
+	MT_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
+BD_cd_nc_expr_ranges_nc <- combineExprDataNc(BD_cd_nc_expr_below_min03, 
 	BD_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
 
 
 # Make cd-cd, nc-cd_spearman, nc-cd_pearson density plot
-jpeg(file = file.path(out_dir, "output", "plots", "AL_expr_test.jpg"), 
+jpeg(file = file.path(out_dir, "output", "plots", "BD_coding_expr_ranges.jpg"), 
 	width = 4000, height = 4700, res = 825)
-p <- ggplot(AL_cd_nc_expr_ranges, aes(x=max_NAT_expression, group=class, fill=class, colour=class, linetype=class)) +
+p <- ggplot(BD_cd_nc_expr_ranges, aes(x=max_NAT_expression, group=class, fill=class, colour=class, linetype=class)) +
 geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
-scale_x_continuous(limits = c(0,10), expand = c(0, 0)) +
+scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 scale_y_continuous(limits = c(0,0.6), expand = c(0, 0))
-p + ggtitle("AL") + theme_bw() + scale_fill_manual(values = c("white", "#52b540", "#00468b")) +
-  scale_color_manual(values = c("gray65", "#52b540", "#00468b")) + 
+p + ggtitle("BD") + theme_bw() + scale_fill_manual(values = c("white", "#00468b", "#52b540")) +
+  scale_color_manual(values = c("gray65", "#00468b", "#52b540")) + 
   scale_linetype_manual(values = c("dotted","solid","solid")) + 
   theme(text=element_text(size=16), 
   	axis.ticks.length = unit(.3, "cm"),
