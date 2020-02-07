@@ -833,14 +833,14 @@ abs_overlap_MT <- scatterDensity(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, 
 abs_overlap_BD <- scatterDensity(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
 
 # for pearson vs spearman plots
-ATH_all <- scatterDensity(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-ATH_comp <- scatterDensity(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-AL_comp <- scatterDensity(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
-CR_comp <- scatterDensity(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-ES_comp <- scatterDensity(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-TH_comp <- scatterDensity(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-MT_comp <- scatterDensity(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-BD_comp <- scatterDensity(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ATH_all_PS <- scatterDensity(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ATH_comp_PS <- scatterDensity(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+AL_comp_PS <- scatterDensity(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+CR_comp_PS <- scatterDensity(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+ES_comp_PS <- scatterDensity(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+TH_comp_PS <- scatterDensity(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+MT_comp_PS <- scatterDensity(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+BD_comp_PS <- scatterDensity(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 
 # Calculate R squared value for relative overlap vs pearson data
 rsqd_ATH_all_perc <- testRsq(ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
@@ -861,6 +861,16 @@ rsqd_ES_abs <- testRsq(ES_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ES_cd_nc_S
 rsqd_TH_abs <- testRsq(TH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, TH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
 rsqd_MT_abs <- testRsq(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
 rsqd_BD_abs <- testRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+
+# Calculate R squared value for pearson vs spearman data
+rsqd_ATH_all_PS <- testRsq(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_ATH_comp_PS <- testRsq(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_AL_PS <- testRsq(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+rsqd_CR_PS <- testRsq(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_ES_PS <- testRsq(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_TH_PS <- testRsq(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_MT_PS <- testRsq(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_BD_PS <- testRsq(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 
 
 
@@ -949,6 +959,49 @@ makeScrPlotAbsOverlap(data=abs_overlap_ES, rsqd=rsqd_ES_abs, plot_title="ES")
 makeScrPlotAbsOverlap(data=abs_overlap_TH, rsqd=rsqd_TH_abs, plot_title="TH")
 makeScrPlotAbsOverlap(data=abs_overlap_MT, rsqd=rsqd_MT_abs, plot_title="MT")
 makeScrPlotAbsOverlap(data=abs_overlap_BD, rsqd=rsqd_BD_abs, plot_title="BD")
+
+
+
+# Function to scatter plot pearson versus spearman correlation
+
+makeScrPlotPSCor <- function(data, rsqd, plot_title = c(
+	"ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD")) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+	
+	rsrt_label = paste("R ^ 2"," == ", rsqd)
+	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
+	geom_point(size = 1.25, colour = data$col) + 
+	scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+	scale_y_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) + 
+	geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
+	annotate("text", x = -Inf, y = Inf, hjust = -0.335, vjust = 1.6, size=5.35, label = rsrt_label, parse = TRUE)
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("Spearman") + 
+  		theme(text=element_text(size=16), 
+  		axis.ticks.length = unit(.3, "cm"),
+  		plot.margin = unit(c(3.0, 10.5, 42.5, 5.5), "points"),
+  		axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
+  		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
+  		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
+  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = 15.5, l = 0), hjust = 0.5),
+  		legend.position = "bottom",
+  		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+		scale = 1, width = 4.848485, height = 5.69697, units = c("in"), 
+		dpi = 825, limitsize = FALSE)
+}
+
+
+makeScrPlotPSCor(data=ATH_all_PS, rsqd=rsqd_ATH_all_PS, plot_title="ATH_all")
+makeScrPlotPSCor(data=ATH_comp_PS, rsqd=rsqd_ATH_comp_PS, plot_title="ATH_comp")
+makeScrPlotPSCor(data=AL_comp_PS, rsqd=rsqd_AL_PS, plot_title="AL")
+makeScrPlotPSCor(data=CR_comp_PS, rsqd=rsqd_CR_PS, plot_title="CR")
+makeScrPlotPSCor(data=ES_comp_PS, rsqd=rsqd_ES_PS, plot_title="ES")
+makeScrPlotPSCor(data=TH_comp_PS, rsqd=rsqd_TH_PS, plot_title="TH")
+makeScrPlotPSCor(data=MT_comp_PS, rsqd=rsqd_MT_PS, plot_title="MT")
+makeScrPlotPSCor(data=BD_comp_PS, rsqd=rsqd_BD_PS, plot_title="BD")
 
 
 
