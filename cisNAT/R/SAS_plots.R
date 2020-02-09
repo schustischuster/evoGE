@@ -345,18 +345,18 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, plot_title = c(
 	rsrt_label = paste("R ^ 2", "==", ".")
 
 	blu = rgb(0, 70, 139, max = 255, alpha = 70)
-	grn = rgb(131, 145, 145, max = 255, alpha = 80)
-	rd = rgb(82, 181, 64, max = 255, alpha = 95)
+	gray = rgb(131, 145, 145, max = 255, alpha = 80)
+	grn = rgb(82, 181, 64, max = 255, alpha = 95)
 	blu_ln = rgb(0, 70, 139, max = 255, alpha = 0)
-	grn_ln = rgb(131, 145, 145, max = 255, alpha = 0)
-	rd_ln = rgb(82, 181, 64, max = 255, alpha = 0)
+	gray_ln = rgb(131, 145, 145, max = 255, alpha = 0)
+	grn_ln = rgb(82, 181, 64, max = 255, alpha = 0)
 
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
 	geom_density(adjust=1.5, size=1.5) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0))
-	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(grn_ln, blu_ln, rd_ln, grn, blu, rd)) +
+	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray_ln, blu_ln, grn_ln, gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540", "#839191", "#00468b", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
 		scale_linetype_manual(values = c("dotted","dotted","dotted", "solid","solid","solid")) + 
 		theme(text=element_text(size=16), 
