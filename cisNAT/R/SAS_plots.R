@@ -284,30 +284,30 @@ combineExprDataCdNc <- function(below_min03, between_min02_02, above_05) {
 	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(below_min03)))),each=number_values))
 	names(species_name) <- "species"
 
-	class_0 = as.data.frame(rep(c("<-0.3_cd"),each=nrow(below_min03)))
+	class_0 = as.data.frame(rep(c(">05_cd"),each=nrow(above_05)))
 	names(class_0) <- "class"
 	class_1 = as.data.frame(rep(c(">-02 <02_cd"),each=nrow(between_min02_02)))
 	names(class_1) <- "class"
-	class_2 = as.data.frame(rep(c(">0.5_cd"),each=nrow(above_05)))
+	class_2 = as.data.frame(rep(c("-0.3_cd"),each=nrow(below_min03)))
 	names(class_2) <- "class"
-	class_3 = as.data.frame(rep(c("<-0.3_nc"),each=nrow(below_min03)))
+	class_3 = as.data.frame(rep(c(">05_nc"),each=nrow(above_05)))
 	names(class_3) <- "class"
 	class_4 = as.data.frame(rep(c(">-02 <02_nc"),each=nrow(between_min02_02)))
 	names(class_4) <- "class"
-	class_5 = as.data.frame(rep(c(">0.5_nc"),each=nrow(above_05)))
+	class_5 = as.data.frame(rep(c("-0.3_nc"),each=nrow(below_min03)))
 	names(class_5) <- "class"
 
-	expr_values_0 = as.data.frame(below_min03$max_coding)
+	expr_values_0 = as.data.frame(above_05$max_coding)
 	names(expr_values_0) <- "max_expression"
 	expr_values_1 = as.data.frame(between_min02_02$max_coding)
 	names(expr_values_1) <- "max_expression"
-	expr_values_2 = as.data.frame(above_05$max_coding)
+	expr_values_2 = as.data.frame(below_min03$max_coding)
 	names(expr_values_2) <- "max_expression"
-	expr_values_3 = as.data.frame(below_min03$max_NAT)
+	expr_values_3 = as.data.frame(above_05$max_NAT)
 	names(expr_values_3) <- "max_expression"
 	expr_values_4 = as.data.frame(between_min02_02$max_NAT)
 	names(expr_values_4) <- "max_expression"
-	expr_values_5 = as.data.frame(above_05$max_NAT)
+	expr_values_5 = as.data.frame(below_min03$max_NAT)
 	names(expr_values_5) <- "max_expression"
 
 	expression_df = data.frame(species_name, rbind(class_0, class_1, class_2, class_3, class_4, class_5), 
@@ -344,12 +344,20 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, plot_title = c(
 
 	rsrt_label = paste("R ^ 2", "==", ".")
 
+	blu = rgb(0, 70, 139, max = 255, alpha = 70)
+	grn = rgb(131, 145, 145, max = 255, alpha = 80)
+	rd = rgb(82, 181, 64, max = 255, alpha = 95)
+	blu_ln = rgb(0, 70, 139, max = 255, alpha = 0)
+	grn_ln = rgb(131, 145, 145, max = 255, alpha = 0)
+	rd_ln = rgb(82, 181, 64, max = 255, alpha = 0)
+
+
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.5, alpha=0.35, size=1.5) + 
+	geom_density(adjust=1.5, size=1.5) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0))
-	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c("white", "white", "white", "red", "#00468b", "#52b540")) +
-		scale_color_manual(values = c("red", "#00468b", "#52b540", "red", "#00468b", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
+	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(grn_ln, blu_ln, rd_ln, grn, blu, rd)) +
+		scale_color_manual(values = c("#839191", "#00468b", "#52b540", "#839191", "#00468b", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
 		scale_linetype_manual(values = c("dotted","dotted","dotted", "solid","solid","solid")) + 
 		theme(text=element_text(size=16), 
   		axis.ticks.length = unit(.3, "cm"),
@@ -363,11 +371,18 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, plot_title = c(
   		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 4.848485, height = 5.69697, units = c("in"), 
+		scale = 1, width = 4.848485, height = 5.95, units = c("in"), 
 		dpi = 825, limitsize = FALSE)
 }
 
 makeScrPlotMaxExpr(data=ATH_all_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.45), plot_title="ATH_all")
+makeScrPlotMaxExpr(data=ATH_comp_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.544), plot_title="ATH_comp")
+makeScrPlotMaxExpr(data=AL_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.548), plot_title="AL")
+makeScrPlotMaxExpr(data=CR_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.4625), plot_title="CR")
+makeScrPlotMaxExpr(data=ES_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.481), plot_title="ES")
+makeScrPlotMaxExpr(data=TH_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.479), plot_title="TH")
+makeScrPlotMaxExpr(data=MT_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.767), plot_title="MT")
+makeScrPlotMaxExpr(data=BD_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.575), plot_title="BD")
 
 
 
