@@ -381,9 +381,9 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
 	n_nc = paste("nc n=", n_nc, sep="")
 	n_pc = paste("pc n=", n_pc, sep="")
 
-	cor03_02 = paste("ac vs nc ", "p=", p03_02, sep="")
-	cor03_05 = paste("ac vs pc ", "p=", p03_05, sep="")
-	cor02_05 = paste("nc vs pc ", "p=", p02_05, sep="")
+	cor03_02 = paste("ac vs. nc ", "p=", p03_02, sep="")
+	cor03_05 = paste("ac vs. pc ", "p=", p03_05, sep="")
+	cor02_05 = paste("nc vs. pc ", "p=", p02_05, sep="")
 
 	blu = rgb(0, 70, 139, max = 255, alpha = 70)
 	gray = rgb(131, 145, 145, max = 255, alpha = 80)
@@ -396,12 +396,12 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
 	geom_density(adjust=1.35, size=1.35) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.23, vjust = 2, size=5.35, label = cor03_02) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.23, vjust = 3.65, size=5.35, label = cor03_05) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.23, vjust = 5.3, size=5.35, label = cor02_05) + 
-	annotate("text", x = 11.55, y = Inf, hjust = 1, vjust = 6.95, size=5.35, label = n_ac) + 
-	annotate("text", x = 11.55, y = Inf, hjust = 1, vjust = 8.6, size=5.35, label = n_nc) + 
-	annotate("text", x = 11.55, y = Inf, hjust = 1, vjust = 10.25, size=5.35, label = n_pc)
+	annotate("text", x = -Inf, y = Inf, hjust = -1.152, vjust = 2, size=5.35, label = cor03_02) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.152, vjust = 3.65, size=5.35, label = cor03_05) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.152, vjust = 5.3, size=5.35, label = cor02_05) + 
+	annotate("text", x = 8.08, y = Inf, hjust = 0, vjust = 6.95, size=5.35, label = n_ac) + 
+	annotate("text", x = 8.08, y = Inf, hjust = 0, vjust = 8.6, size=5.35, label = n_nc) + 
+	annotate("text", x = 8.08, y = Inf, hjust = 0, vjust = 10.25, size=5.35, label = n_pc)
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray_ln, blu_ln, grn_ln, gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540", "#839191", "#00468b", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
 		scale_linetype_manual(values = c("dotdash","dotdash","dotdash", "solid","solid","solid")) + 
@@ -412,7 +412,7 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
   		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 7.25, b = 0, l = 0)),
   		axis.title.x = element_text(colour = "black", margin = margin(t = 14.0, r = 0, b = 0, l = 0)),
   		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 14.0, b = 0, l = 0)),
-  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 12.5, r = 0, b = 12.75, l = 0), hjust = 0.5),
+  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 14.25, r = 0, b = 11.0, l = 0), hjust = 0.5),
   		legend.position = "bottom",
   		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
 
