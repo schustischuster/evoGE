@@ -408,11 +408,11 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
 		theme(text=element_text(size=16), 
   		axis.ticks.length = unit(.3, "cm"),
   		plot.margin = unit(c(5.5, 10.5, 3.0, 3.5), "points"),
-  		axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 8.25, r = 0, b = 0, l = 0)), 
-  		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
-  		axis.title.x = element_text(colour = "black", margin = margin(t = 15.75, r = 0, b = 0, l = 0)),
-  		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 15.25, b = 0, l = 0)),
-  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 10.25, r = 0, b = 16.75, l = 0), hjust = 0.5),
+  		axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 7.25, r = 0, b = 0, l = 0)), 
+  		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 7.25, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", margin = margin(t = 14.0, r = 0, b = 0, l = 0)),
+  		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 14.0, b = 0, l = 0)),
+  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 12.5, r = 0, b = 12.75, l = 0), hjust = 0.5),
   		legend.position = "bottom",
   		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
 
@@ -423,12 +423,12 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
 
 makeScrPlotMaxExpr(data=ATH_all_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.45), p03_02=ATH_all_wilcox_03_02, p03_05=ATH_all_wilcox_03_05, p02_05=ATH_all_wilcox_02_05, plot_title="ATH_all")
 makeScrPlotMaxExpr(data=ATH_comp_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.545), p03_02=ATH_comp_wilcox_03_02, p03_05=ATH_comp_wilcox_03_05, p02_05=ATH_comp_wilcox_02_05, plot_title="ATH_comp")
-makeScrPlotMaxExpr(data=AL_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.552), p03_02=AL_wilcox_03_02, p03_05=AL_wilcox_03_05, p02_05=AL_wilcox_02_05, plot_title="AL")
-makeScrPlotMaxExpr(data=CR_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.457), p03_02=CR_wilcox_03_02, p03_05=CR_wilcox_03_05, p02_05=CR_wilcox_02_05, plot_title="CR")
-makeScrPlotMaxExpr(data=ES_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.480), p03_02=ES_wilcox_03_02, p03_05=ES_wilcox_03_05, p02_05=ES_wilcox_02_05, plot_title="ES")
-makeScrPlotMaxExpr(data=TH_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.479), p03_02=TH_wilcox_03_02, p03_05=TH_wilcox_03_05, p02_05=TH_wilcox_02_05, plot_title="TH")
-makeScrPlotMaxExpr(data=MT_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.771), p03_02=MT_wilcox_03_02, p03_05=MT_wilcox_03_05, p02_05=MT_wilcox_02_05, plot_title="MT")
-makeScrPlotMaxExpr(data=BD_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.590), p03_02=BD_wilcox_03_02, p03_05=BD_wilcox_03_05, p02_05=BD_wilcox_02_05, plot_title="BD")
+makeScrPlotMaxExpr(data=AL_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.552), p03_02=AL_wilcox_03_02, p03_05=AL_wilcox_03_05, p02_05=AL_wilcox_02_05, plot_title="AL_")
+makeScrPlotMaxExpr(data=CR_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.457), p03_02=CR_wilcox_03_02, p03_05=CR_wilcox_03_05, p02_05=CR_wilcox_02_05, plot_title="CR_")
+makeScrPlotMaxExpr(data=ES_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.480), p03_02=ES_wilcox_03_02, p03_05=ES_wilcox_03_05, p02_05=ES_wilcox_02_05, plot_title="ES_")
+makeScrPlotMaxExpr(data=TH_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.479), p03_02=TH_wilcox_03_02, p03_05=TH_wilcox_03_05, p02_05=TH_wilcox_02_05, plot_title="TH_")
+makeScrPlotMaxExpr(data=MT_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.771), p03_02=MT_wilcox_03_02, p03_05=MT_wilcox_03_05, p02_05=MT_wilcox_02_05, plot_title="MT_")
+makeScrPlotMaxExpr(data=BD_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.590), p03_02=BD_wilcox_03_02, p03_05=BD_wilcox_03_05, p02_05=BD_wilcox_02_05, plot_title="BD_")
 
 
 
