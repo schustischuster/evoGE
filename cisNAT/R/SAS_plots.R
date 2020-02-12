@@ -412,7 +412,7 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
   		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 7.25, b = 0, l = 0)),
   		axis.title.x = element_text(colour = "black", margin = margin(t = 14.0, r = 0, b = 0, l = 0)),
   		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 14.0, b = 0, l = 0)),
-  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 14.25, r = 0, b = 11.0, l = 0), hjust = 0.5),
+  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 17, r = 0, b = 8.25, l = 0), hjust = 0.5),
   		legend.position = "bottom",
   		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
 
@@ -433,32 +433,29 @@ makeScrPlotMaxExpr(data=BD_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.590), p
 
 
 
+# Prepare data for ggplot2 density plot w/ expression data below_min03, between_min02_02, above_05
+# For coding and NAT gene expression ratio
+combineExprDataRatio <- function(below_min03, between_min02_02, above_05) {
 
-
-
-
-# Prepare data for NAT max expression
-combineExprDataNc <- function(below_min03, between_min02_02, above_05) {
-
-	number_values <- nrow(below_min03)+nrow(between_min02_02)+nrow(above_05)
+	number_values <- (nrow(below_min03)+nrow(between_min02_02)+nrow(above_05))
 	species_name = as.data.frame(rep(c(sub("\\_.*", "", deparse(substitute(below_min03)))),each=number_values))
 	names(species_name) <- "species"
 
-	class_0 = as.data.frame(rep(c("<-0.3_nc"),each=nrow(below_min03)))
+	class_0 = as.data.frame(rep(c(">05"),each=nrow(above_05)))
 	names(class_0) <- "class"
-	class_1 = as.data.frame(rep(c(">-02 <02_nc"),each=nrow(between_min02_02)))
+	class_1 = as.data.frame(rep(c(">-02 <02"),each=nrow(between_min02_02)))
 	names(class_1) <- "class"
-	class_2 = as.data.frame(rep(c(">0.5_nc"),each=nrow(above_05)))
+	class_2 = as.data.frame(rep(c("-0.3"),each=nrow(below_min03)))
 	names(class_2) <- "class"
 
-	expr_values_0 = as.data.frame(below_min03$max_NAT)
-	names(expr_values_0) <- "max_NAT_expression"
-	expr_values_1 = as.data.frame(between_min02_02$max_NAT)
-	names(expr_values_1) <- "max_NAT_expression"
-	expr_values_2 = as.data.frame(above_05$max_NAT)
-	names(expr_values_2) <- "max_NAT_expression"
+	expr_values_0 = as.data.frame(above_05$max_ratio_nc_cd)
+	names(expr_values_0) <- "max_expression"
+	expr_values_1 = as.data.frame(between_min02_02$max_ratio_nc_cd)
+	names(expr_values_1) <- "max_expression"
+	expr_values_2 = as.data.frame(below_min03$max_ratio_nc_cd)
+	names(expr_values_2) <- "max_expression"
 
-	expression_df = data.frame(species_name, rbind(class_0, class_1, class_2) , 
+	expression_df = data.frame(species_name, rbind(class_0, class_1, class_2), 
 		rbind(expr_values_0, expr_values_1, expr_values_2))
 	expression_df <- na.omit(expression_df)
 
@@ -466,24 +463,109 @@ combineExprDataNc <- function(below_min03, between_min02_02, above_05) {
 }
 
 
-ATH_all_cd_nc_expr_ranges_nc <- combineExprDataNc(ATH_all_cd_nc_expr_below_min03, 
+ATH_all_cd_nc_max_expr_ratio <- combineExprDataRatio(ATH_all_cd_nc_expr_below_min03, 
 	ATH_all_cd_nc_expr_betw_min02_02, ATH_all_cd_nc_expr_above_05)
-ATH_comp_cd_nc_expr_ranges_nc <- combineExprDataNc(ATH_comp_cd_nc_expr_below_min03, 
+ATH_comp_cd_nc_max_expr_ratio <- combineExprDataRatio(ATH_comp_cd_nc_expr_below_min03, 
 	ATH_comp_cd_nc_expr_betw_min02_02, ATH_comp_cd_nc_expr_above_05)
-AL_cd_nc_expr_ranges_nc <- combineExprDataNc(AL_cd_nc_expr_below_min03, 
+AL_cd_nc_max_expr_ratio <- combineExprDataRatio(AL_cd_nc_expr_below_min03, 
 	AL_cd_nc_expr_betw_min02_02, AL_cd_nc_expr_above_05)
-CR_cd_nc_expr_ranges_nc <- combineExprDataNc(CR_cd_nc_expr_below_min03, 
+CR_cd_nc_max_expr_ratio <- combineExprDataRatio(CR_cd_nc_expr_below_min03, 
 	CR_cd_nc_expr_betw_min02_02, CR_cd_nc_expr_above_05)
-ES_cd_nc_expr_ranges_nc <- combineExprDataNc(ES_cd_nc_expr_below_min03, 
+ES_cd_nc_max_expr_ratio <- combineExprDataRatio(ES_cd_nc_expr_below_min03, 
 	ES_cd_nc_expr_betw_min02_02, ES_cd_nc_expr_above_05)
-TH_cd_nc_expr_ranges_nc <- combineExprDataNc(TH_cd_nc_expr_below_min03, 
+TH_cd_nc_max_expr_ratio <- combineExprDataRatio(TH_cd_nc_expr_below_min03, 
 	TH_cd_nc_expr_betw_min02_02, TH_cd_nc_expr_above_05)
-MT_cd_nc_expr_ranges_nc <- combineExprDataNc(MT_cd_nc_expr_below_min03, 
+MT_cd_nc_max_expr_ratio <- combineExprDataRatio(MT_cd_nc_expr_below_min03, 
 	MT_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
-BD_cd_nc_expr_ranges_nc <- combineExprDataNc(BD_cd_nc_expr_below_min03, 
+BD_cd_nc_max_expr_ratio <- combineExprDataRatio(BD_cd_nc_expr_below_min03, 
 	BD_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
 
 
+# Perform wilcox test on all combinations
+wilcoxRatioSAS <- function(x,y) {
+	z <- wilcox.test(x[,21], y[,21])$p.value
+	z <- formatC(z, format = "e", digits = 0)
+}
+
+ATH_all_wilcox_03_02_ratio <- wilcoxRatioSAS(ATH_all_cd_nc_expr_below_min03, ATH_all_cd_nc_expr_betw_min02_02)
+ATH_all_wilcox_03_05_ratio <- wilcoxRatioSAS(ATH_all_cd_nc_expr_below_min03, ATH_all_cd_nc_expr_above_05)
+ATH_all_wilcox_02_05_ratio <- wilcoxRatioSAS(ATH_all_cd_nc_expr_betw_min02_02, ATH_all_cd_nc_expr_above_05)
+ATH_comp_wilcox_03_02_ratio <- wilcoxRatioSAS(ATH_comp_cd_nc_expr_below_min03, ATH_comp_cd_nc_expr_betw_min02_02)
+ATH_comp_wilcox_03_05_ratio <- wilcoxRatioSAS(ATH_comp_cd_nc_expr_below_min03, ATH_comp_cd_nc_expr_above_05)
+ATH_comp_wilcox_02_05_ratio <- wilcoxRatioSAS(ATH_comp_cd_nc_expr_betw_min02_02, ATH_comp_cd_nc_expr_above_05)
+AL_wilcox_03_02_ratio <- wilcoxRatioSAS(AL_cd_nc_expr_below_min03, AL_cd_nc_expr_betw_min02_02)
+AL_wilcox_03_05_ratio <- wilcoxRatioSAS(AL_cd_nc_expr_below_min03, AL_cd_nc_expr_above_05)
+AL_wilcox_02_05_ratio <- wilcoxRatioSAS(AL_cd_nc_expr_betw_min02_02, AL_cd_nc_expr_above_05)
+CR_wilcox_03_02_ratio <- wilcoxRatioSAS(CR_cd_nc_expr_below_min03, CR_cd_nc_expr_betw_min02_02)
+CR_wilcox_03_05_ratio <- wilcoxRatioSAS(CR_cd_nc_expr_below_min03, CR_cd_nc_expr_above_05)
+CR_wilcox_02_05_ratio <- wilcoxRatioSAS(CR_cd_nc_expr_betw_min02_02, CR_cd_nc_expr_above_05)
+ES_wilcox_03_02_ratio <- wilcoxRatioSAS(ES_cd_nc_expr_below_min03, ES_cd_nc_expr_betw_min02_02)
+ES_wilcox_03_05_ratio <- wilcoxRatioSAS(ES_cd_nc_expr_below_min03, ES_cd_nc_expr_above_05)
+ES_wilcox_02_05_ratio <- wilcoxRatioSAS(ES_cd_nc_expr_betw_min02_02, ES_cd_nc_expr_above_05)
+TH_wilcox_03_02_ratio <- wilcoxRatioSAS(TH_cd_nc_expr_below_min03, TH_cd_nc_expr_betw_min02_02)
+TH_wilcox_03_05_ratio <- wilcoxRatioSAS(TH_cd_nc_expr_below_min03, TH_cd_nc_expr_above_05)
+TH_wilcox_02_05_ratio <- wilcoxRatioSAS(TH_cd_nc_expr_betw_min02_02, TH_cd_nc_expr_above_05)
+MT_wilcox_03_02_ratio <- wilcoxRatioSAS(MT_cd_nc_expr_below_min03, MT_cd_nc_expr_betw_min02_02)
+MT_wilcox_03_05_ratio <- wilcoxRatioSAS(MT_cd_nc_expr_below_min03, MT_cd_nc_expr_above_05)
+MT_wilcox_02_05_ratio <- wilcoxRatioSAS(MT_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
+BD_wilcox_03_02_ratio <- wilcoxRatioSAS(BD_cd_nc_expr_below_min03, BD_cd_nc_expr_betw_min02_02)
+BD_wilcox_03_05_ratio <- wilcoxRatioSAS(BD_cd_nc_expr_below_min03, MT_cd_nc_expr_above_05)
+BD_wilcox_02_05_ratio <- wilcoxRatioSAS(BD_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above_05)
+
+
+# Function to scatter plot max expression versus pearson correlation
+makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
+	plot_title = c("ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD")) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+	n_ac <- nrow(subset(data, class=="-0.3_nc"))
+	n_nc <- nrow(subset(data, class==">-02 <02_nc"))
+	n_pc <- nrow(subset(data, class==">05_nc"))
+
+	cor03_02 = paste("ac vs. nc ", "p=", p03_02, sep="")
+	cor03_05 = paste("ac vs. pc ", "p=", p03_05, sep="")
+	cor02_05 = paste("nc vs. pc ", "p=", p02_05, sep="")
+
+	blu = rgb(0, 70, 139, max = 255, alpha = 0)
+	gray = rgb(131, 145, 145, max = 255, alpha = 0)
+	grn = rgb(82, 181, 64, max = 255, alpha = 0)
+
+	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
+	geom_density(adjust=1.35, size=1.35) + 
+	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
+	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
+	annotation_logticks(sides = 'b') + 
+	annotate("text", x = 1.11, y = Inf, hjust = 0, vjust = 2, size=5.35, label = cor03_02) + 
+	annotate("text", x = 1.11, y = Inf, hjust = 0, vjust = 3.65, size=5.35, label = cor03_05) + 
+	annotate("text", x = 1.11, y = Inf, hjust = 0, vjust = 5.3, size=5.35, label = cor02_05)
+	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray, blu, grn)) +
+		scale_color_manual(values = c("#839191", "#00468b", "#52b540")) + xlab("Expression ratio (nc:cd SAS)") + ylab("Density") + 
+		scale_linetype_manual(values = c("solid","solid","solid")) + 
+		theme(text=element_text(size=16), 
+  		axis.ticks.length = unit(.3, "cm"),
+  		plot.margin = unit(c(5.5, 11.5, 20.25, 2.5), "points"),
+  		axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 7.25, r = 0, b = 0, l = 0)), 
+  		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 7.25, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", margin = margin(t = 14.0, r = 0, b = 0, l = 0)),
+  		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 14.0, b = 0, l = 0)),
+  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 17, r = 0, b = 8.25, l = 0), hjust = 0.5),
+  		legend.position = "bottom",
+  		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+
+  	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+		scale = 1, width = 4.848485, height = 5.95, units = c("in"), 
+		dpi = 825, limitsize = FALSE)
+}
+
+makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02=ATH_all_wilcox_03_02_ratio, p03_05=ATH_all_wilcox_03_05_ratio, p02_05=ATH_all_wilcox_02_05_ratio, plot_title="ATH_all")
+makeScrPlotExprRatio(data=ATH_comp_cd_nc_max_expr_ratio, lim_y=c(0,1.615), p03_02=ATH_comp_wilcox_03_02_ratio, p03_05=ATH_comp_wilcox_03_05_ratio, p02_05=ATH_comp_wilcox_02_05_ratio, plot_title="ATH_comp")
+makeScrPlotExprRatio(data=AL_cd_nc_max_expr_ratio, lim_y=c(0,1.42), p03_02=AL_wilcox_03_02_ratio, p03_05=AL_wilcox_03_05_ratio, p02_05=AL_wilcox_02_05_ratio, plot_title="AL_")
+makeScrPlotExprRatio(data=CR_cd_nc_max_expr_ratio, lim_y=c(0,1.79), p03_02=CR_wilcox_03_02_ratio, p03_05=CR_wilcox_03_05_ratio, p02_05=CR_wilcox_02_05_ratio, plot_title="CR_")
+makeScrPlotExprRatio(data=ES_cd_nc_max_expr_ratio, lim_y=c(0,1.935), p03_02=ES_wilcox_03_02_ratio, p03_05=ES_wilcox_03_05_ratio, p02_05=ES_wilcox_02_05_ratio, plot_title="ES_")
+makeScrPlotExprRatio(data=TH_cd_nc_max_expr_ratio, lim_y=c(0,1.5), p03_02=TH_wilcox_03_02_ratio, p03_05=TH_wilcox_03_05_ratio, p02_05=TH_wilcox_02_05_ratio, plot_title="TH_")
+makeScrPlotExprRatio(data=MT_cd_nc_max_expr_ratio, lim_y=c(0,1.685), p03_02=MT_wilcox_03_02_ratio, p03_05=MT_wilcox_03_05_ratio, p02_05=MT_wilcox_02_05_ratio, plot_title="MT_")
+makeScrPlotExprRatio(data=BD_cd_nc_max_expr_ratio, lim_y=c(0,1.682), p03_02=BD_wilcox_03_02_ratio, p03_05=BD_wilcox_03_05_ratio, p02_05=BD_wilcox_02_05_ratio, plot_title="BD_")
 
 
 
