@@ -369,7 +369,7 @@ BD_wilcox_02_05 <- wilcoxMaxNAT(BD_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above
 
 
 # Function to scatter plot max expression versus pearson correlation
-makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
+makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	plot_title = c("ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD")) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
@@ -385,9 +385,9 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
 	cor03_05 = paste("ac vs. pc ", "p=", p03_05, sep="")
 	cor02_05 = paste("nc vs. pc ", "p=", p02_05, sep="")
 
-	blu = rgb(0, 70, 139, max = 255, alpha = 70)
+	blu = rgb(0, 70, 139, max = 255, alpha = 55)
 	gray = rgb(131, 145, 145, max = 255, alpha = 80)
-	grn = rgb(82, 181, 64, max = 255, alpha = 95)
+	grn = rgb(82, 181, 64, max = 255, alpha = 90)
 	blu_ln = rgb(0, 70, 139, max = 255, alpha = 0)
 	gray_ln = rgb(131, 145, 145, max = 255, alpha = 0)
 	grn_ln = rgb(82, 181, 64, max = 255, alpha = 0)
@@ -421,14 +421,14 @@ makeScrPlotMaxExpr <- function(data, rsqd, lim_y, p03_02, p03_05, p02_05,
 		dpi = 825, limitsize = FALSE)
 }
 
-makeScrPlotMaxExpr(data=ATH_all_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.45), p03_02=ATH_all_wilcox_03_02, p03_05=ATH_all_wilcox_03_05, p02_05=ATH_all_wilcox_02_05, plot_title="ATH_all")
-makeScrPlotMaxExpr(data=ATH_comp_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.545), p03_02=ATH_comp_wilcox_03_02, p03_05=ATH_comp_wilcox_03_05, p02_05=ATH_comp_wilcox_02_05, plot_title="ATH_comp")
-makeScrPlotMaxExpr(data=AL_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.552), p03_02=AL_wilcox_03_02, p03_05=AL_wilcox_03_05, p02_05=AL_wilcox_02_05, plot_title="AL_")
-makeScrPlotMaxExpr(data=CR_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.457), p03_02=CR_wilcox_03_02, p03_05=CR_wilcox_03_05, p02_05=CR_wilcox_02_05, plot_title="CR_")
-makeScrPlotMaxExpr(data=ES_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.480), p03_02=ES_wilcox_03_02, p03_05=ES_wilcox_03_05, p02_05=ES_wilcox_02_05, plot_title="ES_")
-makeScrPlotMaxExpr(data=TH_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.479), p03_02=TH_wilcox_03_02, p03_05=TH_wilcox_03_05, p02_05=TH_wilcox_02_05, plot_title="TH_")
-makeScrPlotMaxExpr(data=MT_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.771), p03_02=MT_wilcox_03_02, p03_05=MT_wilcox_03_05, p02_05=MT_wilcox_02_05, plot_title="MT_")
-makeScrPlotMaxExpr(data=BD_cd_nc_max_expr_pearson, rsqd=0.7, lim_y=c(0,0.590), p03_02=BD_wilcox_03_02, p03_05=BD_wilcox_03_05, p02_05=BD_wilcox_02_05, plot_title="BD_")
+makeScrPlotMaxExpr(data=ATH_all_cd_nc_max_expr_pearson, lim_y=c(0,0.45), p03_02=ATH_all_wilcox_03_02, p03_05=ATH_all_wilcox_03_05, p02_05=ATH_all_wilcox_02_05, plot_title="ATH_all")
+makeScrPlotMaxExpr(data=ATH_comp_cd_nc_max_expr_pearson, lim_y=c(0,0.545), p03_02=ATH_comp_wilcox_03_02, p03_05=ATH_comp_wilcox_03_05, p02_05=ATH_comp_wilcox_02_05, plot_title="ATH_comp")
+makeScrPlotMaxExpr(data=AL_cd_nc_max_expr_pearson, lim_y=c(0,0.552), p03_02=AL_wilcox_03_02, p03_05=AL_wilcox_03_05, p02_05=AL_wilcox_02_05, plot_title="AL_")
+makeScrPlotMaxExpr(data=CR_cd_nc_max_expr_pearson, lim_y=c(0,0.457), p03_02=CR_wilcox_03_02, p03_05=CR_wilcox_03_05, p02_05=CR_wilcox_02_05, plot_title="CR_")
+makeScrPlotMaxExpr(data=ES_cd_nc_max_expr_pearson, lim_y=c(0,0.480), p03_02=ES_wilcox_03_02, p03_05=ES_wilcox_03_05, p02_05=ES_wilcox_02_05, plot_title="ES_")
+makeScrPlotMaxExpr(data=TH_cd_nc_max_expr_pearson, lim_y=c(0,0.479), p03_02=TH_wilcox_03_02, p03_05=TH_wilcox_03_05, p02_05=TH_wilcox_02_05, plot_title="TH_")
+makeScrPlotMaxExpr(data=MT_cd_nc_max_expr_pearson, lim_y=c(0,0.771), p03_02=MT_wilcox_03_02, p03_05=MT_wilcox_03_05, p02_05=MT_wilcox_02_05, plot_title="MT_")
+makeScrPlotMaxExpr(data=BD_cd_nc_max_expr_pearson, lim_y=c(0,0.590), p03_02=BD_wilcox_03_02, p03_05=BD_wilcox_03_05, p02_05=BD_wilcox_02_05, plot_title="BD_")
 
 
 
