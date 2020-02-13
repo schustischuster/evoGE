@@ -75,6 +75,9 @@ ATH_cd_nc_SAS_cor_wo_pollen_05_2 <- ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 ATH_cd_nc_SAS_cor_wo_pollen_2_5 <- ATH_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
 	!((id_plus_strand %in% ATH_cd_nc_SAS_cor_wo_pollen_5$id_plus_strand)
 	 & (id_minus_strand %in% ATH_cd_nc_SAS_cor_wo_pollen_5$id_minus_strand)))
+ATH_cd_nc_SAS_cor_wo_pollen_5_10 <- ATH_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
+	!((id_plus_strand %in% ATH_cd_nc_SAS_cor_wo_pollen_10$id_plus_strand)
+	 & (id_minus_strand %in% ATH_cd_nc_SAS_cor_wo_pollen_10$id_minus_strand)))
 # ATH comparative samples
 ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5_2 <- ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 	!((id_plus_strand %in% ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_2$id_plus_strand) &
@@ -82,6 +85,9 @@ ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5_2 <- ATH_comparative_samples
 ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_2_5 <- ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
 	!((id_plus_strand %in% ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_5$id_plus_strand)
 	 & (id_minus_strand %in% ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_5$id_minus_strand)))
+ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_5_10 <- ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
+	!((id_plus_strand %in% ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_10$id_plus_strand)
+	 & (id_minus_strand %in% ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_10$id_minus_strand)))
 # AL comparative samples
 AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5_2 <- AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 	!((id_plus_strand %in% AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_2$id_plus_strand) &
@@ -89,6 +95,9 @@ AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5_2 <- AL_comparative_samples_c
 AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_2_5 <- AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
 	!((id_plus_strand %in% AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_5$id_plus_strand)
 	 & (id_minus_strand %in% AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_5$id_minus_strand)))
+AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_5_10 <- AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
+	!((id_plus_strand %in% AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_10$id_plus_strand)
+	 & (id_minus_strand %in% AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_10$id_minus_strand)))
 # CR
 CR_cd_nc_SAS_cor_wo_pollen_0.5_2 <- CR_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 	!((id_plus_strand %in% CR_cd_nc_SAS_cor_wo_pollen_2$id_plus_strand) &
@@ -96,6 +105,9 @@ CR_cd_nc_SAS_cor_wo_pollen_0.5_2 <- CR_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 CR_cd_nc_SAS_cor_wo_pollen_2_5 <- CR_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
 	!((id_plus_strand %in% CR_cd_nc_SAS_cor_wo_pollen_5$id_plus_strand)
 	 & (id_minus_strand %in% CR_cd_nc_SAS_cor_wo_pollen_5$id_minus_strand)))
+CR_cd_nc_SAS_cor_wo_pollen_5_10 <- CR_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
+	!((id_plus_strand %in% CR_cd_nc_SAS_cor_wo_pollen_10$id_plus_strand)
+	 & (id_minus_strand %in% CR_cd_nc_SAS_cor_wo_pollen_10$id_minus_strand)))
 # ES
 ES_cd_nc_SAS_cor_wo_pollen_0.5_2 <- ES_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 	!((id_plus_strand %in% ES_cd_nc_SAS_cor_wo_pollen_2$id_plus_strand) &
@@ -103,6 +115,9 @@ ES_cd_nc_SAS_cor_wo_pollen_0.5_2 <- ES_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 ES_cd_nc_SAS_cor_wo_pollen_2_5 <- ES_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
 	!((id_plus_strand %in% ES_cd_nc_SAS_cor_wo_pollen_5$id_plus_strand)
 	 & (id_minus_strand %in% ES_cd_nc_SAS_cor_wo_pollen_5$id_minus_strand)))
+ES_cd_nc_SAS_cor_wo_pollen_5_10 <- ES_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
+	!((id_plus_strand %in% ES_cd_nc_SAS_cor_wo_pollen_10$id_plus_strand)
+	 & (id_minus_strand %in% ES_cd_nc_SAS_cor_wo_pollen_10$id_minus_strand)))
 # TH
 TH_cd_nc_SAS_cor_wo_pollen_0.5_2 <- TH_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 	!((id_plus_strand %in% TH_cd_nc_SAS_cor_wo_pollen_2$id_plus_strand) &
@@ -110,6 +125,9 @@ TH_cd_nc_SAS_cor_wo_pollen_0.5_2 <- TH_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 TH_cd_nc_SAS_cor_wo_pollen_2_5 <- TH_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
 	!((id_plus_strand %in% TH_cd_nc_SAS_cor_wo_pollen_5$id_plus_strand)
 	 & (id_minus_strand %in% TH_cd_nc_SAS_cor_wo_pollen_5$id_minus_strand)))
+TH_cd_nc_SAS_cor_wo_pollen_5_10 <- TH_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
+	!((id_plus_strand %in% TH_cd_nc_SAS_cor_wo_pollen_10$id_plus_strand)
+	 & (id_minus_strand %in% TH_cd_nc_SAS_cor_wo_pollen_10$id_minus_strand)))
 # MT
 MT_cd_nc_SAS_cor_wo_pollen_0.5_2 <- MT_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 	!((id_plus_strand %in% MT_cd_nc_SAS_cor_wo_pollen_2$id_plus_strand) &
@@ -117,6 +135,9 @@ MT_cd_nc_SAS_cor_wo_pollen_0.5_2 <- MT_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 MT_cd_nc_SAS_cor_wo_pollen_2_5 <- MT_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
 	!((id_plus_strand %in% MT_cd_nc_SAS_cor_wo_pollen_5$id_plus_strand)
 	 & (id_minus_strand %in% MT_cd_nc_SAS_cor_wo_pollen_5$id_minus_strand)))
+MT_cd_nc_SAS_cor_wo_pollen_5_10 <- MT_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
+	!((id_plus_strand %in% MT_cd_nc_SAS_cor_wo_pollen_10$id_plus_strand)
+	 & (id_minus_strand %in% MT_cd_nc_SAS_cor_wo_pollen_10$id_minus_strand)))
 # BD
 BD_cd_nc_SAS_cor_wo_pollen_0.5_2 <- BD_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 	!((id_plus_strand %in% BD_cd_nc_SAS_cor_wo_pollen_2$id_plus_strand) &
@@ -124,6 +145,9 @@ BD_cd_nc_SAS_cor_wo_pollen_0.5_2 <- BD_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 BD_cd_nc_SAS_cor_wo_pollen_2_5 <- BD_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
 	!((id_plus_strand %in% BD_cd_nc_SAS_cor_wo_pollen_5$id_plus_strand)
 	 & (id_minus_strand %in% BD_cd_nc_SAS_cor_wo_pollen_5$id_minus_strand)))
+BD_cd_nc_SAS_cor_wo_pollen_5_10 <- BD_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
+	!((id_plus_strand %in% BD_cd_nc_SAS_cor_wo_pollen_10$id_plus_strand)
+	 & (id_minus_strand %in% BD_cd_nc_SAS_cor_wo_pollen_10$id_minus_strand)))
 
 
 
@@ -153,43 +177,59 @@ NAT_genes_tables_wo_pollen_list <- list(
 	ATH_cd_nc_SAS_cor_wo_pollen_5 = ATH_cd_nc_SAS_cor_wo_pollen_5,
 	ATH_cd_nc_SAS_cor_wo_pollen_05_2 = ATH_cd_nc_SAS_cor_wo_pollen_05_2,
 	ATH_cd_nc_SAS_cor_wo_pollen_2_5 = ATH_cd_nc_SAS_cor_wo_pollen_2_5,
+	ATH_cd_nc_SAS_cor_wo_pollen_5_10 = ATH_cd_nc_SAS_cor_wo_pollen_5_10,
+	ATH_cd_nc_SAS_cor_wo_pollen_10 = ATH_cd_nc_SAS_cor_wo_pollen_10,
 	ATH_cd_nc_SAS_cor_0.5 = ATH_cd_nc_SAS_cor_0.5, #including pollen samples for ATH
 	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5 = AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5, 
 	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_2 = AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_2, 
 	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_5 = AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_5,
 	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2 = AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5_2,
 	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5 = AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_2_5,
+	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_5_10 = AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_5_10,
+	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_10 = AL_comparative_samples_cd_nc_SAS_cor_wo_pollen_10,
 	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5 = ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5,
 	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_2 = ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_2, 
 	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_5 = ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_5,
 	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2 = ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_0.5_2,
 	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5 = ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_2_5,
+	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_5_10 = ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_5_10,
+	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_10 = ATH_comparative_samples_cd_nc_SAS_cor_wo_pollen_10,
 	ATH_comp_samples_cd_nc_SAS_cor_0.5 = ATH_comparative_samples_cd_nc_SAS_cor_0.5, #including pollen samples for ATH
 	BD_cd_nc_SAS_cor_wo_pollen_0.5 = BD_cd_nc_SAS_cor_wo_pollen_0.5, 
 	BD_cd_nc_SAS_cor_wo_pollen_2 = BD_cd_nc_SAS_cor_wo_pollen_2,
 	BD_cd_nc_SAS_cor_wo_pollen_5 = BD_cd_nc_SAS_cor_wo_pollen_5,
 	BD_cd_nc_SAS_cor_wo_pollen_0.5_2 = BD_cd_nc_SAS_cor_wo_pollen_0.5_2,
 	BD_cd_nc_SAS_cor_wo_pollen_2_5 = BD_cd_nc_SAS_cor_wo_pollen_2_5,
+	BD_cd_nc_SAS_cor_wo_pollen_5_10 = BD_cd_nc_SAS_cor_wo_pollen_5_10,
+	BD_cd_nc_SAS_cor_wo_pollen_10 = BD_cd_nc_SAS_cor_wo_pollen_10,
 	CR_cd_nc_SAS_cor_wo_pollen_0.5 = CR_cd_nc_SAS_cor_wo_pollen_0.5,
 	CR_cd_nc_SAS_cor_wo_pollen_2 = CR_cd_nc_SAS_cor_wo_pollen_2,
 	CR_cd_nc_SAS_cor_wo_pollen_5 = CR_cd_nc_SAS_cor_wo_pollen_5,
 	CR_cd_nc_SAS_cor_wo_pollen_0.5_2 = CR_cd_nc_SAS_cor_wo_pollen_0.5_2,
 	CR_cd_nc_SAS_cor_wo_pollen_2_5 = CR_cd_nc_SAS_cor_wo_pollen_2_5,
+	CR_cd_nc_SAS_cor_wo_pollen_5_10 = CR_cd_nc_SAS_cor_wo_pollen_5_10,
+	CR_cd_nc_SAS_cor_wo_pollen_10 = CR_cd_nc_SAS_cor_wo_pollen_10,
 	ES_cd_nc_SAS_cor_wo_pollen_0.5 = ES_cd_nc_SAS_cor_wo_pollen_0.5,
 	ES_cd_nc_SAS_cor_wo_pollen_2 = ES_cd_nc_SAS_cor_wo_pollen_2,
 	ES_cd_nc_SAS_cor_wo_pollen_5 = ES_cd_nc_SAS_cor_wo_pollen_5,
 	ES_cd_nc_SAS_cor_wo_pollen_0.5_2 = ES_cd_nc_SAS_cor_wo_pollen_0.5_2,
 	ES_cd_nc_SAS_cor_wo_pollen_2_5 = ES_cd_nc_SAS_cor_wo_pollen_2_5,
+	ES_cd_nc_SAS_cor_wo_pollen_5_10 = ES_cd_nc_SAS_cor_wo_pollen_5_10,
+	ES_cd_nc_SAS_cor_wo_pollen_10 = ES_cd_nc_SAS_cor_wo_pollen_10,
 	MT_cd_nc_SAS_cor_wo_pollen_0.5 = MT_cd_nc_SAS_cor_wo_pollen_0.5,
 	MT_cd_nc_SAS_cor_wo_pollen_2 = MT_cd_nc_SAS_cor_wo_pollen_2,
 	MT_cd_nc_SAS_cor_wo_pollen_5 = MT_cd_nc_SAS_cor_wo_pollen_5,
 	MT_cd_nc_SAS_cor_wo_pollen_0.5_2 = MT_cd_nc_SAS_cor_wo_pollen_0.5_2,
 	MT_cd_nc_SAS_cor_wo_pollen_2_5 = MT_cd_nc_SAS_cor_wo_pollen_2_5,
+	MT_cd_nc_SAS_cor_wo_pollen_5_10 = MT_cd_nc_SAS_cor_wo_pollen_5_10,
+	MT_cd_nc_SAS_cor_wo_pollen_10 = MT_cd_nc_SAS_cor_wo_pollen_10,
 	TH_cd_nc_SAS_cor_wo_pollen_0.5 = TH_cd_nc_SAS_cor_wo_pollen_0.5,
 	TH_cd_nc_SAS_cor_wo_pollen_2 = TH_cd_nc_SAS_cor_wo_pollen_2,
 	TH_cd_nc_SAS_cor_wo_pollen_5 = TH_cd_nc_SAS_cor_wo_pollen_5,
 	TH_cd_nc_SAS_cor_wo_pollen_0.5_2 = TH_cd_nc_SAS_cor_wo_pollen_0.5_2,
-	TH_cd_nc_SAS_cor_wo_pollen_2_5 = TH_cd_nc_SAS_cor_wo_pollen_2_5)
+	TH_cd_nc_SAS_cor_wo_pollen_2_5 = TH_cd_nc_SAS_cor_wo_pollen_2_5,
+	TH_cd_nc_SAS_cor_wo_pollen_5_10 = TH_cd_nc_SAS_cor_wo_pollen_5_10,
+	TH_cd_nc_SAS_cor_wo_pollen_10 = TH_cd_nc_SAS_cor_wo_pollen_10)
 
 
 # Extract Spearman and Pearson correlations from expression cor tables excluding pollen samples
@@ -722,14 +762,14 @@ dev.off()
 
 
 # Pearson plot of nc-cd SAS pairs with all thresholds
-make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, threshold_2_5, 
-	threshold_greater5, samples=c("all","comparative")) {
+make_Boxplot_All_Thresholds_Labels <- function(threshold_05_2, threshold_2_5, threshold_5_10, 
+	threshold_greater10, samples=c("all","comparative")) {
 
-	species <- sub("\\_.*", "", deparse(substitute(threshold_05)))
-    n_values_05 <- length(threshold_05)
+	species <- sub("\\_.*", "", deparse(substitute(threshold_05_2)))
     n_values_05_2 <- length(threshold_05_2)
     n_values_2_5 <- length(threshold_2_5)
-    n_values_greater5 <- length(threshold_greater5)
+    n_values_5_10 <- length(threshold_5_10)
+    n_values_greater10 <- length(threshold_greater10)
 
     if (is.element("all", samples))
     	title_plot = paste(species, "all", sep="_")
@@ -743,7 +783,7 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
 	png(file = file.path(out_dir, "output", "plots", fname), 
 		width = 2620, height = 4000, res = 825)
 	par(mar = c(5.725, 4.5, 4, 1))
-	boxplot(threshold_05, threshold_05_2, threshold_2_5, threshold_greater5,
+	boxplot(threshold_05_2, threshold_2_5, threshold_5_10, threshold_greater10,
 		ylim = c(-1.1, 1.1), 
 		yaxt='n', 
 		cex.lab = 1.1, 
@@ -763,28 +803,28 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05, threshold_05_2, thr
 		title(xlab = "cis-NAT expression (TPM)", line = 2.65, cex.lab = 1.1)
 		box(lwd = 1.35)
 		axis(side=2, lwd = 1.35, las = 2)
-		text(x= 1, y= -1.05, labels= n_values_05, col= "gray40", cex=0.97) #threshold_>0.5
-		text(x= 2, y= -1.05, labels= n_values_05_2, col= "gray40", cex=0.97) #threshold_0.5-2
-		text(x= 3, y= -1.05, labels= n_values_2_5, col= "gray40", cex=0.97) #threshold_2-5
-		text(x= 4, y= -1.05, labels= n_values_greater5, col= "gray40", cex=0.97) #threshold_greater5
-		mtext('>0.5', side=1, line=0.85, at=1)
-		mtext('>0.5-2', side=1, line=0.85, at=2)
-		mtext('>2-5', side=1, line=0.85, at=3)
-		mtext('>5', side=1, line=0.85, at=4)
+		text(x= 1, y= -1.05, labels= n_values_05_2, col= "gray40", cex=0.97) #threshold_>0.5
+		text(x= 2, y= -1.05, labels= n_values_2_5, col= "gray40", cex=0.97) #threshold_0.5-2
+		text(x= 3, y= -1.05, labels= n_values_5_10, col= "gray40", cex=0.97) #threshold_2-5
+		text(x= 4, y= -1.05, labels= n_values_greater10, col= "gray40", cex=0.97) #threshold_greater5
+		mtext('0.5-2', side=1, line=0.85, at=1)
+		mtext('2-5', side=1, line=0.85, at=2)
+		mtext('5-10', side=1, line=0.85, at=3)
+		mtext('>10', side=1, line=0.85, at=4)
 		par(xpd=TRUE)
 	dev.off()
 }
 
 
 # Pearson plot of nc-cd SAS pairs with all thresholds
-make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_2_5, 
-	threshold_greater5, samples=c("all","comparative")) {
+make_Boxplot_All_Thresholds <- function(threshold_05_2, threshold_2_5, threshold_5_10, 
+	threshold_greater10, samples=c("all","comparative")) {
 
-	species <- sub("\\_.*", "", deparse(substitute(threshold_05)))
-    n_values_05 <- length(threshold_05)
+	species <- sub("\\_.*", "", deparse(substitute(threshold_05_2)))
     n_values_05_2 <- length(threshold_05_2)
     n_values_2_5 <- length(threshold_2_5)
-    n_values_greater5 <- length(threshold_greater5)
+    n_values_5_10 <- length(threshold_5_10)
+    n_values_greater10 <- length(threshold_greater10)
 
     if (is.element("all", samples))
     	title_plot = paste(species, "all", sep="_")
@@ -798,7 +838,7 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
 	png(file = file.path(out_dir, "output", "plots", fname), 
 		width = 2620, height = 4000, res = 825)
 	par(mar = c(5.725, 4.5, 4, 1))
-	boxplot(threshold_05, threshold_05_2, threshold_2_5, threshold_greater5,
+	boxplot(threshold_05_2, threshold_2_5, threshold_5_10, threshold_greater10,
 		ylim = c(-1.1, 1.1), 
 		yaxt='n', 
 		cex.lab = 1.1, 
@@ -817,14 +857,14 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
 		title(xlab = "cis-NAT expression (TPM)", line = 2.65, cex.lab = 1.1)
 		box(lwd = 1.35)
 		axis(side=2, lwd = 1.35, las = 2)
-		text(x= 1, y= -1.05, labels= n_values_05, col= "gray40", cex=0.97) #threshold_>0.5
-		text(x= 2, y= -1.05, labels= n_values_05_2, col= "gray40", cex=0.97) #threshold_0.5-2
-		text(x= 3, y= -1.05, labels= n_values_2_5, col= "gray40", cex=0.97) #threshold_2-5
-		text(x= 4, y= -1.05, labels= n_values_greater5, col= "gray40", cex=0.97) #threshold_greater5
-		mtext('>0.5', side=1, line=0.85, at=1)
-		mtext('>0.5-2', side=1, line=0.85, at=2)
-		mtext('>2-5', side=1, line=0.85, at=3)
-		mtext('>5', side=1, line=0.85, at=4)
+		text(x= 1, y= -1.05, labels= n_values_05_2, col= "gray40", cex=0.97) #threshold_>0.5
+		text(x= 2, y= -1.05, labels= n_values_2_5, col= "gray40", cex=0.97) #threshold_0.5-2
+		text(x= 3, y= -1.05, labels= n_values_5_10, col= "gray40", cex=0.97) #threshold_2-5
+		text(x= 4, y= -1.05, labels= n_values_greater10, col= "gray40", cex=0.97) #threshold_greater5
+		mtext('0.5-2', side=1, line=0.85, at=1)
+		mtext('2-5', side=1, line=0.85, at=2)
+		mtext('5-10', side=1, line=0.85, at=3)
+		mtext('>10', side=1, line=0.85, at=4)
 		par(xpd=TRUE)
 	dev.off()
 }
@@ -832,37 +872,37 @@ make_Boxplot_All_Thresholds <- function(threshold_05, threshold_05_2, threshold_
 
 
 # ATH all samples
-make_Boxplot_All_Thresholds_Labels(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_05_2_pearson, 
-	ATH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_5_pearson, samples = "all")
+make_Boxplot_All_Thresholds_Labels(ATH_cd_nc_SAS_cor_wo_pollen_05_2_pearson, ATH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+	ATH_cd_nc_SAS_cor_wo_pollen_5_10_pearson, ATH_cd_nc_SAS_cor_wo_pollen_10_pearson, samples = "all")
 
 # ATH comparative samples
-make_Boxplot_All_Thresholds(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
-	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_5_pearson, 
+make_Boxplot_All_Thresholds(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_5_10_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_10_pearson, 
 	samples = "comparative")
 
 # AL comparative samples
-make_Boxplot_All_Thresholds(AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
-	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_5_pearson)
+make_Boxplot_All_Thresholds(AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+	AL_comp_samples_cd_nc_SAS_cor_wo_pollen_5_10_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_10_pearson)
 
 # CR
-make_Boxplot_All_Thresholds(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
-	CR_cd_nc_SAS_cor_wo_pollen_2_5_pearson, CR_cd_nc_SAS_cor_wo_pollen_5_pearson)
+make_Boxplot_All_Thresholds(CR_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, CR_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+	CR_cd_nc_SAS_cor_wo_pollen_5_10_pearson, CR_cd_nc_SAS_cor_wo_pollen_10_pearson)
 
 # ES
-make_Boxplot_All_Thresholds(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
-	ES_cd_nc_SAS_cor_wo_pollen_2_5_pearson, ES_cd_nc_SAS_cor_wo_pollen_5_pearson)
+make_Boxplot_All_Thresholds_Labels(ES_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, ES_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+	ES_cd_nc_SAS_cor_wo_pollen_5_10_pearson, ES_cd_nc_SAS_cor_wo_pollen_10_pearson)
 
 # TH
-make_Boxplot_All_Thresholds_Labels(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
-	TH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, TH_cd_nc_SAS_cor_wo_pollen_5_pearson)
+make_Boxplot_All_Thresholds(TH_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, TH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+	TH_cd_nc_SAS_cor_wo_pollen_5_10_pearson, TH_cd_nc_SAS_cor_wo_pollen_10_pearson)
 
 # MT
-make_Boxplot_All_Thresholds(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
-	MT_cd_nc_SAS_cor_wo_pollen_2_5_pearson, MT_cd_nc_SAS_cor_wo_pollen_5_pearson)
+make_Boxplot_All_Thresholds(MT_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, MT_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+	MT_cd_nc_SAS_cor_wo_pollen_5_10_pearson, MT_cd_nc_SAS_cor_wo_pollen_10_pearson)
 
 # BD
-make_Boxplot_All_Thresholds(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, 
-	BD_cd_nc_SAS_cor_wo_pollen_2_5_pearson, BD_cd_nc_SAS_cor_wo_pollen_5_pearson)
+make_Boxplot_All_Thresholds(BD_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, BD_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+	BD_cd_nc_SAS_cor_wo_pollen_5_10_pearson, BD_cd_nc_SAS_cor_wo_pollen_10_pearson)
 
 
 
