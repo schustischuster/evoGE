@@ -69,7 +69,7 @@ ATGE_NAT_ID <- read.table(file=file.path(in_dir_ATGE, "ATH_cd_nc_SAS_cor_wo_poll
 
 
 # ATH all samples
-ATH_cd_nc_SAS_cor_wo_pollen_05_2 <- ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
+ATH_cd_nc_SAS_cor_wo_pollen_0.5_2 <- ATH_cd_nc_SAS_cor_wo_pollen_0.5 %>% filter(
 	!((id_plus_strand %in% ATH_cd_nc_SAS_cor_wo_pollen_2$id_plus_strand) &
 		(id_minus_strand %in% ATH_cd_nc_SAS_cor_wo_pollen_2$id_minus_strand)))
 ATH_cd_nc_SAS_cor_wo_pollen_2_5 <- ATH_cd_nc_SAS_cor_wo_pollen_2 %>% filter(
@@ -175,7 +175,7 @@ NAT_genes_tables_wo_pollen_list <- list(
 	ATH_cd_nc_SAS_cor_wo_pollen_0.5 = ATH_cd_nc_SAS_cor_wo_pollen_0.5,
 	ATH_cd_nc_SAS_cor_wo_pollen_2 = ATH_cd_nc_SAS_cor_wo_pollen_2,
 	ATH_cd_nc_SAS_cor_wo_pollen_5 = ATH_cd_nc_SAS_cor_wo_pollen_5,
-	ATH_cd_nc_SAS_cor_wo_pollen_05_2 = ATH_cd_nc_SAS_cor_wo_pollen_05_2,
+	ATH_cd_nc_SAS_cor_wo_pollen_0.5_2 = ATH_cd_nc_SAS_cor_wo_pollen_0.5_2,
 	ATH_cd_nc_SAS_cor_wo_pollen_2_5 = ATH_cd_nc_SAS_cor_wo_pollen_2_5,
 	ATH_cd_nc_SAS_cor_wo_pollen_5_10 = ATH_cd_nc_SAS_cor_wo_pollen_5_10,
 	ATH_cd_nc_SAS_cor_wo_pollen_10 = ATH_cd_nc_SAS_cor_wo_pollen_10,
@@ -872,7 +872,7 @@ make_Boxplot_All_Thresholds <- function(threshold_05_2, threshold_2_5, threshold
 
 
 # ATH all samples
-make_Boxplot_All_Thresholds_Labels(ATH_cd_nc_SAS_cor_wo_pollen_05_2_pearson, ATH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
+make_Boxplot_All_Thresholds_Labels(ATH_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, ATH_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
 	ATH_cd_nc_SAS_cor_wo_pollen_5_10_pearson, ATH_cd_nc_SAS_cor_wo_pollen_10_pearson, samples = "all")
 
 # ATH comparative samples
