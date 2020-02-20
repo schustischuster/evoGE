@@ -107,6 +107,16 @@ getNcPc("TH", "comparative", 5)
 getNcPc("MT", "comparative", 5)
 getNcPc("BD", "comparative", 5)
 
+getNcPc("ATH", "single-species", 10)
+getNcPc("ATH", "comparative", 10)
+getNcPc("AL", "single-species", 10)
+getNcPc("AL", "comparative", 10)
+getNcPc("CR", "comparative", 10)
+getNcPc("ES", "comparative", 10)
+getNcPc("TH", "comparative", 10)
+getNcPc("MT", "comparative", 10)
+getNcPc("BD", "comparative", 10)
+
 ```
 
 ### Get DevSeq-ATGE non-coding-coding SAS pairs
