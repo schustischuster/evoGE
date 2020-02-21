@@ -137,7 +137,6 @@ getDevSeq_ATGE()
 Set the file path for the data generated in the previous steps and source the R script:
 
 ```R
-
 in_dir_cd <- "./output/overlap_cd_genes"
 in_dir_nc <- "./output/overlap_nc_genes"
 in_dir_ATGE <- "./output/SAS_DevSeq_ATGE"
