@@ -112,7 +112,6 @@ getNcPc("BD", "comparative", 5)
 
 getNcPc("ATH", "single-species", 10)
 getNcPc("ATH", "comparative", 10)
-getNcPc("AL", "single-species", 10)
 getNcPc("AL", "comparative", 10)
 getNcPc("CR", "comparative", 10)
 getNcPc("ES", "comparative", 10)
