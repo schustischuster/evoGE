@@ -1,2 +1,2 @@
 # evoGE
-Reproducible scripts for transcriptome evolution study.
+Reproducible scripts for transcriptome evolution study
