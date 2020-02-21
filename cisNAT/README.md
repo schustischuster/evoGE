@@ -138,6 +138,8 @@ getDevSeq_ATGE()
 The following function will ... The results will be written to a CSV file. 
 
 ```R
+in_dir <- "./output/overlap_nc_genes"
+
 getExprRatio()
 
 ```
