@@ -78,7 +78,8 @@ getPcPc("BD", "comparative")
 The following function will extract all non-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. A sense-antisense pair is considered as expressed if both non-coding antisense and coding sense transcript reach the threshold, which can be set to any value, in at least two out of three replicates in at least one sample type. 
 
 ```R
-getNcPc(species = "ATH", experiment = "single-species", threshold = 0.5)
+getNcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+        experiment = c("single-species", "comparative"), threshold)
 
 ```
 To generate all data tables used in this study, execute the following function calls: 
