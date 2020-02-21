@@ -12,6 +12,7 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Retrieve coding-coding gene overlapp](#retrieve-coding-coding-gene-overlapp)
   * [Retrieve non-coding-coding gene overlapp](#retrieve-non-coding-coding-gene-overlapp)
   * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
+  * [Get expression intensity and ratio of SAS pairs](#get-expression-intensity-and-ratio-of-sas-pairs)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -129,6 +130,15 @@ The following function will select all non-coding protein-coding sense-antisense
 
 ```R
 getDevSeq_ATGE()
+
+```
+
+### Get expression intensity and ratio of SAS pairs
+
+The following function will ... The results will be written to a CSV file. 
+
+```R
+getExprRatio()
 
 ```
 
