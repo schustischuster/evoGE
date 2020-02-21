@@ -135,7 +135,7 @@ getDevSeq_ATGE()
 
 ### Get expression intensity and ratio of SAS pairs
 
-The following function will retrieve the maximum expression level for both coding and non-coding transcripts, and will calculate the ratio between SAS gene expression. The results will be written to CSV files. 
+The following function will retrieve the maximum expression level for both coding and non-coding transcripts, and will calculate the ratio between NAT and coding gene expression. The results will be written to CSV files. 
 
 ```R
 in_dir <- "./output/overlap_nc_genes"
