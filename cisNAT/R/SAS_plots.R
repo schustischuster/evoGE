@@ -1099,7 +1099,7 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 	rsrt_label = paste("R ^ 2", "==", ".")
 	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
 	geom_point(size = 1.5, colour = data$col) + 
-	scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
 	scale_y_continuous(limits = c(0,101), expand = c(0, 0)) + 
 	geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = vjust_1, size=5.7, label = rsrt_label, parse = TRUE) + 
@@ -1144,7 +1144,7 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 	rsrt_label = paste("R ^ 2"," == ", rsqd)
 	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
 	geom_point(size = 1.5, colour = data$col) + 
-	scale_x_continuous(limits = c(-1.02,1.02), expand = c(0, 0)) +
+	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
 	scale_y_continuous(limits = c(0,4030), expand = c(0, 0)) + 
 	geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = 1.6, size=5.7, label = rsrt_label, parse = TRUE)
