@@ -32,6 +32,8 @@ if (!require(rtracklayer)) install.packages('rtracklayer')
 library(rtracklayer)
 if (!require(ggplot2)) install.packages('ggplot2')
 library(ggplot2)
+if (!require(mgcv)) install.packages('mgcv')
+library(mgcv)
 
 ```
   
