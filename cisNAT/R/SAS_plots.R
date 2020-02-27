@@ -1068,7 +1068,7 @@ rsqd_MT_perc <- testRsq(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_
 rsqd_BD_perc <- testRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
 
 
-# Compute adjusted rsqr cor value
+# Compute adjusted rsqr value
 testAdjRsq <- function(x,y) { 
 	test <- summary(gam(y ~ x))$r.sq
 	test <- round(test, digits=2)
@@ -1097,26 +1097,26 @@ rsqd_BD_PS <- testRsq(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_w
 
 
 
-# Some tests to check if assumptions of linear model are met
-# Examples for ATH data
-abs_lm_mod <- lm(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data)
-summary(abs_lm_mod)
-plot(abs_lm_mod)
-perc_lm_mod <- lm(perc_overlap_ATH_all$y_data ~ perc_overlap_ATH_all$x_data)
-summary(perc_lm_mod)
-plot(perc_lm_mod)
+## Some tests to check if assumptions of linear model are met
+## Examples for ATH data
+# abs_lm_mod <- lm(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data)
+# summary(abs_lm_mod)
+# plot(abs_lm_mod)
+# perc_lm_mod <- lm(perc_overlap_ATH_all$y_data ~ perc_overlap_ATH_all$x_data)
+# summary(perc_lm_mod)
+# plot(perc_lm_mod)
 
-# Check if assumptions of gam or glm gamma are met
-library(DHARMa)
-abs_gam_mod <- gam(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data)
-summary(abs_gam_mod)
-simulationOutput <- simulateResiduals(fittedModel = abs_gam_mod)
-plot(simulationOutput)
-abs_gamma_mod <- glm(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data, 
-	family = Gamma(link = "log"))
-summary(abs_gamma_mod)
-simulationOutput <- simulateResiduals(fittedModel = abs_gamma_mod)
-plot(simulationOutput)
+## Check if assumptions of gam or glm gamma are met
+# library(DHARMa)
+# abs_gam_mod <- gam(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data)
+# summary(abs_gam_mod)
+# simulationOutput <- simulateResiduals(fittedModel = abs_gam_mod)
+# plot(simulationOutput)
+# abs_gamma_mod <- glm(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data, 
+# 	family = Gamma(link = "log"))
+# summary(abs_gamma_mod)
+# simulationOutput <- simulateResiduals(fittedModel = abs_gamma_mod)
+# plot(simulationOutput)
 
 
 
