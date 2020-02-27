@@ -1067,15 +1067,23 @@ rsqd_TH_perc <- testRsq(TH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, TH_cd_nc_
 rsqd_MT_perc <- testRsq(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
 rsqd_BD_perc <- testRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
 
+
+# Compute adjusted rsqr cor value
+testAdjRsq <- function(x,y) { 
+	test <- summary(gam(y ~ x))$r.sq
+	test <- round(test, digits=2)
+  	return(test)
+}
+
 # Calculate R squared value for absolute overlap vs pearson data
-rsqd_ATH_all_abs <- testRsq(ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
-rsqd_ATH_comp_abs <- testRsq(ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
-rsqd_AL_abs <- testRsq(AL_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, AL_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
-rsqd_CR_abs <- testRsq(CR_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, CR_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
-rsqd_ES_abs <- testRsq(ES_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ES_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
-rsqd_TH_abs <- testRsq(TH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, TH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
-rsqd_MT_abs <- testRsq(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
-rsqd_BD_abs <- testRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_ATH_all_abs <- testAdjRsq(ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_ATH_comp_abs <- testAdjRsq(ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ATH_comp_samples_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_AL_abs <- testAdjRsq(AL_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, AL_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_CR_abs <- testAdjRsq(CR_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, CR_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_ES_abs <- testAdjRsq(ES_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, ES_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_TH_abs <- testAdjRsq(TH_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, TH_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_MT_abs <- testAdjRsq(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
+rsqd_BD_abs <- testAdjRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$overlap)
 
 # Calculate R squared value for pearson vs spearman data
 rsqd_ATH_all_PS <- testRsq(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
@@ -1086,6 +1094,29 @@ rsqd_ES_PS <- testRsq(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_w
 rsqd_TH_PS <- testRsq(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 rsqd_MT_PS <- testRsq(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 rsqd_BD_PS <- testRsq(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+
+
+
+# Some tests to check if assumptions of linear model are met
+# Examples for ATH data
+abs_lm_mod <- lm(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data)
+summary(abs_lm_mod)
+plot(abs_lm_mod)
+perc_lm_mod <- lm(perc_overlap_ATH_all$y_data ~ perc_overlap_ATH_all$x_data)
+summary(perc_lm_mod)
+plot(perc_lm_mod)
+
+# Check if assumptions of gam or glm gamma are met
+library(DHARMa)
+abs_gam_mod <- gam(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data)
+summary(abs_gam_mod)
+simulationOutput <- simulateResiduals(fittedModel = abs_gam_mod)
+plot(simulationOutput)
+abs_gamma_mod <- glm(abs_overlap_ATH_all$y_data ~ abs_overlap_ATH_all$x_data, 
+	family = Gamma(link = "log"))
+summary(abs_gamma_mod)
+simulationOutput <- simulateResiduals(fittedModel = abs_gamma_mod)
+plot(simulationOutput)
 
 
 
@@ -1145,8 +1176,8 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
 	geom_point(size = 1.5, colour = data$col) + 
 	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
-	scale_y_continuous(limits = c(0,4030), expand = c(0, 0)) + 
-	geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
+	scale_y_continuous(trans='log10', labels = prettyNum, breaks=c(1,10,100,1000,10000), limits=c(1, 22000), expand = c(0, 0)) + 
+	geom_smooth(method="auto" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = 1.6, size=5.7, label = rsrt_label, parse = TRUE)
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (bp)") + 
   		theme(text=element_text(size=16), 
