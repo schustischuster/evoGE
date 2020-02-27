@@ -15,6 +15,8 @@ if (!require(dplyr)) install.packages('dplyr')
 library(dplyr)
 if (!require(ggplot2)) install.packages('ggplot2')
 library(ggplot2)
+if (!require(mgcv)) install.packages('mgcv')
+library(mgcv)
 
 
 # Set file path and input files
@@ -1132,7 +1134,6 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 	geom_point(size = 1.5, colour = data$col) + 
 	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
 	scale_y_continuous(limits = c(0,101), expand = c(0, 0)) + 
-	geom_smooth(method="lm" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = vjust_1, size=5.7, label = rsrt_label, parse = TRUE) + 
 	annotate("text", x = -Inf, y = Inf, hjust = rsgd_pos, vjust = vjust_2, size=5.7, label = rsqd, parse = FALSE) 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (%)") + 
@@ -1153,10 +1154,10 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 }
 
 
-makeScrPlotRelOverlap(data=perc_overlap_ATH_all, rsqd=rsqd_ATH_all_perc, plot_title="ATH_all", rsgd_pos= -0.405, vjust_1=1.8, vjust_2=4)
+makeScrPlotRelOverlap(data=perc_overlap_ATH_all, rsqd=rsqd_ATH_all_perc, plot_title="ATH_all", rsgd_pos= -0.405, vjust_1=2.9, vjust_2=5.5)
 makeScrPlotRelOverlap(data=perc_overlap_ATH_comp, rsqd=rsqd_ATH_comp_perc, plot_title="ATH_comp", rsgd_pos= -0.405, vjust_1=10.5, vjust_2=16.55)
-makeScrPlotRelOverlap(data=perc_overlap_AL, rsqd=rsqd_AL_perc, plot_title="AL_", rsgd_pos= -1.41, vjust_1=8.25, vjust_2=13)
-makeScrPlotRelOverlap(data=perc_overlap_CR, rsqd=rsqd_CR_perc, plot_title="CR_", rsgd_pos= -0.405, vjust_1=3.4, vjust_2=6.25)
+makeScrPlotRelOverlap(data=perc_overlap_AL, rsqd=rsqd_AL_perc, plot_title="AL_", rsgd_pos= -1.41, vjust_1=7.55, vjust_2=12)
+makeScrPlotRelOverlap(data=perc_overlap_CR, rsqd=rsqd_CR_perc, plot_title="CR_", rsgd_pos= -0.405, vjust_1=3.8, vjust_2=6.8)
 makeScrPlotRelOverlap(data=perc_overlap_ES, rsqd=rsqd_ES_perc, plot_title="ES_", rsgd_pos= -0.405, vjust_1=12.68, vjust_2=19.1)
 makeScrPlotRelOverlap(data=perc_overlap_TH, rsqd=rsqd_TH_perc, plot_title="TH_", rsgd_pos= -0.405, vjust_1=7.0, vjust_2=11.25)
 makeScrPlotRelOverlap(data=perc_overlap_MT, rsqd=rsqd_MT_perc, plot_title="MT_", rsgd_pos= -0.405, vjust_1=2, vjust_2=4.33)
@@ -1177,7 +1178,7 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 	geom_point(size = 1.5, colour = data$col) + 
 	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
 	scale_y_continuous(trans='log10', labels = prettyNum, breaks=c(1,10,100,1000,10000), limits=c(1, 22000), expand = c(0, 0)) + 
-	geom_smooth(method="auto" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use linear regression model
+	geom_smooth(method="auto" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use gam regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = 1.6, size=5.7, label = rsrt_label, parse = TRUE)
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (bp)") + 
   		theme(text=element_text(size=16), 
