@@ -427,9 +427,9 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	cor03_05 = paste("ac vs. pc ", "p=", p03_05, sep="")
 	cor02_05 = paste("nc vs. pc ", "p=", p02_05, sep="")
 
-	blu = rgb(0, 70, 139, max = 255, alpha = 55)
-	gray = rgb(131, 145, 145, max = 255, alpha = 80)
-	grn = rgb(82, 181, 64, max = 255, alpha = 90)
+	blu = rgb(0, 70, 139, max = 255, alpha = 40)
+	gray = rgb(131, 145, 145, max = 255, alpha = 70)
+	grn = rgb(82, 181, 64, max = 255, alpha = 80)
 	blu_ln = rgb(0, 70, 139, max = 255, alpha = 0)
 	gray_ln = rgb(131, 145, 145, max = 255, alpha = 0)
 	grn_ln = rgb(82, 181, 64, max = 255, alpha = 0)
@@ -450,13 +450,13 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 		theme(text=element_text(size=16), 
   		axis.ticks.length = unit(.3, "cm"),
   		plot.margin = unit(c(5.5, 10.5, 3.0, 3.5), "points"),
-  		axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 7.25, r = 0, b = 0, l = 0)), 
-  		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 7.25, b = 0, l = 0)),
-  		axis.title.x = element_text(colour = "black", margin = margin(t = 14.0, r = 0, b = 0, l = 0)),
-  		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 14.0, b = 0, l = 0)),
-  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 17, r = 0, b = 8.25, l = 0), hjust = 0.5),
+  		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+  		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 0, l = 0)),
+  		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 12.5, b = 0, l = 0)),
+  		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 17.25, r = 0, b = 8, l = 0), hjust = 0.5),
   		legend.position = "bottom",
-  		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
 		scale = 1, width = 4.848485, height = 5.95, units = c("in"), 
@@ -586,14 +586,14 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 		scale_linetype_manual(values = c("solid","solid","solid")) + 
 		theme(text=element_text(size=16), 
   		axis.ticks.length = unit(.3, "cm"),
-  		plot.margin = unit(c(5.5, 11.5, 20.25, 2.5), "points"),
-  		axis.text.x = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 7.25, r = 0, b = 0, l = 0)), 
-  		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 7.25, b = 0, l = 0)),
-  		axis.title.x = element_text(colour = "black", margin = margin(t = 14.0, r = 0, b = 0, l = 0)),
-  		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 14.0, b = 0, l = 0)),
-  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 17, r = 0, b = 8.25, l = 0), hjust = 0.5),
+  		plot.margin = unit(c(5.5, 13.5, 20.25, 0.5), "points"),
+  		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+  		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 0, l = 0)),
+  		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 12.5, b = 0, l = 0)),
+  		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 17.25, r = 0, b = 8, l = 0), hjust = 0.5),
   		legend.position = "bottom",
-  		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
+  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
 		scale = 1, width = 4.848485, height = 5.95, units = c("in"), 
@@ -601,6 +601,7 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 }
 
 makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02=ATH_all_wilcox_03_02_ratio, p03_05=ATH_all_wilcox_03_05_ratio, p02_05=ATH_all_wilcox_02_05_ratio, plot_title="ATH_all")
+
 makeScrPlotExprRatio(data=ATH_comp_cd_nc_max_expr_ratio, lim_y=c(0,1.615), p03_02=ATH_comp_wilcox_03_02_ratio, p03_05=ATH_comp_wilcox_03_05_ratio, p02_05=ATH_comp_wilcox_02_05_ratio, plot_title="ATH_comp")
 makeScrPlotExprRatio(data=AL_cd_nc_max_expr_ratio, lim_y=c(0,1.42), p03_02=AL_wilcox_03_02_ratio, p03_05=AL_wilcox_03_05_ratio, p02_05=AL_wilcox_02_05_ratio, plot_title="AL_")
 makeScrPlotExprRatio(data=CR_cd_nc_max_expr_ratio, lim_y=c(0,1.79), p03_02=CR_wilcox_03_02_ratio, p03_05=CR_wilcox_03_05_ratio, p02_05=CR_wilcox_02_05_ratio, plot_title="CR_")
@@ -1187,7 +1188,7 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 6.25, r = 0, b = 0, l = 0)), 
 		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 6.25, b = 0, l = 0)),
 		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
-		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 9, b = 0, l = 1)),
+		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 0, b = 0, l = 1)),
 		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 19, r = 0, b = 8, l = 0), hjust = 0.5),
 		legend.position = "bottom",
   		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
