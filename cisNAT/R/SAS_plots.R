@@ -438,12 +438,12 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	geom_density(adjust=1.35, size=1.35) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.152, vjust = 2, size=5.35, label = cor03_02) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.152, vjust = 3.65, size=5.35, label = cor03_05) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.152, vjust = 5.3, size=5.35, label = cor02_05) + 
-	annotate("text", x = 8.08, y = Inf, hjust = 0, vjust = 6.95, size=5.35, label = n_ac) + 
-	annotate("text", x = 8.08, y = Inf, hjust = 0, vjust = 8.6, size=5.35, label = n_nc) + 
-	annotate("text", x = 8.08, y = Inf, hjust = 0, vjust = 10.25, size=5.35, label = n_pc)
+	annotate("text", x = -Inf, y = Inf, hjust = -1.048, vjust = 2, size=5.65, label = cor03_02) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.048, vjust = 3.65, size=5.65, label = cor03_05) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.048, vjust = 5.3, size=5.65, label = cor02_05) + 
+	annotate("text", x = 7.94, y = Inf, hjust = 0, vjust = 6.95, size=5.65, label = n_ac) + 
+	annotate("text", x = 7.94, y = Inf, hjust = 0, vjust = 8.6, size=5.65, label = n_nc) + 
+	annotate("text", x = 7.94, y = Inf, hjust = 0, vjust = 10.25, size=5.65, label = n_pc)
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray_ln, blu_ln, grn_ln, gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540", "#839191", "#00468b", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
 		scale_linetype_manual(values = c("dotdash","dotdash","dotdash", "solid","solid","solid")) + 
@@ -578,9 +578,9 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
-	annotate("text", x = 1.11, y = Inf, hjust = 0, vjust = 2, size=5.35, label = cor03_02) + 
-	annotate("text", x = 1.11, y = Inf, hjust = 0, vjust = 3.65, size=5.35, label = cor03_05) + 
-	annotate("text", x = 1.11, y = Inf, hjust = 0, vjust = 5.3, size=5.35, label = cor02_05)
+	annotate("text", x = 0.92, y = Inf, hjust = 0, vjust = 2, size=5.65, label = cor03_02) + 
+	annotate("text", x = 0.92, y = Inf, hjust = 0, vjust = 3.65, size=5.65, label = cor03_05) + 
+	annotate("text", x = 0.92, y = Inf, hjust = 0, vjust = 5.3, size=5.65, label = cor02_05)
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540")) + xlab("Expression ratio (nc:cd SAS)") + ylab("Density") + 
 		scale_linetype_manual(values = c("solid","solid","solid")) + 
@@ -601,7 +601,6 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 }
 
 makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02=ATH_all_wilcox_03_02_ratio, p03_05=ATH_all_wilcox_03_05_ratio, p02_05=ATH_all_wilcox_02_05_ratio, plot_title="ATH_all")
-
 makeScrPlotExprRatio(data=ATH_comp_cd_nc_max_expr_ratio, lim_y=c(0,1.615), p03_02=ATH_comp_wilcox_03_02_ratio, p03_05=ATH_comp_wilcox_03_05_ratio, p02_05=ATH_comp_wilcox_02_05_ratio, plot_title="ATH_comp")
 makeScrPlotExprRatio(data=AL_cd_nc_max_expr_ratio, lim_y=c(0,1.42), p03_02=AL_wilcox_03_02_ratio, p03_05=AL_wilcox_03_05_ratio, p02_05=AL_wilcox_02_05_ratio, plot_title="AL_")
 makeScrPlotExprRatio(data=CR_cd_nc_max_expr_ratio, lim_y=c(0,1.79), p03_02=CR_wilcox_03_02_ratio, p03_05=CR_wilcox_03_05_ratio, p02_05=CR_wilcox_02_05_ratio, plot_title="CR_")
@@ -1140,9 +1139,9 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (%)") + 
 		theme(text=element_text(size=16), 
 		axis.ticks.length = unit(.3, "cm"),
-		plot.margin = unit(c(3.0, 10.5, 44.5, 16), "points"),
-		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 6.25, r = 0, b = 0, l = 0)), 
-		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 6.25, b = 0, l = 0)),
+		plot.margin = unit(c(3.0, 10.5, 45.5, 17), "points"),
+		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 5.25, r = 0, b = 0, l = 0)), 
+		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 5.25, b = 0, l = 0)),
 		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
 		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 9, b = 0, l = 1)),
 		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 19, r = 0, b = 8, l = 0), hjust = 0.5),
@@ -1184,9 +1183,9 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (bp)") + 
   		theme(text=element_text(size=16), 
   		axis.ticks.length = unit(.3, "cm"),
-  		plot.margin = unit(c(3.0, 10.5, 44.5, 7), "points"),
-		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 6.25, r = 0, b = 0, l = 0)), 
-		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 6.25, b = 0, l = 0)),
+  		plot.margin = unit(c(3.0, 10.5, 45.5, 8), "points"),
+		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 5.25, r = 0, b = 0, l = 0)), 
+		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 5.25, b = 0, l = 0)),
 		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
 		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 0, b = 0, l = 1)),
 		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 19, r = 0, b = 8, l = 0), hjust = 0.5),
