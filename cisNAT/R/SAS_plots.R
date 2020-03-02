@@ -427,15 +427,15 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	cor03_05 = paste("ac vs. pc ", "p=", p03_05, sep="")
 	cor02_05 = paste("nc vs. pc ", "p=", p02_05, sep="")
 
-	blu = rgb(0, 70, 139, max = 255, alpha = 40)
-	gray = rgb(131, 145, 145, max = 255, alpha = 70)
-	grn = rgb(82, 181, 64, max = 255, alpha = 80)
+	blu = rgb(0, 70, 139, max = 255, alpha = 35)
+	gray = rgb(131, 145, 145, max = 255, alpha = 60)
+	grn = rgb(94, 200, 100, max = 255, alpha = 75)
 	blu_ln = rgb(0, 70, 139, max = 255, alpha = 0)
 	gray_ln = rgb(131, 145, 145, max = 255, alpha = 0)
-	grn_ln = rgb(82, 181, 64, max = 255, alpha = 0)
+	grn_ln = rgb(94, 200, 100, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.35) + 
+	geom_density(adjust=1.35, size=1.25) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotate("text", x = -Inf, y = Inf, hjust = -1.048, vjust = 2, size=5.65, label = cor03_02) + 
@@ -571,10 +571,10 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 
 	blu = rgb(0, 70, 139, max = 255, alpha = 0)
 	gray = rgb(131, 145, 145, max = 255, alpha = 0)
-	grn = rgb(82, 181, 64, max = 255, alpha = 0)
+	grn = rgb(94, 200, 100, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.35) + 
+	geom_density(adjust=1.35, size=1.25) + 
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
