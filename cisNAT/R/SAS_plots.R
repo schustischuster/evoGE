@@ -442,8 +442,8 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 		xmax=c(7,8.75,7,8.75,7,8.75,7.075,7.68,8.75,7.075,7.68,8.75,7.075,7.68,8.75), 
 		ymin=c(0.4158*yadj,0.4158*yadj,0.3853*yadj,0.3853*yadj,0.3548*yadj,0.3548*yadj,0.3336*yadj,0.3336*yadj,0.3243*yadj,0.3031*yadj,0.3031*yadj,0.2938*yadj,0.2726*yadj,0.2726*yadj,0.2633*yadj), 
 		ymax=c(0.4348*yadj,0.4348*yadj,0.4043*yadj,0.4043*yadj,0.3738*yadj,0.3738*yadj,0.3340*yadj,0.3340*yadj,0.3433*yadj,0.3035*yadj,0.3035*yadj,0.3128*yadj,0.2730*yadj,0.2730*yadj,0.2823*yadj), 
-		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b","#49b43c","#49b43c","#49b43c","#00468b","#00468b","#00468b","#839191","#839191","#839191"), 
-		size=1.2, fill=c(grn,blu,grn,gray,gray,blu,grn,grn,grn,blu,blu,blu,gray,gray,gray)) + 
+		color=c("#49b43c","#00468b","#49b43c","#839191","#00468b","#839191","#49b43c","#49b43c","#49b43c","#00468b","#00468b","#00468b","#839191","#839191","#839191"), 
+		size=1.2, fill=c(grn,blu,grn,gray,blu,gray,grn,grn,grn,blu,blu,blu,gray,gray,gray)) + 
 	annotate("segment", x=c(6), xend=c(12), y=c(0.248*yadj), yend=c(0.248*yadj), color="grey20", size=0.7) + 
 	annotate("segment", x=c(6.03), xend=c(6.03), y=c(0.247*yadj), yend=c(0.449*yadj), color="grey20", size=0.7) + 
 	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 1.8, size=5.5, label = cor03_02) + 
