@@ -412,38 +412,46 @@ BD_wilcox_02_05 <- wilcoxMaxNAT(BD_cd_nc_expr_betw_min02_02, MT_cd_nc_expr_above
 
 # Function to scatter plot max expression versus pearson correlation
 makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
-	plot_title = c("ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD")) {
+	plot_title = c("ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD"), yadj) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
 	n_ac <- nrow(subset(data, class=="-0.3_nc"))
 	n_nc <- nrow(subset(data, class==">-02 <02_nc"))
 	n_pc <- nrow(subset(data, class==">05_nc"))
-	n_ac = paste("ac n=", n_ac, sep="")
-	n_nc = paste("nc n=", n_nc, sep="")
-	n_pc = paste("pc n=", n_pc, sep="")
+	n_ac = paste("n=", n_ac, sep="")
+	n_nc = paste("n=", n_nc, sep="")
+	n_pc = paste("n=", n_pc, sep="")
 
-	cor03_02 = paste("ac vs. nc ", "p=", p03_02, sep="")
-	cor03_05 = paste("ac vs. pc ", "p=", p03_05, sep="")
-	cor02_05 = paste("nc vs. pc ", "p=", p02_05, sep="")
+	cor03_02 = paste("vs.    ", " p=", p03_02, sep="")
+	cor03_05 = paste("vs.    ", " p=", p03_05, sep="")
+	cor02_05 = paste("vs.    ", " p=", p02_05, sep="")
 
 	blu = rgb(0, 70, 139, max = 255, alpha = 35)
 	gray = rgb(131, 145, 145, max = 255, alpha = 60)
 	grn = rgb(94, 200, 100, max = 255, alpha = 75)
 	blu_ln = rgb(0, 70, 139, max = 255, alpha = 0)
 	gray_ln = rgb(131, 145, 145, max = 255, alpha = 0)
-	grn_ln = rgb(94, 200, 100, max = 255, alpha = 0)
+	grn_ln = rgb(73, 180, 60, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
 	geom_density(adjust=1.35, size=1.25) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.048, vjust = 2, size=5.65, label = cor03_02) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.048, vjust = 3.65, size=5.65, label = cor03_05) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.048, vjust = 5.3, size=5.65, label = cor02_05) + 
-	annotate("text", x = 7.94, y = Inf, hjust = 0, vjust = 6.95, size=5.65, label = n_ac) + 
-	annotate("text", x = 7.94, y = Inf, hjust = 0, vjust = 8.6, size=5.65, label = n_nc) + 
-	annotate("text", x = 7.94, y = Inf, hjust = 0, vjust = 10.25, size=5.65, label = n_pc)
+	annotate("rect", xmin=c(6.5,8.25,6.5,8.25,6.5,8.25,6.5,7.45,8.25,6.5,7.45,8.25,6.5,7.45,8.25), 
+		xmax=c(7,8.75,7,8.75,7,8.75,7.075,7.68,8.75,7.075,7.68,8.75,7.075,7.68,8.75), 
+		ymin=c(0.4158*yadj,0.4158*yadj,0.3853*yadj,0.3853*yadj,0.3548*yadj,0.3548*yadj,0.3336*yadj,0.3336*yadj,0.3243*yadj,0.3031*yadj,0.3031*yadj,0.2938*yadj,0.2726*yadj,0.2726*yadj,0.2633*yadj), 
+		ymax=c(0.4348*yadj,0.4348*yadj,0.4043*yadj,0.4043*yadj,0.3738*yadj,0.3738*yadj,0.3340*yadj,0.3340*yadj,0.3433*yadj,0.3035*yadj,0.3035*yadj,0.3128*yadj,0.2730*yadj,0.2730*yadj,0.2823*yadj), 
+		color=c("#49b43c","#00468b","#49b43c","#839191","#00468b","#839191","#49b43c","#49b43c","#49b43c","#00468b","#00468b","#00468b","#839191","#839191","#839191"), 
+		size=1.2, fill=c(grn,blu,grn,gray,blu,gray,grn,grn,grn,blu,blu,blu,gray,gray,gray)) + 
+	annotate("segment", x=c(6), xend=c(12), y=c(0.248*yadj), yend=c(0.248*yadj), color="grey20", size=0.7) + 
+	annotate("segment", x=c(6.03), xend=c(6.03), y=c(0.247*yadj), yend=c(0.449*yadj), color="grey20", size=0.7) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 1.8, size=5.5, label = cor03_02) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 3.425, size=5.5, label = cor03_05) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 5.05, size=5.5, label = cor02_05) + 
+	annotate("text", x = 9.066, y = Inf, hjust = 0, vjust = 6.675, size=5.5, label = n_ac) + 
+	annotate("text", x = 9.066, y = Inf, hjust = 0, vjust = 8.3, size=5.5, label = n_nc) + 
+	annotate("text", x = 9.066, y = Inf, hjust = 0, vjust = 9.925, size=5.5, label = n_pc)
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray_ln, blu_ln, grn_ln, gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540", "#839191", "#00468b", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
 		scale_linetype_manual(values = c("dotdash","dotdash","dotdash", "solid","solid","solid")) + 
@@ -463,14 +471,14 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 		dpi = 825, limitsize = FALSE)
 }
 
-makeScrPlotMaxExpr(data=ATH_all_cd_nc_max_expr_pearson, lim_y=c(0,0.45), p03_02=ATH_all_wilcox_03_02, p03_05=ATH_all_wilcox_03_05, p02_05=ATH_all_wilcox_02_05, plot_title="ATH_all")
-makeScrPlotMaxExpr(data=ATH_comp_cd_nc_max_expr_pearson, lim_y=c(0,0.545), p03_02=ATH_comp_wilcox_03_02, p03_05=ATH_comp_wilcox_03_05, p02_05=ATH_comp_wilcox_02_05, plot_title="ATH_comp")
-makeScrPlotMaxExpr(data=AL_cd_nc_max_expr_pearson, lim_y=c(0,0.552), p03_02=AL_wilcox_03_02, p03_05=AL_wilcox_03_05, p02_05=AL_wilcox_02_05, plot_title="AL_")
-makeScrPlotMaxExpr(data=CR_cd_nc_max_expr_pearson, lim_y=c(0,0.457), p03_02=CR_wilcox_03_02, p03_05=CR_wilcox_03_05, p02_05=CR_wilcox_02_05, plot_title="CR_")
-makeScrPlotMaxExpr(data=ES_cd_nc_max_expr_pearson, lim_y=c(0,0.480), p03_02=ES_wilcox_03_02, p03_05=ES_wilcox_03_05, p02_05=ES_wilcox_02_05, plot_title="ES_")
-makeScrPlotMaxExpr(data=TH_cd_nc_max_expr_pearson, lim_y=c(0,0.479), p03_02=TH_wilcox_03_02, p03_05=TH_wilcox_03_05, p02_05=TH_wilcox_02_05, plot_title="TH_")
-makeScrPlotMaxExpr(data=MT_cd_nc_max_expr_pearson, lim_y=c(0,0.771), p03_02=MT_wilcox_03_02, p03_05=MT_wilcox_03_05, p02_05=MT_wilcox_02_05, plot_title="MT_")
-makeScrPlotMaxExpr(data=BD_cd_nc_max_expr_pearson, lim_y=c(0,0.590), p03_02=BD_wilcox_03_02, p03_05=BD_wilcox_03_05, p02_05=BD_wilcox_02_05, plot_title="BD_")
+makeScrPlotMaxExpr(data=ATH_all_cd_nc_max_expr_pearson, lim_y=c(0,0.45), p03_02=ATH_all_wilcox_03_02, p03_05=ATH_all_wilcox_03_05, p02_05=ATH_all_wilcox_02_05, plot_title="ATH_all", yadj=1)
+makeScrPlotMaxExpr(data=ATH_comp_cd_nc_max_expr_pearson, lim_y=c(0,0.545), p03_02=ATH_comp_wilcox_03_02, p03_05=ATH_comp_wilcox_03_05, p02_05=ATH_comp_wilcox_02_05, plot_title="ATH_comp", yadj=1.211)
+makeScrPlotMaxExpr(data=AL_cd_nc_max_expr_pearson, lim_y=c(0,0.552), p03_02=AL_wilcox_03_02, p03_05=AL_wilcox_03_05, p02_05=AL_wilcox_02_05, plot_title="AL_", yadj=1.2267)
+makeScrPlotMaxExpr(data=CR_cd_nc_max_expr_pearson, lim_y=c(0,0.457), p03_02=CR_wilcox_03_02, p03_05=CR_wilcox_03_05, p02_05=CR_wilcox_02_05, plot_title="CR_", yadj=1.0155)
+makeScrPlotMaxExpr(data=ES_cd_nc_max_expr_pearson, lim_y=c(0,0.480), p03_02=ES_wilcox_03_02, p03_05=ES_wilcox_03_05, p02_05=ES_wilcox_02_05, plot_title="ES_", yadj=1.0667)
+makeScrPlotMaxExpr(data=TH_cd_nc_max_expr_pearson, lim_y=c(0,0.479), p03_02=TH_wilcox_03_02, p03_05=TH_wilcox_03_05, p02_05=TH_wilcox_02_05, plot_title="TH_", yadj=1.0645)
+makeScrPlotMaxExpr(data=MT_cd_nc_max_expr_pearson, lim_y=c(0,0.771), p03_02=MT_wilcox_03_02, p03_05=MT_wilcox_03_05, p02_05=MT_wilcox_02_05, plot_title="MT_", yadj=1.7135)
+makeScrPlotMaxExpr(data=BD_cd_nc_max_expr_pearson, lim_y=c(0,0.590), p03_02=BD_wilcox_03_02, p03_05=BD_wilcox_03_05, p02_05=BD_wilcox_02_05, plot_title="BD_", yadj=1.3112)
 
 
 
@@ -578,9 +586,9 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
-	annotate("text", x = 0.92, y = Inf, hjust = 0, vjust = 2, size=5.65, label = cor03_02) + 
-	annotate("text", x = 0.92, y = Inf, hjust = 0, vjust = 3.65, size=5.65, label = cor03_05) + 
-	annotate("text", x = 0.92, y = Inf, hjust = 0, vjust = 5.3, size=5.65, label = cor02_05)
+	annotate("text", x = 1.12, y = Inf, hjust = 0, vjust = 1.8, size=5.5, label = cor03_02) + 
+	annotate("text", x = 1.12, y = Inf, hjust = 0, vjust = 3.425, size=5.5, label = cor03_05) + 
+	annotate("text", x = 1.12, y = Inf, hjust = 0, vjust = 5.05, size=5.5, label = cor02_05)
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540")) + xlab("Expression ratio (nc:cd SAS)") + ylab("Density") + 
 		scale_linetype_manual(values = c("solid","solid","solid")) + 
