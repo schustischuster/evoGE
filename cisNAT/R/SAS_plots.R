@@ -442,8 +442,8 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 		xmax=c(7,8.75,7,8.75,7,8.75,7.075,7.68,8.75,7.075,7.68,8.75,7.075,7.68,8.75), 
 		ymin=c(0.4158*yadj,0.4158*yadj,0.3853*yadj,0.3853*yadj,0.3548*yadj,0.3548*yadj,0.3336*yadj,0.3336*yadj,0.3243*yadj,0.3031*yadj,0.3031*yadj,0.2938*yadj,0.2726*yadj,0.2726*yadj,0.2633*yadj), 
 		ymax=c(0.4348*yadj,0.4348*yadj,0.4043*yadj,0.4043*yadj,0.3738*yadj,0.3738*yadj,0.3340*yadj,0.3340*yadj,0.3433*yadj,0.3035*yadj,0.3035*yadj,0.3128*yadj,0.2730*yadj,0.2730*yadj,0.2823*yadj), 
-		color=c("#49b43c","#00468b","#49b43c","#839191","#00468b","#839191","#49b43c","#49b43c","#49b43c","#00468b","#00468b","#00468b","#839191","#839191","#839191"), 
-		size=1.2, fill=c(grn,blu,grn,gray,blu,gray,grn,grn,grn,blu,blu,blu,gray,gray,gray)) + 
+		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b","#49b43c","#49b43c","#49b43c","#00468b","#00468b","#00468b","#839191","#839191","#839191"), 
+		size=1.2, fill=c(grn,blu,grn,gray,gray,blu,grn,grn,grn,blu,blu,blu,gray,gray,gray)) + 
 	annotate("segment", x=c(6), xend=c(12), y=c(0.248*yadj), yend=c(0.248*yadj), color="grey20", size=0.7) + 
 	annotate("segment", x=c(6.03), xend=c(6.03), y=c(0.247*yadj), yend=c(0.449*yadj), color="grey20", size=0.7) + 
 	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 1.8, size=5.5, label = cor03_02) + 
@@ -565,7 +565,7 @@ BD_wilcox_02_05_ratio <- wilcoxRatioSAS(BD_cd_nc_expr_betw_min02_02, MT_cd_nc_ex
 
 # Function to scatter plot max expression versus pearson correlation
 makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
-	plot_title = c("ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD")) {
+	plot_title = c("ATH_all", "ATH", "CR", "ES", "TH", "MT", "BD"), yadj) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
@@ -573,9 +573,9 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	n_nc <- nrow(subset(data, class==">-02 <02_nc"))
 	n_pc <- nrow(subset(data, class==">05_nc"))
 
-	cor03_02 = paste("ac vs. nc ", "p=", p03_02, sep="")
-	cor03_05 = paste("ac vs. pc ", "p=", p03_05, sep="")
-	cor02_05 = paste("nc vs. pc ", "p=", p02_05, sep="")
+	cor03_02 = paste("vs.    ", " p=", p03_02, sep="")
+	cor03_05 = paste("vs.    ", " p=", p03_05, sep="")
+	cor02_05 = paste("vs.    ", " p=", p02_05, sep="")
 
 	blu = rgb(0, 70, 139, max = 255, alpha = 0)
 	gray = rgb(131, 145, 145, max = 255, alpha = 0)
@@ -586,9 +586,15 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
-	annotate("text", x = 1.12, y = Inf, hjust = 0, vjust = 1.8, size=5.5, label = cor03_02) + 
-	annotate("text", x = 1.12, y = Inf, hjust = 0, vjust = 3.425, size=5.5, label = cor03_05) + 
-	annotate("text", x = 1.12, y = Inf, hjust = 0, vjust = 5.05, size=5.5, label = cor02_05)
+	annotate("rect", xmin=c(1.39,5.5,1.39,5.5,1.39,5.5), 
+		xmax=c(2.05,8.1,2.05,8.1,2.05,8.1), 
+		ymin=c(1.989*yadj,1.989*yadj,1.846*yadj,1.846*yadj,1.703*yadj,1.703*yadj), 
+		ymax=c(1.9907*yadj,1.9907*yadj,1.8477*yadj,1.8477*yadj,1.7047*yadj,1.7047*yadj), 
+		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b"), 
+		size=1.2, fill=c(grn,blu,grn,gray,gray,blu)) + 
+	annotate("text", x = 2.52, y = Inf, hjust = 0, vjust = 1.8, size=5.5, label = cor03_02) + 
+	annotate("text", x = 2.52, y = Inf, hjust = 0, vjust = 3.425, size=5.5, label = cor03_05) + 
+	annotate("text", x = 2.52, y = Inf, hjust = 0, vjust = 5.05, size=5.5, label = cor02_05)
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540")) + xlab("Expression ratio (nc:cd SAS)") + ylab("Density") + 
 		scale_linetype_manual(values = c("solid","solid","solid")) + 
@@ -608,14 +614,14 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 		dpi = 825, limitsize = FALSE)
 }
 
-makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02=ATH_all_wilcox_03_02_ratio, p03_05=ATH_all_wilcox_03_05_ratio, p02_05=ATH_all_wilcox_02_05_ratio, plot_title="ATH_all")
-makeScrPlotExprRatio(data=ATH_comp_cd_nc_max_expr_ratio, lim_y=c(0,1.615), p03_02=ATH_comp_wilcox_03_02_ratio, p03_05=ATH_comp_wilcox_03_05_ratio, p02_05=ATH_comp_wilcox_02_05_ratio, plot_title="ATH_comp")
-makeScrPlotExprRatio(data=AL_cd_nc_max_expr_ratio, lim_y=c(0,1.42), p03_02=AL_wilcox_03_02_ratio, p03_05=AL_wilcox_03_05_ratio, p02_05=AL_wilcox_02_05_ratio, plot_title="AL_")
-makeScrPlotExprRatio(data=CR_cd_nc_max_expr_ratio, lim_y=c(0,1.79), p03_02=CR_wilcox_03_02_ratio, p03_05=CR_wilcox_03_05_ratio, p02_05=CR_wilcox_02_05_ratio, plot_title="CR_")
-makeScrPlotExprRatio(data=ES_cd_nc_max_expr_ratio, lim_y=c(0,1.935), p03_02=ES_wilcox_03_02_ratio, p03_05=ES_wilcox_03_05_ratio, p02_05=ES_wilcox_02_05_ratio, plot_title="ES_")
-makeScrPlotExprRatio(data=TH_cd_nc_max_expr_ratio, lim_y=c(0,1.5), p03_02=TH_wilcox_03_02_ratio, p03_05=TH_wilcox_03_05_ratio, p02_05=TH_wilcox_02_05_ratio, plot_title="TH_")
-makeScrPlotExprRatio(data=MT_cd_nc_max_expr_ratio, lim_y=c(0,1.685), p03_02=MT_wilcox_03_02_ratio, p03_05=MT_wilcox_03_05_ratio, p02_05=MT_wilcox_02_05_ratio, plot_title="MT_")
-makeScrPlotExprRatio(data=BD_cd_nc_max_expr_ratio, lim_y=c(0,1.682), p03_02=BD_wilcox_03_02_ratio, p03_05=BD_wilcox_03_05_ratio, p02_05=BD_wilcox_02_05_ratio, plot_title="BD_")
+makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02=ATH_all_wilcox_03_02_ratio, p03_05=ATH_all_wilcox_03_05_ratio, p02_05=ATH_all_wilcox_02_05_ratio, plot_title="ATH_all", yadj=1)
+makeScrPlotExprRatio(data=ATH_comp_cd_nc_max_expr_ratio, lim_y=c(0,1.615), p03_02=ATH_comp_wilcox_03_02_ratio, p03_05=ATH_comp_wilcox_03_05_ratio, p02_05=ATH_comp_wilcox_02_05_ratio, plot_title="ATH_comp", yadj=0.7673)
+makeScrPlotExprRatio(data=AL_cd_nc_max_expr_ratio, lim_y=c(0,1.42), p03_02=AL_wilcox_03_02_ratio, p03_05=AL_wilcox_03_05_ratio, p02_05=AL_wilcox_02_05_ratio, plot_title="AL_", yadj=0.6746)
+makeScrPlotExprRatio(data=CR_cd_nc_max_expr_ratio, lim_y=c(0,1.79), p03_02=CR_wilcox_03_02_ratio, p03_05=CR_wilcox_03_05_ratio, p02_05=CR_wilcox_02_05_ratio, plot_title="CR_", yadj=0.8504)
+makeScrPlotExprRatio(data=ES_cd_nc_max_expr_ratio, lim_y=c(0,1.935), p03_02=ES_wilcox_03_02_ratio, p03_05=ES_wilcox_03_05_ratio, p02_05=ES_wilcox_02_05_ratio, plot_title="ES_", yadj=0.9193)
+makeScrPlotExprRatio(data=TH_cd_nc_max_expr_ratio, lim_y=c(0,1.5), p03_02=TH_wilcox_03_02_ratio, p03_05=TH_wilcox_03_05_ratio, p02_05=TH_wilcox_02_05_ratio, plot_title="TH_", yadj=0.7126)
+makeScrPlotExprRatio(data=MT_cd_nc_max_expr_ratio, lim_y=c(0,1.685), p03_02=MT_wilcox_03_02_ratio, p03_05=MT_wilcox_03_05_ratio, p02_05=MT_wilcox_02_05_ratio, plot_title="MT_", yadj=0.8005)
+makeScrPlotExprRatio(data=BD_cd_nc_max_expr_ratio, lim_y=c(0,1.682), p03_02=BD_wilcox_03_02_ratio, p03_05=BD_wilcox_03_05_ratio, p02_05=BD_wilcox_02_05_ratio, plot_title="BD_", yadj=0.7991)
 
 
 
