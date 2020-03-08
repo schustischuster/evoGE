@@ -440,12 +440,12 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotate("rect", xmin=c(6.5,8.25,6.5,8.25,6.5,8.25,6.5,7.45,8.25,6.5,7.45,8.25,6.5,7.45,8.25), 
 		xmax=c(7,8.75,7,8.75,7,8.75,7.075,7.68,8.75,7.075,7.68,8.75,7.075,7.68,8.75), 
-		ymin=c(0.4158*yadj,0.4158*yadj,0.3853*yadj,0.3853*yadj,0.3548*yadj,0.3548*yadj,0.3336*yadj,0.3336*yadj,0.3243*yadj,0.3031*yadj,0.3031*yadj,0.2938*yadj,0.2726*yadj,0.2726*yadj,0.2633*yadj), 
+		ymin=c(0.4158*yadj,0.4158*yadj,0.3853*yadj,0.3853*yadj,0.3548*yadj,0.3548*yadj,0.3330*yadj,0.3330*yadj,0.3243*yadj,0.3025*yadj,0.3025*yadj,0.2938*yadj,0.2720*yadj,0.2720*yadj,0.2633*yadj), 
 		ymax=c(0.4348*yadj,0.4348*yadj,0.4043*yadj,0.4043*yadj,0.3738*yadj,0.3738*yadj,0.3340*yadj,0.3340*yadj,0.3433*yadj,0.3035*yadj,0.3035*yadj,0.3128*yadj,0.2730*yadj,0.2730*yadj,0.2823*yadj), 
 		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b","#49b43c","#49b43c","#49b43c","#00468b","#00468b","#00468b","#839191","#839191","#839191"), 
-		size=1.2, fill=c(grn,blu,grn,gray,gray,blu,grn,grn,grn,blu,blu,blu,gray,gray,gray)) + 
-	annotate("segment", x=c(6), xend=c(12), y=c(0.248*yadj), yend=c(0.248*yadj), color="grey20", size=0.7) + 
-	annotate("segment", x=c(6.03), xend=c(6.03), y=c(0.247*yadj), yend=c(0.449*yadj), color="grey20", size=0.7) + 
+		size=1.1, fill=c(grn,blu,grn,gray,gray,blu,grn,grn,grn,blu,blu,blu,gray,gray,gray)) + 
+	annotate("segment", x=c(6), xend=c(12), y=c(0.248*yadj), yend=c(0.248*yadj), color="grey20", size=0.6) + 
+	annotate("segment", x=c(6.03), xend=c(6.03), y=c(0.247*yadj), yend=c(0.449*yadj), color="grey20", size=0.6) + 
 	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 1.8, size=5.5, label = cor03_02) + 
 	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 3.425, size=5.5, label = cor03_05) + 
 	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 5.05, size=5.5, label = cor02_05) + 
@@ -588,8 +588,8 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	annotation_logticks(sides = 'b') + 
 	annotate("rect", xmin=c(1.39,5.5,1.39,5.5,1.39,5.5), 
 		xmax=c(2.05,8.1,2.05,8.1,2.05,8.1), 
-		ymin=c(1.989*yadj,1.989*yadj,1.846*yadj,1.846*yadj,1.703*yadj,1.703*yadj), 
-		ymax=c(1.9907*yadj,1.9907*yadj,1.8477*yadj,1.8477*yadj,1.7047*yadj,1.7047*yadj), 
+		ymin=c(1.9857*yadj,1.9857*yadj,1.8427*yadj,1.8427*yadj,1.6997*yadj,1.6997*yadj), 
+		ymax=c(1.9940*yadj,1.9940*yadj,1.8510*yadj,1.8510*yadj,1.7080*yadj,1.7080*yadj), 
 		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b"), 
 		size=1.2, fill=c(grn,blu,grn,gray,gray,blu)) + 
 	annotate("text", x = 2.52, y = Inf, hjust = 0, vjust = 1.8, size=5.5, label = cor03_02) + 
