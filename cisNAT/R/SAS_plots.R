@@ -438,20 +438,15 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	geom_density(adjust=1.35, size=1.25) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
-	annotate("rect", xmin=c(6.5,8.25,6.5,8.25,6.5,8.25,6.5,7.45,8.25,6.5,7.45,8.25,6.5,7.45,8.25), 
-		xmax=c(7,8.75,7,8.75,7,8.75,7.075,7.68,8.75,7.075,7.68,8.75,7.075,7.68,8.75), 
-		ymin=c(0.4158*yadj,0.4158*yadj,0.3853*yadj,0.3853*yadj,0.3548*yadj,0.3548*yadj,0.3330*yadj,0.3330*yadj,0.3243*yadj,0.3025*yadj,0.3025*yadj,0.2938*yadj,0.2720*yadj,0.2720*yadj,0.2633*yadj), 
-		ymax=c(0.4348*yadj,0.4348*yadj,0.4043*yadj,0.4043*yadj,0.3738*yadj,0.3738*yadj,0.3340*yadj,0.3340*yadj,0.3433*yadj,0.3035*yadj,0.3035*yadj,0.3128*yadj,0.2730*yadj,0.2730*yadj,0.2823*yadj), 
-		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b","#49b43c","#49b43c","#49b43c","#00468b","#00468b","#00468b","#839191","#839191","#839191"), 
-		size=1.1, fill=c(grn,blu,grn,gray,gray,blu,grn,grn,grn,blu,blu,blu,gray,gray,gray)) + 
-	annotate("segment", x=c(6), xend=c(12), y=c(0.248*yadj), yend=c(0.248*yadj), color="grey20", size=0.6) + 
-	annotate("segment", x=c(6.03), xend=c(6.03), y=c(0.247*yadj), yend=c(0.449*yadj), color="grey20", size=0.6) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 1.8, size=5.5, label = cor03_02) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 3.425, size=5.5, label = cor03_05) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.644, vjust = 5.05, size=5.5, label = cor02_05) + 
-	annotate("text", x = 9.066, y = Inf, hjust = 0, vjust = 6.675, size=5.5, label = n_ac) + 
-	annotate("text", x = 9.066, y = Inf, hjust = 0, vjust = 8.3, size=5.5, label = n_nc) + 
-	annotate("text", x = 9.066, y = Inf, hjust = 0, vjust = 9.925, size=5.5, label = n_pc)
+	annotate("rect", xmin=c(6.42,8.17,6.42,8.17,6.42,8.17), 
+		xmax=c(6.92,8.67,6.92,8.67,6.92,8.67), 
+		ymin=c(0.4128*yadj,0.4128*yadj,0.3823*yadj,0.3823*yadj,0.3518*yadj,0.3518*yadj), 
+		ymax=c(0.4318*yadj,0.4318*yadj,0.4013*yadj,0.4013*yadj,0.3708*yadj,0.3708*yadj), 
+		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b"), 
+		size=1.1, fill=c(grn,blu,grn,gray,gray,blu)) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.626, vjust = 1.97, size=5.5, label = cor03_02) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.626, vjust = 3.595, size=5.5, label = cor03_05) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.626, vjust = 5.22, size=5.5, label = cor02_05) 
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray_ln, blu_ln, grn_ln, gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540", "#839191", "#00468b", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
 		scale_linetype_manual(values = c("dotdash","dotdash","dotdash", "solid","solid","solid")) + 
@@ -582,19 +577,31 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	grn = rgb(94, 200, 100, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.25) + 
+	geom_density(adjust=1.35, size=1.3) + #smaller img settings: size=1.25
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
-	annotate("rect", xmin=c(1.39,5.5,1.39,5.5,1.39,5.5), 
-		xmax=c(2.05,8.1,2.05,8.1,2.05,8.1), 
-		ymin=c(1.9857*yadj,1.9857*yadj,1.8427*yadj,1.8427*yadj,1.6997*yadj,1.6997*yadj), 
-		ymax=c(1.9940*yadj,1.9940*yadj,1.8510*yadj,1.8510*yadj,1.7080*yadj,1.7080*yadj), 
+	annotate("rect", xmin=1.55, xmax=77, ymin=1.626, ymax=2.05, color="black", fill="white", size=0.55) + 
+	annotate("rect", xmin=c(2.125,6.85,2.125,6.85,2.125,6.85), 
+		xmax=c(2.94,9.45,2.94,9.45,2.94,9.45), 
+		ymin=c(1.9537*yadj,1.9537*yadj,1.8331*yadj,1.8331*yadj,1.7147*yadj,1.7147*yadj), 
+		ymax=c(1.9620*yadj,1.9620*yadj,1.8414*yadj,1.8414*yadj,1.7230*yadj,1.7230*yadj), 
 		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b"), 
 		size=1.2, fill=c(grn,blu,grn,gray,gray,blu)) + 
-	annotate("text", x = 2.52, y = Inf, hjust = 0, vjust = 1.8, size=5.5, label = cor03_02) + 
-	annotate("text", x = 2.52, y = Inf, hjust = 0, vjust = 3.425, size=5.5, label = cor03_05) + 
-	annotate("text", x = 2.52, y = Inf, hjust = 0, vjust = 5.05, size=5.5, label = cor02_05)
+	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 2.5, size=5.5, label = cor03_02) + #smaller img settings: x = 2.52, vjust = 1.8 / 3.425 / 5.05
+	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 4.125, size=5.5, label = cor03_05) + 
+	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 5.75, size=5.5, label = cor02_05) + 
+	annotate("rect", xmin=2.0, xmax=77, ymin=0.945, ymax=1.5, color="black", fill="white", size=0.55) + 
+	annotate("rect", xmin=c(2.743,2.743,2.743), 
+		xmax=c(3.81,3.81,3.81), 
+		ymin=c(1.273*yadj,1.1537*yadj,1.0344*yadj), 
+		ymax=c(1.2813*yadj,1.1620*yadj,1.0427*yadj), 
+		color=c("#49b43c","#00468b","#839191"), 
+		size=1.2, fill=c(grn,blu,gray)) + 
+	annotate("text", x = 2.563, y = Inf, hjust = 0, vjust = 10.0, size=5.5, label = "PCC of SAS", fontface=2) + 
+	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 11.75, size=5.5, label = "r < -0.3") + 
+	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 13.375, size=5.5, label = "-0.2 < r < 0.2") + 
+	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 15.0, size=5.5, label = "r > 0.5") 
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray, blu, grn)) +
 		scale_color_manual(values = c("#839191", "#00468b", "#52b540")) + xlab("Expression ratio (nc:cd SAS)") + ylab("Density") + 
 		scale_linetype_manual(values = c("solid","solid","solid")) + 
@@ -607,21 +614,22 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
   		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 12.5, b = 0, l = 0)),
   		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 17.25, r = 0, b = 8, l = 0), hjust = 0.5),
   		legend.position = "bottom",
-  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
+  		panel.border = element_rect(colour = "black", fill=NA, size=1.25))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 4.848485, height = 5.95, units = c("in"), 
+		scale = 1, width = 5.52, height = 6.68, units = c("in"), #smaller img settings: width = 4.848485, height = 5.95
 		dpi = 825, limitsize = FALSE)
 }
 
-makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02=ATH_all_wilcox_03_02_ratio, p03_05=ATH_all_wilcox_03_05_ratio, p02_05=ATH_all_wilcox_02_05_ratio, plot_title="ATH_all", yadj=1)
-makeScrPlotExprRatio(data=ATH_comp_cd_nc_max_expr_ratio, lim_y=c(0,1.615), p03_02=ATH_comp_wilcox_03_02_ratio, p03_05=ATH_comp_wilcox_03_05_ratio, p02_05=ATH_comp_wilcox_02_05_ratio, plot_title="ATH_comp", yadj=0.7673)
-makeScrPlotExprRatio(data=AL_cd_nc_max_expr_ratio, lim_y=c(0,1.42), p03_02=AL_wilcox_03_02_ratio, p03_05=AL_wilcox_03_05_ratio, p02_05=AL_wilcox_02_05_ratio, plot_title="AL_", yadj=0.6746)
-makeScrPlotExprRatio(data=CR_cd_nc_max_expr_ratio, lim_y=c(0,1.79), p03_02=CR_wilcox_03_02_ratio, p03_05=CR_wilcox_03_05_ratio, p02_05=CR_wilcox_02_05_ratio, plot_title="CR_", yadj=0.8504)
-makeScrPlotExprRatio(data=ES_cd_nc_max_expr_ratio, lim_y=c(0,1.935), p03_02=ES_wilcox_03_02_ratio, p03_05=ES_wilcox_03_05_ratio, p02_05=ES_wilcox_02_05_ratio, plot_title="ES_", yadj=0.9193)
-makeScrPlotExprRatio(data=TH_cd_nc_max_expr_ratio, lim_y=c(0,1.5), p03_02=TH_wilcox_03_02_ratio, p03_05=TH_wilcox_03_05_ratio, p02_05=TH_wilcox_02_05_ratio, plot_title="TH_", yadj=0.7126)
-makeScrPlotExprRatio(data=MT_cd_nc_max_expr_ratio, lim_y=c(0,1.685), p03_02=MT_wilcox_03_02_ratio, p03_05=MT_wilcox_03_05_ratio, p02_05=MT_wilcox_02_05_ratio, plot_title="MT_", yadj=0.8005)
-makeScrPlotExprRatio(data=BD_cd_nc_max_expr_ratio, lim_y=c(0,1.682), p03_02=BD_wilcox_03_02_ratio, p03_05=BD_wilcox_03_05_ratio, p02_05=BD_wilcox_02_05_ratio, plot_title="BD_", yadj=0.7991)
+makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02=ATH_all_wilcox_03_02_ratio, p03_05=ATH_all_wilcox_03_05_ratio, p02_05=ATH_all_wilcox_02_05_ratio, plot_title="SAS expression in ATH", yadj=1)
+
+# makeScrPlotExprRatio(data=ATH_comp_cd_nc_max_expr_ratio, lim_y=c(0,1.615), p03_02=ATH_comp_wilcox_03_02_ratio, p03_05=ATH_comp_wilcox_03_05_ratio, p02_05=ATH_comp_wilcox_02_05_ratio, plot_title="ATH_comp", yadj=0.7673)
+# makeScrPlotExprRatio(data=AL_cd_nc_max_expr_ratio, lim_y=c(0,1.42), p03_02=AL_wilcox_03_02_ratio, p03_05=AL_wilcox_03_05_ratio, p02_05=AL_wilcox_02_05_ratio, plot_title="AL_", yadj=0.6746)
+# makeScrPlotExprRatio(data=CR_cd_nc_max_expr_ratio, lim_y=c(0,1.79), p03_02=CR_wilcox_03_02_ratio, p03_05=CR_wilcox_03_05_ratio, p02_05=CR_wilcox_02_05_ratio, plot_title="CR_", yadj=0.8504)
+# makeScrPlotExprRatio(data=ES_cd_nc_max_expr_ratio, lim_y=c(0,1.935), p03_02=ES_wilcox_03_02_ratio, p03_05=ES_wilcox_03_05_ratio, p02_05=ES_wilcox_02_05_ratio, plot_title="ES_", yadj=0.9193)
+# makeScrPlotExprRatio(data=TH_cd_nc_max_expr_ratio, lim_y=c(0,1.5), p03_02=TH_wilcox_03_02_ratio, p03_05=TH_wilcox_03_05_ratio, p02_05=TH_wilcox_02_05_ratio, plot_title="TH_", yadj=0.7126)
+# makeScrPlotExprRatio(data=MT_cd_nc_max_expr_ratio, lim_y=c(0,1.685), p03_02=MT_wilcox_03_02_ratio, p03_05=MT_wilcox_03_05_ratio, p02_05=MT_wilcox_02_05_ratio, plot_title="MT_", yadj=0.8005)
+# makeScrPlotExprRatio(data=BD_cd_nc_max_expr_ratio, lim_y=c(0,1.682), p03_02=BD_wilcox_03_02_ratio, p03_05=BD_wilcox_03_05_ratio, p02_05=BD_wilcox_02_05_ratio, plot_title="BD_", yadj=0.7991)
 
 
 
