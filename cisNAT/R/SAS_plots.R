@@ -581,24 +581,24 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
-	annotate("rect", xmin=1.55, xmax=77, ymin=1.626, ymax=2.05, color="black", fill="white", size=0.55) + 
+	annotate("rect", xmin=1.55, xmax=77, ymin=1.590, ymax=2.014, color="black", fill="white", size=0.55) + 
 	annotate("rect", xmin=c(2.125,6.85,2.125,6.85,2.125,6.85), 
 		xmax=c(2.94,9.45,2.94,9.45,2.94,9.45), 
-		ymin=c(1.9537*yadj,1.9537*yadj,1.8331*yadj,1.8331*yadj,1.7147*yadj,1.7147*yadj), 
-		ymax=c(1.9620*yadj,1.9620*yadj,1.8414*yadj,1.8414*yadj,1.7230*yadj,1.7230*yadj), 
+		ymin=c(1.9177*yadj,1.9177*yadj,1.7981*yadj,1.7981*yadj,1.6787*yadj,1.6787*yadj), 
+		ymax=c(1.926*yadj,1.926*yadj,1.8064*yadj,1.8064*yadj,1.687*yadj,1.687*yadj), 
 		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b"), 
 		size=1.2, fill=c(grn,blu,grn,gray,gray,blu)) + 
-	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 2.5, size=5.5, label = cor03_02) + #smaller img settings: x = 2.52, vjust = 1.8 / 3.425 / 5.05
-	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 4.125, size=5.5, label = cor03_05) + 
-	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 5.75, size=5.5, label = cor02_05) + 
-	annotate("rect", xmin=2.0, xmax=77, ymin=0.945, ymax=1.5, color="black", fill="white", size=0.55) + 
+	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 2.98, size=5.5, label = cor03_02) + #smaller img settings: x = 2.52, vjust = 1.8 / 3.425 / 5.05
+	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 4.61, size=5.5, label = cor03_05) + 
+	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 6.23, size=5.5, label = cor02_05) + 
+	annotate("rect", xmin=2.0, xmax=77, ymin=0.945, ymax=1.5038, color="black", fill="white", size=0.55) + 
 	annotate("rect", xmin=c(2.743,2.743,2.743), 
 		xmax=c(3.81,3.81,3.81), 
 		ymin=c(1.273*yadj,1.1537*yadj,1.0344*yadj), 
 		ymax=c(1.2813*yadj,1.1620*yadj,1.0427*yadj), 
 		color=c("#49b43c","#00468b","#839191"), 
 		size=1.2, fill=c(grn,blu,gray)) + 
-	annotate("text", x = 2.563, y = Inf, hjust = 0, vjust = 10.0, size=5.5, label = "PCC of SAS", fontface=2) + 
+	annotate("text", x = 2.563, y = Inf, hjust = 0, vjust = 9.98, size=5.5, label = "PCC of SAS", fontface=2) + 
 	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 11.75, size=5.5, label = "r < -0.3") + 
 	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 13.375, size=5.5, label = "-0.2 < r < 0.2") + 
 	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 15.0, size=5.5, label = "r > 0.5") 
