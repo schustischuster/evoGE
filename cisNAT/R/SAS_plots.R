@@ -435,20 +435,20 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	grn_ln = rgb(73, 180, 60, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.25) + 
+	geom_density(adjust=1.35, size=1.5) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
-	annotate("rect", xmin=c(6.42,8.17,6.42,8.17,6.42,8.17), 
-		xmax=c(6.92,8.67,6.92,8.67,6.92,8.67), 
-		ymin=c(0.4128*yadj,0.4128*yadj,0.3823*yadj,0.3823*yadj,0.3518*yadj,0.3518*yadj), 
-		ymax=c(0.4318*yadj,0.4318*yadj,0.4013*yadj,0.4013*yadj,0.3708*yadj,0.3708*yadj), 
-		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b"), 
-		size=1.1, fill=c(grn,blu,grn,gray,gray,blu)) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.626, vjust = 1.97, size=5.5, label = cor03_02) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.626, vjust = 3.595, size=5.5, label = cor03_05) + 
-	annotate("text", x = -Inf, y = Inf, hjust = -1.626, vjust = 5.22, size=5.5, label = cor02_05) 
-	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray_ln, blu_ln, grn_ln, gray, blu, grn)) +
-		scale_color_manual(values = c("#839191", "#00468b", "#52b540", "#839191", "#00468b", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
+	annotate("rect", xmin=c(6.31,8.14,6.31,8.14,6.31,8.14), 
+		xmax=c(6.81,8.64,6.81,8.64,6.81,8.64), 
+		ymin=c(0.4118*yadj,0.4118*yadj,0.3813*yadj,0.3813*yadj,0.3508*yadj,0.3508*yadj), 
+		ymax=c(0.4308*yadj,0.4308*yadj,0.4003*yadj,0.4003*yadj,0.3698*yadj,0.3698*yadj), 
+		color=c("#49b43c","#839191","#49b43c","#00468b","#839191","#00468b"), 
+		size=1.35, fill=c(grn,gray,grn,blu,gray,blu)) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.575, vjust = 2.0, size=5.6, label = cor03_02) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.575, vjust = 3.585, size=5.6, label = cor03_05) + 
+	annotate("text", x = -Inf, y = Inf, hjust = -1.575, vjust = 5.175, size=5.6, label = cor02_05) 
+	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(blu_ln, gray_ln, grn_ln, blu, gray, grn)) +
+		scale_color_manual(values = c("#00468b", "#839191", "#52b540", "#00468b", "#839191", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
 		scale_linetype_manual(values = c("dotdash","dotdash","dotdash", "solid","solid","solid")) + 
 		theme(text=element_text(size=16), 
   		axis.ticks.length = unit(.3, "cm"),
@@ -564,10 +564,6 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	n_ac <- nrow(subset(data, class=="-0.3_nc"))
-	n_nc <- nrow(subset(data, class==">-02 <02_nc"))
-	n_pc <- nrow(subset(data, class==">05_nc"))
-
 	cor03_02 = paste("vs.    ", " p=", p03_02, sep="")
 	cor03_05 = paste("vs.    ", " p=", p03_05, sep="")
 	cor02_05 = paste("vs.    ", " p=", p02_05, sep="")
@@ -577,7 +573,7 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	grn = rgb(94, 200, 100, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.3) + #smaller img settings: size=1.25
+	geom_density(adjust=1.35, size=1.5) + #smaller img settings: size=1.25
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
@@ -586,8 +582,8 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 		xmax=c(2.94,9.45,2.94,9.45,2.94,9.45), 
 		ymin=c(1.9177*yadj,1.9177*yadj,1.7981*yadj,1.7981*yadj,1.6787*yadj,1.6787*yadj), 
 		ymax=c(1.926*yadj,1.926*yadj,1.8064*yadj,1.8064*yadj,1.687*yadj,1.687*yadj), 
-		color=c("#49b43c","#00468b","#49b43c","#839191","#839191","#00468b"), 
-		size=1.2, fill=c(grn,blu,grn,gray,gray,blu)) + 
+		color=c("#49b43c","#839191","#49b43c","#00468b","#839191","#00468b"), 
+		size=1.2, fill=c(grn,gray,grn,blu,gray,blu)) + 
 	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 2.98, size=5.5, label = cor03_02) + #smaller img settings: x = 2.52, vjust = 1.8 / 3.425 / 5.05
 	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 4.61, size=5.5, label = cor03_05) + 
 	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 6.23, size=5.5, label = cor02_05) + 
@@ -596,14 +592,14 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 		xmax=c(3.81,3.81,3.81), 
 		ymin=c(1.273*yadj,1.1537*yadj,1.0344*yadj), 
 		ymax=c(1.2813*yadj,1.1620*yadj,1.0427*yadj), 
-		color=c("#49b43c","#00468b","#839191"), 
-		size=1.2, fill=c(grn,blu,gray)) + 
-	annotate("text", x = 2.563, y = Inf, hjust = 0, vjust = 9.98, size=5.5, label = "PCC of SAS", fontface=2) + 
+		color=c("#49b43c","#839191","#00468b"), 
+		size=1.2, fill=c(grn,gray,blu)) + 
+	annotate("text", x = 2.563, y = Inf, hjust = 0, vjust = 9.98, size=5.5, label = "PCC of SAS pairs", fontface=2) + 
 	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 11.75, size=5.5, label = "r < -0.3") + 
 	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 13.375, size=5.5, label = "-0.2 < r < 0.2") + 
 	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 15.0, size=5.5, label = "r > 0.5") 
-	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(gray, blu, grn)) +
-		scale_color_manual(values = c("#839191", "#00468b", "#52b540")) + xlab("Expression ratio (nc:cd SAS)") + ylab("Density") + 
+	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(blu, gray, grn)) +
+		scale_color_manual(values = c("#00468b", "#839191", "#52b540")) + xlab("Expression ratio (nc:cd SAS)") + ylab("Density") + 
 		scale_linetype_manual(values = c("solid","solid","solid")) + 
 		theme(text=element_text(size=16), 
   		axis.ticks.length = unit(.3, "cm"),
@@ -617,7 +613,7 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
   		panel.border = element_rect(colour = "black", fill=NA, size=1.25))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 5.52, height = 6.68, units = c("in"), #smaller img settings: width = 4.848485, height = 5.95
+		scale = 1, width = 8, height = 6.68, units = c("in"), #smaller img settings: width = 4.848485, height = 5.95
 		dpi = 825, limitsize = FALSE)
 }
 
@@ -632,6 +628,78 @@ makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02
 # makeScrPlotExprRatio(data=BD_cd_nc_max_expr_ratio, lim_y=c(0,1.682), p03_02=BD_wilcox_03_02_ratio, p03_05=BD_wilcox_03_05_ratio, p02_05=BD_wilcox_02_05_ratio, plot_title="BD_", yadj=0.7991)
 
 
+
+# Combine all pearson correlation SAS data to create data table for stacked bar chart
+species <- c(rep("ATH_all", 3), rep("ATH", 3), rep("AL", 3), rep("CR", 3), rep("ES", 3), rep("TH", 3), rep("MT", 3), rep("BD", 3))
+condition <- rep(c("-0.3 < r" , "-02 < r < 02" , "r > 05") , 8)
+value <- c(
+	nrow(subset(ATH_all_cd_nc_max_expr_ratio, class=="-0.3")),
+	nrow(subset(ATH_all_cd_nc_max_expr_ratio, class==">-02 <02")),
+	nrow(subset(ATH_all_cd_nc_max_expr_ratio, class==">05")),
+	nrow(subset(ATH_comp_cd_nc_max_expr_ratio, class=="-0.3")),
+	nrow(subset(ATH_comp_cd_nc_max_expr_ratio, class==">-02 <02")),
+	nrow(subset(ATH_comp_cd_nc_max_expr_ratio, class==">05")),
+	nrow(subset(AL_cd_nc_max_expr_ratio, class=="-0.3")),
+	nrow(subset(AL_cd_nc_max_expr_ratio, class==">-02 <02")),
+	nrow(subset(AL_cd_nc_max_expr_ratio, class==">05")),
+	nrow(subset(CR_cd_nc_max_expr_ratio, class=="-0.3")),
+	nrow(subset(CR_cd_nc_max_expr_ratio, class==">-02 <02")),
+	nrow(subset(CR_cd_nc_max_expr_ratio, class==">05")),
+	nrow(subset(ES_cd_nc_max_expr_ratio, class=="-0.3")),
+	nrow(subset(ES_cd_nc_max_expr_ratio, class==">-02 <02")),
+	nrow(subset(ES_cd_nc_max_expr_ratio, class==">05")),
+	nrow(subset(TH_cd_nc_max_expr_ratio, class=="-0.3")),
+	nrow(subset(TH_cd_nc_max_expr_ratio, class==">-02 <02")),
+	nrow(subset(TH_cd_nc_max_expr_ratio, class==">05")),
+	nrow(subset(MT_cd_nc_max_expr_ratio, class=="-0.3")),
+	nrow(subset(MT_cd_nc_max_expr_ratio, class==">-02 <02")),
+	nrow(subset(MT_cd_nc_max_expr_ratio, class==">05")),
+	nrow(subset(BD_cd_nc_max_expr_ratio, class=="-0.3")),
+	nrow(subset(BD_cd_nc_max_expr_ratio, class==">-02 <02")),
+	nrow(subset(BD_cd_nc_max_expr_ratio, class==">05"))
+	)
+SAS_class_abundances <- data.frame(species,condition,value)
+
+
+# Function for stacked bar chart of pearson correlation SAS groups
+makeScrPlotExprRatio <- function(data) {
+
+	fname <- 'SAS_class_abundances.jpg'
+	data$species <- factor(data$species, levels = unique(data$species))
+
+	blu = "#0c5093"
+	gray = "#839191"
+	grn = "#5ec864"
+
+	p <- ggplot(data, aes(fill=condition, x=species, y=value)) + 
+	scale_y_continuous(limits = c(0,2550), expand = c(0, 0)) + 
+    geom_bar(width=0.5, position="stack", stat="identity")
+    q <- p + ggtitle("SAS class abundances") +
+    theme_bw() + scale_fill_manual(values = c(grn,gray,blu), labels=c("-0.3 < r ","-0.2 < r < 0.2 ","r > 0.5 ")) + 
+    xlab("Species") + ylab("Number of cis-NAT pairs") + 
+    labs(fill="Pearson's r:", fontface=2) + 
+    theme(text=element_text(size=16), 
+  		axis.ticks.length = unit(.3, "cm"),
+  		plot.margin = unit(c(7.9, 13.5, 60.5, 0.5), "points"),
+  		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
+  		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 5, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 0, l = 0)),
+  		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 12.5, b = 0, l = 0)),
+  		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 17.25, r = 0, b = 8, l = 0), hjust = 0.5),
+  		legend.position=c(0.5,0.9),
+  		legend.direction = "horizontal", 
+  		legend.box = "horizontal",
+  		legend.key.size = unit(1.35, 'lines'),
+  		legend.title=element_text(size=17.5), 
+    	legend.text=element_text(size=16.5),
+  		panel.border = element_rect(colour = "black", fill=NA, size=1.25))
+    
+  	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+		scale = 1, width = 9.52, height = 6.68, units = c("in"), #smaller img settings: width = 4.848485, height = 5.95
+		dpi = 400, limitsize = FALSE)
+}
+
+makeScrPlotExprRatio(data=SAS_class_abundances)
 
 
 #-------------------------------- Perform Wilcox rank sum test ---------------------------------
