@@ -573,7 +573,7 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	grn = rgb(94, 200, 100, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.5) +
+	geom_density(adjust=1.35, size=1.6) +
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
@@ -595,7 +595,7 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 		ymax=c(1.1523*yadj,1.033*yadj,0.9138*yadj), 
 		color=c("#49b43c","#839191","#00468b"), 
 		size=1.2, fill=c(grn,gray,blu)) + 
-	annotate("text", x = 7.1, y = Inf, hjust = 0, vjust = 11.735, size=5.5, label = "PCC of SAS", fontface=2) + 
+	annotate("text", x = 7.1, y = Inf, hjust = 0, vjust = 11.735, size=5.5, label = "Pearson's r", fontface=2) + 
 	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 13.505, size=5.5, label = "r < -0.3") + 
 	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 15.13, size=5.5, label = "-0.2 < r < 0.2") + 
 	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 16.75, size=5.5, label = "r > 0.5") 
@@ -663,7 +663,7 @@ SAS_class_abundances <- data.frame(species,condition,value)
 
 
 # Function for stacked bar chart of pearson correlation SAS groups
-plotSASAbund <- function(data) {
+makeAbndPlot <- function(data) {
 
 	fname <- 'SAS_class_abundances.jpg'
 	data$species <- factor(data$species, levels = unique(data$species))
@@ -700,7 +700,7 @@ plotSASAbund <- function(data) {
 		dpi = 400, limitsize = FALSE)
 }
 
-plotSASAbund(data=SAS_class_abundances)
+makeAbndPlot(data=SAS_class_abundances)
 
 
 #-------------------------------- Perform Wilcox rank sum test ---------------------------------
