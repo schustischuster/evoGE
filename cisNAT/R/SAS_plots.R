@@ -528,7 +528,7 @@ BD_cd_nc_max_expr_ratio <- combineExprDataRatio(BD_cd_nc_expr_below_min03,
 
 # Perform wilcox test on all combinations
 wilcoxRatioSAS <- function(x,y) {
-	z <- wilcox.test(x[,21], y[,21])$p.value
+	z <- wilcox.test(x[,21], y[,21], paired = FALSE)$p.value
 	z <- formatC(z, format = "e", digits = 0)
 }
 
@@ -573,31 +573,32 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
 	grn = rgb(94, 200, 100, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.5) + #smaller img settings: size=1.25
+	geom_density(adjust=1.35, size=1.5) +
 	scale_x_continuous(trans='log10', labels = prettyNum, limits = c(0.01,100), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotation_logticks(sides = 'b') + 
-	annotate("rect", xmin=1.55, xmax=77, ymin=1.590, ymax=2.014, color="black", fill="white", size=0.55) + 
-	annotate("rect", xmin=c(2.125,6.85,2.125,6.85,2.125,6.85), 
-		xmax=c(2.94,9.45,2.94,9.45,2.94,9.45), 
-		ymin=c(1.9177*yadj,1.9177*yadj,1.7981*yadj,1.7981*yadj,1.6787*yadj,1.6787*yadj), 
-		ymax=c(1.926*yadj,1.926*yadj,1.8064*yadj,1.8064*yadj,1.687*yadj,1.687*yadj), 
+	annotate("rect", xmin=6.0, xmax=77, ymin=1.457, ymax=2.014, color="black", fill="white", size=0.55) + 
+	annotate("rect", xmin=c(7.4,15.95,7.4,15.95,7.4,15.95), 
+		xmax=c(9.6,20.72,9.6,20.72,9.6,20.72), 
+		ymin=c(1.7837*yadj,1.7837*yadj,1.6641*yadj,1.6641*yadj,1.5445*yadj,1.5445*yadj), 
+		ymax=c(1.792*yadj,1.792*yadj,1.6724*yadj,1.6724*yadj,1.5528*yadj,1.5528*yadj), 
 		color=c("#49b43c","#839191","#49b43c","#00468b","#839191","#00468b"), 
 		size=1.2, fill=c(grn,gray,grn,blu,gray,blu)) + 
-	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 2.98, size=5.5, label = cor03_02) + #smaller img settings: x = 2.52, vjust = 1.8 / 3.425 / 5.05
-	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 4.61, size=5.5, label = cor03_05) + 
-	annotate("text", x = 3.52, y = Inf, hjust = 0, vjust = 6.23, size=5.5, label = cor02_05) + 
-	annotate("rect", xmin=2.0, xmax=77, ymin=0.945, ymax=1.5038, color="black", fill="white", size=0.55) + 
-	annotate("rect", xmin=c(2.743,2.743,2.743), 
-		xmax=c(3.81,3.81,3.81), 
-		ymin=c(1.273*yadj,1.1537*yadj,1.0344*yadj), 
-		ymax=c(1.2813*yadj,1.1620*yadj,1.0427*yadj), 
+	annotate("text", x = 7.1, y = Inf, hjust = 0, vjust = 2.98, size=5.5, label = "Wilcoxon test", fontface=2) +
+	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 4.805, size=5.5, label = cor03_02) +
+	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 6.435, size=5.5, label = cor03_05) + 
+	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 8.060, size=5.5, label = cor02_05) + 
+	annotate("rect", xmin=6.0, xmax=77, ymin=0.817, ymax=1.371, color="black", fill="white", size=0.55) + 
+	annotate("rect", xmin=c(7.4,7.4,7.4), 
+		xmax=c(9.6,9.6,9.6), 
+		ymin=c(1.144*yadj,1.0247*yadj,0.9055*yadj), 
+		ymax=c(1.1523*yadj,1.033*yadj,0.9138*yadj), 
 		color=c("#49b43c","#839191","#00468b"), 
 		size=1.2, fill=c(grn,gray,blu)) + 
-	annotate("text", x = 2.563, y = Inf, hjust = 0, vjust = 9.98, size=5.5, label = "PCC of SAS pairs", fontface=2) + 
-	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 11.75, size=5.5, label = "r < -0.3") + 
-	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 13.375, size=5.5, label = "-0.2 < r < 0.2") + 
-	annotate("text", x = 4.715, y = Inf, hjust = 0, vjust = 15.0, size=5.5, label = "r > 0.5") 
+	annotate("text", x = 7.1, y = Inf, hjust = 0, vjust = 11.735, size=5.5, label = "PCC of SAS", fontface=2) + 
+	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 13.505, size=5.5, label = "r < -0.3") + 
+	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 15.13, size=5.5, label = "-0.2 < r < 0.2") + 
+	annotate("text", x = 10.6, y = Inf, hjust = 0, vjust = 16.75, size=5.5, label = "r > 0.5") 
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(blu, gray, grn)) +
 		scale_color_manual(values = c("#00468b", "#839191", "#52b540")) + xlab("Expression ratio (nc:cd SAS)") + ylab("Density") + 
 		scale_linetype_manual(values = c("solid","solid","solid")) + 
@@ -613,7 +614,7 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
   		panel.border = element_rect(colour = "black", fill=NA, size=1.25))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 8, height = 6.68, units = c("in"), #smaller img settings: width = 4.848485, height = 5.95
+		scale = 1, width = 8, height = 6.68, units = c("in"),
 		dpi = 825, limitsize = FALSE)
 }
 
@@ -662,7 +663,7 @@ SAS_class_abundances <- data.frame(species,condition,value)
 
 
 # Function for stacked bar chart of pearson correlation SAS groups
-makeScrPlotExprRatio <- function(data) {
+plotSASAbund <- function(data) {
 
 	fname <- 'SAS_class_abundances.jpg'
 	data$species <- factor(data$species, levels = unique(data$species))
@@ -699,7 +700,7 @@ makeScrPlotExprRatio <- function(data) {
 		dpi = 400, limitsize = FALSE)
 }
 
-makeScrPlotExprRatio(data=SAS_class_abundances)
+plotSASAbund(data=SAS_class_abundances)
 
 
 #-------------------------------- Perform Wilcox rank sum test ---------------------------------
