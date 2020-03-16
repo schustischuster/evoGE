@@ -435,7 +435,7 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	grn_ln = rgb(73, 180, 60, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.5) + 
+	geom_density(adjust=1.35, size=1.6) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotate("rect", xmin=c(6.31,8.14,6.31,8.14,6.31,8.14), 
