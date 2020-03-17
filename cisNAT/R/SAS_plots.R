@@ -1003,18 +1003,36 @@ make_Boxplot_All_Thresholds(BD_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, BD_cd_nc_S
 #--------------- ATGE/DevSeq, NAT_length and Spearman - Pearson cor scatter plots ---------------
 
 
-# Correlation plots of cd-cd SAS / nc-cd SAS pairs ATH_all_samples in DevSeq and ATGE
+# Correlation plots of cd-cd SAS / nc-cd SAS pairs ATH_all_samples in DevSeq, Araport and ATGE
 DevSeq_pearson <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+DevSeq_DevSeq <- rbind(
+	subset(ATH_cd_nc_SAS_cor_wo_pollen_0.5, biotype_query=="lnc_exonic_antisense" & gene_source_query == "DevSeq"), 
+	subset(ATH_cd_nc_SAS_cor_wo_pollen_0.5, biotype_query=="lnc_intronic_antisense" & gene_source_query == "DevSeq"), 
+	subset(ATH_cd_nc_SAS_cor_wo_pollen_0.5, biotype_subject=="lnc_exonic_antisense" & gene_source_subject == "DevSeq"), 
+	subset(ATH_cd_nc_SAS_cor_wo_pollen_0.5, biotype_subject=="lnc_intronic_antisense" & gene_source_subject == "DevSeq") 
+	)
+DevSeq_DevSeq_wo_pollen_0.5_pearson <- unlist(select(DevSeq_DevSeq, Pearson))
+DevSeq_DevSeq_pearson <- length(DevSeq_DevSeq_wo_pollen_0.5_pearson)
+DevSeq_Araport <- rbind(
+	subset(ATH_cd_nc_SAS_cor_wo_pollen_0.5, biotype_query=="lnc_exonic_antisense" & gene_source_query == "araport11"), 
+	subset(ATH_cd_nc_SAS_cor_wo_pollen_0.5, biotype_query=="lnc_intronic_antisense" & gene_source_query == "araport11"), 
+	subset(ATH_cd_nc_SAS_cor_wo_pollen_0.5, biotype_subject=="lnc_exonic_antisense" & gene_source_subject == "araport11"), 
+	subset(ATH_cd_nc_SAS_cor_wo_pollen_0.5, biotype_subject=="lnc_intronic_antisense" & gene_source_subject == "araport11") 
+	)
+DevSeq_Araport_wo_pollen_0.5_pearson <- unlist(select(DevSeq_Araport, Pearson))
+DevSeq_Araport_pearson <- length(DevSeq_Araport_wo_pollen_0.5_pearson)
 ATGE_pearson <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson)
 DevSeq_spearman <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 ATGE_spearman <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_spearman)
 
+
 # Pearson boxplot
-jpeg(file=file.path(out_dir, "output", "plots", "nccd_SAS_pearson_ATH_all_DevSeq_all.jpeg"), 
-	width = 2620, height = 4000, res = 825)
-par(mar = c(5.725, 5.92, 4, 1))
-boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson, 
-	ylim = c(-1.0, 1.2), 
+jpeg(file=file.path(out_dir, "output", "plots", "nccd_SAS_pearson_ATH_DevSeq_Araport.jpeg"), 
+	width = 4000, height = 4700, res = 825) 
+par(mar = c(6.73, 4.95, 3.14, 0.75))
+boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, DevSeq_DevSeq_wo_pollen_0.5_pearson, 
+	DevSeq_Araport_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE_pearson, 
+	ylim = c(-1.0, 1.0), 
 	names = FALSE, 
 	xaxt = 'n', 
 	yaxt = 'n', 
@@ -1023,25 +1041,28 @@ boxplot(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5
 	cex.axis = 1.1, #adapt size of axis labels
 	xlab = "", 
 	ylab = "", 
-	col = c("#d8a900", "#d8a900"), 
-	boxwex = 0.8, 
-	lwd = 1.35, 
+	col = c("#d8a900", "#00bc1f", "#00c094", "#00beda"), 
+	boxwex = 0.75, 
+	lwd = 1.7, 
 	whisklty = 1, 
-	at = c(1,2), 
+	at = c(1,2,3,4), 
 	pars = list(outcol = "gray50"), 
 	notch = FALSE
 	)
-	title("nc-cd SAS pairs", adj = 0.50, line = 1.25, font.main = 1, cex.main = 1.2)
-	title(xlab = "present in data set", line = 2.65, cex.lab = 1.1)
-	title(ylab = "Pearson ρ", line = 3.0, cex.lab = 1.1)
-	rug(x = c(1,2), ticksize = -0.035, side = 1, lwd = 1.35, col = "black") #x-axis ticks
-	box(lwd = 1.35)
-	axis(side = 2, lwd = 1.35, las = 2)
-	text(x= 1.5, y = 1.135, labels= "p < 0.01", col = "black", cex = 1) #ATH_all p-value
-	text(x= 1, y= -0.95, labels= DevSeq_pearson, col= "gray40", cex= 0.97) #ATH_all no.genes
-	text(x= 2, y= -0.95, labels= ATGE_pearson, col= "gray40", cex= 0.97)
-	mtext('DevSeq', side = 1, line = 0.85, at = 1)
-	mtext('ATGE', side = 1, line = 0.85, at = 2)
+	title("nc-cd SAS pairs", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.41)
+	title(xlab = "Data set", line = 2.92, cex.lab = 1.34)
+	title(ylab = "Pearson ρ", line = 3.5, cex.lab = 1.34)
+	rug(x = c(1,2,3,4), ticksize = -0.032, side = 1, lwd = 1.5, col = "black") #x-axis ticks
+	box(lwd = 1.7)
+	axis(side = 2, lwd = 1.5, las = 2, cex.axis = 1.2, tck = -0.032, mgp=c(3,1.2,0))
+	text(x= 1, y= -0.95, labels= DevSeq_pearson, col= "gray40", cex= 1.15) #ATH_all no.genes
+	text(x= 2, y= -0.95, labels= DevSeq_DevSeq_pearson, col= "gray40", cex= 1.15)
+	text(x= 3, y= -0.95, labels= DevSeq_Araport_pearson, col= "gray40", cex= 1.15)
+	text(x= 4, y= -0.95, labels= ATGE_pearson, col= "gray40", cex= 1.15)
+	mtext('DevSeq', side = 1, line = 1.12, at = 1, cex = 1.2)
+	mtext('DS-DS', side = 1, line = 1.12, at = 2, cex = 1.2)
+	mtext('DS-AP', side = 1, line = 1.12, at = 3, cex = 1.2)
+	mtext('ATGE', side = 1, line = 1.12, at = 4, cex = 1.2)
 	par(xpd=TRUE)
 dev.off()
 
