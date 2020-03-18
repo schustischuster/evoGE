@@ -632,7 +632,7 @@ makeScrPlotExprRatio(data=ATH_all_cd_nc_max_expr_ratio, lim_y=c(0,2.105), p03_02
 
 # Combine all pearson correlation SAS data to create data table for stacked bar chart
 species <- c(rep("ATH_all", 3), rep("ATH", 3), rep("AL", 3), rep("CR", 3), rep("ES", 3), rep("TH", 3), rep("MT", 3), rep("BD", 3))
-condition <- rep(c("r < -0.3" , "-02 < r < 02" , "r > 05") , 8)
+condition <- rep(c("-0.3" , ">-02 <02" , ">05") , 8)
 value <- c(
 	nrow(subset(ATH_all_cd_nc_max_expr_ratio, class=="-0.3")),
 	nrow(subset(ATH_all_cd_nc_max_expr_ratio, class==">-02 <02")),
