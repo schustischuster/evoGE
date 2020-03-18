@@ -427,15 +427,15 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	cor03_05 = paste("vs.    ", " p=", p03_05, sep="")
 	cor02_05 = paste("vs.    ", " p=", p02_05, sep="")
 
-	blu = rgb(0, 70, 139, max = 255, alpha = 35)
-	gray = rgb(131, 145, 145, max = 255, alpha = 60)
-	grn = rgb(94, 200, 100, max = 255, alpha = 75)
+	blu = rgb(0, 70, 139, max = 255, alpha = 45)
+	gray = rgb(131, 145, 145, max = 255, alpha = 65)
+	grn = rgb(50, 209, 63, max = 255, alpha = 90)
 	blu_ln = rgb(0, 70, 139, max = 255, alpha = 0)
 	gray_ln = rgb(131, 145, 145, max = 255, alpha = 0)
 	grn_ln = rgb(73, 180, 60, max = 255, alpha = 0)
 
 	p <- ggplot(data, aes(x=max_expression, group=class, fill=class, colour=class, linetype=class)) +
-	geom_density(adjust=1.35, size=1.6) + 
+	geom_density(adjust=1.35, size=1.5) + 
 	scale_x_continuous(limits = c(0,12), expand = c(0, 0)) +
 	scale_y_continuous(limits = lim_y, expand = c(0, 0)) + 
 	annotate("rect", xmin=c(6.31,8.14,6.31,8.14,6.31,8.14), 
@@ -449,14 +449,14 @@ makeScrPlotMaxExpr <- function(data, lim_y, p03_02, p03_05, p02_05,
 	annotate("text", x = -Inf, y = Inf, hjust = -1.575, vjust = 5.175, size=5.6, label = cor02_05) 
 	q <- p + ggtitle(plot_title) + theme_bw() + scale_fill_manual(values = c(blu_ln, gray_ln, grn_ln, blu, gray, grn)) +
 		scale_color_manual(values = c("#00468b", "#839191", "#52b540", "#00468b", "#839191", "#52b540")) + xlab("Expression (log2 TPM)") + ylab("Density") + 
-		scale_linetype_manual(values = c("dotdash","dotdash","dotdash", "solid","solid","solid")) + 
+		scale_linetype_manual(values = c("dotted","dotted","dotted", "solid","solid","solid")) + 
 		theme(text=element_text(size=16), 
   		axis.ticks.length = unit(.3, "cm"),
   		plot.margin = unit(c(5.5, 10.5, 3.0, 3.5), "points"),
   		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
   		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 5, b = 0, l = 0)),
-  		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 0, l = 0)),
-  		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 12.5, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", size=18, margin = margin(t = 14.1, r = 0, b = 0, l = 0)),
+  		axis.title.y = element_text(colour = "black", size=18, margin = margin(t = 0, r = 12.1, b = 0, l = 0)),
   		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 17.25, r = 0, b = 8, l = 0), hjust = 0.5),
   		legend.position = "bottom",
   		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
@@ -607,8 +607,8 @@ makeScrPlotExprRatio <- function(data, lim_y, p03_02, p03_05, p02_05,
   		plot.margin = unit(c(5.5, 13.5, 20.25, 0.5), "points"),
   		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
   		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 5, b = 0, l = 0)),
-  		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 0, l = 0)),
-  		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 12.5, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", size=18, margin = margin(t = 14.1, r = 0, b = 0, l = 0)),
+  		axis.title.y = element_text(colour = "black", size=18, margin = margin(t = 0, r = 12.1, b = 0, l = 0)),
   		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 17.25, r = 0, b = 8, l = 0), hjust = 0.5),
   		legend.position = "bottom",
   		panel.border = element_rect(colour = "black", fill=NA, size=1.25))
@@ -684,8 +684,8 @@ makeAbndPlot <- function(data) {
   		plot.margin = unit(c(7.9, 13.5, 60.5, 0.5), "points"),
   		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 5, r = 0, b = 0, l = 0)), 
   		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 5, b = 0, l = 0)),
-  		axis.title.x = element_text(colour = "black", size=17.5, margin = margin(t = 14.5, r = 0, b = 0, l = 0)),
-  		axis.title.y = element_text(colour = "black", size=17.5, margin = margin(t = 0, r = 12.5, b = 0, l = 0)),
+  		axis.title.x = element_text(colour = "black", size=18, margin = margin(t = 14.1, r = 0, b = 0, l = 0)),
+  		axis.title.y = element_text(colour = "black", size=18, margin = margin(t = 0, r = 12.1, b = 0, l = 0)),
   		plot.title = element_text(colour = "black", size=17.5, margin = margin(t = 17.25, r = 0, b = 8, l = 0), hjust = 0.5),
   		legend.position=c(0.5,0.9),
   		legend.direction = "horizontal", 
