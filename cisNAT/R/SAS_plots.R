@@ -763,7 +763,7 @@ boxplot(ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pe
 	text(x= 3.5, y= -1.175, labels= n_ATH_pc_comp_wo_pollen, col= "gray40", cex= 0.97) #AL_comp no.genes
 	text(x= 4.5, y= -1.04, labels= n_ATH_nc_comp_wo_pollen, col= "gray40", cex= 0.97)
 	mtext('ATH_all', side = 1, line = 0.55, at = 1.5)
-	mtext('ATH_comp', side = 1, line = 0.55, at = 4)
+	mtext('ATH', side = 1, line = 0.55, at = 4)
 	par(xpd=TRUE)
 	legend(-0.35,-1.6,c("cd-cd SAS", "nc-cd SAS"),  
 	bty='n', horiz = TRUE, fill = c("#a8a8a8", "#d8a900"), cex = 1.1, x.intersp = 0.5)
@@ -970,8 +970,7 @@ make_Boxplot_All_Thresholds_Labels(ATH_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, AT
 
 # ATH comparative samples
 make_Boxplot_All_Thresholds(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
-	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_5_10_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_10_pearson, 
-	samples = "comparative")
+	ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_5_10_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_10_pearson)
 
 # AL comparative samples
 make_Boxplot_All_Thresholds(AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_2_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_2_5_pearson, 
