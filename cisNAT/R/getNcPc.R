@@ -265,6 +265,12 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	# Get all protein-coding genes
 	GTF_df_cd_nc <- GTF_df[GTF_df$gene_biotype %in% c("protein_coding","lnc_exonic_antisense","lnc_intronic_antisense"), ]
 
+	# Remove all chloroplast and mito genes
+	# Reason: RNA-seq prep kit used is Ribo_zero, which incompletely removes Pt and
+	# Mt transcripts, so expression estimates of those genes are likely to be wrong
+	GTF_df_cd <- subset(GTF_df_cd, seqnames != "Pt")
+	GTF_df_cd <- subset(GTF_df_cd, seqnames != "Mt")
+
 
 	# Separate genes from plus strand and minus strand
 	strand_plus <- subset(GTF_df_cd_nc, strand == "+")
