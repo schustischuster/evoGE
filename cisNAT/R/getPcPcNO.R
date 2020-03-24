@@ -505,8 +505,6 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		seqnames, 
 		queryHits, 
 		subjectHits, 
-		# key_query, 
-		# key_subject, 
 		Spearman, 
 		Pearson)
 
@@ -531,8 +529,6 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		seqnames, 
 		queryHits, 
 		subjectHits, 
-		# key_query, 
-		# key_subject, 
 		Spearman, 
 		Pearson)
 
