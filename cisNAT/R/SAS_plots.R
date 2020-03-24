@@ -741,7 +741,7 @@ n_ATH_SAS_PCT <- length(ATH_SAS_PCT[,16])
 
 png(file=file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_ATH_all_vs_comp.png"), 
 	width = 2850, height = 4000, res = 825)
-par(mar = c(4.5, 4.5, 4, 2.5))
+par(mar = c(4.5, 4.5, 4, 2.4))
 boxplot(ATH_tandem_PCT[,16], ATH_SAS_PCT[,16], 
 	ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
 	ylim = c(-1.2, 1.35), 
@@ -752,8 +752,8 @@ boxplot(ATH_tandem_PCT[,16], ATH_SAS_PCT[,16],
 	las = 2,
 	cex.axis = 1.1, #adapt size of axis labels
 	ylab = "Pearson ρ", 
-	col = c("gray88", "gray75", "#a8a8a8", "#d8a900"), 
-	boxwex = 0.8, 
+	col = c("#e0e0e0", "#c4c4c4", "#a8a8a8", "#d8a900"), 
+	boxwex = 0.75, 
 	pars = list(outcol = "gray50"), 
 	lwd = 1.35, 
 	whisklty = 1, 
@@ -774,8 +774,8 @@ boxplot(ATH_tandem_PCT[,16], ATH_SAS_PCT[,16],
 	text(x= 4, y= -1.04, labels= n_ATH_nc_all_wo_pollen, col= "gray40", cex= 0.97)
 	par(xpd=TRUE)
 	legend(-0.35,-1.385,c("tandem cd", "cd-cd OS"),  
-	bty='n', horiz = TRUE, fill = c("gray88", "gray75"), cex = 1.1, x.intersp = 0.5)
-	legend(-0.35,-1.6,c("cd-cd SAS", "nc-cd SAS"),  
+	bty='n', horiz = TRUE, fill = c("#e0e0e0", "#c4c4c4"), cex = 1.1, x.intersp = 0.5)
+	legend(-0.35,-1.625,c("cd-cd SAS", "nc-cd SAS"),  
 	bty='n', horiz = TRUE, fill = c("#a8a8a8", "#d8a900"), cex = 1.1, x.intersp = 0.5)
 dev.off()
 
