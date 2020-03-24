@@ -24,6 +24,7 @@ in_dir_cd <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/An
 in_dir_nc <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/overlap_nc_genes"
 in_dir_ATGE <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/SAS_DevSeq_ATGE"
 in_dir_expr <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/NAT_expr_cor"
+in_dir_pairs <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/output/cd_gene_pairs"
 out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
 
 
@@ -64,6 +65,11 @@ list2env(NAT_expr_cor, envir = .GlobalEnv)
 ATGE_NAT_ID <- read.table(file=file.path(in_dir_ATGE, "ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE.csv"), 
 	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
+# Read ATH non-overlapping protein-coding gene pair tables
+ATH_tandem_PCT <- read.table(file=file.path(in_dir_pairs, "ATH_tandem_PCT_pairs.csv"), 
+	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
+ATH_SAS_PCT <- read.table(file=file.path(in_dir_pairs, "ATH_SAS_PCT_pairs.csv"), 
+	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
 
 
@@ -729,13 +735,16 @@ n_ATH_pc_all_wo_pollen <- length(ATH_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_all_wo_pollen <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
 n_ATH_pc_comp_wo_pollen <- length(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_comp_wo_pollen <- length(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
+n_ATH_tandem_PCT <- length(ATH_tandem_PCT[,16])
+n_ATH_SAS_PCT <- length(ATH_SAS_PCT[,16])
+
 
 png(file=file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_ATH_all_vs_comp.png"), 
 	width = 2850, height = 4000, res = 825)
 par(mar = c(4.5, 4.5, 4, 2.5))
-boxplot(ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
-	ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson,
-	ylim = c(-1.2, 1.2), 
+boxplot(ATH_tandem_PCT[,16], ATH_SAS_PCT[,16], 
+	ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
+	ylim = c(-1.2, 1.35), 
 	names = FALSE, 
 	xaxt = 'n', 
 	yaxt = 'n', 
@@ -743,28 +752,29 @@ boxplot(ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pe
 	las = 2,
 	cex.axis = 1.1, #adapt size of axis labels
 	ylab = "Pearson ρ", 
-	col = c("#a8a8a8", "#d8a900", "#a8a8a8", "#d8a900"), 
-	boxwex = 0.85, 
+	col = c("gray88", "gray75", "#a8a8a8", "#d8a900"), 
+	boxwex = 0.8, 
 	pars = list(outcol = "gray50"), 
 	lwd = 1.35, 
 	whisklty = 1, 
-	at = c(1,2,3.5,4.5), 
+	at = c(1,2,3,4), 
 	notch = FALSE
 	)
 	title("SAS pairs in ATH", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.2)
-	rug(x = c(2.75), ticksize = -0.13, side = 1, lwd = 1.35, col = "gray60") #x-axis ticks
-	abline(v = c(2.75), col = "gray60")
 	box(lwd = 1.35)
 	axis(side = 2, lwd = 1.35, las = 2)
-	text(x= 1.5, y = 1.15, labels= "p<1e-100", col = "black", cex = 1) #ATH_all p-value
-	text(x= 4, y = 1.15, labels= "p<1e-50", col = "black", cex = 1) #ATH_comp p-value
-	text(x= 1, y= -1.175, labels= n_ATH_pc_all_wo_pollen, col= "gray40", cex= 0.97) #ATH_all no.genes
-	text(x= 2, y= -1.04, labels= n_ATH_nc_all_wo_pollen, col= "gray40", cex= 0.97)
-	text(x= 3.5, y= -1.175, labels= n_ATH_pc_comp_wo_pollen, col= "gray40", cex= 0.97) #AL_comp no.genes
-	text(x= 4.5, y= -1.04, labels= n_ATH_nc_comp_wo_pollen, col= "gray40", cex= 0.97)
-	mtext('ATH_all', side = 1, line = 0.55, at = 1.5)
-	mtext('ATH_comp', side = 1, line = 0.55, at = 4)
+	text(x= 2.5, y = 1.3, labels= "p<1e-100", col = "black", cex = 1) #ATH_all p-value
+	segments(x0=1,x1=3,y0=1.1,y1=1.1, col="gray10", lwd = 1.35)
+	segments(x0=2,x1=4,y0=1.2,y1=1.2, col="gray10", lwd = 1.35)
+	segments(x0=2,x1=2,y0=1.1,y1=1.2, col="gray10", lwd = 1.35)
+	segments(x0=4,x1=4,y0=1.1,y1=1.2, col="gray10", lwd = 1.35)
+	text(x= 1, y= -1.175, labels= n_ATH_tandem_PCT, col= "gray40", cex= 0.97) #ATH_all no.genes
+	text(x= 2, y= -1.04, labels= n_ATH_SAS_PCT, col= "gray40", cex= 0.97)
+	text(x= 3, y= -1.175, labels= n_ATH_pc_all_wo_pollen, col= "gray40", cex= 0.97) #AL_comp no.genes
+	text(x= 4, y= -1.04, labels= n_ATH_nc_all_wo_pollen, col= "gray40", cex= 0.97)
 	par(xpd=TRUE)
+	legend(-0.35,-1.385,c("tandem cd", "cd-cd OS"),  
+	bty='n', horiz = TRUE, fill = c("gray88", "gray75"), cex = 1.1, x.intersp = 0.5)
 	legend(-0.35,-1.6,c("cd-cd SAS", "nc-cd SAS"),  
 	bty='n', horiz = TRUE, fill = c("#a8a8a8", "#d8a900"), cex = 1.1, x.intersp = 0.5)
 dev.off()
