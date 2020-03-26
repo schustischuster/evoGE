@@ -388,24 +388,24 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
-	#---- Split data to sense-sense (tandem PCT pairs) and sense-antisense (SAS PCT pairs)  ----
+	#---- Split data to sense-sense (same_strand PCT pairs) and sense-antisense (SAS PCT pairs)  ----
 
 	PCT_pairs_query_plus <- subset(strand_plus_minus_query_genes_tpm_0.5, strand == "+")
 	PCT_pairs_subject_plus <- subset(strand_plus_minus_subject_genes_tpm_0.5, strand == "+")
 	PCT_pairs_query_minus <- subset(strand_plus_minus_query_genes_tpm_0.5, strand == "-")
 	PCT_pairs_subject_minus <- subset(strand_plus_minus_subject_genes_tpm_0.5, strand == "-")
 
-	tandem_PCT_pairs_query_plus <- PCT_pairs_query_plus[(
+	same_strand_PCT_pairs_query_plus <- PCT_pairs_query_plus[(
 		PCT_pairs_query_plus$id %in% PCT_pairs_subject_plus$id),]
-	tandem_PCT_pairs_subject_plus <- PCT_pairs_subject_plus[(
+	same_strand_PCT_pairs_subject_plus <- PCT_pairs_subject_plus[(
 		PCT_pairs_subject_plus$id %in% PCT_pairs_query_plus$id),]
-	tandem_PCT_pairs_query_minus <- PCT_pairs_query_minus[(
+	same_strand_PCT_pairs_query_minus <- PCT_pairs_query_minus[(
 		PCT_pairs_query_minus$id %in% PCT_pairs_subject_minus$id),]
-	tandem_PCT_pairs_subject_minus <- PCT_pairs_subject_minus[(
+	same_strand_PCT_pairs_subject_minus <- PCT_pairs_subject_minus[(
 		PCT_pairs_subject_minus$id %in% PCT_pairs_query_minus$id),]
 
-	tandem_PCT_pairs_query <- rbind(tandem_PCT_pairs_query_plus, tandem_PCT_pairs_query_minus)
-	tandem_PCT_pairs_subject <- rbind(tandem_PCT_pairs_subject_plus, tandem_PCT_pairs_subject_minus)
+	same_strand_PCT_pairs_query <- rbind(same_strand_PCT_pairs_query_plus, same_strand_PCT_pairs_query_minus)
+	same_strand_PCT_pairs_subject <- rbind(same_strand_PCT_pairs_subject_plus, same_strand_PCT_pairs_subject_minus)
 
 	SAS_PCT_pairs_query_plus <- PCT_pairs_query_plus[(
 		PCT_pairs_query_plus$id %in% PCT_pairs_subject_minus$id),]
@@ -425,12 +425,12 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Remove pollen triplicates from expression table
-	tandem_PCT_pairs_query_wo_pollen <- dplyr::select(tandem_PCT_pairs_query, -c(
+	same_strand_PCT_pairs_query_wo_pollen <- dplyr::select(same_strand_PCT_pairs_query, -c(
 		flowers_mature_pollen_1, 
 		flowers_mature_pollen_2, 
 		flowers_mature_pollen_3)) #tibble w/o pollen samles
 
-	tandem_PCT_pairs_subject_wo_pollen <- dplyr::select(tandem_PCT_pairs_subject, -c(
+	same_strand_PCT_pairs_subject_wo_pollen <- dplyr::select(same_strand_PCT_pairs_subject, -c(
 		flowers_mature_pollen_1, 
 		flowers_mature_pollen_2, 
 		flowers_mature_pollen_3)) #tibble w/o pollen samles
@@ -473,8 +473,8 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	}
 
 
-	tandem_PCT_pairs_wo_pollen <- getCor(
-		tandem_PCT_pairs_query_wo_pollen, tandem_PCT_pairs_subject_wo_pollen)
+	same_strand_PCT_pairs_wo_pollen <- getCor(
+		same_strand_PCT_pairs_query_wo_pollen, same_strand_PCT_pairs_subject_wo_pollen)
 	SAS_PCT_pairs_wo_pollen <- getCor(
 		SAS_PCT_pairs_query_wo_pollen, SAS_PCT_pairs_subject_wo_pollen)
 
@@ -485,12 +485,12 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Create data table containing both strand plus and minus genes and cor values
-	tandem_PCT_pairs_subject_descript = tandem_PCT_pairs_subject_wo_pollen %>% select(id, gene_id, start, end, strand, biotype)
-	names(tandem_PCT_pairs_subject_descript) <- c("key_subject" ,"id_subject", "start_subject", "end_subject", "strand_subject", "biotype_subject")
-	tandem_PCT_pairs_wo_pollen_descript <- tandem_PCT_pairs_wo_pollen
-	names(tandem_PCT_pairs_wo_pollen_descript)[1:10] <- c("key_query", "subjectHits", "queryHits", "distance", "id_query", "seqnames", "start_query", "end_query", "strand_query", "biotype_query")
-	tandem_PCT_pairs <- cbind(tandem_PCT_pairs_wo_pollen_descript, tandem_PCT_pairs_subject_descript)
-	tandem_PCT_pairs = tandem_PCT_pairs %>% select(
+	same_strand_PCT_pairs_subject_descript = same_strand_PCT_pairs_subject_wo_pollen %>% select(id, gene_id, start, end, strand, biotype)
+	names(same_strand_PCT_pairs_subject_descript) <- c("key_subject" ,"id_subject", "start_subject", "end_subject", "strand_subject", "biotype_subject")
+	same_strand_PCT_pairs_wo_pollen_descript <- same_strand_PCT_pairs_wo_pollen
+	names(same_strand_PCT_pairs_wo_pollen_descript)[1:10] <- c("key_query", "subjectHits", "queryHits", "distance", "id_query", "seqnames", "start_query", "end_query", "strand_query", "biotype_query")
+	same_strand_PCT_pairs <- cbind(same_strand_PCT_pairs_wo_pollen_descript, same_strand_PCT_pairs_subject_descript)
+	same_strand_PCT_pairs = same_strand_PCT_pairs %>% select(
 		id_query, 
 		start_query, 
 		end_query, 
@@ -534,7 +534,7 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Set filename
-    tandem_fname <- sprintf('%s.csv', paste(species_id, "tandem_PCT_pairs", sep="_"))
+    same_strand_fname <- sprintf('%s.csv', paste(species_id, "same_strand_PCT_pairs", sep="_"))
 	SAS_fname <- sprintf('%s.csv', paste(species_id, "SAS_PCT_pairs", sep="_"))
 
 
@@ -542,7 +542,7 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	if (!dir.exists(file.path(out_dir, "output", "cd_gene_pairs"))) 
 		dir.create(file.path(out_dir, "output", "cd_gene_pairs"), recursive = TRUE)
 
-	write.table(tandem_PCT_pairs, file=file.path(out_dir, "output", "cd_gene_pairs", tandem_fname), 
+	write.table(same_strand_PCT_pairs, file=file.path(out_dir, "output", "cd_gene_pairs", same_strand_fname), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 	write.table(SAS_PCT_pairs, file=file.path(out_dir, "output", "cd_gene_pairs", SAS_fname), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
