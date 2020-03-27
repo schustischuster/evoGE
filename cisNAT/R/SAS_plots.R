@@ -66,7 +66,7 @@ ATGE_NAT_ID <- read.table(file=file.path(in_dir_ATGE, "ATH_cd_nc_SAS_cor_wo_poll
 	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
 # Read ATH non-overlapping protein-coding gene pair tables
-ATH_tandem_PCT <- read.table(file=file.path(in_dir_pairs, "ATH_tandem_PCT_pairs.csv"), 
+ATH_same_strand_PCT <- read.table(file=file.path(in_dir_pairs, "ATH_same_strand_PCT_pairs.csv"), 
 	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 ATH_SAS_PCT <- read.table(file=file.path(in_dir_pairs, "ATH_SAS_PCT_pairs.csv"), 
 	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
@@ -735,14 +735,14 @@ n_ATH_pc_all_wo_pollen <- length(ATH_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_all_wo_pollen <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
 n_ATH_pc_comp_wo_pollen <- length(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_comp_wo_pollen <- length(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-n_ATH_tandem_PCT <- length(ATH_tandem_PCT[,16])
+n_ATH_same_strand_PCT <- length(ATH_same_strand_PCT[,16])
 n_ATH_SAS_PCT <- length(ATH_SAS_PCT[,16])
 
 
 png(file=file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_ATH_all_vs_comp.png"), 
 	width = 2850, height = 4000, res = 825)
 par(mar = c(4.5, 4.5, 4, 2.4))
-boxplot(ATH_tandem_PCT[,16], ATH_SAS_PCT[,16], 
+boxplot(ATH_same_strand_PCT[,16], ATH_SAS_PCT[,16], 
 	ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
 	ylim = c(-1.2, 1.35), 
 	names = FALSE, 
@@ -768,15 +768,17 @@ boxplot(ATH_tandem_PCT[,16], ATH_SAS_PCT[,16],
 	segments(x0=2,x1=4,y0=1.2,y1=1.2, col="gray10", lwd = 1.35)
 	segments(x0=2,x1=2,y0=1.1,y1=1.2, col="gray10", lwd = 1.35)
 	segments(x0=4,x1=4,y0=1.1,y1=1.2, col="gray10", lwd = 1.35)
-	text(x= 1, y= -1.175, labels= n_ATH_tandem_PCT, col= "gray40", cex= 0.97) #ATH_all no.genes
+	text(x= 1, y= -1.175, labels= n_ATH_same_strand_PCT, col= "gray40", cex= 0.97) #ATH_all no.genes
 	text(x= 2, y= -1.04, labels= n_ATH_SAS_PCT, col= "gray40", cex= 0.97)
 	text(x= 3, y= -1.175, labels= n_ATH_pc_all_wo_pollen, col= "gray40", cex= 0.97) #AL_comp no.genes
 	text(x= 4, y= -1.04, labels= n_ATH_nc_all_wo_pollen, col= "gray40", cex= 0.97)
 	par(xpd=TRUE)
-	legend(-0.35,-1.385,c("tandem cd", "cd-cd OS"),  
-	bty='n', horiz = TRUE, fill = c("#e0e0e0", "#c4c4c4"), cex = 1.1, x.intersp = 0.5)
+	legend(-0.35,-1.385,c("cd-cd SSN", "cd-cd OSN"),  
+	bty='n', horiz = TRUE, fill = c("#e0e0e0", "#c4c4c4"), cex = 1.1, x.intersp = 0.5, 
+	text.width=c(2,1.81))
 	legend(-0.35,-1.625,c("cd-cd SAS", "nc-cd SAS"),  
-	bty='n', horiz = TRUE, fill = c("#a8a8a8", "#d8a900"), cex = 1.1, x.intersp = 0.5)
+	bty='n', horiz = TRUE, fill = c("#a8a8a8", "#d8a900"), cex = 1.1, x.intersp = 0.5, 
+	text.width=c(2,1.81))
 dev.off()
 
 
