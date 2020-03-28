@@ -1376,6 +1376,182 @@ makeScrPlotPSCor(data=BD_comp_PS, rsqd=rsqd_BD_PS, plot_title="BD")
 
 
 
+#--------------- Generate count plots for neighboring protein-coding gene pairs ----------------
+
+
+# Create intergenic ranges lists
+getDistanceRange <- function(x, min_dist, max_dist) {
+	data <- subset(x, distance >= min_dist & distance < max_dist)
+	return(data)
+}
+
+# for cd-cd gene pairs that are on same strand
+range_1_50_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 1, max_dist = 50)
+range_50_100_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 50, max_dist = 100)
+range_100_200_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 100, max_dist = 200)
+range_200_500_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 200, max_dist = 500)
+range_500_1000_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 500, max_dist = 1000)
+range_1000_2000_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 1000, max_dist = 2000)
+range_2000_5000_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 2000, max_dist = 5000)
+range_5000_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 5000, max_dist = 50000)
+
+# for cd-cd gene pairs that are on opposite strand
+range_1_50_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 1, max_dist = 50)
+range_50_100_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 50, max_dist = 100)
+range_100_200_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 100, max_dist = 200)
+range_200_500_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 200, max_dist = 500)
+range_500_1000_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 500, max_dist = 1000)
+range_1000_2000_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 1000, max_dist = 2000)
+range_2000_5000_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 2000, max_dist = 5000)
+range_5000_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 5000, max_dist = 50000)
+
+
+SSN_list <- list(range_1_50_SSN=range_1_50_SSN,range_50_100_SSN=range_50_100_SSN,
+	range_100_200_SSN=range_100_200_SSN,range_200_500_SSN=range_200_500_SSN,
+	range_500_1000_SSN=range_500_1000_SSN,range_1000_2000_SSN=range_1000_2000_SSN,
+	range_2000_5000_SSN=range_2000_5000_SSN,range_5000_SSN=range_5000_SSN)
+
+OSN_list <- list(range_1_50_OSN=range_1_50_OSN,range_50_100_OSN=range_50_100_OSN,
+	range_100_200_OSN=range_100_200_OSN,range_200_500_OSN=range_200_500_OSN,
+	range_500_1000_OSN=range_500_1000_OSN,range_1000_2000_OSN=range_1000_2000_OSN,
+	range_2000_5000_OSN=range_2000_5000_OSN,range_5000_OSN=range_5000_OSN)
+
+
+# Get median of Pearson values
+med_SSN_pearson <- lapply(SSN_list, function(x) {
+	median(x[, 16])
+})
+names(med_SSN_pearson) <- paste(names(
+	med_SSN_pearson),"_median_pearson", sep="")
+list2env(med_SSN_pearson, envir = .GlobalEnv)
+med_SSN_pearson <- unlist(med_SSN_pearson)
+med_SSN_pearson <- as.data.frame(med_SSN_pearson)
+rownames(med_SSN_pearson) <- c()
+
+med_OSN_pearson <- lapply(OSN_list, function(x) {
+	median(x[, 16])
+})
+names(med_OSN_pearson) <- paste(names(
+	med_OSN_pearson),"_median_pearson", sep="")
+list2env(med_OSN_pearson, envir = .GlobalEnv)
+med_OSN_pearson <- unlist(med_OSN_pearson)
+med_OSN_pearson <- as.data.frame(med_OSN_pearson)
+rownames(med_OSN_pearson) <- c()
+
+dist_range <- c("1-50","50-100","100-200","200-500","500-1K","1K-2K","2K-5K",">5K")
+dist_range <- as.data.frame(dist_range)
+
+med_dist_cor <- cbind(dist_range, med_SSN_pearson, med_OSN_pearson)
+
+
+# Get number of genes per intergenic range
+n_range_1_50_SSN <- nrow(range_1_50_SSN)
+n_range_50_100_SSN <- nrow(range_50_100_SSN)
+n_range_100_200_SSN <- nrow(range_100_200_SSN)
+n_range_200_500_SSN <- nrow(range_200_500_SSN)
+n_range_500_1000_SSN <- nrow(range_500_1000_SSN)
+n_range_1000_2000_SSN <- nrow(range_1000_2000_SSN)
+n_range_2000_5000_SSN <- nrow(range_2000_5000_SSN)
+n_range_5000_SSN <- nrow(range_5000_SSN)
+
+n_ranges_SSN <- c(n_range_1_50_SSN,n_range_50_100_SSN,n_range_100_200_SSN,n_range_200_500_SSN,
+	n_range_500_1000_SSN,n_range_1000_2000_SSN,n_range_2000_5000_SSN,n_range_5000_SSN)
+n_ranges_SSN <- t(as.data.frame(n_ranges_SSN))
+colnames(n_ranges_SSN) <- c("1-50","50-100","100-200","200-500","500-1K","1K-2K","2K-5K",">5K")
+rownames(n_ranges_SSN) <- c()
+
+n_range_1_50_OSN <- nrow(range_1_50_OSN)
+n_range_50_100_OSN <- nrow(range_50_100_OSN)
+n_range_100_200_OSN <- nrow(range_100_200_OSN)
+n_range_200_500_OSN <- nrow(range_200_500_OSN)
+n_range_500_1000_OSN <- nrow(range_500_1000_OSN)
+n_range_1000_2000_OSN <- nrow(range_1000_2000_OSN)
+n_range_2000_5000_OSN <- nrow(range_2000_5000_OSN)
+n_range_5000_OSN <- nrow(range_5000_OSN)
+
+n_ranges_OSN <- c(n_range_1_50_OSN,n_range_50_100_OSN,n_range_100_200_OSN,n_range_200_500_OSN,
+	n_range_500_1000_OSN,n_range_1000_2000_OSN,n_range_2000_5000_OSN,n_range_5000_OSN)
+n_ranges_OSN <- t(as.data.frame(n_ranges_OSN))
+colnames(n_ranges_OSN) <- c("1-50","50-100","100-200","200-500","500-1K","1K-2K","2K-5K",">5K")
+rownames(n_ranges_OSN) <- c()
+
+
+
+# Make connected scatter plot
+makeScrPlotDistCor <- function(data, plot_title, n_ranges_SSN, n_ranges_OSN) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+	# Get number of gene pairs from same strand
+    range_1_50_SSN <- n_ranges_SSN[,1]
+    range_50_100_SSN <- n_ranges_SSN[,2]
+    range_100_200_SSN <- n_ranges_SSN[,3]
+    range_200_500_SSN <- n_ranges_SSN[,4]
+    range_500_1000_SSN <- n_ranges_SSN[,5]
+    range_1000_2000_SSN <- n_ranges_SSN[,6]
+    range_2000_5000_SSN <- n_ranges_SSN[,7]
+    range_5000_SSN <- n_ranges_SSN[,8]
+
+    # Get number of gene pairs from opposite strands
+    range_1_50_OSN <- n_ranges_OSN[,1]
+    range_50_100_OSN <- n_ranges_OSN[,2]
+    range_100_200_OSN <- n_ranges_OSN[,3]
+    range_200_500_OSN <- n_ranges_OSN[,4]
+    range_500_1000_OSN <- n_ranges_OSN[,5]
+    range_1000_2000_OSN <- n_ranges_OSN[,6]
+    range_2000_5000_OSN <- n_ranges_OSN[,7]
+    range_5000_OSN <- n_ranges_OSN[,8]
+	
+	p <- ggplot(data, aes(dist_range,group = 1)) + 
+	geom_line(aes(y = med_SSN_pearson, color = "med_SSN_pearson",group = 1), size=1.125) + 
+	geom_line(aes(y = med_OSN_pearson, color = "med_OSN_pearson",group = 1), size=1.125) + 
+  	geom_point(aes(y = med_SSN_pearson, color = "med_SSN_pearson",group = 1), size=3.25) + 
+  	geom_point(aes(y = med_OSN_pearson, color = "med_OSN_pearson",group = 1), size=3.25) + 
+  	labs(color="Adjecent gene pair") + 
+  	scale_color_manual(labels = c("same strand", "opposite strands"), values = c("#18b3b7", "#f35e5a")) + 
+	scale_y_continuous(limits = c(0,0.25)) + 
+	scale_x_discrete(breaks=data$dist_range,labels=data$dist_range, 
+		limits=c("1-50","50-100","100-200","200-500","500-1K","1K-2K","2K-5K",">5K")) + 
+	annotate("text", x=0.76, y=Inf, hjust=0, vjust=10.5, size=5.5, label=range_1_50_SSN, col="gray40") + 
+	annotate("text", x=1.82, y=Inf, hjust=0, vjust=13.05, size=5.5, label=range_50_100_SSN, col="gray40") + 
+	annotate("text", x=2.76, y=Inf, hjust=0, vjust=14.36, size=5.5, label=range_100_200_SSN, col="gray40") + 
+	annotate("text", x=3.74, y=Inf, hjust=0, vjust=16.25, size=5.5, label=range_200_500_SSN, col="gray40") + 
+	annotate("text", x=4.76, y=Inf, hjust=0, vjust=21.58, size=5.5, label=range_500_1000_SSN, col="gray40") + 
+	annotate("text", x=5.76, y=Inf, hjust=0, vjust=20.57, size=5.5, label=range_1000_2000_SSN, col="gray40") + 
+	annotate("text", x=6.80, y=Inf, hjust=0, vjust=20.9, size=5.5, label=range_2000_5000_SSN, col="gray40") + 
+	annotate("text", x=7.82, y=Inf, hjust=0, vjust=27.68, size=5.5, label=range_5000_SSN, col="gray40") + 
+	annotate("text", x=0.825, y=Inf, hjust=0, vjust=2.975, size=5.5, label=range_1_50_OSN, col="gray40") + 
+	annotate("text", x=1.825, y=Inf, hjust=0, vjust=5.4, size=5.5, label=range_50_100_OSN, col="gray40") + 
+	annotate("text", x=2.8275, y=Inf, hjust=0, vjust=6.9, size=5.5, label=range_100_200_OSN, col="gray40") + 
+	annotate("text", x=3.74, y=Inf, hjust=0, vjust=10.89, size=5.5, label=range_200_500_OSN, col="gray40") + 
+	annotate("text", x=4.8275, y=Inf, hjust=0, vjust=10.05, size=5.5, label=range_500_1000_OSN, col="gray40") + 
+	annotate("text", x=5.8275, y=Inf, hjust=0, vjust=10.37, size=5.5, label=range_1000_2000_OSN, col="gray40") + 
+	annotate("text", x=6.8275, y=Inf, hjust=0, vjust=16.02, size=5.5, label=range_2000_5000_OSN, col="gray40") + 
+	annotate("text", x=7.8275, y=Inf, hjust=0, vjust=18.8, size=5.5, label=range_5000_OSN, col="gray40")
+
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Intergenic distance (bp)") + ylab("Pearson's r") + 
+  		theme(text=element_text(size=16), 
+  		axis.ticks.length = unit(.25, "cm"),
+  		plot.margin = unit(c(3.0, 10.5, 20, 8), "points"),
+		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 9, r = 0, b = 0, l = 0)), 
+		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 9, b = 0, l = 0)),
+		axis.title.x = element_text(colour = "black", size=18.25, margin = margin(t = 28, r = 0, b = 1, l = 0), face ="bold"),
+		axis.title.y = element_text(colour = "black", size=18.25, margin = margin(t = 0, r = 27, b = 0, l = 10), face ="bold"),
+		plot.title = element_text(colour = "black", size=20.25, margin = margin(t = 25, r = 0, b = 28, l = 0), hjust = 0.5),
+		legend.position = "right",
+		legend.title = element_text(colour = "black", size=17, face ="bold"),
+		legend.text=element_text(size=17), 
+		legend.spacing.x = unit(0.25, 'cm'),
+		legend.key.size = unit(0.775, "cm"),
+  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
+
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+		scale = 1, width = 12.5, height = 8, units = c("in"), 
+		dpi = 450, limitsize = FALSE)
+}
+
+makeScrPlotDistCor(data=med_dist_cor, plot_title="Correlation between coexpression and intergenic distance", n_ranges_SSN=n_ranges_SSN, n_ranges_OSN=n_ranges_OSN)
+
 
 
 
