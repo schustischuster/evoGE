@@ -1426,7 +1426,6 @@ names(med_SSN_pearson) <- paste(names(
 list2env(med_SSN_pearson, envir = .GlobalEnv)
 med_SSN_pearson <- unlist(med_SSN_pearson)
 med_SSN_pearson <- as.data.frame(med_SSN_pearson)
-rownames(med_SSN_pearson) <- c()
 
 med_OSN_pearson <- lapply(OSN_list, function(x) {
 	median(x[, 16])
@@ -1436,12 +1435,12 @@ names(med_OSN_pearson) <- paste(names(
 list2env(med_OSN_pearson, envir = .GlobalEnv)
 med_OSN_pearson <- unlist(med_OSN_pearson)
 med_OSN_pearson <- as.data.frame(med_OSN_pearson)
-rownames(med_OSN_pearson) <- c()
 
 dist_range <- c("1-50","50-100","100-200","200-500","500-1K","1K-2K","2K-5K",">5K")
 dist_range <- as.data.frame(dist_range)
 
 med_dist_cor <- cbind(dist_range, med_SSN_pearson, med_OSN_pearson)
+rownames(med_dist_cor) <- c()
 
 
 # Get number of genes per intergenic range
