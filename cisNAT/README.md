@@ -13,6 +13,7 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Retrieve non-coding-coding gene overlapp](#retrieve-non-coding-coding-gene-overlapp)
   * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
   * [Get expression intensity and ratio of SAS pairs](#get-expression-intensity-and-ratio-of-sas-pairs)
+  * [Get intergenic distance of neighboring genes](#get-intergenic-distance-of-neighboring-genes)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -143,6 +144,17 @@ The following function will retrieve the maximum expression level for both codin
 in_dir <- "./output/overlap_nc_genes"
 
 getExprRatio()
+
+```
+
+### Get intergenic distance of neighboring genes
+
+...
+
+```R
+in_dir <- "./output/..."
+
+get...()
 
 ```
 
