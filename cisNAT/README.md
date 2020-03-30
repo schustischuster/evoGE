@@ -152,7 +152,7 @@ getExprRatio()
 
 ### Get intergenic distance of neighboring genes
 
-Numerous studies have shown that neighboring genes tend to be coexpressed, e.g. Cohen  et al. (2000), Boutanaev et al. (2000), Spellman and Rubin (2002), Lercher et al. (2002), Lercher et al. (2003), Williams and Bowles (2002). We wanted to test if a similar trend can be found in the DevSeq data set. The following function will extract all protein-coding gene pairs from the GTF file, apply an expression threshold of 0.5 TPM, compute pairwise log2 expression correlations across all samples, and write the results to a CSV file.
+Numerous studies have shown that neighboring genes tend to be coexpressed, e.g. Cohen  et al. (2000), Boutanaev et al. (2000), Lercher et al. (2002), Lercher et al. (2003), Williams and Bowles (2002). We wanted to test if a similar trend can be found in the DevSeq data set. The following function will extract all protein-coding gene pairs from the GTF file, apply an expression threshold of 0.5 TPM, compute pairwise log2 expression correlations across all samples, and write the results to a CSV file.
 
 ```R
 getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
