@@ -155,6 +155,13 @@ getExprRatio()
 ...
 
 ```R
+getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+                      experiment = c("single-species", "comparative"))
+ 
+```
+...
+
+```R
 in_dir <- "./output/..."
 
 get...()
