@@ -94,14 +94,14 @@ To generate all data tables used in this study, execute the following function c
 ```R
 thresholds <- list(0.5, 2, 5, 10)
 
-lapply(thresholds, getNcPc, "ATH", "single-species")
-lapply(thresholds, getNcPc, "ATH", "comparative")
-lapply(thresholds, getNcPc, "AL", "comparative")
-lapply(thresholds, getNcPc, "CR", "comparative")
-lapply(thresholds, getNcPc, "ES", "comparative")
-lapply(thresholds, getNcPc, "TH", "comparative")
-lapply(thresholds, getNcPc, "MT", "comparative")
-lapply(thresholds, getNcPc, "BD", "comparative")
+lapply(thresholds, getNcPc, species = "ATH", experiment = "single-species")
+lapply(thresholds, getNcPc, species = "ATH", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "AL", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "CR", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "ES", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "TH", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "MT", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "BD", experiment = "comparative")
 
 ```
 
