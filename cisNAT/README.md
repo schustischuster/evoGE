@@ -92,41 +92,16 @@ getNcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
-getNcPc("ATH", "single-species", 0.5)
-getNcPc("ATH", "comparative", 0.5)
-getNcPc("AL", "comparative", 0.5)
-getNcPc("CR", "comparative", 0.5)
-getNcPc("ES", "comparative", 0.5)
-getNcPc("TH", "comparative", 0.5)
-getNcPc("MT", "comparative", 0.5)
-getNcPc("BD", "comparative", 0.5)
+thresholds <- list(0.5, 2, 5, 10)
 
-getNcPc("ATH", "single-species", 2)
-getNcPc("ATH", "comparative", 2)
-getNcPc("AL", "comparative", 2)
-getNcPc("CR", "comparative", 2)
-getNcPc("ES", "comparative", 2)
-getNcPc("TH", "comparative", 2)
-getNcPc("MT", "comparative", 2)
-getNcPc("BD", "comparative", 2)
-
-getNcPc("ATH", "single-species", 5)
-getNcPc("ATH", "comparative", 5)
-getNcPc("AL", "comparative", 5)
-getNcPc("CR", "comparative", 5)
-getNcPc("ES", "comparative", 5)
-getNcPc("TH", "comparative", 5)
-getNcPc("MT", "comparative", 5)
-getNcPc("BD", "comparative", 5)
-
-getNcPc("ATH", "single-species", 10)
-getNcPc("ATH", "comparative", 10)
-getNcPc("AL", "comparative", 10)
-getNcPc("CR", "comparative", 10)
-getNcPc("ES", "comparative", 10)
-getNcPc("TH", "comparative", 10)
-getNcPc("MT", "comparative", 10)
-getNcPc("BD", "comparative", 10)
+lapply(thresholds, getNcPc, "ATH", "single-species")
+lapply(thresholds, getNcPc, "ATH", "comparative")
+lapply(thresholds, getNcPc, "AL", "comparative")
+lapply(thresholds, getNcPc, "CR", "comparative")
+lapply(thresholds, getNcPc, "ES", "comparative")
+lapply(thresholds, getNcPc, "TH", "comparative")
+lapply(thresholds, getNcPc, "MT", "comparative")
+lapply(thresholds, getNcPc, "BD", "comparative")
 
 ```
 
