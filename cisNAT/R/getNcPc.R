@@ -268,8 +268,8 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	# Remove all chloroplast and mito genes
 	# Reason: RNA-seq prep kit used is Ribo_zero, which incompletely removes Pt and
 	# Mt transcripts, so expression estimates of those genes are likely to be wrong
-	GTF_df_cd <- subset(GTF_df_cd, seqnames != "Pt")
-	GTF_df_cd <- subset(GTF_df_cd, seqnames != "Mt")
+	GTF_df_cd_nc <- subset(GTF_df_cd_nc, seqnames != "Pt")
+	GTF_df_cd_nc <- subset(GTF_df_cd_nc, seqnames != "Mt")
 
 
 	# Separate genes from plus strand and minus strand
@@ -710,47 +710,16 @@ getNcPc <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 }
 
 
+thresholds <- list(0.5, 2, 5, 10)
 
-# Execute getNcPc function
-getNcPc("ATH", "single-species", 0.5)
-getNcPc("ATH", "comparative", 0.5)
-getNcPc("AL", "single-species", 0.5)
-getNcPc("AL", "comparative", 0.5)
-getNcPc("CR", "comparative", 0.5)
-getNcPc("ES", "comparative", 0.5)
-getNcPc("TH", "comparative", 0.5)
-getNcPc("MT", "comparative", 0.5)
-getNcPc("BD", "comparative", 0.5)
-
-getNcPc("ATH", "single-species", 2)
-getNcPc("ATH", "comparative", 2)
-getNcPc("AL", "single-species", 2)
-getNcPc("AL", "comparative", 2)
-getNcPc("CR", "comparative", 2)
-getNcPc("ES", "comparative", 2)
-getNcPc("TH", "comparative", 2)
-getNcPc("MT", "comparative", 2)
-getNcPc("BD", "comparative", 2)
-
-getNcPc("ATH", "single-species", 5)
-getNcPc("ATH", "comparative", 5)
-getNcPc("AL", "single-species", 5)
-getNcPc("AL", "comparative", 5)
-getNcPc("CR", "comparative", 5)
-getNcPc("ES", "comparative", 5)
-getNcPc("TH", "comparative", 5)
-getNcPc("MT", "comparative", 5)
-getNcPc("BD", "comparative", 5)
-
-getNcPc("ATH", "single-species", 10)
-getNcPc("ATH", "comparative", 10)
-getNcPc("AL", "single-species", 10)
-getNcPc("AL", "comparative", 10)
-getNcPc("CR", "comparative", 10)
-getNcPc("ES", "comparative", 10)
-getNcPc("TH", "comparative", 10)
-getNcPc("MT", "comparative", 10)
-getNcPc("BD", "comparative", 10)
+lapply(thresholds, getNcPc, species = "ATH", experiment = "single-species")
+lapply(thresholds, getNcPc, species = "ATH", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "AL", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "CR", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "ES", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "TH", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "MT", experiment = "comparative")
+lapply(thresholds, getNcPc, species = "BD", experiment = "comparative")
 
 getNcPc("ATH", "single-species", 0)
 
