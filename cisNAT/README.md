@@ -144,11 +144,11 @@ getDevSeq_ATGE()
 Numerous studies using different model organisms including A. thaliana, C. elegans, D. melanogaster, H. sapiens, and S. cerevisiae have shown that neighboring genes tend to be coexpressed, e.g. [Cohen  et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/11017073), [Boutanaev et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/12478293), [Lercher et al. (2002)](https://www.ncbi.nlm.nih.gov/pubmed/11992122), [Lercher et al. (2003)](https://www.ncbi.nlm.nih.gov/pubmed/12566401), [Williams and Bowles (2004)](https://www.ncbi.nlm.nih.gov/pubmed/15173112). We wanted to test if a similar trend can be found in the DevSeq data set. The following function will extract all protein-coding gene pairs and their intergenic distance from the GTF file, apply an expression threshold of 0.5 TPM, compute pairwise log2 expression correlations across all samples, and write the results to a CSV file.
 
 ```R
-getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-                      experiment = c("single-species", "comparative"))
- 
+getPcPcNO(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+          experiment = c("single-species", "comparative"))
+
 ```
-...
+To generate the data table for Arabidopsis thaliana, execute the following function call: 
 
 ```R
 getPcPcNO("ATH", "single-species")
