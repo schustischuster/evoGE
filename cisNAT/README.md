@@ -164,6 +164,8 @@ The plotting functions will generate the panels for the following figures:
 
 ![SAS_CC_scatter](README_files/SAS_CC_cor.png)
 
+![gene_pair_cor](README_files/gene_pair_cor.png)
+
 
 
 ---
