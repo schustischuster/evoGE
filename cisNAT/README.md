@@ -150,6 +150,7 @@ in_dir_cd <- "./output/overlap_cd_genes"
 in_dir_nc <- "./output/overlap_nc_genes"
 in_dir_ATGE <- "./output/SAS_DevSeq_ATGE"
 in_dir_expr <- "./output/NAT_expr_cor"
+in_dir_pairs <- "./output/cd_gene_pairs"
 
 source("SAS_plots.R")
 
