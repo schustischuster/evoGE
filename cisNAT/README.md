@@ -12,8 +12,8 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Retrieve coding-coding gene overlapp](#retrieve-coding-coding-gene-overlapp)
   * [Retrieve non-coding-coding gene overlapp](#retrieve-non-coding-coding-gene-overlapp)
   * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
-  * [Get expression intensity and ratio of SAS pairs](#get-expression-intensity-and-ratio-of-sas-pairs)
   * [Get intergenic distance of neighboring genes](#get-intergenic-distance-of-neighboring-genes)
+  * [Get expression intensity and ratio of SAS pairs](#get-expression-intensity-and-ratio-of-sas-pairs)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -139,17 +139,6 @@ getDevSeq_ATGE()
 
 ```
 
-### Get expression intensity and ratio of SAS pairs
-
-The following function will retrieve the maximum expression level for both coding and non-coding transcripts, and will calculate the ratio between NAT and coding gene expression. The results will be written to CSV files. 
-
-```R
-in_dir <- "./output/overlap_nc_genes"
-
-getExprRatio()
-
-```
-
 ### Get intergenic distance of neighboring genes
 
 Numerous studies using different model organisms including A. thaliana, C. elegans, D. melanogaster, H. sapiens, and S. cerevisiae have shown that neighboring genes tend to be coexpressed, e.g. [Cohen  et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/11017073), [Boutanaev et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/12478293), [Lercher et al. (2002)](https://www.ncbi.nlm.nih.gov/pubmed/11992122), [Lercher et al. (2003)](https://www.ncbi.nlm.nih.gov/pubmed/12566401), [Williams and Bowles (2004)](https://www.ncbi.nlm.nih.gov/pubmed/15173112). We wanted to test if a similar trend can be found in the DevSeq data set. The following function will extract all protein-coding gene pairs and their intergenic distance from the GTF file, apply an expression threshold of 0.5 TPM, compute pairwise log2 expression correlations across all samples, and write the results to a CSV file.
@@ -162,9 +151,18 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 ...
 
 ```R
-in_dir <- "./output/..."
-
 getPcPcNO("ATH", "single-species")
+
+```
+
+### Get expression intensity and ratio of SAS pairs
+
+The following function will retrieve the maximum expression level for both coding and non-coding transcripts, and will calculate the ratio between NAT and coding gene expression. The results will be written to CSV files. 
+
+```R
+in_dir <- "./output/overlap_nc_genes"
+
+getExprRatio()
 
 ```
 
