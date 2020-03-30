@@ -25,8 +25,6 @@ This code allows to reproduce the results of the protein-coding protein-coding s
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-if (!require(plyr)) install.packages('plyr')
-library(plyr)
 if (!require(dplyr)) install.packages('dplyr')
 library(dplyr)
 if (!require(GenomicRanges)) install.packages('GenomicRanges')
