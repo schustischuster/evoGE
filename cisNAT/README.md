@@ -92,7 +92,7 @@ getNcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
-thresholds <- list(0.5, 2, 5, 10)
+thresholds <- list(0.5, 2, 5, 10) # threshold values are TPM
 
 lapply(thresholds, getNcPc, species = "ATH", experiment = "single-species")
 lapply(thresholds, getNcPc, species = "ATH", experiment = "comparative")
