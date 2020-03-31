@@ -167,6 +167,8 @@ The plotting functions will generate the panels for the following figures:
 
 ![gene_pair_cor](README_files/gene_pair_cor.png)
 
+![SAS_class_distr](SAS_class_distr.png)
+
 
 
 ---
