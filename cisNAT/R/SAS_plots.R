@@ -1329,6 +1329,8 @@ makeScrPlotPSCor <- function(data, rsqd, plot_title = c(
 	"ATH_all", "ATH", "AL", "CR", "ES", "TH", "MT", "BD")) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+	ifelse (is.element("ATH_all", plot_title), b_adj<-15.5, b_adj<-17.9)
 	
 	rsrt_label = paste("R ^ 2"," == ", rsqd)
 	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
@@ -1345,7 +1347,7 @@ makeScrPlotPSCor <- function(data, rsqd, plot_title = c(
   		axis.text.y = element_text(colour = "black", size=14.25, angle=0, margin = margin(t = 0, r = 8.25, b = 0, l = 0)),
   		axis.title.x = element_text(colour = "black", margin = margin(t = 14.5, r = 0, b = 1, l = 0)),
   		axis.title.y = element_text(colour = "black", margin = margin(t = 0, r = 9, b = 0, l = 1)),
-  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = 15.5, l = 0), hjust = 0.5),
+  		plot.title = element_text(colour = "black", size=17, margin = margin(t = 11.5, r = 0, b = b_adj, l = 0), hjust = 0.5),
   		legend.position = "bottom",
   		panel.border = element_rect(colour = "black", fill=NA, size=1.2))
 
@@ -1356,7 +1358,7 @@ makeScrPlotPSCor <- function(data, rsqd, plot_title = c(
 
 
 makeScrPlotPSCor(data=ATH_all_PS, rsqd=rsqd_ATH_all_PS, plot_title="ATH_all")
-makeScrPlotPSCor(data=ATH_comp_PS, rsqd=rsqd_ATH_comp_PS, plot_title="ATH_comp")
+makeScrPlotPSCor(data=ATH_comp_PS, rsqd=rsqd_ATH_comp_PS, plot_title="ATH")
 makeScrPlotPSCor(data=AL_comp_PS, rsqd=rsqd_AL_PS, plot_title="AL")
 makeScrPlotPSCor(data=CR_comp_PS, rsqd=rsqd_CR_PS, plot_title="CR")
 makeScrPlotPSCor(data=ES_comp_PS, rsqd=rsqd_ES_PS, plot_title="ES")
