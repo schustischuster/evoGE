@@ -167,6 +167,7 @@ The plotting functions will generate the panels for the following figures:
 
 ![SAS_class_distr](README_files/SAS_class_distr.png)
 
+![SAS_overlap_cor](README_files/SAS_overlap_cor.png)
 
 
 ---
