@@ -128,7 +128,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	# separate outliers from violin plot data and plot them individually as dots
+	# separate outliers with low reads from violin plot data and plot them individually as dots
 	data_wo_outl <- data[c(-505:-507),]
 	data_outl <- data[c(505:507),]
 
@@ -173,6 +173,69 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 makePlotStatsOS(data=non_ATH_stats_df, lim_y=226000000, medw = 0.415, plot_title="Other species")
 # 10 data point for trimmed raw reads above lim_y
 
+
+
+# Make Deduplicated Read Replicates
+makeRepl <- function(x) {
+
+	repl_names_ATH <- data.frame(c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2",
+		"hypocotyl.3","leaf.1","leaf.2","leaf.3","apex_veg.1","apex_veg.2","apex_veg.3",
+		"apex_infl.1","apex_infl.2","apex_infl.3","flower.1","flower.2","flower.3","stamen.1",
+		"stamen.2","stamen.3","pollen.1","pollen.2","pollen.3","carpel.1","carpel.2","carpel.3"))
+	names(repl_names_ATH) <- "Sample_repl"
+	repl_names_non_ATH <- c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2","hypocotyl.3",
+		"leaf.1","leaf.2","leaf.3","apex_veg.1","apex_veg.2","apex_veg.3","apex_infl.1",
+		"apex_infl.2","apex_infl.3","flower.1","flower.2","flower.3","pollen.1","pollen.2",
+		"pollen.3","carpel.1","carpel.2","carpel.3","stamen.1","stamen.2","stamen.3")
+
+	repl_names_non_ATH <- as.data.frame(rep(repl_names_non_ATH, times = 6))
+	names(repl_names_non_ATH) <- "Sample_repl"
+	all_repl_non_ATH <- rbind(repl_names_ATH,repl_names_non_ATH)
+
+	repl_df <- cbind(x, all_repl_non_ATH)
+	return(repl_df)
+}
+
+comp_stats_df <- makeRepl(comp_stats)
+
+
+
+# Plot number of deduplicated reads for each species
+plotDedupReads <- function(data, plot_title) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+	p <- ggplot(data, aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species)) + 
+	geom_line(aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species), size=1.125) + 
+	geom_line(aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species), size=1.125) + 
+  	geom_point(aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species), size=3.25) + 
+  	geom_point(aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species), size=3.25) + 
+  	scale_y_continuous(limits = c(0,6.7e7), expand = c(0, 0)) + 
+  	scale_x_discrete(breaks=unique(data$Sample_repl)) + 
+  	labs(color="Adjecent gene pair")
+
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Intergenic distance (bp)") + ylab("Pearson's r") + 
+  		theme(text=element_text(size=16), 
+  		axis.ticks.length = unit(.25, "cm"),
+  		plot.margin = unit(c(3.0, 10.5, 20, 8), "points"),
+		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 9, r = 0, b = 0, l = 0)), 
+		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 9, b = 0, l = 0)),
+		axis.title.x = element_text(colour = "black", size=18.25, margin = margin(t = 28, r = 0, b = 1, l = 0), face ="bold"),
+		axis.title.y = element_text(colour = "black", size=18.25, margin = margin(t = 0, r = 27, b = 0, l = 10), face ="bold"),
+		plot.title = element_text(colour = "black", size=20.25, margin = margin(t = 25, r = 0, b = 28, l = 0), hjust = 0.5),
+		legend.position = "right",
+		legend.title = element_text(colour = "black", size=17, face ="bold"),
+		legend.text=element_text(size=17), 
+		legend.spacing.x = unit(0.25, 'cm'),
+		legend.key.size = unit(0.775, "cm"),
+  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
+
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+		scale = 1, width = 12.5, height = 8, units = c("in"), 
+		dpi = 450, limitsize = FALSE)
+}
+
+plotDedupReads(data=comp_stats_df, plot_title="Deduplicated reads in each species")
 
 
 
