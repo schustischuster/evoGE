@@ -86,17 +86,17 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
 
 	p <- ggplot(data, aes(x=class, y=reads, fill=class)) + 
-		 geom_violin(trim=TRUE, width = 1.5, size=1.25, scale="area") + 
-		 geom_boxplot(aes(x=class, y=reads),alpha=0, color="gray5", fill="white", width=medw, 
+		 geom_violin(trim=TRUE, width = 1.5, size=1.25, scale="area", color="gray15") + 
+		 geom_boxplot(aes(x=class, y=reads),alpha=0, color="gray15", fill="white", width=medw, 
 		 	size=0.0005, fatten = 5000) + 
 		 scale_y_continuous(limits = c(0,lim_y), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
-		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0.2, 
+		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35)
 
-	q <- p + scale_fill_manual(values=c("#9e9e9e", "#c49a00", "#16aee3")) + theme_minimal() + 
+	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
 	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
@@ -135,8 +135,8 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
 
 	p <- ggplot(data_wo_outl, aes(x=class, y=reads, fill=class)) + 
-		 geom_violin(trim=TRUE, width = 1.5, size=1.25, scale="area", color="gray5") + 
-		 geom_boxplot(data=data, aes(x=class, y=reads),alpha=0, color="gray5", fill="white", width=medw, 
+		 geom_violin(trim=TRUE, width = 1.5, size=1.25, scale="area", color="gray15") + 
+		 geom_boxplot(data=data, aes(x=class, y=reads),alpha=0, color="gray15", fill="white", width=medw, 
 		 	size=0.0005, fatten = 5000) +
 		 geom_point(aes(x=3, y=data_outl[1,2]), shape=21, colour="gray35", size=2.5, fill="white", stroke=2) + 
 		 geom_point(aes(x=3, y=data_outl[2,2]), shape=21, colour="gray35", size=2.5, fill="white", stroke=2) + 
@@ -145,10 +145,10 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
-		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0.2, 
+		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35)
 
-	q <- p + scale_fill_manual(values=c("#9e9e9e", "#c49a00", "#16aee3")) + theme_minimal() + 
+	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
 	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
@@ -205,25 +205,41 @@ plotDedupReads <- function(data, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	p <- ggplot(data, aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species)) + 
-	geom_line(aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species), size=1.125) + 
-	geom_line(aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species), size=1.125) + 
-  	geom_point(aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species), size=3.25) + 
-  	geom_point(aes(x = Sample_repl, y = Deduplicated, color = Species, group = Species), size=3.25) + 
-  	scale_y_continuous(limits = c(0,6.7e7), expand = c(0, 0)) + 
-  	scale_x_discrete(breaks=unique(data$Sample_repl)) + 
-  	labs(color="Adjecent gene pair")
+	level_order <- c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2","hypocotyl.3",
+		"leaf.1","leaf.2","leaf.3","apex_veg.1","apex_veg.2","apex_veg.3","apex_infl.1",
+		"apex_infl.2","apex_infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
+		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
 
-	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Intergenic distance (bp)") + ylab("Pearson's r") + 
-  		theme(text=element_text(size=16), 
-  		axis.ticks.length = unit(.25, "cm"),
-  		plot.margin = unit(c(3.0, 10.5, 20, 8), "points"),
-		axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 9, r = 0, b = 0, l = 0)), 
-		axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 9, b = 0, l = 0)),
-		axis.title.x = element_text(colour = "black", size=18.25, margin = margin(t = 28, r = 0, b = 1, l = 0), face ="bold"),
-		axis.title.y = element_text(colour = "black", size=18.25, margin = margin(t = 0, r = 27, b = 0, l = 10), face ="bold"),
-		plot.title = element_text(colour = "black", size=20.25, margin = margin(t = 25, r = 0, b = 28, l = 0), hjust = 0.5),
-		legend.position = "right",
+	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
+
+	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
+	geom_line(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=1.125) + 
+	geom_line(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=1.125) + 
+  	geom_point(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=3.25) + 
+  	geom_point(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=3.25) + 
+  	scale_y_continuous(limits = c(0,8e7), expand = c(0, 0), 
+		 	labels = function(l) { 
+		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
+		 	}) + 
+  	scale_x_discrete(breaks=unique(data$Sample_repl)) + 
+  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=8e7, fill="white", alpha=0.2, 
+		 	color="black", size=1.35) + 
+  	labs(color="Species")
+
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("PE dedupl. reads") + 
+		guides(colour = guide_legend(nrow = 1)) + 
+  		theme(text=element_text(size=23), 
+  		axis.ticks.length = unit(.3, "cm"),
+  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
+  		axis.title.y = element_text(colour = "black", size=22, 
+  			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
+  		axis.text.x = element_text(colour = "black", size=22, angle=90, 
+  			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
+  		plot.title = element_text(colour = "black", size=24, 
+  			margin = margin(t = 16, r = 0, b = 16.25, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 10, 0, 5), "points"),
+		legend.position = c(0.4,0.12),
 		legend.title = element_text(colour = "black", size=17, face ="bold"),
 		legend.text=element_text(size=17), 
 		legend.spacing.x = unit(0.25, 'cm'),
@@ -231,11 +247,11 @@ plotDedupReads <- function(data, plot_title) {
   		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 12.5, height = 8, units = c("in"), 
-		dpi = 450, limitsize = FALSE)
+		scale = 1, width = 8.25, height = 6.95, units = c("in"), 
+		dpi = 600, limitsize = FALSE)
 }
 
-plotDedupReads(data=comp_stats_df, plot_title="Deduplicated reads in each species")
+plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
 
 
 
