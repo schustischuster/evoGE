@@ -43,6 +43,6 @@ Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT
 in_dir <- "./data"
 out_dir <- "."
 
-source("getPcPc.R")
+source("getStats.R")
 
 ```
