@@ -10,7 +10,7 @@ This code allows to reproduce the results of the ...
   * [Required Packages](#required-packages)
   * [Data input](#data-input)
 * [Data analysis](#data-analysis)
-  * [Retrieve sample statistics](#retrieve-sample-statistics)
+  * [Retrieve mapping statistics](#retrieve-mapping-statistics)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -48,12 +48,11 @@ source("getStats.R")
 
 ## Data analysis
 
-### Retrieve sample statistics
+### Retrieve mapping statistics
 
-The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater than 0.5 TPM in at least two out of three replicates in at least one sample type. 
+The following function will summarize the DevSeq mapping statistics and create a data table for each the _A.thaliana_ data set, the non-ATH data, and the comparative data set. 
 
 ```R
-getPcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-        experiment = c("single-species", "comparative"))
+getStats()
 
 ```
