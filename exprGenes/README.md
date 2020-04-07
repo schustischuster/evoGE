@@ -56,3 +56,16 @@ The following function will summarize the DevSeq mapping statistics and create a
 getStats()
 
 ```
+
+## Visualization
+
+Set the file path for the data generated in the previous steps and source the R script:
+
+```R
+in_dir_cd <- "./output/mapping_statistics"
+
+source("exprGenes_plots.R")
+
+```
+
+The plotting functions will generate the panels for the following figures:
