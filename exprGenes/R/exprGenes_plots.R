@@ -134,8 +134,6 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 	data_wo_outl <- data[c(-505:-507),]
 	data_outl <- data[c(505:507),]
 
-	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
-
 	p <- ggplot(data_wo_outl, aes(x=class, y=reads, fill=class)) + 
 		 geom_violin(trim=TRUE, width = 1.5, size=1.25, scale="area", color="gray15") + 
 		 geom_boxplot(data=data, aes(x=class, y=reads),alpha=0, color="gray15", fill="white", width=medw, 
@@ -214,8 +212,6 @@ plotDedupReads <- function(data, plot_title) {
 
 	x_labels <- rep(c("root","hypocotyl","leaf","apex.veg","apex.infl","flower","stamen",
 		"pollen","carpel"),times=7) ## order of labels has to match the order in first species (ATH)
-
-	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
 	geom_line(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=1.25) + 
