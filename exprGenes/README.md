@@ -48,7 +48,7 @@ source("getStats.R")
 
 ## Data analysis
 
-### Retrieve mapping statistics
+### Retrieve sample statistics
 
 The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater than 0.5 TPM in at least two out of three replicates in at least one sample type. 
 
