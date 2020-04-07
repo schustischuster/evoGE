@@ -213,7 +213,7 @@ plotDedupReads <- function(data, plot_title) {
 		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
 
 	x_labels <- rep(c("root","hypocotyl","leaf","apex.veg","apex.infl","flower","stamen",
-		"pollen","carpel"),times=7) ## order of labels has to mach the order in first species (ATH)
+		"pollen","carpel"),times=7) ## order of labels has to match the order in first species (ATH)
 
 	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
 
