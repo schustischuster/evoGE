@@ -13,6 +13,8 @@ if (!require(ggplot2)) install.packages('ggplot2')
 library(ggplot2)
 if (!require(mgcv)) install.packages('mgcv')
 library(mgcv)
+if (!require(grid)) install.packages('grid')
+library(grid)
 
 
 # Set file path and input files
@@ -109,7 +111,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 16.25, l = 0), hjust = 0.5), 
+  			margin = margin(t = 16, r = 0, b = 18.5, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 10, 0, 5), "points"))
 	
 
@@ -210,44 +212,78 @@ plotDedupReads <- function(data, plot_title) {
 		"apex_infl.2","apex_infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
 		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
 
+	x_labels <- rep(c("root","hypocotyl","leaf","apex.veg","apex.infl","flower","stamen",
+		"pollen","carpel"),times=7) ## order of labels has to mach the order in first species (ATH)
+
 	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
-	geom_line(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=1.125) + 
-	geom_line(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=1.125) + 
-  	geom_point(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=3.25) + 
-  	geom_point(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=3.25) + 
+	geom_line(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=1.25) + 
+  	geom_point(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=3.5) + 
   	scale_y_continuous(limits = c(0,8e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
-  	scale_x_discrete(breaks=unique(data$Sample_repl)) + 
-  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=8e7, fill="white", alpha=0.2, 
-		 	color="black", size=1.35) + 
+  	scale_x_discrete(labels=x_labels, breaks=data$Sample_repl[seq(1, length(data$Sample_repl), by = 3)]) + 
+  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=8e7, fill="white", alpha=0, 
+		 	color="black", size=0.7) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=1, xmax=3,ymin=-1950000, ymax=-1950000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=1, xmax=1,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=3, xmax=3,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=4, xmax=6,ymin=-1950000, ymax=-1950000) +
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=4, xmax=4,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=6, xmax=6,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=7, xmax=9,ymin=-1950000, ymax=-1950000) +
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=7, xmax=7,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=9, xmax=9,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=10, xmax=12,ymin=-1950000, ymax=-1950000) +
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=10, xmax=10,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=12, xmax=12,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=13, xmax=15,ymin=-1950000, ymax=-1950000) +
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=13, xmax=13,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=15, xmax=15,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=16, xmax=18,ymin=-1950000, ymax=-1950000) +
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=16, xmax=16,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=18, xmax=18,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=19, xmax=21,ymin=-1950000, ymax=-1950000) +
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=19, xmax=19,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=21, xmax=21,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=22, xmax=24,ymin=-1950000, ymax=-1950000) +
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=22, xmax=22,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=24, xmax=24,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=25, xmax=27,ymin=-1950000, ymax=-1950000) +
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=25, xmax=25,ymin=-1950000, ymax=-1000000) + 
+	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=27, xmax=27,ymin=-1950000, ymax=-1000000) + 
   	labs(color="Species")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("PE dedupl. reads") + 
 		guides(colour = guide_legend(nrow = 1)) + 
+		scale_color_hue(l=59, c=100) +  ## the default values for l and c are (l = 65, c = 100)
   		theme(text=element_text(size=23), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=22, 
   			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
   		axis.text.x = element_text(colour = "black", size=22, angle=90, 
-  			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
+  			margin = margin(t = 5.75, r = 0, b = 0, l = 0), hjust = 1, vjust = 1.5), 
+  		axis.ticks.x = element_blank(),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 16.25, l = 0), hjust = 0.5), 
+  			margin = margin(t = 16, r = 0, b = 16.575, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 10, 0, 5), "points"),
-		legend.position = c(0.4,0.12),
-		legend.title = element_text(colour = "black", size=17, face ="bold"),
-		legend.text=element_text(size=17), 
+		legend.position = c(0.3722,0.125),
+		legend.title = element_text(colour = "black", size=19, face ="bold"),
+		legend.text=element_text(size=19), 
 		legend.spacing.x = unit(0.25, 'cm'),
 		legend.key.size = unit(0.775, "cm"),
   		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
-	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 8.25, height = 6.95, units = c("in"), 
+  	png("NUL")
+	r <- ggplotGrob(q)
+	r$layout$clip[r$layout$name=="panel"] <- "off"
+
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
+		scale = 1, width = 8.9, height = 7.1035, units = c("in"), 
 		dpi = 600, limitsize = FALSE)
 }
 
