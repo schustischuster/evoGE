@@ -50,7 +50,7 @@ source("getStats.R")
 
 ### Retrieve mapping statistics
 
-The following function will summarize the DevSeq mapping statistics and create a data table for each the _A.thaliana_ data set, the non-ATH data, and the comparative data set. 
+The following function will merge the DevSeq mapping statistics and create a data table for each the _A.thaliana_ data set, the non-ATH data, and the comparative data set. 
 
 ```R
 getStats()
