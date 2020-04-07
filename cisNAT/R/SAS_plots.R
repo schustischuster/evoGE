@@ -1500,7 +1500,7 @@ makeScrPlotDistCor <- function(data, plot_title, n_ranges_SSN, n_ranges_OSN) {
   	geom_point(aes(y = med_SSN_pearson, color = "med_SSN_pearson",group = 1), size=3.25) + 
   	geom_point(aes(y = med_OSN_pearson, color = "med_OSN_pearson",group = 1), size=3.25) + 
   	labs(color="Adjecent gene pair") + 
-  	scale_color_manual(labels = c("same strand", "opposite strands"), values = c("#18b3b7", "#f35e5a")) + 
+  	scale_color_manual(labels = c("same strand", "opposite strands"), values = c("#16a2a6", "#f03a35")) + 
 	scale_y_continuous(limits = c(0,0.25)) + 
 	scale_x_discrete(breaks=data$dist_range,labels=data$dist_range, 
 		limits=c("1-50","50-100","100-200","200-500","500-1K","1K-2K","2K-5K",">5K")) + 
