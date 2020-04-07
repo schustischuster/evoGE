@@ -35,7 +35,6 @@ library(grid)
 
 ```
 
-  
 ### Data input
 Download the [data](https://github.com/schustischuster/evoGEx/tree/master/exprGenes/data) folder and [R scripts](https://github.com/schustischuster/evoGEx/tree/master/exprGenes/R) to the working directory on your computer. Then, set the file path for input and output files and source the scripts: 
 
@@ -44,5 +43,17 @@ in_dir <- "./data"
 out_dir <- "."
 
 source("getStats.R")
+
+```
+
+## Data analysis
+
+### Retrieve mapping statistics
+
+The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater than 0.5 TPM in at least two out of three replicates in at least one sample type. 
+
+```R
+getPcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+        experiment = c("single-species", "comparative"))
 
 ```
