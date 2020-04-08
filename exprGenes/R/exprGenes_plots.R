@@ -85,6 +85,12 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
+	dedupl <- subset(data, class=="dedupl.")
+	n_dedupl <- nrow(dedupl)
+	n_dedupl <- paste("n=", n_dedupl, sep="")
+	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
+	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
+
 	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
 
 	p <- ggplot(data, aes(x=class, y=reads, fill=class)) + 
@@ -96,7 +102,8 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
-		 	color="black", size=1.35)
+		 	color="black", size=1.35) + 
+		 annotate("text", x = 2.65, y = Inf, hjust = 0, vjust = 1.5, size=7, label = total_dedupl)
 
 	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
 	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
@@ -112,7 +119,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
   			margin = margin(t = 16, r = 0, b = 18.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 10, 0, 5), "points"))
+  		plot.margin = unit(c(0, 14, 0, 14), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -130,6 +137,12 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
+	dedupl <- subset(data, class=="dedupl.")
+	n_dedupl <- nrow(dedupl)
+	n_dedupl <- paste("n=", n_dedupl, sep="")
+	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
+	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
+
 	# separate outliers with low reads from violin plot data and plot them individually as dots
 	data_wo_outl <- data[c(-505:-507),]
 	data_outl <- data[c(505:507),]
@@ -146,7 +159,8 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
-		 	color="black", size=1.35)
+		 	color="black", size=1.35) + 
+		 annotate("text", x = 2.65, y = Inf, hjust = 0, vjust = 1.5, size=7, label = total_dedupl)
 
 	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
 	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
@@ -162,7 +176,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
   			margin = margin(t = 16, r = 0, b = 16.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 10, 0, 5), "points"))
+  		plot.margin = unit(c(0, 14, 0, 14), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -265,8 +279,8 @@ plotDedupReads <- function(data, plot_title) {
   		axis.ticks.x = element_blank(),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 16.575, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 10, 0, 5), "points"),
+  			margin = margin(t = 16, r = 0, b = 16.5, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 5, 0, 5), "points"),
 		legend.position = c(0.3722,0.125),
 		legend.title = element_text(colour = "black", size=19, face ="bold"),
 		legend.text=element_text(size=19), 
@@ -279,7 +293,7 @@ plotDedupReads <- function(data, plot_title) {
 	r$layout$clip[r$layout$name=="panel"] <- "off"
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
-		scale = 1, width = 8.9, height = 7.1035, units = c("in"), 
+		scale = 1, width = 9.1, height = 7.09, units = c("in"), 
 		dpi = 600, limitsize = FALSE)
 }
 
