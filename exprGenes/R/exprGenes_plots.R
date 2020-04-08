@@ -86,8 +86,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
 	dedupl <- subset(data, class=="dedupl.")
-	n_dedupl <- nrow(dedupl)
-	n_dedupl <- paste("n=", n_dedupl, sep="")
+	n_dedupl <- paste("n=", nrow(dedupl), sep="")
 	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
 	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
 
@@ -138,8 +137,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
 	dedupl <- subset(data, class=="dedupl.")
-	n_dedupl <- nrow(dedupl)
-	n_dedupl <- paste("n=", n_dedupl, sep="")
+	n_dedupl <- paste("n=", nrow(dedupl), sep="")
 	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
 	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
 
