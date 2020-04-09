@@ -226,8 +226,8 @@ plotDedupReads <- function(data, plot_title) {
 		"pollen","carpel"),times=7) ## order of labels has to match the order in first species (ATH)
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
-	geom_line(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=1.25) + 
-  	geom_point(aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species), size=3.5) + 
+	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.5) + 
+  	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.5) + 
   	scale_y_continuous(limits = c(0,8e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
@@ -265,8 +265,8 @@ plotDedupReads <- function(data, plot_title) {
   	labs(color="Species")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("PE dedupl. reads") + 
+	scale_color_manual(values=c("#ea6965","#dca207","#46ae12","#1fac7b","#36a5d8","#967cee","#e057c3")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
-		scale_color_hue(l=59, c=100) +  ## the default values for l and c are (l = 65, c = 100)
   		theme(text=element_text(size=23), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
@@ -278,10 +278,10 @@ plotDedupReads <- function(data, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
   			margin = margin(t = 16, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 5, 0, 5), "points"),
-		legend.position = c(0.3722,0.125),
-		legend.title = element_text(colour = "black", size=19, face ="bold"),
-		legend.text=element_text(size=19), 
+  		plot.margin = unit(c(0, 2, 0, 1), "points"),
+		legend.position = c(0.385,0.125),
+		legend.title = element_text(colour = "black", size=20.5, face ="bold"),
+		legend.text=element_text(size=20.5), 
 		legend.spacing.x = unit(0.25, 'cm'),
 		legend.key.size = unit(0.775, "cm"),
   		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
