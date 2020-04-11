@@ -36,7 +36,7 @@ library(grid)
 ```
 
 ### Data input
-Download the [data](https://github.com/schustischuster/evoGEx/tree/master/exprGenes/data) folder and [R scripts](https://github.com/schustischuster/evoGEx/tree/master/exprGenes/R) to the working directory on your computer. Then, set the file path for input and output files and source the scripts: 
+Download the entire subdirectory to the working directory on your computer. One easy way to do this is using GitZip(http://kinolien.github.io/gitzip/). Then, set the file path for input and output files and source the scripts: 
 
 ```R
 in_dir <- "./data"
