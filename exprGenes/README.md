@@ -39,10 +39,10 @@ library(grid)
 Download the entire subdirectory to the working directory on your computer. One easy way to do this is using [GitZip](http://kinolien.github.io/gitzip/). Then, set the file path for input and output files and source the scripts: 
 
 ```R
-in_dir <- "./data"
-out_dir <- "."
+in_dir <- "./exprGenes/data"
+out_dir <- "./exprGenes"
 
-source("R/getStats.R")
+source("exprGenes/R/getStats.R")
 
 ```
 
