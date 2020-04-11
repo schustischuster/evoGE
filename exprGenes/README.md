@@ -42,7 +42,7 @@ Download the entire subdirectory to the working directory on your computer. One 
 in_dir <- "./data"
 out_dir <- "."
 
-source("getStats.R")
+source("R/getStats.R")
 
 ```
 
