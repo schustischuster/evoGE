@@ -29,7 +29,7 @@ out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Anal
 # Define function to get expressed genes
 
 getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-	experiment = c("single-species", "comparative"), threshold) {
+	experiment = c("single-species", "comparative")) {
 	
 	# Show error message if no species is chosen
     if (missing(species))
@@ -66,23 +66,6 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   'ATH', 'AL', 'CR', 'ES', 'TH', 'MT', 'BD'",
 	   call. = TRUE
        )
-
-    # Show error message if no threshold is given
-    if (missing(threshold))
-   
-       stop(
-       "Please set a spike-in threshold:
-       e.g. '0.05' for the lowest 5% of expressed spike-ins",
-	   call. = TRUE
-       )
-
-    # Add an error if threshold < 0
-  	if (threshold < 0)
-    	stop(
-        "'threshold' must be >= 0",
-	   	call. = TRUE
-    	)
-
 
     # Show startup message
     message("Reading data...")
@@ -222,6 +205,15 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
+    # Stop function here to allow specific analysis of a single species
+    # return_list <- list("species_id" = species_id, "all_genes_tpm" = all_genes_tpm)
+    # return(return_list)
+    # }
+    # return_objects <- getExprGenes(species="ATH", experiment="single-species") # read in GTF and expression data for A.thaliana
+    # list2env(return_objects, envir = .GlobalEnv)
+
+
+
 	# Extract ERCC data
 	ERCC <- all_genes_tpm[all_genes_tpm$gene_id %like% "ERCC", ]
 
@@ -231,8 +223,8 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		data.frame(gene_id="ERCC_threshold"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
 		as.data.frame(t(
 			data.frame(ERCC_threshold = sapply(ERCC[,4:ncol(ERCC)], function(x) {
-				ERCC_cutoff <- floor(sum(x>0) - (threshold * sum(x>0))) 
-				# use ceiling() instead floor() to round up if neccessary
+				ERCC_cutoff <- ceiling(sum(x>0) - (threshold * sum(x>0))) 
+				# use floor() instead ceiling() to round down if neccessary
 				ERCC_cutoff_low <- nrow(ERCC) - ERCC_cutoff
 				return(ERCC_cutoff_low)
 				}
@@ -278,25 +270,49 @@ test <- getExprGenes(species="ATH", experiment="single-species", threshold=0.05)
 
 
 
+	getThresholds <- function(ERCC=ERCC, threshold) {
 
 
+		# Get lowest ERCC spike-in after applying threshold
+		ERCC_threshold <- rbind(ERCC, cbind(
+			data.frame(gene_id="ERCC_threshold"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
+			as.data.frame(t(
+				data.frame(ERCC_threshold = sapply(ERCC[,4:ncol(ERCC)], function(x) {
+					ERCC_cutoff <- floor(sum(x>0) - (threshold * sum(x>0))) 
+					# use ceiling() instead floor() to round up if neccessary
+					ERCC_cutoff_low <- nrow(ERCC) - ERCC_cutoff
+					return(ERCC_cutoff_low)
+					}
+				))
+			))
+		))
+
+		# Get sample-specific TPM threshold
+		ERCC_cutoff <- rbind(ERCC_threshold, cbind(
+			data.frame(gene_id="TPM_cutoff"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
+			as.data.frame(t(
+				data.frame(TPM_cutoff = sapply(ERCC_threshold[,4:ncol(ERCC_threshold)], function(x) {
+					sort(x[1:nrow(ERCC_threshold)-1], partial=x[nrow(ERCC_threshold)])[x[nrow(ERCC_threshold)]]
+					}
+				))
+			))
+		))
+
+		return(ERCC_cutoff)
+	}
 
 
+	ERCC_001 <- getThresholds(ERCC,0.01)
+	ERCC_001$gene_id[which(ERCC_001$gene_id == "TPM_cutoff")] <- "TPM_cutoff_001"
+	all_genes_tpm_001 <- rbind(all_genes_tpm,ERCC_001[nrow(ERCC_001),])
 
+	ERCC_005 <- getThresholds(ERCC,0.05)
+	ERCC_005$gene_id[which(ERCC_005$gene_id == "TPM_cutoff")] <- "TPM_cutoff_005"
+	all_genes_tpm_001_5 <- rbind(all_genes_tpm_001,ERCC_005[nrow(ERCC_005),])
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+	ERCC_01 <- getThresholds(ERCC,0.1)
+	ERCC_01$gene_id[which(ERCC_01$gene_id == "TPM_cutoff")] <- "TPM_cutoff_01"
+	all_genes_tpm_cutoff <- rbind(all_genes_tpm_001_5,ERCC_01[nrow(ERCC_01),])
 
 
 
