@@ -36,7 +36,7 @@ library(grid)
 ```
 
 ### Data input
-Download the entire subdirectory to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the file path for input and output files and source the R scripts: 
+Download the entire subdirectory to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
 
 ```R
 in_dir <- "./exprGenes/data"
