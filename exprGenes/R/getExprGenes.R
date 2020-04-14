@@ -298,42 +298,14 @@ test <- getExprGenes(species="ATH", experiment="single-species", threshold=0.05)
 
 
 # test data
-df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'TPM_cutoff'), 
-	source  = c('DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'NA'), 
-    sample1 = c(2, 1, 18, 3, 3),
-    sample2 = c(4, 3, 17, 16, 5),
-    sample3 = c(3, 2, 11, 2, 2),
-    sample4 = c(22, 9, 11, 35, 11),
-    sample5 = c(10, 5, 8, 22, 7),
-    sample6 = c(17, 6, 9, 11, 8))
-
-
-
-
-
-
-# Define threshold function
-		getThreshold <- function(df) {
-
-			# Split data frame by sample replicates into a list then apply threshold for each subset
-	
-			th_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], #adjust columns
-								rep(seq_along(df), each = 1, length.out = ncol(df)-1)),
-								function(x) {
-									x[x <= x[nrow(df),], ] <- 0;
-									x
-								}
-							))
-
-			# Bind key/id/prt_id/symbol/biotype/source columns to thresholded data frame
-			th_replicates <- cbind(df[1], th_replicates)
-
-			return(th_replicates)
-		}
-
-
-
-
+df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'TPM_cutoff'), 
+	source  = c('DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'Araport', 'DevSeq', 'NA'), 
+    sample1 = c(2, 1, 18, 3, 0.1, 0, 3),
+    sample2 = c(4, 3, 17, 16, 0.3, 0, 5),
+    sample3 = c(3, 2, 11, 2, 0.2, 0, 2),
+    sample4 = c(22, 9, 11, 35, 0, 0, 11),
+    sample5 = c(10, 5, 8, 22, 0, 0, 7),
+    sample6 = c(17, 6, 9, 11, 0.1, 0, 8))
 
 
 
@@ -365,7 +337,10 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'TPM_cutoff'),
 			return(th_replicates)
 		}
 
-		df <- getSampleTH(express_df)
+		if (threshold > 0) {
+			df <- getSampleTH(express_df)
+		} else 
+			df <- express_df
 
 		# Define threshold function
 		getThreshold <- function(df) {
@@ -390,8 +365,8 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'TPM_cutoff'),
 		}
 
 		# Apply threshold to data and extract keys ("key")
-		keys_data <- getThreshold(df)
-		keys_data <- keys_data[,1:2]
+		keys_data_repl <- getThreshold(df)
+		keys_data <- keys_data_repl[,1:2]
 		names(keys_data) <- c("key","ID")
 
 		# Generate thresholded data frame based on keys
@@ -399,8 +374,24 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'TPM_cutoff'),
 		th_df <- th_df[order(th_df$key),]
 		th_df <- th_df[-1:-2]
 
-		return(th_df)
+		# Create list of return objects
+		return_th_list <- list("express_data_th"=th_df, "express_data_th_replicates"=keys_data_repl)
+		return(return_th_list)
 	}
+
+    return_objects_th <- applyThreshold(df)
+    list2env(return_objects_th, envir = .GlobalEnv)
+    #* there are two return objects: 
+    #* (1) express_data_th = expression data that only contains genes that show in at least one 
+       #* sample type in at least two out of three replicates an expression above the individual 
+       #* ERCC spike-in threshold (at defined level of either 0.01/0.05/0.1) or above 0 (if
+       #* threshold=0)
+    #* (2) express_data_th_replicates = same file as above, but if expression value of replicate
+       #* is below the individual ERCC spike-in threshold (or 0), the expression values of the
+       #* replicates will be replaced by "0", and if two out of three replicates of one sample
+       #* type get "0", the third replicate value also gets "0" (therefore sum of all three
+       #* replicates will be zero, which defines a gene that is not expressed [above threshold
+       #* level])
 
 
 
