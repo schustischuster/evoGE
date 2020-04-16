@@ -298,14 +298,15 @@ test <- getExprGenes(species="ATH", experiment="single-species", threshold=0.05)
 
 
 # test data
-df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'TPM_cutoff'), 
-	source  = c('DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'Araport', 'DevSeq', 'NA'), 
-    sample1 = c(2, 1, 18, 3, 0.1, 0, 3),
-    sample2 = c(4, 3, 17, 16, 0.3, 0, 5),
-    sample3 = c(3, 2, 11, 2, 0.2, 0, 2),
-    sample4 = c(22, 9, 11, 35, 0, 0, 11),
-    sample5 = c(10, 5, 8, 22, 0, 0, 7),
-    sample6 = c(17, 6, 9, 11, 0.1, 0, 8))
+df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'TPM_cutoff'), 
+	biotype  = c('coding', 'coding', 'coding', 'coding', 'coding', 'coding', 'coding', 'NA'), 
+	source  = c('DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'Araport', 'DevSeq', 'NA'), 
+    sample1 = c(2, 7, 1, 18, 3, 0.1, 0, 3),
+    sample2 = c(4, 0, 3, 17, 16, 0.3, 0, 5),
+    sample3 = c(3, 4, 2, 11, 2, 0.2, 0, 2),
+    sample4 = c(22, 14, 9, 11, 35, 0, 0, 11),
+    sample5 = c(10, 8, 5, 8, 22, 0, 0, 7),
+    sample6 = c(17, 11, 6, 9, 11, 0.1, 0, 8))
 
 
 
@@ -319,12 +320,13 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 		key <- seq(1, nrow(express_df), 1)
 		express_df <- cbind(as.data.frame(key),express_df)
 
+		# Replace all values with "0" that are below sample threshold (either greater 0 or ERCC)
 		getSampleTH <- function(df) {
 
 			# Split data frame by sample replicates into a list then apply threshold for each subset
 	
-			th_replicates <- do.call(cbind, lapply(split.default(df[4:ncol(df)], #adjust columns
-								rep(seq_along(df), each = 1, length.out = ncol(df)-3)),
+			th_replicates <- do.call(cbind, lapply(split.default(df[5:ncol(df)], #adjust columns
+								rep(seq_along(df), each = 1, length.out = ncol(df)-4)),
 								function(x) {
 									x[x <= x[nrow(df),], ] <- 0;
 									x
@@ -332,7 +334,7 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 							))
 
 			# Bind key/id/prt_id/symbol/biotype/source columns to thresholded data frame
-			th_replicates <- cbind(df[1:3], th_replicates)
+			th_replicates <- cbind(df[1:4], th_replicates)
 
 			return(th_replicates)
 		}
@@ -343,12 +345,14 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 			df <- express_df
 
 		# Define threshold function
+		# This function will remove all rows that do not show expression in at least two of three
+		# replicates in at least one sample type
 		getThreshold <- function(df) {
 
 			# Split data frame by sample replicates into a list then apply threshold for each subset
 	
-			th_replicates <- do.call(cbind, lapply(split.default(df[4:ncol(df)], #adjust columns
-								rep(seq_along(df), each = 3, length.out = ncol(df)-3)), #adjust columns
+			th_replicates <- do.call(cbind, lapply(split.default(df[5:ncol(df)], #adjust columns
+								rep(seq_along(df), each = 3, length.out = ncol(df)-4)), #adjust columns
 								function(x) {
 									x[rowSums(x > 0) < 2, ] <- 0; 
 									x
@@ -356,10 +360,10 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 							))
 
 			# Bind key/id/prt_id/symbol/biotype/source columns to thresholded data frame
-			th_replicates <- cbind(df[1:3], th_replicates)
+			th_replicates <- cbind(df[1:4], th_replicates)
 
 			# Remove all rows that only contain "0"
-			th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-3, drop = FALSE] > 0) > 0),]
+			th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-4, drop = FALSE] > 0) > 0),]
 
 			return(th_replicates)
 		}
@@ -373,13 +377,14 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 		th_df <- merge(keys_data, express_df, by="key")
 		th_df <- th_df[order(th_df$key),]
 		th_df <- th_df[-1:-2]
+		keys_data_repl <- keys_data_repl[-1]
 
 		# Create list of return objects
 		return_th_list <- list("express_data_th"=th_df, "express_data_th_replicates"=keys_data_repl)
 		return(return_th_list)
 	}
 
-    return_objects_th <- applyThreshold(df)
+    return_objects_th <- applyThreshold(all_genes_tpm_cutoff)
     list2env(return_objects_th, envir = .GlobalEnv)
     #* there are two return objects: 
     #* (1) express_data_th = expression data that only contains genes that show in at least one 
@@ -392,6 +397,69 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
        #* type get "0", the third replicate value also gets "0" (therefore sum of all three
        #* replicates will be zero, which defines a gene that is not expressed [above threshold
        #* level])
+
+
+    # Merge replicates
+    calculateAvgExpr <- function(df) {
+
+	# Split data frame by sample replicates into a list
+	# then get rowMeans for each subset and bind averaged data to gene_id/biotype/source column
+	
+	averaged_replicates <- do.call(cbind, lapply(split.default(df[4:ncol(df)], 
+			rep(seq_along(df), 
+			each = 3, 
+			length.out=ncol(df)-3)
+			), rowMeans)
+		)
+
+		averaged_replicates <- cbind(df[1:3], averaged_replicates)
+		
+		return(averaged_replicates)
+	}
+
+
+	express_data_th_avg <- calculateAvgExpr(express_data_th_replicates)
+
+	repl_names <- unique(substr(names(express_data_th_replicates[-1:-3]), 1, nchar(names(express_data_th_replicates[-1:-3]))-2))
+	repl_names <- substring(repl_names, 3)
+
+	if ((is.element("ATH", species)) && (is.element("single-species", experiment))) { 
+
+		repl_names[-1:-9] <- substring(repl_names[-1:-9], 2)
+		repl_names[-1:-23] <- substr(repl_names[-1:-23],1,nchar(repl_names[-1:-23])-1)
+		repl_names[10] <- substr(repl_names[10],1,nchar(repl_names[10])-1)
+		repl_names <- gsub("apex_inflorescence_28", "apex_inflorescence_28d", repl_names)
+		repl_names <- gsub("flowers_mature_polle", "flowers_mature_pollen", repl_names)
+	}
+
+	colnames(express_data_th_avg) <- c("gene_id", "biotype", "source", repl_names)
+
+
+	# Get number of genes expressed in each sample type
+	protein_coding_subset <- subset(express_data_th_avg, biotype=="protein_coding")
+	lnc_intergenic_subset <- subset(express_data_th_avg, biotype=="lnc_intergenic")
+	lnc_antisense_subset <- express_data_th_avg[express_data_th_avg$biotype %like% "antisense", ]
+
+	expr_protein_coding <- colSums(protein_coding_subset > 0)
+	expr_lnc_antisense <- colSums(lnc_antisense_subset > 0)
+	expr_lnc_intergenic <- colSums(lnc_intergenic_subset > 0)
+
+
+
+	# Remove chloroplast and mito genes from coding gene list
+	`%nlike%` = Negate(`%like%`)
+
+	if ((is.element("ATH", species)) && (is.element("single-species", experiment))) { 
+
+		protein_coding_subset <- protein_coding_subset[protein_coding_subset$gene_id %nlike% "ATMG", ]
+		protein_coding_subset <- protein_coding_subset[protein_coding_subset$gene_id %nlike% "ATCG", ]
+	}
+
+
+	# Create final list of expressed genes per organ/ sample type
+	expressed_genes_th_avg <- rbind(expr_protein_coding, expr_lnc_antisense, expr_lnc_intergenic)
+	expressed_genes_th_avg <- subset(expressed_genes_th_avg, select = -c(biotype, source))
+	colnames(expressed_genes_th_avg)[1] <- "total_expressed"
 
 
 
