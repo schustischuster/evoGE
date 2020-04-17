@@ -21,9 +21,8 @@ library(data.table)
 
 
 # Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200113_expressed_genes_CS/data"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200113_expressed_genes_CS"
-
+in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes/data"
+out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes"
 
 
 
@@ -189,8 +188,6 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_2'] <- 'flowers_mature_pollen_2'
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_3'] <- 'flowers_mature_pollen_3'
 
-		species_id <- "AL_comparative_samples"
-
 
     } else if (is.element("ATH", species)) {
 		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_1'] <- 'flowers_mature_pollen_1'
@@ -239,81 +236,69 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
+#--------------------------- Get and apply sample-specific threshold  --------------------------
+
+
+    # Show message
+    message("Starting analysis...")
+
+
 	# Extract ERCC data
 	ERCC <- all_genes_tpm[all_genes_tpm$gene_id %like% "ERCC", ]
 
 
-	# Get lowest ERCC spike-in after applying threshold
-	ERCC_threshold <- rbind(ERCC, cbind(
-		data.frame(gene_id="ERCC_threshold"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
-		as.data.frame(t(
-			data.frame(ERCC_threshold = sapply(ERCC[,4:ncol(ERCC)], function(x) {
-				ERCC_cutoff <- floor(sum(x>0) - (threshold * sum(x>0))) 
-				# use ceiling() instead floor() to round up if neccessary
-				ERCC_cutoff_low <- nrow(ERCC) - ERCC_cutoff
-				return(ERCC_cutoff_low)
-				}
-			))
-		))
-	))
+	if (threshold > 0) {
+
+	   # Get lowest ERCC spike-in after applying threshold
+	   ERCC_threshold <- rbind(ERCC, cbind(
+		   data.frame(gene_id="ERCC_threshold"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
+		   as.data.frame(t(
+			   data.frame(ERCC_threshold = sapply(ERCC[,4:ncol(ERCC)], function(x) {
+				   ERCC_cutoff <- floor(sum(x>0) - (threshold * sum(x>0))) 
+				   # use ceiling() instead floor() to round up if neccessary
+				   ERCC_cutoff_low <- nrow(ERCC) - ERCC_cutoff
+				   return(ERCC_cutoff_low)
+				   }
+			   ))
+		   ))
+	   ))
+
+	   # Get sample-specific TPM threshold
+	   ERCC_cutoff <- rbind(ERCC_threshold, cbind(
+		   data.frame(gene_id="TPM_cutoff"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
+		   as.data.frame(t(
+			   data.frame(TPM_cutoff = sapply(ERCC_threshold[,4:ncol(ERCC_threshold)], function(x) {
+				   sort(x[1:nrow(ERCC_threshold)-1], partial=x[nrow(ERCC_threshold)])[x[nrow(ERCC_threshold)]]
+				   }
+			   ))
+		   ))
+	   ))
+
+	   # Bind sample-specific threshold to expression table
+	   all_genes_tpm_cutoff <- rbind(all_genes_tpm,ERCC_cutoff[nrow(ERCC_cutoff),])
+	}
 
 
-	# Get sample-specific TPM threshold
-	ERCC_cutoff <- rbind(ERCC_threshold, cbind(
-		data.frame(gene_id="TPM_cutoff"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
-		as.data.frame(t(
-			data.frame(TPM_cutoff = sapply(ERCC_threshold[,4:ncol(ERCC_threshold)], function(x) {
-				sort(x[1:nrow(ERCC_threshold)-1], partial=x[nrow(ERCC_threshold)])[x[nrow(ERCC_threshold)]]
-				}
-			))
-		))
-	))
-
-
-	# Bind sample-specific threshold to expression table
-	all_genes_tpm_cutoff <- rbind(all_genes_tpm,ERCC_cutoff[nrow(ERCC_cutoff),])
-
-
-
-
-
-
-
-
-
-
-
-}
+	if (threshold == 0) {
+		th_values <- data.frame(t(rep(0, ncol(ERCC)-3)))
+		names(th_values) <- colnames(all_genes_tpm)[4:ncol(all_genes_tpm)]
+		ERCC_cutoff <- data.frame(gene_id="TPM_cutoff", biotype="NA", source="NA", th_values)
+		all_genes_tpm_cutoff <- rbind(all_genes_tpm, ERCC_cutoff)
+	}
 
 
 
 
-test <- getExprGenes(species="ATH", experiment="single-species", threshold=0.05)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# test data
-df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'TPM_cutoff'), 
-	biotype  = c('coding', 'coding', 'coding', 'coding', 'coding', 'coding', 'coding', 'NA'), 
-	source  = c('DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'Araport', 'DevSeq', 'NA'), 
-    sample1 = c(2, 7, 1, 18, 3, 0.1, 0, 3),
-    sample2 = c(4, 0, 3, 17, 16, 0.3, 0, 5),
-    sample3 = c(3, 4, 2, 11, 2, 0.2, 0, 2),
-    sample4 = c(22, 14, 9, 11, 35, 0, 0, 11),
-    sample5 = c(10, 8, 5, 8, 22, 0, 0, 7),
-    sample6 = c(17, 11, 6, 9, 11, 0.1, 0, 8))
-
+	#* test data
+	#* df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'TPM_cutoff'), 
+	#* 	biotype  = c('coding', 'coding', 'coding', 'coding', 'coding', 'coding', 'coding', 'NA'), 
+	#* 	source  = c('DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'DevSeq', 'Araport', 'DevSeq', 'NA'), 
+	#*     sample1 = c(2, 7, 1, 18, 3, 0.1, 0, 3),
+	#*     sample2 = c(4, 0, 3, 17, 16, 0.3, 0, 5),
+	#*     sample3 = c(3, 4, 2, 11, 2, 0.2, 0, 2),
+	#*     sample4 = c(22, 14, 9, 11, 35, 0, 0, 11),
+	#*     sample5 = c(10, 8, 5, 8, 22, 0, 0, 7),
+	#*     sample6 = c(17, 11, 6, 9, 11, 0.1, 0, 8))
 
 
 
@@ -405,7 +390,11 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
        #* level])
 
 
-    # Merge replicates
+
+
+#----------- Merge replicates and retrieve number of expressed genes for each sample -----------
+
+
     calculateAvgExpr <- function(df) {
 
 	# Split data frame by sample replicates into a list
@@ -468,6 +457,39 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 	colnames(expressed_genes_th_avg)[1] <- "total_expressed"
 
 
+
+
+#--------------------------------------- Write csv file  ---------------------------------------
+
+
+	# Show message
+    message("Writing output...")
+
+
+	# Set filename
+    fname <- sprintf('%s.csv', paste(species_id, "expr_genes", threshold, sep="_"))
+
+
+	# Write final data tables to csv files and store them in /out_dir/output/data_tables
+	if (!dir.exists(file.path(out_dir, "output", "expr_genes"))) 
+		dir.create(file.path(out_dir, "output", "expr_genes"), recursive = TRUE)
+
+	write.table(expressed_genes_th_avg, file=file.path(out_dir, "output", "expr_genes", fname), 
+		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+
+}
+
+
+
+thresholds <- list(0, 0.01, 0.05, 0.1) # threshold values are 0 or perc of expressed spike-ins
+
+lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
+lapply(thresholds, getExprGenes, species = "AL", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "CR", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "ES", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "TH", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "MT", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "BD", experiment = "comparative")
 
 
 
