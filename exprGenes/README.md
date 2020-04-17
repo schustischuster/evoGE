@@ -43,6 +43,7 @@ in_dir <- "./exprGenes/data"
 out_dir <- "./exprGenes"
 
 source("exprGenes/R/getStats.R")
+source("exprGenes/R/getExprGenes.R")
 
 ```
 
