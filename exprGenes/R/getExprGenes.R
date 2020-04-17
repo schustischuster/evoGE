@@ -121,6 +121,12 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     }
 
 
+    # Get experiment
+    if (is.element("single-species", experiment)) {
+    	experiment <- "single-species"
+    } else experiment <- "comparative"
+
+
 	# Read expression data
 	all_genes_tpm <- read.table(genesTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 	colnames(all_genes_tpm)[1] <- "gene_id"
@@ -225,7 +231,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
     # Stop function here to allow specific analysis of a single species
-    # return_list <- list("species_id" = species_id, "all_genes_tpm" = all_genes_tpm, "threshold" = threshold)
+    # return_list <- list("species_id" = species_id, "experiment" = experiment, "all_genes_tpm" = all_genes_tpm, "threshold" = threshold)
     # return(return_list)
     # }
     # return_objects <- getExprGenes(species="ATH", experiment="single-species", 0.05) # read in GTF and expression data for A.thaliana
@@ -320,7 +326,7 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 		key <- seq(1, nrow(express_df), 1)
 		express_df <- cbind(as.data.frame(key),express_df)
 
-		# Replace all values with "0" that are below sample threshold (either greater 0 or ERCC)
+		# Replace all values with "0" that are below sample threshold (either 0 or ERCC)
 		getSampleTH <- function(df) {
 
 			# Split data frame by sample replicates into a list then apply threshold for each subset
@@ -423,7 +429,7 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 	repl_names <- unique(substr(names(express_data_th_replicates[-1:-3]), 1, nchar(names(express_data_th_replicates[-1:-3]))-2))
 	repl_names <- substring(repl_names, 3)
 
-	if ((is.element("ATH", species)) && (is.element("single-species", experiment))) { 
+	if ((is.element("ATH", species_id)) && (is.element("single-species", experiment))) { 
 
 		repl_names[-1:-9] <- substring(repl_names[-1:-9], 2)
 		repl_names[-1:-23] <- substr(repl_names[-1:-23],1,nchar(repl_names[-1:-23])-1)
@@ -440,20 +446,20 @@ df <- data.frame (ID  = c('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 
 	lnc_intergenic_subset <- subset(express_data_th_avg, biotype=="lnc_intergenic")
 	lnc_antisense_subset <- express_data_th_avg[express_data_th_avg$biotype %like% "antisense", ]
 
-	expr_protein_coding <- colSums(protein_coding_subset > 0)
-	expr_lnc_antisense <- colSums(lnc_antisense_subset > 0)
-	expr_lnc_intergenic <- colSums(lnc_intergenic_subset > 0)
-
-
-
+	
 	# Remove chloroplast and mito genes from coding gene list
 	`%nlike%` = Negate(`%like%`)
 
-	if ((is.element("ATH", species)) && (is.element("single-species", experiment))) { 
+	if ((is.element("ATH", species_id))) { 
 
 		protein_coding_subset <- protein_coding_subset[protein_coding_subset$gene_id %nlike% "ATMG", ]
 		protein_coding_subset <- protein_coding_subset[protein_coding_subset$gene_id %nlike% "ATCG", ]
 	}
+
+
+	expr_protein_coding <- colSums(protein_coding_subset > 0)
+	expr_lnc_antisense <- colSums(lnc_antisense_subset > 0)
+	expr_lnc_intergenic <- colSums(lnc_intergenic_subset > 0)
 
 
 	# Create final list of expressed genes per organ/ sample type
