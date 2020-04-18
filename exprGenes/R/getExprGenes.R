@@ -459,6 +459,37 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
+#----------- Calculate spearman correlation for biological replicates of each sample -----------
+
+
+	# Get replicate correlation
+	replCorr <- function(df, coefficient=c("spearman", "pearson")) {
+
+		if (is.element("pearson", coefficient)) {
+			df[,4:ncol(df)] <- log2(df[,4:ncol(df)] + 1)
+		}
+
+		replicate_corr <- do.call(cbind, lapply(split.default(df[4:ncol(df)], #adjust columns
+								rep(seq_along(df), each = 3, length.out = ncol(df)-3)), #adjust columns
+									function(x) {
+									repl_corr <- data.frame(cbind(
+										cor(x[,1],x[,2],method=coefficient),
+										cor(x[,1],x[,3],method=coefficient),
+										cor(x[,2],x[,3],method=coefficient)));
+									repl_corr
+								}
+							))
+
+		return(replicate_corr)
+	}
+
+	repl_corr_df <- replCorr(express_data_th, coefficient="spearman")
+
+	colnames(repl_corr_df) <- rep(repl_names,each=3)
+
+
+
+
 #--------------------------------------- Write csv file  ---------------------------------------
 
 
@@ -467,14 +498,17 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Set filename
-    fname <- sprintf('%s.csv', paste(species_id, "expr_genes", threshold, sep="_"))
+    fname_expr_genes <- sprintf('%s.csv', paste(species_id, "expr_genes", threshold, sep="_"))
+    fname_repl_corr <- sprintf('%s.csv', paste(species_id, "repl_corr", threshold, sep="_"))
 
 
 	# Write final data tables to csv files and store them in /out_dir/output/data_tables
 	if (!dir.exists(file.path(out_dir, "output", "expr_genes"))) 
 		dir.create(file.path(out_dir, "output", "expr_genes"), recursive = TRUE)
 
-	write.table(expressed_genes_th_avg, file=file.path(out_dir, "output", "expr_genes", fname), 
+	write.table(expressed_genes_th_avg, file=file.path(out_dir, "output", "expr_genes", fname_expr_genes), 
+		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+	write.table(repl_corr_df, file=file.path(out_dir, "output", "expr_genes", fname_repl_corr), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 
 }
