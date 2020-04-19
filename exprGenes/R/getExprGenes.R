@@ -455,6 +455,8 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	expressed_genes_th_avg <- rbind(expr_protein_coding, expr_lnc_antisense, expr_lnc_intergenic)
 	expressed_genes_th_avg <- subset(expressed_genes_th_avg, select = -c(biotype, source))
 	colnames(expressed_genes_th_avg)[1] <- "total_expressed"
+	biotype <- c("protein_coding", "lnc_antisense", "lnc_intergenic")
+	expressed_genes_th_avg <- as.data.frame(cbind(biotype, expressed_genes_th_avg))
 
 
 
