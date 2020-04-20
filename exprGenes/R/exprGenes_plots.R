@@ -19,6 +19,7 @@ library(grid)
 
 # Set file path and input files
 in_dir_stats <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes/output/mapping_statistics"
+in_dir_expr_genes <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes/output/expr_genes"
 out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes"
 
 
@@ -29,16 +30,21 @@ readTable <- function(path, pattern = "*.csv") {
 }
 
 stats_tables <- readTable(in_dir_stats)
+expr_genes_tables <- readTable(in_dir_expr_genes)
 
 
 # Get file names and save them in character vector
 stats_table_list <- as.character(list.files(in_dir_stats, pattern = "*.csv"))
 stats_table_names <- gsub('\\.csv$', '', stats_table_list)
+expr_genes_table_list <- as.character(list.files(in_dir_expr_genes, pattern = "*.csv"))
+expr_genes_table_names <- gsub('\\.csv$', '', expr_genes_table_list)
 
 
 # Change data frame names in list
 names(stats_tables) <- stats_table_names
 list2env(stats_tables, envir = .GlobalEnv)
+names(expr_genes_tables) <- expr_genes_table_names
+list2env(expr_genes_tables, envir = .GlobalEnv)
 
 
 # Create "plots" folder in /out_dir/output/plots
@@ -80,7 +86,7 @@ non_ATH_stats_df <- prepareStats(non_ATH_stats)
 
 
 
-# Function to scatter plot max expression versus pearson correlation
+# Make stats violin plot for ATH
 makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
@@ -131,7 +137,7 @@ makePlotStatsATH(data=ATH_stats_df, lim_y=212000000, medw = 0.277, plot_title="A
 
 
 
-# Function to scatter plot max expression versus pearson correlation
+# Make stats violin plot for other species
 makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
@@ -296,6 +302,125 @@ plotDedupReads <- function(data, plot_title) {
 }
 
 plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
+
+
+
+
+#------------------------------ Plotting expressed genes data -------------------------------
+
+
+# Prepare data for ggplot
+prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0, th_0_01, th_0_05, 
+	th_0_1) {
+
+	df_names <- c("Detailed_name" , "Sample" , "Threshold", "Expressed")
+
+	if (is.element("coding", biotype)) {
+		data <- cbind(th_0[1,3:ncol(th_0)], th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)])
+	} else if (is.element("NAT", biotype)) {
+		data <- cbind(th_0[2,3:ncol(th_0)], th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)])
+	} else  if (is.element("lincRNA", biotype)) {
+		data <- cbind(th_0[3,3:ncol(th_0)], th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)])
+	}
+
+	colnames(data) <- NULL
+	data <- as.data.frame(t(data))
+
+	detailed_sample_name <- names(th_0)[3:ncol(th_0)]
+	detailed_sample_name <- as.data.frame(rep(detailed_sample_name, times=4))
+
+	sample_names <- c("root_root_tip", "root_mat_zone", "root_5d", "root_7d", "root_14d", 
+		"root_21d", "hypocotyl", "3rd_internode", "2nd_internode", "1st_internode", "cotyledons", 
+		"leaf_7d", "leaf_10d", "petiole", "leaf_tip", "leaf_17d", "leaf_27d", "leaf_35d", 
+		"cauline_leaf", "apex_veg_7d", "apex_veg_10d", "apex_veg_14d", "apex_inf_21d", "apex_inf_clv1", 
+		"apex_inf_28d", "flower_stg9", "flower_stg10.11", "flower_stg12", "flower_stg15", 
+		"sepals_stg12", "sepals_stg15", "petals_stg12", "petals_stg15", "stamens_stg12", 
+		"stamens_stg15", "mature_pollen", "carpels_stg12.e", "carpels_stg12.l", "carpels_stg15", 
+		"fruit_stg16", "fruit_stg17a", "seeds_stg16", "seeds_stg17a", "seeds_stg18")
+	sample_names <- as.data.frame(rep(sample_names, times=4))
+
+	threshold <- c("0", "0.01", "0.05", "0.1")
+	threshold <- as.data.frame(rep(threshold, each=44))
+
+	expr_df <- cbind(detailed_sample_name,sample_names, threshold, data)
+	colnames(expr_df) <- df_names
+
+	return(expr_df)
+}
+
+
+expr_coding_genes_ATH <- prepareExprGenes(biotype = "coding", th_0 = ATH_expr_genes_0,
+	th_0_01 = ATH_expr_genes_0.01, th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1)
+expr_NATs_ATH <- prepareExprGenes(biotype = "NAT", th_0 = ATH_expr_genes_0,
+	th_0_01 = ATH_expr_genes_0.01, th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1)
+expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0 = ATH_expr_genes_0,
+	th_0_01 = ATH_expr_genes_0.01, th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1)
+
+
+
+
+
+
+# Plot number of deduplicated reads for each species
+plotExprGenes <- function(data, plot_title) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+	level_order <- c("root_root_tip", "root_mat_zone", "root_5d", "root_7d", "root_14d", 
+		"root_21d", "hypocotyl", "3rd_internode", "2nd_internode", "1st_internode", "cotyledons", 
+		"leaf_7d", "leaf_10d", "petiole", "leaf_tip", "leaf_17d", "leaf_27d", "leaf_35d", 
+		"cauline_leaf", "apex_veg_7d", "apex_veg_10d", "apex_veg_14d", "apex_inf_21d", "apex_inf_clv1", 
+		"apex_inf_28d", "flower_stg9", "flower_stg10.11", "flower_stg12", "flower_stg15", 
+		"sepals_stg12", "sepals_stg15", "petals_stg12", "petals_stg15", "stamens_stg12", 
+		"stamens_stg15", "mature_pollen", "carpels_stg12.e", "carpels_stg12.l", "carpels_stg15", 
+		"fruit_stg16", "fruit_stg17a", "seeds_stg16", "seeds_stg17a", "seeds_stg18")
+
+	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
+	geom_line(aes(x = factor(Sample, level= level_order)), size=1.5) + 
+	scale_y_continuous(limits = c(1.25e4,2.82e4), expand = c(0, 0), 
+		 	labels = function(l) { 
+		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
+		 	}) +
+  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=8e7, fill="white", alpha=0, 
+		 	color="black", size=0.7) + 
+  	labs(color="Sample")
+
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("PE dedupl. reads") + 
+		guides(colour = guide_legend(nrow = 1)) + 
+  		theme(text=element_text(size=23), 
+  		axis.ticks.length = unit(.3, "cm"),
+  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
+  		axis.title.y = element_text(colour = "black", size=22, 
+  			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
+  		axis.text.x = element_text(colour = "black", size=13.25, angle=90, 
+  			margin = margin(t = 5.75, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.ticks.x = element_blank(),
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
+  		plot.title = element_text(colour = "black", size=24, 
+  			margin = margin(t = 16, r = 0, b = 16.5, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 2, 0, 1), "points"),
+		legend.position = c(0.385,0.125),
+		legend.title = element_text(colour = "black", size=20.5, face ="bold"),
+		legend.text=element_text(size=20.5), 
+		legend.spacing.x = unit(0.25, 'cm'),
+		legend.key.size = unit(0.775, "cm"),
+  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
+
+  	png("NUL")
+	r <- ggplotGrob(q)
+	r$layout$clip[r$layout$name=="panel"] <- "off"
+
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
+		scale = 1, width = 9.1, height = 7.09, units = c("in"), 
+		dpi = 600, limitsize = FALSE)
+}
+
+plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed coding genes")
+
+
+
+
+
 
 
 
