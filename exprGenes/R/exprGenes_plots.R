@@ -124,7 +124,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
   			margin = margin(t = 16, r = 0, b = 18.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 14, 0, 14), "points"))
+  		plot.margin = unit(c(0, 7, 0, 14), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -180,7 +180,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
   			margin = margin(t = 16, r = 0, b = 16.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 14, 0, 14), "points"))
+  		plot.margin = unit(c(0, 7, 0, 14), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -233,7 +233,7 @@ plotDedupReads <- function(data, plot_title) {
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
 	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.5) + 
-  	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.5) + 
+  	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.25) + 
   	scale_y_continuous(limits = c(0,8e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
@@ -329,14 +329,14 @@ prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0, th_0
 	detailed_sample_name <- names(th_0)[3:ncol(th_0)]
 	detailed_sample_name <- as.data.frame(rep(detailed_sample_name, times=4))
 
-	sample_names <- c("root_root_tip", "root_mat_zone", "root_5d", "root_7d", "root_14d", 
-		"root_21d", "hypocotyl", "3rd_internode", "2nd_internode", "1st_internode", "cotyledons", 
-		"leaf_7d", "leaf_10d", "petiole", "leaf_tip", "leaf_17d", "leaf_27d", "leaf_35d", 
-		"cauline_leaf", "apex_veg_7d", "apex_veg_10d", "apex_veg_14d", "apex_inf_21d", "apex_inf_clv1", 
-		"apex_inf_28d", "flower_stg9", "flower_stg10.11", "flower_stg12", "flower_stg15", 
-		"sepals_stg12", "sepals_stg15", "petals_stg12", "petals_stg15", "stamens_stg12", 
-		"stamens_stg15", "mature_pollen", "carpels_stg12.e", "carpels_stg12.l", "carpels_stg15", 
-		"fruit_stg16", "fruit_stg17a", "seeds_stg16", "seeds_stg17a", "seeds_stg18")
+	sample_names <- c("root tip", "root m.zone", "whole root 5d", "whole root 7d", "whole root 14", 
+		"whole root 21", "hypocotyl 10d", "3rd internode", "2nd internode", "1st internode", "cotyledons", 
+		"leaf 1.2 7d", "leaf 1.2 10d", "leaf petiole", "leaf tip 10d", "leaf 5.6 17d", "leaf 9.10 27d", "leaf sen.35d", 
+		"cauline leaf", "apex veg 7d", "apex veg 10d", "apex veg 14d", "apex inf 21d", "apex inf clv1", 
+		"apex inf 28d", "flower st9", "flower 10.11", "flower st12", "flower st15", 
+		"sepals st12", "sepals st15", "petals st12", "petals st15", "stamens st12", 
+		"stamens st15", "mature pollen", "carpels st12.e", "carpels st12.l", "carpels st15", 
+		"fruit st16", "fruit st17a", "seeds st16", "seeds st17a", "seeds st18")
 	sample_names <- as.data.frame(rep(sample_names, times=4))
 
 	threshold <- c("0", "0.01", "0.05", "0.1")
@@ -362,48 +362,91 @@ expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0 = ATH_expr_genes
 
 
 # Plot number of deduplicated reads for each species
-plotExprGenes <- function(data, plot_title) {
+plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), texpr) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	level_order <- c("root_root_tip", "root_mat_zone", "root_5d", "root_7d", "root_14d", 
-		"root_21d", "hypocotyl", "3rd_internode", "2nd_internode", "1st_internode", "cotyledons", 
-		"leaf_7d", "leaf_10d", "petiole", "leaf_tip", "leaf_17d", "leaf_27d", "leaf_35d", 
-		"cauline_leaf", "apex_veg_7d", "apex_veg_10d", "apex_veg_14d", "apex_inf_21d", "apex_inf_clv1", 
-		"apex_inf_28d", "flower_stg9", "flower_stg10.11", "flower_stg12", "flower_stg15", 
-		"sepals_stg12", "sepals_stg15", "petals_stg12", "petals_stg15", "stamens_stg12", 
-		"stamens_stg15", "mature_pollen", "carpels_stg12.e", "carpels_stg12.l", "carpels_stg15", 
-		"fruit_stg16", "fruit_stg17a", "seeds_stg16", "seeds_stg17a", "seeds_stg18")
+	total_expr <- paste("total:", texpr, "at 0.05" , sep=" ")
+
+	if (is.element("coding", biotype)) {
+		breaksY <- c(1.5e4,2e4,2.5e4)
+		pltymin <- 1.375e4
+		pltymax <- 2.77e4
+		xtepos <- 30.25
+		y_margin <- margin(t = 0, r = 15, b = 0, l = 0)
+
+	} else if (is.element("NAT", biotype)) {
+		breaksY <- c(1e3,2e3,3e3)
+		pltymin <- 5.25e2
+		pltymax <- 3.7e3
+		xtepos <- 31.25
+		y_margin <- margin(t = 0, r = 15, b = 0, l = 10)
+
+	} else if (is.element("linc", biotype)) {
+		breaksY <- c(5e2,1e3,1.5e3)
+		pltymin <- 2.0e2
+		pltymax <- 1.575e3
+		xtepos <- 31.05
+		y_margin <- margin(t = 0, r = 10, b = 0, l = 0)
+	}
+
+	level_order <- c("root tip", "root m.zone", "whole root 5d", "whole root 7d", "whole root 14", 
+		"whole root 21", "hypocotyl 10d", "3rd internode", "2nd internode", "1st internode", "cotyledons", 
+		"leaf 1.2 7d", "leaf 1.2 10d", "leaf petiole", "leaf tip 10d", "leaf 5.6 17d", "leaf 9.10 27d", "leaf sen.35d", 
+		"cauline leaf", "apex veg 7d", "apex veg 10d", "apex veg 14d", "apex inf 21d", "apex inf clv1", 
+		"apex inf 28d", "flower st9", "flower 10.11", "flower st12", "flower st15", 
+		"sepals st12", "sepals st15", "petals st12", "petals st15", "stamens st12", 
+		"stamens st15", "mature pollen", "carpels st12.e", "carpels st12.l", "carpels st15", 
+		"fruit st16", "fruit st17a", "seeds st16", "seeds st17a", "seeds st18")
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
-	geom_line(aes(x = factor(Sample, level= level_order)), size=1.5) + 
-	scale_y_continuous(limits = c(1.25e4,2.82e4), expand = c(0, 0), 
+
+	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
+	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
 		 	}) +
-  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=8e7, fill="white", alpha=0, 
+  	annotate("rect", xmin=0.25, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="white", alpha=0, 
 		 	color="black", size=0.7) + 
-  	labs(color="Sample")
+  	annotate("rect", xmin=0.25, xmax=6.5, ymin=pltymin, ymax=pltymax, fill="#747474", alpha=0.175) + 
+  	annotate("rect", xmin=10.5, xmax=19.5, ymin=pltymin, ymax=pltymax, fill="#0fc941", alpha=0.175) + 
+  	annotate("rect", xmin=25.5, xmax=29.5, ymin=pltymin, ymax=pltymax, fill="#747474", alpha=0.175) + 
+  	annotate("rect", xmin=38.5, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="#db1010", alpha=0.175) +
+  	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
+  	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 21.51, size=7.01, label = total_expr) + 
+  	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 19.75, size=7.01, label = "Threshold", fontface = 2) + 
+  	annotate("text", x = 2, y = Inf, hjust = 0, vjust = 2.4, size=7.25, label = "root") + 
+  	annotate("text", x = 6.75, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "stem") + 
+  	annotate("text", x = 13.65, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "leaf") + 
+  	annotate("text", x = 20.75, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "apex") + 
+  	annotate("text", x = 26.1, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "flow") + 
+  	annotate("text", x = 30.05, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "floral organ") + 
+  	annotate("text", x = 40.15, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "fruit") + 
+  	labs(color="")
 
-	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("PE dedupl. reads") + 
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("# expressed genes") + 
+	scale_color_manual(values=c("gray45","#ea6965","#967cee","#e5a907")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(text=element_text(size=23), 
+  		panel.grid.major = element_line(colour = "white"), 
+  		panel.grid.minor = element_line(colour = "white"),  
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=22, 
-  			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
+  			margin = y_margin), 
   		axis.text.x = element_text(colour = "black", size=13.25, angle=90, 
-  			margin = margin(t = 5.75, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
-  		axis.ticks.x = element_blank(),
+  			margin = margin(t = 3.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
   			margin = margin(t = 16, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 2, 0, 1), "points"),
-		legend.position = c(0.385,0.125),
-		legend.title = element_text(colour = "black", size=20.5, face ="bold"),
-		legend.text=element_text(size=20.5), 
-		legend.spacing.x = unit(0.25, 'cm'),
+  		plot.margin = unit(c(0, 2, 18, 4), "points"),
+		legend.position = c(0.225,0.115),
+		legend.title = element_text(colour = "black", size=20, face ="bold"),
+		legend.text = element_text(size=20), 
 		legend.key.size = unit(0.775, "cm"),
+		legend.key.height = unit(0.4, "cm"),
+		legend.background = element_rect(fill = NA),
+		legend.key = element_rect(fill = "white"),
   		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
   	png("NUL")
@@ -415,7 +458,10 @@ plotExprGenes <- function(data, plot_title) {
 		dpi = 600, limitsize = FALSE)
 }
 
-plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed coding genes")
+
+plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed protein-coding genes", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
+plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
+plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
 
 
 
