@@ -485,7 +485,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		return(replicate_corr)
 	}
 
-	repl_corr_df <- replCorr(express_data_th, coefficient="spearman")
+	repl_corr_df <- replCorr(express_data_th, coefficient="pearson")
 
 	colnames(repl_corr_df) <- rep(repl_names,each=3)
 
