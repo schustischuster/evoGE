@@ -123,7 +123,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 18.5, l = 0), hjust = 0.5), 
+  			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 7, 3.6, 14), "points"))
 	
 
@@ -179,7 +179,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 16.25, l = 0), hjust = 0.5), 
+  			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 7, 3.6, 14), "points"))
 	
 
@@ -228,6 +228,8 @@ plotDedupReads <- function(data, plot_title) {
 		"apex_infl.2","apex_infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
 		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
 
+	species_order <- c("ATH","AL","CR","ES","TH","MT","BD")
+
 	x_labels <- rep(c("root","hypocotyl","leaf","apex.veg","apex.infl","flower","stamen",
 		"pollen","carpel"),times=7) ## order of labels has to match the order in first species (ATH)
 
@@ -271,19 +273,19 @@ plotDedupReads <- function(data, plot_title) {
   	labs(color="Species")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("PE dedupl. reads") + 
-	scale_color_manual(values=c("#ea6965","#dca207","#46ae12","#1fac7b","#36a5d8","#967cee","#e057c3")) + 
+	scale_color_manual(values=c("#dca207","#a8a8a8","#ea6965","#46ae12","#1fac7b","#967cee","#36a5d8"), breaks=species_order) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(text=element_text(size=23), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=22, 
-  			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
+  			margin = margin(t = 0, r = 10.25, b = 0, l = 2.2)), 
   		axis.text.x = element_text(colour = "black", size=21, angle=90, 
-  			margin = margin(t = 5.75, r = 0, b = 0, l = 0), hjust = 1, vjust = 1.5), 
+  			margin = margin(t = 5.75, r = 0, b = 0, l = 0), hjust = 1, vjust = 1.75), 
   		axis.ticks.x = element_blank(),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 16.5, l = 0), hjust = 0.5), 
+  			margin = margin(t = 18, r = 0, b = 14.5, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 2, 4.25, 1), "points"),
 		legend.position = c(0.385,0.125),
 		legend.title = element_text(colour = "black", size=20.5, face ="bold"),
@@ -465,6 +467,96 @@ plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in ATH", biotype = 
 plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in ATH", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
 
 
+
+
+#----------------------------- Plotting replicate correlations ------------------------------
+
+
+# Prepare data for ggplot
+prepareReplStats <- function(ATH,AL,CR,ES,TH,MT,BD) {
+
+	number_values_ATH <- (ncol(ATH))
+	number_values_AL <- (ncol(AL))
+	number_values_other <- (ncol(CR))
+
+	class_ATH_key = as.data.frame(rep(c("ATH"), times = number_values_ATH))
+	names(class_ATH_key) <- "Species"
+	class_ATH <- cbind(class_ATH_key, as.data.frame(t(ATH)))
+	names(class_ATH)[2] <- "Correlation"
+	class_AL_key = as.data.frame(rep(c("AL"), times = number_values_AL))
+	names(class_AL_key) <- "Species"
+	class_AL <- cbind(class_AL_key, as.data.frame(t(AL)))
+	names(class_AL)[2] <- "Correlation"
+	class_CR_key = as.data.frame(rep(c("CR"), times = number_values_other))
+	names(class_CR_key) <- "Species"
+	class_CR <- cbind(class_CR_key, as.data.frame(t(CR)))
+	names(class_CR)[2] <- "Correlation"
+	class_ES_key = as.data.frame(rep(c("ES"), times = number_values_other))
+	names(class_ES_key) <- "Species"
+	class_ES <- cbind(class_ES_key, as.data.frame(t(ES)))
+	names(class_ES)[2] <- "Correlation"
+	class_TH_key = as.data.frame(rep(c("TH"), times = number_values_other))
+	names(class_TH_key) <- "Species"
+	class_TH <- cbind(class_TH_key, as.data.frame(t(TH)))
+	names(class_TH)[2] <- "Correlation"
+	class_MT_key = as.data.frame(rep(c("MT"), times = number_values_other))
+	names(class_MT_key) <- "Species"
+	class_MT <- cbind(class_MT_key, as.data.frame(t(MT)))
+	names(class_MT)[2] <- "Correlation"
+	class_BD_key = as.data.frame(rep(c("BD"), times = number_values_other))
+	names(class_BD_key) <- "Species"
+	class_BD <- cbind(class_BD_key, as.data.frame(t(BD)))
+	names(class_BD)[2] <- "Correlation"
+
+	repStats <- rbind(class_ATH, class_AL, class_CR, class_ES, class_TH, class_MT, class_BD)
+	return(repStats)
+}
+
+all_spec_repl_df <- prepareReplStats(ATH=ATH_repl_corr_0.05, AL=AL_repl_corr_0.05, CR=CR_repl_corr_0.05, 
+	ES=ES_repl_corr_0.05, TH=TH_repl_corr_0.05, MT=MT_repl_corr_0.05, BD=BD_repl_corr_0.05)
+
+
+
+
+
+# Make replicate correlation plot
+makePlotReplCorr <- function(data, plot_title) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+	p <- ggplot(data, aes(x=Species, y=Correlation, fill=Species)) + 
+	     stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
+		 geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
+		 	outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
+		 scale_y_continuous(limits = c(0.9658,1.0005), expand = c(0, 0)) + 
+		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9658, ymax=1.0005, fill="white", alpha=0, 
+		 	color="black", size=1.35)
+
+	q <- p + scale_fill_manual(values=c("#b2b2b2","#dca207","#46ae12","#1fac7b","#36a5d8","#967cee","#ea6965")) + 
+	theme_minimal() + 
+	xlab("Species") + ylab("Pearson's r") + ggtitle(plot_title) + 
+	theme(legend.position = "none", 
+		text=element_text(size=23), 
+  		axis.ticks.length = unit(.3, "cm"),
+  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
+  		axis.title.x = element_text(colour = "black", size=22, 
+  			margin = margin(t = 17.5, r = 0, b = 0, l = 0)), 
+  		axis.title.y = element_text(colour = "black", size=22, 
+  			margin = margin(t = 0, r = 12.5, b = 0, l = 0.5)), 
+  		axis.text.x = element_text(colour = "black", size=20, angle=0, 
+  			margin = margin(t = 7.5, r = 0, b = 0, l = 0), hjust = 0.5, vjust = 0.5),
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
+  		plot.title = element_text(colour = "black", size=24, 
+  			margin = margin(t = 16, r = 0, b = 15.75, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 1.25, 67.15, 2.0), "points"))
+
+  	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+		scale = 1, width = 9.1, height = 7.09, units = c("in"), 
+		dpi = 600, limitsize = FALSE)
+}
+
+makePlotReplCorr(data=all_spec_repl_df, plot_title="Replicate correlations") 
+# 1 data point for trimmed raw reads above lim_y
 
 
 
