@@ -15,6 +15,8 @@ if (!require(mgcv)) install.packages('mgcv')
 library(mgcv)
 if (!require(grid)) install.packages('grid')
 library(grid)
+if (!require(scales)) install.packages('scales')
+library(scales)
 
 
 # Set file path and input files
@@ -308,7 +310,7 @@ plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
 
 
 
-#------------------------------ Plotting expressed genes data -------------------------------
+#-------------------------- Plotting expressed genes data for ATH ---------------------------
 
 
 # Prepare data for ggplot
@@ -360,10 +362,7 @@ expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0 = ATH_expr_genes
 
 
 
-
-
-
-# Plot number of deduplicated reads for each species
+# Plot number of expressed genes at different thresholds for ATH
 plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), texpr) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
@@ -517,8 +516,6 @@ all_spec_repl_df <- prepareReplStats(ATH=ATH_repl_corr_0.05, AL=AL_repl_corr_0.0
 
 
 
-
-
 # Make replicate correlation plot
 makePlotReplCorr <- function(data, plot_title) {
 
@@ -557,6 +554,197 @@ makePlotReplCorr <- function(data, plot_title) {
 
 makePlotReplCorr(data=all_spec_repl_df, plot_title="Replicate correlations") 
 # 1 data point for trimmed raw reads above lim_y
+
+
+
+
+#-------------------- Plotting expressed genes data for non-ATH species ---------------------
+
+
+# Prepare data for ggplot
+prepareExprGenesOS <- function(biotype=c("coding","NAT","lincRNA"), species=c("AL","CR","ES","TH","MT","BD"), 
+	th_0, th_0_01, th_0_05, th_0_1) {
+
+	df_names <- c("Detailed_name" , "Sample" , "Threshold", "Expressed")
+
+	if (is.element("coding", biotype)) {
+		data <- cbind(th_0[1,3:ncol(th_0)], th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)])
+	} else if (is.element("NAT", biotype)) {
+		data <- cbind(th_0[2,3:ncol(th_0)], th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)])
+	} else  if (is.element("lincRNA", biotype)) {
+		data <- cbind(th_0[3,3:ncol(th_0)], th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)])
+	}
+
+	colnames(data) <- NULL
+	data <- as.data.frame(t(data))
+
+	detailed_sample_name <- names(th_0)[3:ncol(th_0)]
+	detailed_sample_name <- as.data.frame(rep(detailed_sample_name, times=4))
+
+	if (is.element("BD", species)) {
+
+		sample_names <- c("root", "mesocotyl", "leaf", "apex veg", "spiklet m", 
+		"floret", "pollen", "carpel", "stamen")
+
+	} else {
+
+		sample_names <- c("root", "hypocotyl", "leaf", "apex veg", "apex inf", 
+		"flower", "pollen", "carpel", "stamen")
+	}
+
+	sample_names <- as.data.frame(rep(sample_names, times=4))
+
+	threshold <- c("0", "0.01", "0.05", "0.1")
+	threshold <- as.data.frame(rep(threshold, each=9))
+
+	expr_df <- cbind(detailed_sample_name,sample_names, threshold, data)
+	colnames(expr_df) <- df_names
+
+	expr_df <- expr_df[c(1:6,8,9,7,10:15,17,18,16,19:24,26,27,25,28:33,35,36,34),]
+
+	return(expr_df)
+}
+
+
+expr_coding_genes_AL <- prepareExprGenesOS(biotype = "coding", species = "AL", th_0 = AL_expr_genes_0,
+	th_0_01 = AL_expr_genes_0.01, th_0_05 = AL_expr_genes_0.05, th_0_1 = AL_expr_genes_0.1)
+expr_NATs_AL <- prepareExprGenesOS(biotype = "NAT", species = "AL", th_0 = AL_expr_genes_0,
+	th_0_01 = AL_expr_genes_0.01, th_0_05 = AL_expr_genes_0.05, th_0_1 = AL_expr_genes_0.1)
+expr_lincRNAs_AL <- prepareExprGenesOS(biotype = "lincRNA", species = "AL", th_0 = AL_expr_genes_0,
+	th_0_01 = AL_expr_genes_0.01, th_0_05 = AL_expr_genes_0.05, th_0_1 = AL_expr_genes_0.1)
+
+expr_coding_genes_CR <- prepareExprGenesOS(biotype = "coding", species = "CR", th_0 = CR_expr_genes_0,
+	th_0_01 = CR_expr_genes_0.01, th_0_05 = CR_expr_genes_0.05, th_0_1 = CR_expr_genes_0.1)
+expr_NATs_CR <- prepareExprGenesOS(biotype = "NAT", species = "CR", th_0 = CR_expr_genes_0,
+	th_0_01 = CR_expr_genes_0.01, th_0_05 = CR_expr_genes_0.05, th_0_1 = CR_expr_genes_0.1)
+expr_lincRNAs_CR <- prepareExprGenesOS(biotype = "lincRNA", species = "CR", th_0 = CR_expr_genes_0,
+	th_0_01 = CR_expr_genes_0.01, th_0_05 = CR_expr_genes_0.05, th_0_1 = CR_expr_genes_0.1)
+
+expr_coding_genes_ES <- prepareExprGenesOS(biotype = "coding", species = "ES", th_0 = ES_expr_genes_0,
+	th_0_01 = ES_expr_genes_0.01, th_0_05 = ES_expr_genes_0.05, th_0_1 = ES_expr_genes_0.1)
+expr_NATs_ES <- prepareExprGenesOS(biotype = "NAT", species = "ES", th_0 = ES_expr_genes_0,
+	th_0_01 = ES_expr_genes_0.01, th_0_05 = ES_expr_genes_0.05, th_0_1 = ES_expr_genes_0.1)
+expr_lincRNAs_ES <- prepareExprGenesOS(biotype = "lincRNA", species = "ES", th_0 = ES_expr_genes_0,
+	th_0_01 = ES_expr_genes_0.01, th_0_05 = ES_expr_genes_0.05, th_0_1 = ES_expr_genes_0.1)
+
+expr_coding_genes_TH <- prepareExprGenesOS(biotype = "coding", species = "TH", th_0 = TH_expr_genes_0,
+	th_0_01 = TH_expr_genes_0.01, th_0_05 = TH_expr_genes_0.05, th_0_1 = TH_expr_genes_0.1)
+expr_NATs_TH <- prepareExprGenesOS(biotype = "NAT", species = "TH", th_0 = TH_expr_genes_0,
+	th_0_01 = TH_expr_genes_0.01, th_0_05 = TH_expr_genes_0.05, th_0_1 = TH_expr_genes_0.1)
+expr_lincRNAs_TH <- prepareExprGenesOS(biotype = "lincRNA", species = "TH", th_0 = TH_expr_genes_0,
+	th_0_01 = TH_expr_genes_0.01, th_0_05 = TH_expr_genes_0.05, th_0_1 = TH_expr_genes_0.1)
+
+expr_coding_genes_MT <- prepareExprGenesOS(biotype = "coding", species = "MT", th_0 = MT_expr_genes_0,
+	th_0_01 = MT_expr_genes_0.01, th_0_05 = MT_expr_genes_0.05, th_0_1 = MT_expr_genes_0.1)
+expr_NATs_MT <- prepareExprGenesOS(biotype = "NAT", species = "MT", th_0 = MT_expr_genes_0,
+	th_0_01 = MT_expr_genes_0.01, th_0_05 = MT_expr_genes_0.05, th_0_1 = MT_expr_genes_0.1)
+expr_lincRNAs_MT <- prepareExprGenesOS(biotype = "lincRNA", species = "MT", th_0 = MT_expr_genes_0,
+	th_0_01 = MT_expr_genes_0.01, th_0_05 = MT_expr_genes_0.05, th_0_1 = MT_expr_genes_0.1)
+
+expr_coding_genes_BD <- prepareExprGenesOS(biotype = "coding", species = "BD", th_0 = BD_expr_genes_0,
+	th_0_01 = BD_expr_genes_0.01, th_0_05 = BD_expr_genes_0.05, th_0_1 = BD_expr_genes_0.1)
+expr_NATs_BD <- prepareExprGenesOS(biotype = "NAT", species = "BD", th_0 = BD_expr_genes_0,
+	th_0_01 = BD_expr_genes_0.01, th_0_05 = BD_expr_genes_0.05, th_0_1 = BD_expr_genes_0.1)
+expr_lincRNAs_BD <- prepareExprGenesOS(biotype = "lincRNA", species = "BD", th_0 = BD_expr_genes_0,
+	th_0_01 = BD_expr_genes_0.01, th_0_05 = BD_expr_genes_0.05, th_0_1 = BD_expr_genes_0.1)
+
+
+
+
+# Plot number of deduplicated reads for each species
+plotExprGenesOS <- function(data, plot_title, species = c("dicot","BD"), texpr) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+	total_expr <- paste("total:", texpr, "at 0.05" , sep=" ")
+
+	if (is.element("dicot", species)) {
+		level_order <- c("root", "hypocotyl", "leaf", "apex veg", "apex inf", 
+		"flower", "carpel", "stamen", "pollen")
+
+	} else if (is.element("BD", species)) {
+		level_order <- c("root", "mesocotyl", "leaf", "apex veg", "spiklet m", 
+		"floret", "carpel", "stamen", "pollen")
+	}
+
+
+	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
+
+	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
+	scale_y_continuous(expand = c(0.15, 0.15), breaks= pretty_breaks(), 
+		 	labels = function(l) { 
+		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
+		 	}) +
+  	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
+  	annotate("text", x = 0.825, y = Inf, hjust = 0, vjust = 19.0, size=7.0, label = total_expr) + 
+  	annotate("text", x = 0.825, y = Inf, hjust = 0, vjust = 15.2, size=7.0, label = "Threshold", fontface = 2) + 
+  	labs(color="")
+
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of Genes") + 
+	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
+		guides(colour = guide_legend(nrow = 1)) + 
+  		theme(text=element_text(size=23),   
+  		axis.ticks.length = unit(.3, "cm"),
+  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
+  		axis.title.y = element_text(colour = "black", size=22, 
+  			margin = margin(t = 0, r = 17, b = 0, l = 0)), 
+  		axis.text.x = element_text(colour = "black", size=21, angle=90, 
+  			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
+  		plot.title = element_text(colour = "black", size=24, 
+  			margin = margin(t = 16, r = 0, b = 16.5, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 5, 5, 5), "points"),
+		legend.position = c(0.3475,0.22),
+		legend.title = element_text(colour = "black", size=20, face ="bold"),
+		legend.text = element_text(size=20), 
+		legend.key.size = unit(0.775, "cm"),
+		legend.key.height = unit(0.4, "cm"),
+		legend.background = element_rect(fill = NA),
+		legend.key = element_rect(fill = NA),
+  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
+
+  	png("NUL")
+	r <- ggplotGrob(q)
+	r$layout$clip[r$layout$name=="panel"] <- "off"
+
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
+		scale = 1, width = 6.2, height = 6.5, units = c("in"), 
+		dpi = 600, limitsize = FALSE)
+}
+
+
+plotExprGenesOS(data=expr_coding_genes_AL, plot_title="Protein-coding genes in AL", species = "dicot", texpr=AL_expr_genes_0.05[1,2])
+plotExprGenesOS(data=expr_NATs_AL, plot_title="NATs in AL", species = "dicot", texpr=AL_expr_genes_0.05[2,2])
+plotExprGenesOS(data=expr_lincRNAs_AL, plot_title="lincRNAs in AL", species = "dicot", texpr=AL_expr_genes_0.05[3,2])
+
+
+plotExprGenesOS(data=expr_coding_genes_CR, plot_title="Protein-coding genes in CR", species = "dicot", texpr=CR_expr_genes_0.05[1,2])
+plotExprGenesOS(data=expr_NATs_CR, plot_title="NATs in CR", species = "dicot", texpr=CR_expr_genes_0.05[2,2])
+plotExprGenesOS(data=expr_lincRNAs_CR, plot_title="lincRNAs in CR", species = "dicot", texpr=CR_expr_genes_0.05[3,2])
+
+
+plotExprGenesOS(data=expr_coding_genes_ES, plot_title="Protein-coding genes in ES", species = "dicot", texpr=ES_expr_genes_0.05[1,2])
+plotExprGenesOS(data=expr_NATs_ES, plot_title="NATs in ES", species = "dicot", texpr=ES_expr_genes_0.05[2,2])
+plotExprGenesOS(data=expr_lincRNAs_ES, plot_title="lincRNAs in ES", species = "dicot", texpr=ES_expr_genes_0.05[3,2])
+
+
+plotExprGenesOS(data=expr_coding_genes_TH, plot_title="Protein-coding genes in TH", species = "dicot", texpr=TH_expr_genes_0.05[1,2])
+plotExprGenesOS(data=expr_NATs_TH, plot_title="NATs in TH", species = "dicot", texpr=TH_expr_genes_0.05[2,2])
+plotExprGenesOS(data=expr_lincRNAs_TH, plot_title="lincRNAs in TH", species = "dicot", texpr=TH_expr_genes_0.05[3,2])
+
+
+plotExprGenesOS(data=expr_coding_genes_MT, plot_title="Protein-coding genes in MT", species = "dicot", texpr=MT_expr_genes_0.05[1,2])
+plotExprGenesOS(data=expr_NATs_MT, plot_title="NATs in MT", species = "dicot", texpr=MT_expr_genes_0.05[2,2])
+plotExprGenesOS(data=expr_lincRNAs_MT, plot_title="lincRNAs in MT", species = "dicot", texpr=MT_expr_genes_0.05[3,2])
+
+
+plotExprGenesOS(data=expr_coding_genes_BD, plot_title="Protein-coding genes in BD", species = "BD", texpr=BD_expr_genes_0.05[1,2])
+plotExprGenesOS(data=expr_NATs_BD, plot_title="NATs in BD", species = "BD", texpr=BD_expr_genes_0.05[2,2])
+plotExprGenesOS(data=expr_lincRNAs_BD, plot_title="lincRNAs in BD", species = "BD", texpr=BD_expr_genes_0.05[3,2])
+
+
+
+
 
 
 
