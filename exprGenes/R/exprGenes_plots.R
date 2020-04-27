@@ -652,11 +652,12 @@ expr_lincRNAs_BD <- prepareExprGenesOS(biotype = "lincRNA", species = "BD", th_0
 
 
 # Plot number of deduplicated reads for each species
-plotExprGenesOS <- function(data, plot_title, species = c("dicot","BD"), texpr) {
+plotExprGenesOS <- function(data, plot_title, species = c("dicot", "BD"), texpr, 
+	class = c("coding", "non-coding")) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	total_expr <- paste("total:", texpr, "at 0.05" , sep=" ")
+	total_expr <- paste("Total:", texpr, "at 0.05" , sep=" ")
 
 	if (is.element("dicot", species)) {
 		level_order <- c("root", "hypocotyl", "leaf", "apex veg", "apex inf", 
@@ -667,6 +668,20 @@ plotExprGenesOS <- function(data, plot_title, species = c("dicot","BD"), texpr) 
 		"floret", "carpel", "stamen", "pollen")
 	}
 
+	if (is.element("coding", class)) {
+		legend_title <- "Threshold"
+		tlmargin <- margin(t = 16.5, r = 0, b = 16.0, l = 0)
+		pltmargin <- c(0, 5, 15, 10)
+
+	} else if (is.element("non-coding", class)) {
+		legend_title <- ""
+		tlmargin <- margin(t = 16.5, r = 0, b = 18.375, l = 0)
+		pltmargin <- c(0, 5, 15, 4.75)
+	}
+
+	if (is.element("lincRNAs in MT", plot_title)) {
+		pltmargin <- c(0, 5, 15, 20.5)
+	}
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
 
@@ -676,32 +691,32 @@ plotExprGenesOS <- function(data, plot_title, species = c("dicot","BD"), texpr) 
 		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
 		 	}) +
   	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
-  	annotate("text", x = 0.825, y = Inf, hjust = 0, vjust = 19.0, size=7.0, label = total_expr) + 
-  	annotate("text", x = 0.825, y = Inf, hjust = 0, vjust = 15.2, size=7.0, label = "Threshold", fontface = 2) + 
+  	annotate("text", x = 0.825, y = Inf, hjust = 0, vjust = 19.5, size=6.85, label = total_expr) + 
+  	annotate("text", x = 0.825, y = Inf, hjust = 0, vjust = 15.75, size=6.85, label = legend_title, fontface = 2) + 
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of Genes") + 
 	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
-  		theme(text=element_text(size=23),   
+  		theme(   
   		axis.ticks.length = unit(.3, "cm"),
-  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.y = element_text(colour = "black", size=22, 
-  			margin = margin(t = 0, r = 17, b = 0, l = 0)), 
-  		axis.text.x = element_text(colour = "black", size=21, angle=90, 
-  			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
-  		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 5, 5, 5), "points"),
+  		axis.ticks = element_line(colour = "gray15", size = 0.75), 
+  		axis.title.y = element_text(colour = "black", size=22.5, 
+  			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
+  		axis.text.x = element_text(colour = "black", size=19.5, angle=90, 
+  			margin = margin(t = 3.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.text.y = element_text(colour = "black", size=19, margin = margin(t = 0, r = 3, b = 0, l = 0)), 
+  		plot.title = element_text(colour = "black", size=22.5, 
+  			margin = tlmargin, hjust = 0.5), 
+  		plot.margin = unit(pltmargin, "points"),
 		legend.position = c(0.3475,0.22),
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
-		legend.text = element_text(size=20), 
+		legend.text = element_text(size=19.5), 
 		legend.key.size = unit(0.775, "cm"),
 		legend.key.height = unit(0.4, "cm"),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
-  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
+  		panel.border = element_rect(colour = "black", fill=NA, size=0.75))
 
   	png("NUL")
 	r <- ggplotGrob(q)
@@ -713,34 +728,29 @@ plotExprGenesOS <- function(data, plot_title, species = c("dicot","BD"), texpr) 
 }
 
 
-plotExprGenesOS(data=expr_coding_genes_AL, plot_title="Protein-coding genes in AL", species = "dicot", texpr=AL_expr_genes_0.05[1,2])
-plotExprGenesOS(data=expr_NATs_AL, plot_title="NATs in AL", species = "dicot", texpr=AL_expr_genes_0.05[2,2])
-plotExprGenesOS(data=expr_lincRNAs_AL, plot_title="lincRNAs in AL", species = "dicot", texpr=AL_expr_genes_0.05[3,2])
+plotExprGenesOS(data=expr_coding_genes_AL, plot_title="Protein-coding genes in AL", species = "dicot", texpr=AL_expr_genes_0.05[1,2], class="coding")
+plotExprGenesOS(data=expr_NATs_AL, plot_title="NATs in AL", species = "dicot", texpr=AL_expr_genes_0.05[2,2], class="non-coding")
+plotExprGenesOS(data=expr_lincRNAs_AL, plot_title="lincRNAs in AL", species = "dicot", texpr=AL_expr_genes_0.05[3,2], class="non-coding")
 
+plotExprGenesOS(data=expr_coding_genes_CR, plot_title="Protein-coding genes in CR", species = "dicot", texpr=CR_expr_genes_0.05[1,2], class="coding")
+plotExprGenesOS(data=expr_NATs_CR, plot_title="NATs in CR", species = "dicot", texpr=CR_expr_genes_0.05[2,2], class="non-coding")
+plotExprGenesOS(data=expr_lincRNAs_CR, plot_title="lincRNAs in CR", species = "dicot", texpr=CR_expr_genes_0.05[3,2], class="non-coding")
 
-plotExprGenesOS(data=expr_coding_genes_CR, plot_title="Protein-coding genes in CR", species = "dicot", texpr=CR_expr_genes_0.05[1,2])
-plotExprGenesOS(data=expr_NATs_CR, plot_title="NATs in CR", species = "dicot", texpr=CR_expr_genes_0.05[2,2])
-plotExprGenesOS(data=expr_lincRNAs_CR, plot_title="lincRNAs in CR", species = "dicot", texpr=CR_expr_genes_0.05[3,2])
+plotExprGenesOS(data=expr_coding_genes_ES, plot_title="Protein-coding genes in ES", species = "dicot", texpr=ES_expr_genes_0.05[1,2], class="coding")
+plotExprGenesOS(data=expr_NATs_ES, plot_title="NATs in ES", species = "dicot", texpr=ES_expr_genes_0.05[2,2], class="non-coding")
+plotExprGenesOS(data=expr_lincRNAs_ES, plot_title="lincRNAs in ES", species = "dicot", texpr=ES_expr_genes_0.05[3,2], class="non-coding")
 
+plotExprGenesOS(data=expr_coding_genes_TH, plot_title="Protein-coding genes in TH", species = "dicot", texpr=TH_expr_genes_0.05[1,2], class="coding")
+plotExprGenesOS(data=expr_NATs_TH, plot_title="NATs in TH", species = "dicot", texpr=TH_expr_genes_0.05[2,2], class="non-coding")
+plotExprGenesOS(data=expr_lincRNAs_TH, plot_title="lincRNAs in TH", species = "dicot", texpr=TH_expr_genes_0.05[3,2], class="non-coding")
 
-plotExprGenesOS(data=expr_coding_genes_ES, plot_title="Protein-coding genes in ES", species = "dicot", texpr=ES_expr_genes_0.05[1,2])
-plotExprGenesOS(data=expr_NATs_ES, plot_title="NATs in ES", species = "dicot", texpr=ES_expr_genes_0.05[2,2])
-plotExprGenesOS(data=expr_lincRNAs_ES, plot_title="lincRNAs in ES", species = "dicot", texpr=ES_expr_genes_0.05[3,2])
+plotExprGenesOS(data=expr_coding_genes_MT, plot_title="Protein-coding genes in MT", species = "dicot", texpr=MT_expr_genes_0.05[1,2], class="coding")
+plotExprGenesOS(data=expr_NATs_MT, plot_title="NATs in MT", species = "dicot", texpr=MT_expr_genes_0.05[2,2], class="non-coding")
+plotExprGenesOS(data=expr_lincRNAs_MT, plot_title="lincRNAs in MT", species = "dicot", texpr=MT_expr_genes_0.05[3,2], class="non-coding")
 
-
-plotExprGenesOS(data=expr_coding_genes_TH, plot_title="Protein-coding genes in TH", species = "dicot", texpr=TH_expr_genes_0.05[1,2])
-plotExprGenesOS(data=expr_NATs_TH, plot_title="NATs in TH", species = "dicot", texpr=TH_expr_genes_0.05[2,2])
-plotExprGenesOS(data=expr_lincRNAs_TH, plot_title="lincRNAs in TH", species = "dicot", texpr=TH_expr_genes_0.05[3,2])
-
-
-plotExprGenesOS(data=expr_coding_genes_MT, plot_title="Protein-coding genes in MT", species = "dicot", texpr=MT_expr_genes_0.05[1,2])
-plotExprGenesOS(data=expr_NATs_MT, plot_title="NATs in MT", species = "dicot", texpr=MT_expr_genes_0.05[2,2])
-plotExprGenesOS(data=expr_lincRNAs_MT, plot_title="lincRNAs in MT", species = "dicot", texpr=MT_expr_genes_0.05[3,2])
-
-
-plotExprGenesOS(data=expr_coding_genes_BD, plot_title="Protein-coding genes in BD", species = "BD", texpr=BD_expr_genes_0.05[1,2])
-plotExprGenesOS(data=expr_NATs_BD, plot_title="NATs in BD", species = "BD", texpr=BD_expr_genes_0.05[2,2])
-plotExprGenesOS(data=expr_lincRNAs_BD, plot_title="lincRNAs in BD", species = "BD", texpr=BD_expr_genes_0.05[3,2])
+plotExprGenesOS(data=expr_coding_genes_BD, plot_title="Protein-coding genes in BD", species = "BD", texpr=BD_expr_genes_0.05[1,2], class="coding")
+plotExprGenesOS(data=expr_NATs_BD, plot_title="NATs in BD", species = "BD", texpr=BD_expr_genes_0.05[2,2], class="non-coding")
+plotExprGenesOS(data=expr_lincRNAs_BD, plot_title="lincRNAs in BD", species = "BD", texpr=BD_expr_genes_0.05[3,2], class="non-coding")
 
 
 
