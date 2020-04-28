@@ -659,6 +659,8 @@ plotExprGenesOS <- function(data, plot_title, species = c("dicot", "BD"), texpr,
 
 	total_expr <- paste("Total:", texpr, "at 0.05" , sep=" ")
 
+	legend_pos <- c(0.3475,0.22)
+
 	if (is.element("dicot", species)) {
 		level_order <- c("root", "hypocotyl", "leaf", "apex veg", "apex inf", 
 		"flower", "carpel", "stamen", "pollen")
@@ -668,19 +670,34 @@ plotExprGenesOS <- function(data, plot_title, species = c("dicot", "BD"), texpr,
 		"floret", "carpel", "stamen", "pollen")
 	}
 
-	if (is.element("coding", class)) {
+	if (is.element("coding", class) &&! is.element("BD", species)) {
 		legend_title <- "Threshold"
 		tlmargin <- margin(t = 16.5, r = 0, b = 16.0, l = 0)
 		pltmargin <- c(0, 5, 15, 10)
 
-	} else if (is.element("non-coding", class)) {
+	} else if (is.element("non-coding", class) &&! is.element("BD", species)) {
 		legend_title <- ""
 		tlmargin <- margin(t = 16.5, r = 0, b = 18.375, l = 0)
 		pltmargin <- c(0, 5, 15, 4.75)
+
+	} else if (is.element("coding", class) && is.element("BD", species)) {
+		legend_title <- "Threshold"
+		tlmargin <- margin(t = 16.5, r = 0, b = 16.0, l = 0)
+		pltmargin <- c(0, 5, 9.55, 10)
+
+	} else if (is.element("non-coding", class) && is.element("BD", species)) {
+		legend_title <- ""
+		tlmargin <- margin(t = 16.5, r = 0, b = 18.375, l = 0)
+		pltmargin <- c(0, 5, 9.55, 4.75)
 	}
 
 	if (is.element("lincRNAs in MT", plot_title)) {
-		pltmargin <- c(0, 5, 15, 20.5)
+		pltmargin <- c(0, 5, 15, 20.7)
+	}
+
+	if (is.element("lincRNAs in CR", plot_title) | is.element("lincRNAs in ES", plot_title) 
+		| is.element("lincRNAs in BD", plot_title)) {
+		legend_pos <- "none"
 	}
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
@@ -702,14 +719,14 @@ plotExprGenesOS <- function(data, plot_title, species = c("dicot", "BD"), texpr,
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.75), 
   		axis.title.y = element_text(colour = "black", size=22.5, 
-  			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
+  			margin = margin(t = 0, r = 14, b = 0, l = 1)), 
   		axis.text.x = element_text(colour = "black", size=19.5, angle=90, 
   			margin = margin(t = 3.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", size=19, margin = margin(t = 0, r = 3, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=22.5, 
   			margin = tlmargin, hjust = 0.5), 
   		plot.margin = unit(pltmargin, "points"),
-		legend.position = c(0.3475,0.22),
+		legend.position = legend_pos,
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
 		legend.text = element_text(size=19.5), 
 		legend.key.size = unit(0.775, "cm"),
