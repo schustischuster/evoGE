@@ -1141,8 +1141,15 @@ scatterDensity <- function(x, y) {
 	names(plot_data) <- c("x_data", "y_data")
 	
 	# Use densCols() output to get density at each point
-	plot_data$col <- densCols(x, y, colramp=colorRampPalette(c("#000099", "#00FEFF", "#45FE4F", 
-                            "#FCFF00", "#FF9400", "#FF3100")))
+	plot_data$col <- densCols(x, y, nbin = 350, colramp=colorRampPalette(c(
+		"#2a3a96","#2a3a96","#34489e","#3851a3","#3a54a5","#3d5ba9","#3d66b0","#417abe",
+		"#429dd6","#32c6f4","#61cbe6","#70cbd2","#75c9b5","#82ca97","#93cc79","#a7d059",
+		"#bfd735","#dae11e","#f4ed1a","#fcdb05","#fcb713","#f7951e","#f47321","#f47321",
+		"#f05323","#ee3523","#ed2224","#e61d25","#c52026","#c52026")))
+
+	# Original density color settings
+	# plot_data$col <- densCols(x, y, colramp=colorRampPalette(c("#000099", "#000099", "#00FEFF",
+	# "#45FE4F", "#FCFF00", "#FF9400", "#FF3100")))
 	
 	# Reorder "plot_data" based on "col" values - the highest density points are plotted on top
 	plot_data <- plot_data[order(plot_data$col),]
@@ -1247,7 +1254,9 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
 	geom_point(size = 1.5, colour = data$col) + 
 	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
-	scale_y_continuous(limits = c(0,101), expand = c(0, 0)) + 
+	scale_y_continuous(limits = c(0,101), expand = c(0.01, 0.01)) + 
+	geom_smooth(method="loess" , color="gray75", se=FALSE, size=2.5) +  # regression line shade
+	geom_smooth(method="loess" , color="gray20", fill="#b7dbd2", se=FALSE, size=1.5) +  # use loess regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = vjust_1, size=5.7, label = rsrt_label, parse = TRUE) + 
 	annotate("text", x = -Inf, y = Inf, hjust = rsgd_pos, vjust = vjust_2, size=5.7, label = rsqd, parse = FALSE) 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (%)") + 
@@ -1271,10 +1280,10 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 makeScrPlotRelOverlap(data=perc_overlap_ATH_all, rsqd=rsqd_ATH_all_perc, plot_title="ATH_all", rsgd_pos= -0.405, vjust_1=2.9, vjust_2=5.5)
 makeScrPlotRelOverlap(data=perc_overlap_ATH_comp, rsqd=rsqd_ATH_comp_perc, plot_title="ATH_comp", rsgd_pos= -0.405, vjust_1=10.5, vjust_2=16.55)
 makeScrPlotRelOverlap(data=perc_overlap_AL, rsqd=rsqd_AL_perc, plot_title="AL_", rsgd_pos= -1.41, vjust_1=7.55, vjust_2=12)
-makeScrPlotRelOverlap(data=perc_overlap_CR, rsqd=rsqd_CR_perc, plot_title="CR_", rsgd_pos= -0.405, vjust_1=3.8, vjust_2=6.8)
+makeScrPlotRelOverlap(data=perc_overlap_CR, rsqd=rsqd_CR_perc, plot_title="CR_", rsgd_pos= -0.405, vjust_1=3.55, vjust_2=6.45)
 makeScrPlotRelOverlap(data=perc_overlap_ES, rsqd=rsqd_ES_perc, plot_title="ES_", rsgd_pos= -0.405, vjust_1=12.68, vjust_2=19.1)
 makeScrPlotRelOverlap(data=perc_overlap_TH, rsqd=rsqd_TH_perc, plot_title="TH_", rsgd_pos= -0.405, vjust_1=7.0, vjust_2=11.25)
-makeScrPlotRelOverlap(data=perc_overlap_MT, rsqd=rsqd_MT_perc, plot_title="MT_", rsgd_pos= -0.405, vjust_1=2, vjust_2=4.33)
+makeScrPlotRelOverlap(data=perc_overlap_MT, rsqd=rsqd_MT_perc, plot_title="MT_", rsgd_pos= -0.405, vjust_1=8.2, vjust_2=12.85)
 makeScrPlotRelOverlap(data=perc_overlap_BD, rsqd=rsqd_BD_perc, plot_title="BD_", rsgd_pos= -0.405, vjust_1=1.8, vjust_2=4)
 
 
@@ -1291,8 +1300,8 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 	p <- ggplot(data, aes(x = x_data, y = y_data)) + 
 	geom_point(size = 1.5, colour = data$col) + 
 	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
-	scale_y_continuous(trans='log10', labels = prettyNum, breaks=c(1,10,100,1000,10000), limits=c(1, 22000), expand = c(0, 0)) + 
-	geom_smooth(method="auto" , color="gray20", fill="#69b3a2", se=TRUE, size=1) +  # use gam regression model
+	scale_y_continuous(trans='log10', labels = prettyNum, breaks=c(1,10,100,1000,10000), limits=c(0.9, 22000), expand = c(0, 0)) + 
+	geom_smooth(method="loess" , color="gray20", fill="#69b3a2", se=TRUE, size=1.75) +  # use loess regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = 1.6, size=5.7, label = rsrt_label, parse = TRUE)
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (bp)") + 
   		theme(text=element_text(size=16), 
