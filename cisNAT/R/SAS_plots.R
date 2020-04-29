@@ -1301,7 +1301,7 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 	geom_point(size = 1.5, colour = data$col) + 
 	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
 	scale_y_continuous(trans='log10', labels = prettyNum, breaks=c(1,10,100,1000,10000), limits=c(0.9, 22000), expand = c(0, 0)) + 
-	geom_smooth(method="loess" , color="gray20", fill="#69b3a2", se=TRUE, size=1.75) +  # use loess regression model
+	geom_smooth(method="loess" , color="gray20", fill="#69b3a2", se=TRUE, size=1.5) +  # use loess regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = 1.6, size=5.7, label = rsrt_label, parse = TRUE)
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (bp)") + 
   		theme(text=element_text(size=16), 
