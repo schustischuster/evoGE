@@ -1144,7 +1144,7 @@ scatterDensity <- function(x, y) {
 	df$dens <- col2rgb(x)[1,] + 1L
 
 	cols <- colorRampPalette(c(
-		"#1E34AE","#1B40B2","#194DB6","#165ABA","#1467BE","#1274C3","#0D97D2","#09B9E1",
+		"#283BAE","#2546B0","#2251B3","#1F5CB5","#1C67B8","#1a73bb","#0D97D2","#09B9E1",
 		"#04DBF0","#00FEFF","#17FEC4","#2EFE89","#45FE4F","#68FA44","#8BF739","#AEF32F",
 		"#D1F024","#f4ed1a","#F3DE18","#F2CF16","#F1C114","#F0B212","#EFA310","#EF950E",
 		"#F0870C","#F2790A","#F46B08","#F65D06","#F85004","#FF3100"))(256)
