@@ -1147,7 +1147,7 @@ scatterDensity <- function(x, y) {
 		"#1E34AE","#1B40B2","#194DB6","#165ABA","#1467BE","#1274C3","#0D97D2","#09B9E1",
 		"#04DBF0","#00FEFF","#11FED3","#22FEA7","#33FE7B","#45FE4F","#70F941","#9CF534",
 		"#C8F127","#f4ed1a","#F3DE18","#F2CF16","#F1C114","#F0B212","#EFA310","#EF950E",
-		"#F1850B","#F37609","#F56707","#F75805","#F85004","#FF3100"))(256)
+		"#F0870C","#F2790A","#F46B08","#F65D06","#F85004","#FF3100"))(256)
 
 	# Original density color settings
 	# plot_data$col <- densCols(x, y, colramp=colorRampPalette(c("#000099", "#000099", "#00FEFF",
