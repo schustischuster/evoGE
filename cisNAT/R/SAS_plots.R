@@ -1145,8 +1145,8 @@ scatterDensity <- function(x, y) {
 
 	cols <- colorRampPalette(c(
 		"#283BAE","#2546B0","#2251B3","#1F5CB5","#1C67B8","#1a73bb","#0D97D2","#09B9E1",
-		"#04DBF0","#00FEFF","#17FEC4","#2EFE89","#45FE4F","#68FA44","#8BF739","#AEF32F",
-		"#D1F024","#f4ed1a","#F3DE18","#F2CF16","#F1C114","#F0B212","#EFA310","#EF950E",
+		"#04DBF0","#00FEFF","#17FEC4","#2EFE89","#45FE4F","#69FE3F","#8EFE2F","#B2FE1F",
+		"#D7FE0F","#FCFF00","#F9ED02","#F7DB04","#F5CA07","#F3B809","#F1A60B","#EF950E",
 		"#F0870C","#F2790A","#F46B08","#F65D06","#F85004","#FF3100"))(256)
 
 	# Original density color settings
