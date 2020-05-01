@@ -1079,22 +1079,30 @@ dev.off()
 
 
 
-# Compute rsqr cor value
+# Get rsqr cor value
 testRsq <- function(x, y) { 
 	test <- cor(x, y, use = "complete.obs") ^ 2
   	test <- round(test, digits=2)
   	return(test)
 }
 
-# Calculate R squared value for pearson vs spearman data
-rsqd_ATH_all_PS <- testRsq(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-rsqd_ATH_comp_PS <- testRsq(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-rsqd_AL_PS <- testRsq(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
-rsqd_CR_PS <- testRsq(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-rsqd_ES_PS <- testRsq(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-rsqd_TH_PS <- testRsq(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-rsqd_MT_PS <- testRsq(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-rsqd_BD_PS <- testRsq(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+# Compute adjusted rsqr value for lm
+# Should give very similar results as above unadjusted rsqr
+testAdjRsqlm <- function(x,y) { 
+	test <- summary(lm(y ~ x))$r.sq
+	test <- round(test, digits=2)
+  	return(test)
+}
+
+# Calculate adjusted R squared value for pearson vs spearman data
+rsqd_ATH_all_PS <- testAdjRsqlm(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_ATH_comp_PS <- testAdjRsqlm(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_AL_PS <- testAdjRsqlm(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+rsqd_CR_PS <- testAdjRsqlm(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_ES_PS <- testAdjRsqlm(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_TH_PS <- testAdjRsqlm(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_MT_PS <- testAdjRsqlm(MT_cd_nc_SAS_cor_wo_pollen_0.5_pearson, MT_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
+rsqd_BD_PS <- testAdjRsqlm(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson, BD_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 
 
 
@@ -1205,7 +1213,7 @@ rsqd_MT_perc <- testRsq(MT_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, MT_cd_nc_
 rsqd_BD_perc <- testRsq(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, BD_cd_nc_SAS_wo_pollen_0.5_cor_length$percent_overlap)
 
 
-# Compute adjusted rsqr value
+# Compute adjusted rsqr value for gam
 testAdjRsq <- function(x,y) { 
 	test <- summary(gam(y ~ x))$r.sq
 	test <- round(test, digits=2)
@@ -1259,8 +1267,8 @@ makeScrPlotRelOverlap <- function(data, rsqd, plot_title = c(
 	geom_point(size = 1.5, colour = data$col) + 
 	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
 	scale_y_continuous(limits = c(0,101), expand = c(0.005, 0.005)) + 
-	geom_smooth(method="loess" , color="gray80", se=FALSE, size=2.25) +  # regression line shade
-	geom_smooth(method="loess" , color="gray15", se=FALSE, size=1.5) +  # use loess regression model
+	geom_smooth(method="auto" , color="gray80", se=FALSE, size=2.25) +  # gam regression line shade
+	geom_smooth(method="auto" , color="gray15", se=FALSE, size=1.5) +  # use gam regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = vjust_1, size=5.7, label = rsrt_label, parse = TRUE) + 
 	annotate("text", x = -Inf, y = Inf, hjust = rsgd_pos, vjust = vjust_2, size=5.7, label = rsqd, parse = FALSE) 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (%)") + 
@@ -1305,7 +1313,7 @@ makeScrPlotAbsOverlap <- function(data, rsqd, plot_title = c(
 	geom_point(size = 1.5, colour = data$col) + 
 	scale_x_continuous(limits = c(-1.02,1.02), breaks=c(-1,-0.5,0,0.5,1), labels=c(-1,-0.5,0,0.5,1), expand = c(0, 0)) +
 	scale_y_continuous(trans='log10', labels = prettyNum, breaks=c(1,10,100,1000,10000), limits=c(0.9, 22000), expand = c(0, 0)) + 
-	geom_smooth(method="loess" , color="gray15", fill="#69b3a2", se=TRUE, size=1.5) +  # use loess regression model
+	geom_smooth(method="auto" , color="gray15", fill="#69b3a2", se=TRUE, size=1.5) +  # use gam regression model
 	annotate("text", x = -Inf, y = Inf, hjust = -0.31, vjust = 1.6, size=5.7, label = rsrt_label, parse = TRUE)
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Pearson") + ylab("NAT overlap (bp)") + 
   		theme(text=element_text(size=16), 
@@ -1512,7 +1520,7 @@ makeScrPlotDistCor <- function(data, plot_title, n_ranges_SSN, n_ranges_OSN) {
 	geom_line(aes(y = med_OSN_pearson, color = "med_OSN_pearson",group = 1), size=1.125) + 
   	geom_point(aes(y = med_SSN_pearson, color = "med_SSN_pearson",group = 1), size=3.25) + 
   	geom_point(aes(y = med_OSN_pearson, color = "med_OSN_pearson",group = 1), size=3.25) + 
-  	labs(color="Adjecent gene pair") + 
+  	labs(color="Adjacent gene pair") + 
   	scale_color_manual(labels = c("same strand", "opposite strands"), values = c("#16a2a6", "#f03a35")) + 
 	scale_y_continuous(limits = c(0,0.25)) + 
 	scale_x_discrete(breaks=data$dist_range,labels=data$dist_range, 
@@ -1548,7 +1556,7 @@ makeScrPlotDistCor <- function(data, plot_title, n_ranges_SSN, n_ranges_OSN) {
 		legend.text=element_text(size=17), 
 		legend.spacing.x = unit(0.25, 'cm'),
 		legend.key.size = unit(0.775, "cm"),
-  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
+  		panel.border = element_rect(colour = "black", fill=NA, size=1.0))
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
 		scale = 1, width = 12.5, height = 8, units = c("in"), 
