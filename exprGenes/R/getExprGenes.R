@@ -489,9 +489,9 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Get replicate correlation
-	replCorr <- function(df, coefficient=c("spearman", "pearson")) {
+	replCorr <- function(df, coefficient=c("spearman", "pearson"), expr_est=c("tpm", "counts")) {
 
-		if (is.element("pearson", coefficient)) {
+		if (is.element("pearson", coefficient) && is.element("tpm", expr_est)) {
 			df[,4:ncol(df)] <- log2(df[,4:ncol(df)] + 1)
 		}
 
@@ -511,11 +511,11 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	
 	# Get replicate correlations based on TPM values
-	repl_corr_df_tpm <- replCorr(express_data_th, coefficient="pearson")
+	repl_corr_df_tpm <- replCorr(express_data_th, coefficient="pearson", expr_est="tpm")
 	colnames(repl_corr_df_tpm) <- rep(repl_names,each=3)
 
 	# Get replicate correlations based on normalized rlog counts
-	repl_corr_df_counts <- replCorr(express_data_th_counts, coefficient="pearson")
+	repl_corr_df_counts <- replCorr(express_data_th_counts, coefficient="pearson", expr_est="counts")
 	colnames(repl_corr_df_counts) <- rep(repl_names,each=3)
 
 
