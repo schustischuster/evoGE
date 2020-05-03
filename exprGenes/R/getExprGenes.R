@@ -530,10 +530,12 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	lnc_intergenic_th_repl_counts <- subset(all_genes_counts, gene_id %in% lnc_intergenic_subset$gene_id)
 	th_genes_counts <- rbind(protein_coding_th_repl_counts, lnc_antisense_th_repl_counts, lnc_intergenic_th_repl_counts)
 
-	# For ERCC-thresholded tpm data
-	protein_coding_th_repl_tpm <- subset(all_genes_tpm, gene_id %in% protein_coding_subset$gene_id)
-	lnc_antisense_th_repl_tpm <- subset(all_genes_tpm, gene_id %in% lnc_antisense_subset$gene_id)
-	lnc_intergenic_th_repl_tpm <- subset(all_genes_tpm, gene_id %in% lnc_intergenic_subset$gene_id)
+	# For ERCC-thresholded tpm data - first log2 transform data
+	all_genes_tpm_log <- all_genes_tpm
+	all_genes_tpm_log[,4:ncol(all_genes_tpm_log)] <- log2(all_genes_tpm_log[,4:ncol(all_genes_tpm_log)] + 1)
+	protein_coding_th_repl_tpm <- subset(all_genes_tpm_log, gene_id %in% protein_coding_subset$gene_id)
+	lnc_antisense_th_repl_tpm <- subset(all_genes_tpm_log, gene_id %in% lnc_antisense_subset$gene_id)
+	lnc_intergenic_th_repl_tpm <- subset(all_genes_tpm_log, gene_id %in% lnc_intergenic_subset$gene_id)
 	th_genes_tpm <- rbind(protein_coding_th_repl_tpm, lnc_antisense_th_repl_tpm, lnc_intergenic_th_repl_tpm)
 
 
