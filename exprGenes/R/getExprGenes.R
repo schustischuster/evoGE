@@ -562,14 +562,16 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 	write.table(repl_corr_df_tpm, file=file.path(out_dir, "output", "expr_genes", fname_repl_corr_tpm), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
-	# Optional write count table
-	# write.table(repl_corr_df_counts, file=file.path(out_dir, "output", "expr_genes", fname_repl_corr_counts), 
-	# 	sep=";", dec=".", row.names=FALSE, col.names=TRUE)
-	write.table(th_genes_tpm, file=file.path(out_dir, "output", "expr_genes", fname_th_genes_repl_tpm), 
+	write.table(repl_corr_df_counts, file=file.path(out_dir, "output", "expr_genes", fname_repl_corr_counts), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
-	# Optional write count table
-	# write.table(th_genes_counts, file=file.path(out_dir, "output", "expr_genes", fname_th_genes_repl_counts), 
-	# 	sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+
+	# Only write thresholded expression tables for 0.05 ERCC threshold to file
+	if (threshold == 0.05) {
+		write.table(th_genes_tpm, file=file.path(out_dir, "output", "expr_genes", fname_th_genes_repl_tpm), 
+			sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+		write.table(th_genes_counts, file=file.path(out_dir, "output", "expr_genes", fname_th_genes_repl_counts), 
+			sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+	}
 
 }
 
