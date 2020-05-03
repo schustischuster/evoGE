@@ -11,12 +11,18 @@ if (!require(dplyr)) install.packages('dplyr')
 library(dplyr)
 if (!require(ggplot2)) install.packages('ggplot2')
 library(ggplot2)
+if (!require(data.table)) install.packages('data.table')
+library(data.table)
 if (!require(mgcv)) install.packages('mgcv')
 library(mgcv)
 if (!require(grid)) install.packages('grid')
 library(grid)
 if (!require(scales)) install.packages('scales')
 library(scales)
+if (!require(factoextra)) install.packages('factoextra')
+library(factoextra)
+if (!require(dendextend)) install.packages('dendextend')
+library(dendextend)
 
 
 # Set file path and input files
@@ -511,8 +517,9 @@ prepareReplStats <- function(ATH,AL,CR,ES,TH,MT,BD) {
 	return(repStats)
 }
 
-all_spec_repl_df <- prepareReplStats(ATH=ATH_repl_corr_0.05, AL=AL_repl_corr_0.05, CR=CR_repl_corr_0.05, 
-	ES=ES_repl_corr_0.05, TH=TH_repl_corr_0.05, MT=MT_repl_corr_0.05, BD=BD_repl_corr_0.05)
+all_spec_repl_df <- prepareReplStats(ATH=ATH_repl_corr_tpm_0.05, AL=AL_repl_corr_tpm_0.05, 
+	CR=CR_repl_corr_tpm_0.05, ES=ES_repl_corr_tpm_0.05, TH=TH_repl_corr_tpm_0.05, 
+	MT=MT_repl_corr_tpm_0.05, BD=BD_repl_corr_tpm_0.05)
 
 
 
@@ -771,6 +778,101 @@ plotExprGenesOS(data=expr_lincRNAs_BD, plot_title="lincRNAs in BD", species = "B
 
 
 
+
+#-------------------------- Do hclust dendrograms for all species ---------------------------
+
+
+# Generate hclust dendrogram using relative expression data
+makeDendrogram <- function(x, coefficient = c("pearson", "spearman"), 
+	biotype = c("protein_coding", "antisense" , "lnc_intergenic")) {
+
+	# Show error message if no scaling is chosen
+	if (missing(coefficient))
+
+		stop(
+			"Please choose one of the following coefficients: 
+			'pearson', 'spearman'",
+			call. = TRUE
+			)
+
+	if (missing(biotype))
+
+		stop(
+			"Please choose one of the following biotypes: 
+			'protein_coding', 'antisense', 'lnc_intergenic'",
+			call. = TRUE
+			)
+
+	# Set filename
+    dfname <- deparse(substitute(x))
+    coefficient_tag <- match.arg(coefficient)
+    fname <- sprintf('%s_dend.png', paste(dfname, biotype, coefficient_tag, sep="_"))
+    species <- substr(dfname, start = 1, stop = 2)
+
+	if (is.element("protein_coding", biotype)) {
+
+		x <- subset(x, biotype=="protein_coding")
+
+	} else if (is.element("antisense", biotype)) {
+
+		x <- x[x$biotype %like% "antisense", ]
+
+	} else if (is.element("lnc_intergenic", biotype)) {
+
+		x <- subset(x, biotype=="lnc_intergenic")
+	}
+
+    df_t <- t(x[, 4:ncol(x)]) # transposes data frame so rows become columns and vice versa
+    df_t[is.na(df_t)] <- 0 # replaces NAs by 0
+
+
+    # Define colors based on sample name
+    label_col <- c(fir="gray10", sec="gray10", thi="gray10", ape="blue", hyp="purple", 
+    	flo="#e40000", roo="gray47", lea="green3", cot="green3", cau="green3", fru="red")
+
+    # Build distance matrix
+    if (is.element(coefficient, c("pearson"))) {
+        df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "pearson")
+
+    } else if (is.element(coefficient, c("spearman"))) {
+      df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "spearman")
+    } 
+
+    df_clust.res <- hclust(df_t_dist.mat, method = "average") # agglomerate clustering using average linkage
+  
+    df_dend <- dendrapply(as.dendrogram(df_clust.res), function(n){
+    
+    if (is.leaf(n)){
+      dend_col <- label_col[substr(attr(n,"label"),1,3)]
+      attr(n, "nodePar") <- list(pch = NA, lab.col = dend_col) # to define label color
+      attr(n, "edgePar") <- list(col = dend_col) # to color branch
+      }
+    return(n)
+    })
+
+    # make branch colors extend to last common node
+    brc_col <- label_col[substr(colnames(x[, 4:ncol(x)]),1,3)]
+    brc_col <- brc_col[order.dendrogram(df_dend)]
+    brc_col <- factor(brc_col, unique(brc_col))
+
+    png(height = 1100, width = 2400, pointsize = 10, 
+    	file = file.path(out_dir, "output", "plots", fname))
+    par(mar = c(14, 3.5, 1, 0.5), lwd = 7, cex = 3, cex.axis = 1)
+    df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
+    if ((species == "AT") && (biotype == "protein_coding") && (coefficient == "pearson")) {
+      df_dend <- flip_leaves(df_dend, c(73), c(22))
+      # df_dend <- flip_leaves(df_dend, c(88), c(121))
+    }
+    plot(df_dend)
+    dev.off()
+}
+
+makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding")
+makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "antisense")
+makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "lnc_intergenic")
+makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding")
+makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "antisense")
+makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "lnc_intergenic")
 
 
 
