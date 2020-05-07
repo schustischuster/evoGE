@@ -879,7 +879,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
 
     png(height = 725, width = 2600, pointsize = 10, 
     	file = file.path(out_dir, "output", "plots", fname))
-    par(mar = c(9.5, 3.5, 0.5, 0), lwd = 6.5, cex = 2.025, cex.axis = 1)
+    par(mar = c(10, 3.5, 0.5, 0), lwd = 6.5, cex = 2.025, cex.axis = 1)
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
 
     if ((species == "AT") && (biotype == "protein_coding") && (coefficient == "pearson")) { 
@@ -894,6 +894,18 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     	df_dend <- rotate(df_dend,c(124:132,1:3,7:9,4:6,64:69,73:84,70:73,13:30,34:39,46:48,40:45,31:33,55:63,49:54,85:123))
     }
 
+    if ((species == "AT") && (biotype == "protein_coding") && (coefficient == "spearman")) { 
+    	df_dend <- rotate(df_dend,c(1:9,13:27,10:12,28:30,34:36,31:33,37:45,49:54,46:48,91:105,112:126,106:111,127:132,55:90))
+    }
+
+    if ((species == "AT") && (biotype == "antisense") && (coefficient == "spearman")) { 
+    	df_dend <- rotate(df_dend,c(4:6,1:3,7:12,16:30,13:15,31:36,46:51,40:45,37:39,127:132,109:111,115:117,112:114,103:108,88:102,118:126,85:87,82:84,55:57,58:81,52:54))
+    }
+
+    if ((species == "AT") && (biotype == "lnc_intergenic") && (coefficient == "spearman")) { 
+    	df_dend <- rotate(df_dend,c(7:9,4:6,1:3,10:24,28:42,25:27,43:51,58:66,52:57,73:78,67:72,79:90,121:132,91:120))
+    }
+
     # Get color vector for reordered dendrogram
     brc_col <- label_col[substr(colnames(x[, 4:ncol(x)]),1,3)]
     brc_col <- brc_col[order.dendrogram(df_dend)]
@@ -906,18 +918,17 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
 }
 
 makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
-	label_col = label_col, d_leaf = 0.0895, cby_shift = -0.01125, cby_scale=0.0725)
+	label_col = label_col, d_leaf = 0.111, cby_shift = -0.01125, cby_scale=0.094)
 makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "antisense", 
-	label_col = label_col, d_leaf = 0.08, cby_shift = -0.01, cby_scale=0.065)
+	label_col = label_col, d_leaf = 0.098, cby_shift = -0.01, cby_scale=0.083)
 makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "lnc_intergenic", 
-	label_col = label_col, d_leaf = 0.0675, cby_shift = -0.0085, cby_scale=0.055)
-
+	label_col = label_col,  d_leaf = 0.084, cby_shift = -0.0085, cby_scale=0.0705)
 makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
-	label_col = label_col, d_leaf = 0.06, cby_shift = -0.0075, cby_scale=0.0485)
+	label_col = label_col, d_leaf = 0.074, cby_shift = -0.0075, cby_scale=0.0625)
 makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "antisense", 
-	label_col = label_col, d_leaf = 0.0935, cby_shift = -0.01175, cby_scale=0.0755)
+	label_col = label_col, d_leaf = 0.115, cby_shift = -0.01175, cby_scale=0.0965)
 makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "lnc_intergenic", 
-	label_col = label_col, d_leaf = 0.0875, cby_shift = -0.01135, cby_scale=0.071)
+	label_col = label_col, d_leaf = 0.1085, cby_shift = -0.01135, cby_scale=0.091)
 
 
 
