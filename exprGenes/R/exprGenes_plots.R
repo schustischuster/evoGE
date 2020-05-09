@@ -803,9 +803,11 @@ names(ATH_th_genes_repl_tpm_0.05)[4:ncol(ATH_th_genes_repl_tpm_0.05)] <- AT_name
 
 
 # Define colors based on sample name
-label_col <- c(roo="gray20", hyp="black", int="aquamarine2", lea="green3", cot="green3", cau="green3", 
-	ape="blue2", flo="#e40000", sep="green4", pet="darkorchid3", sta="orange", pol="orange3", car="cornflowerblue", 
-	fru="pink2", see="deeppink1")
+label_col <- c(roo="#716cb1", hyp="#623d99", int="#9ed3a7", lea="#82c73e", cot="#82c73e", 
+	cau="#82c73e", ape="#ebdb2d", flo="#cc509a", sep="#417339", pet="#efd5cb", 
+	sta="#20a88d", pol="#126A5A", car="#e19d31", fru="#9e3273", see="#e393be")
+
+# for color splitting apex: veg="#fbc819", inf="#e3292f"
 
 
 # Generate hclust dendrogram using relative expression data
@@ -886,23 +888,23 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     	df_dend <- rotate(df_dend,c(1:15,19:33,16:18,34:39,55:75,46:54,40:45,76:78,82:87,79:81,88:132))
     }
 
-    if ((species == "AT") && (biotype == "antisense") && (coefficient == "pearson")) { 
+    else if ((species == "AT") && (biotype == "antisense") && (coefficient == "pearson")) { 
     	df_dend <- rotate(df_dend,c(4:6,1:3,7:33,37:45,34:36,76:87,112:117,109:111,103:108,88:102,130:132,124:129,121:123,118:120,46:75))
     }
 
-    if ((species == "AT") && (biotype == "lnc_intergenic") && (coefficient == "pearson")) { 
+    else if ((species == "AT") && (biotype == "lnc_intergenic") && (coefficient == "pearson")) { 
     	df_dend <- rotate(df_dend,c(124:132,1:3,7:9,4:6,64:69,73:84,70:73,13:30,34:39,46:48,40:45,31:33,55:63,49:54,85:123))
     }
 
-    if ((species == "AT") && (biotype == "protein_coding") && (coefficient == "spearman")) { 
+    else if ((species == "AT") && (biotype == "protein_coding") && (coefficient == "spearman")) { 
     	df_dend <- rotate(df_dend,c(1:9,13:27,10:12,28:30,34:36,31:33,37:45,49:54,46:48,91:105,112:126,106:111,127:132,55:90))
     }
 
-    if ((species == "AT") && (biotype == "antisense") && (coefficient == "spearman")) { 
+    else if ((species == "AT") && (biotype == "antisense") && (coefficient == "spearman")) { 
     	df_dend <- rotate(df_dend,c(4:6,1:3,7:12,16:30,13:15,31:36,46:51,40:45,37:39,127:132,109:111,115:117,112:114,103:108,88:102,118:126,85:87,82:84,55:57,58:81,52:54))
     }
 
-    if ((species == "AT") && (biotype == "lnc_intergenic") && (coefficient == "spearman")) { 
+    else if ((species == "AT") && (biotype == "lnc_intergenic") && (coefficient == "spearman")) { 
     	df_dend <- rotate(df_dend,c(7:9,4:6,1:3,10:24,28:42,25:27,43:51,58:66,52:57,73:78,67:72,79:90,121:132,91:120))
     }
 
