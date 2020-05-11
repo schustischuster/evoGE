@@ -803,11 +803,11 @@ names(ATH_th_genes_repl_tpm_0.05)[4:ncol(ATH_th_genes_repl_tpm_0.05)] <- AT_name
 
 
 # Define colors based on sample name
-label_col <- c(roo="#716cb1", hyp="#623d99", int="#9ed3a7", lea="#72c142", cot="#72c142", 
-	cau="#72c142", ape="#ebdb2d", flo="#cc509a", sep="#417339", pet="#efd5cb", 
-	sta="#20a88d", pol="#126A5A", car="#e19d31", fru="#9e3273", see="#e393bc")
+label_col <- c(roo="#7972ba", hyp="#68459d", int="#91d49c", lea="#50ba45", cot="#50ba45", 
+	cau="#50ba45", ape="#f7e223", flo="#dd5faa", sep="#159650", pet="#efd5cb", 
+	sta="#f23a3a", pol="#ae4136", car="#f2a529", fru="#ab3e7e", see="#ec96aa")
 
-# for color splitting apex: veg="#fbc819", inf="#e3292f"
+# for color splitting apex: veg="#20a77d", inf="#ecd50f"
 
 
 # Generate hclust dendrogram using relative expression data
