@@ -802,12 +802,17 @@ AT_names <- paste0(AT_names,replicate_tag)
 names(ATH_th_genes_repl_tpm_0.05)[4:ncol(ATH_th_genes_repl_tpm_0.05)] <- AT_names
 
 
-# Define colors based on sample name
-label_col <- c(roo="#7f78b4", hyp="#6e509e", int="#98d5a2", lea="#6bbd4f", cot="#6bbd4f", 
-	cau="#6bbd4f", ape="#F6E22C", flo="#da68ab", sep="#159650", pet="#efd5cb", 
-	sta="#f23a3a", pol="#ae4136", car="#f2a529", fru="#ab3e7e", see="#e9a3b3")
+# Define colors based on sample name - new color settings
+label_col <- c(roo="#8050a2", hyp="#7e8bc0", int="#98d5a2", lea="#109450", cot="#109450", 
+	cau="#109450", ape="#f4dc28", flo="#de70af", sep="#70af4e", pet="#efd5cb", 
+	sta="#f43b37", pol="#ae4136", car="#f3aa34", fru="#b04082", see="#eda7ba")
 
-# for color splitting apex: veg="#20a77d", inf="#ecd50f"
+# for color splitting apex: veg="gold1", inf="#83ba00" or similar
+
+# Define colors based on sample name
+# label_col <- c(roo="#7f78b4", hyp="#6e509e", int="#98d5a2", lea="#6bbd4f", cot="#6bbd4f", 
+#	cau="#6bbd4f", ape="#F6E22C", flo="#da68ab", sep="#159650", pet="#efd5cb", 
+#	sta="#f23a3a", pol="#ae4136", car="#f2a529", fru="#ab3e7e", see="#e9a3b3")
 
 
 # Generate hclust dendrogram using relative expression data
