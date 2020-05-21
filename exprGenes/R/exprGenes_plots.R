@@ -803,9 +803,9 @@ names(ATH_th_genes_repl_tpm_0.05)[4:ncol(ATH_th_genes_repl_tpm_0.05)] <- AT_name
 
 
 # Define colors based on sample name - new color settings
-label_col <- c(roo="#6e509e", hyp="#808dc2", int="#0c703d", lea="#109450", cot="#109450", 
-	cau="#109450", ape="#f4dc28", flo="#da68ab", sep="#84cd6a", pet="#ead1c7", 
-	sta="#f43b37", pol="#9f3b31", car="#f2a529", fru="#b04082", see="#e9a3b3")
+label_col <- c(roo="#52428c", hyp="#808dc2", int="#0c703d", lea="#00994f", cot="#00994f", 
+	cau="#00994f", ape="#f4dc28", flo="#de6daf", sep="#84cd6a", pet="#ead1c7", 
+	sta="#f23d29", pol="#a63126", car="#f2a529", fru="#b54185", see="#e9a3b3")
 
 # for color splitting apex: veg="gold1", inf="#83ba00" or similar
 
