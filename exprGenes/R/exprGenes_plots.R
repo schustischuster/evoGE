@@ -802,17 +802,14 @@ AT_names <- paste0(AT_names,replicate_tag)
 names(ATH_th_genes_repl_tpm_0.05)[4:ncol(ATH_th_genes_repl_tpm_0.05)] <- AT_names
 
 
-# Define colors based on sample name - new color settings
+# Define colors based on sample name
 label_col <- c(roo="#52428c", hyp="#808dc2", int="#0c703d", lea="#00994f", cot="#00994f", 
 	cau="#00994f", ape="#f4dc28", flo="#de6daf", sep="#84cd6a", pet="#ead1c7", 
 	sta="#f23d29", pol="#a63126", car="#f2a529", fru="#b54185", see="#e9a3b3")
 
-# for color splitting apex: veg="gold1", inf="#83ba00" or similar
-
-# Define colors based on sample name
-# label_col <- c(roo="#7f78b4", hyp="#6e509e", int="#98d5a2", lea="#6bbd4f", cot="#6bbd4f", 
-#	cau="#6bbd4f", ape="#F6E22C", flo="#da68ab", sep="#159650", pet="#efd5cb", 
-#	sta="#f23a3a", pol="#ae4136", car="#f2a529", fru="#ab3e7e", see="#e9a3b3")
+# color setting for comparative heatamp and PCA: 
+# split apex samles => apex veg="#95b73a", apex inf="#fad819" 
+# hypocotyl slightly lighter hyp="#8591c7" root lighter roo="#5850a3"
 
 
 # Generate hclust dendrogram using relative expression data
