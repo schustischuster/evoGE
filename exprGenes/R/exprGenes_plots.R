@@ -807,6 +807,9 @@ label_col <- c(roo="#52428c", hyp="#808dc2", int="#0c703d", lea="#00994f", cot="
 	cau="#00994f", ape="#f4dc28", flo="#de6daf", sep="#84cd6a", pet="#ead1c7", 
 	sta="#f23d29", pol="#a63126", car="#f2a529", fru="#b54185", see="#e9a3b3")
 
+# apex color for Fig1
+# ape="#f4dc28"
+
 # color setting for comparative heatamp and PCA: 
 # split apex samles => apex veg="#95b73a", apex inf="#fad819" 
 # hypocotyl slightly lighter hyp="#8591c7" root lighter roo="#5850a3"
@@ -936,15 +939,175 @@ makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "
 
 
 
+# -------- non-ATH species -------- 
+
+# Create shorter sample descriptions
+brass_names <- rep(c("root, whole root", "hypocotyl", "leaf 1+2", "vegetative apex", "inflorescence apex", 
+	"flower stg12", "mature pollen", "carpel stg12", "stamen stg12"), each=3)
+TH_names <- rep(c("root, whole root", "hypocotyl", "leaf 1+2", "vegetative apex", "inflorescence apex", 
+	"flower stg12 equiv", "mature pollen", "carpel stg12 equiv", "stamen stg12 equiv"), each=3)
+MT_names <- rep(c("root, whole root", "hypocotyl", "leaf 2", "vegetative apex", "inflorescence apex", 
+	"flower stg8", "mature pollen", "carpel stg8", "stamen stg8"), each=3)
+BD_names <- rep(c("root, whole root", "mesocotyl", "leaf 1", "vegetative apex", "spikelet meristem", "floret stg12 equiv", "mature pollen", 
+	"carpel stg12 equiv", "stamen stg12 equiv"), each=3)
+
+replicate_tag_comp_samples <- rep(c(" 1"," 2"," 3"), times=9)
+
+brass_names <- paste0(brass_names,replicate_tag_comp_samples)
+TH_names <- paste0(TH_names,replicate_tag_comp_samples)
+MT_names <- paste0(MT_names,replicate_tag_comp_samples)
+BD_names <- paste0(BD_names,replicate_tag_comp_samples)
+
+names(AL_th_genes_repl_tpm_0.05)[4:ncol(AL_th_genes_repl_tpm_0.05)] <- brass_names
+names(CR_th_genes_repl_tpm_0.05)[4:ncol(CR_th_genes_repl_tpm_0.05)] <- brass_names
+names(ES_th_genes_repl_tpm_0.05)[4:ncol(ES_th_genes_repl_tpm_0.05)] <- brass_names
+names(TH_th_genes_repl_tpm_0.05)[4:ncol(TH_th_genes_repl_tpm_0.05)] <- TH_names
+names(MT_th_genes_repl_tpm_0.05)[4:ncol(MT_th_genes_repl_tpm_0.05)] <- MT_names
+names(BD_th_genes_repl_tpm_0.05)[4:ncol(BD_th_genes_repl_tpm_0.05)] <- BD_names
 
 
+# Define colors based on sample name
+label_col_c <- c(roo="#52428c", hyp="#808dc2", mes="#808dc2", lea="#00994f", veg="#95b73a", 
+	inf="#eed410", spi="#eed410", flo="#de6daf", sta="#f23d29", mat="#a63126", car="#f2a529")
 
 
+# Generate hclust dendrogram for non-ATH species
+makeDendrogramC <- function(x, coefficient = c("pearson", "spearman"), 
+	biotype = c("protein_coding", "antisense" , "lnc_intergenic"), label_col, d_leaf, 
+	cby_shift, cby_scale) {
 
+	# Show error message if no scaling is chosen
+	if (missing(coefficient))
 
+		stop(
+			"Please choose one of the following coefficients: 
+			'pearson', 'spearman'",
+			call. = TRUE
+			)
 
+	if (missing(biotype))
 
+		stop(
+			"Please choose one of the following biotypes: 
+			'protein_coding', 'antisense', 'lnc_intergenic'",
+			call. = TRUE
+			)
 
+	# Set filename
+    dfname <- deparse(substitute(x))
+    coefficient_tag <- match.arg(coefficient)
+    fname <- sprintf('%s_dend.png', paste(dfname, biotype, coefficient_tag, sep="_"))
+    species <- substr(dfname, start = 1, stop = 2)
+
+	if (is.element("protein_coding", biotype)) {
+
+		x <- subset(x, biotype=="protein_coding")
+
+	} else if (is.element("antisense", biotype)) {
+
+		x <- x[x$biotype %like% "antisense", ]
+
+	} else if (is.element("lnc_intergenic", biotype)) {
+
+		x <- subset(x, biotype=="lnc_intergenic")
+	}
+
+    df_t <- t(x[, 4:ncol(x)]) # transposes data frame so rows become columns and vice versa
+    df_t[is.na(df_t)] <- 0 # replaces NAs by 0
+
+    # Build distance matrix
+    if (is.element(coefficient, c("pearson"))) {
+        df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "pearson")
+
+    } else if (is.element(coefficient, c("spearman"))) {
+      df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "spearman")
+    } 
+
+    df_clust.res <- hclust(df_t_dist.mat, method = "average") # agglomerate clustering using average linkage
+  
+    df_dend <- dendrapply(as.dendrogram(df_clust.res), function(n){
+    
+    if (is.leaf(n)){
+      dend_col <- label_col[substr(attr(n,"label"),1,3)]
+      attr(n, "nodePar") <- list(pch = NA, lab.col = dend_col) # to define label color
+      attr(n, "edgePar") <- list(col = dend_col) # to color branch
+      }
+    return(n)
+    })
+
+    # make branch colors extend to last common node
+    brc_col <- label_col[substr(colnames(x[, 4:ncol(x)]),1,3)]
+    brc_col <- brc_col[order.dendrogram(df_dend)]
+    brc_col <- factor(brc_col, unique(brc_col))
+
+    png(height = 1580, width = 1400, pointsize = 10, 
+    	file = file.path(out_dir, "output", "plots", fname))
+    par(mar = c(10, 2.5, 0.5, 0), lwd = 13, cex = 4.8, cex.axis = 0.8)
+    df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
+
+    if ((species == "AL") && (biotype == "protein_coding")) { 
+    	df_dend <- rotate(df_dend,c(1:3,7:9,4:6,22:27,10:21))
+    }
+    if (((species == "CR")|(species == "ES")) && (biotype == "protein_coding") && (coefficient == "pearson")) { 
+    	df_dend <- rotate(df_dend,c(1:3,7:9,4:6,10:15,25:27,22:24,19:21,16:18))
+    }
+    if (((species == "CR")|(species == "ES")) && (biotype == "protein_coding") && (coefficient == "spearman")) { 
+    	df_dend <- rotate(df_dend,c(1:3,7:9,4:6,10:15,25:27,22:24,16:21))
+    }
+    if ((species == "TH") && (biotype == "protein_coding")) { 
+    	df_dend <- rotate(df_dend,c(1:12,25:27,22:24,13:21))
+    }
+    if ((species == "MT") && (biotype == "protein_coding") && (coefficient == "pearson")) { 
+    	df_dend <- rotate(df_dend,c(1:6,10:12,7:9,25:27,22:24,13:15,19:21,16:18))
+    }
+    if ((species == "MT") && (biotype == "protein_coding") && (coefficient == "spearman")) { 
+    	df_dend <- rotate(df_dend,c(1:12,25:27,22:24,13:15,19:21,16:18))
+    }
+    if ((species == "BD") && (biotype == "protein_coding") && (coefficient == "pearson")) { 
+    	df_dend <- rotate(df_dend,c(4:6,1:3,7:12,22:27,13:15,16:21))
+    }
+    if ((species == "BD") && (biotype == "protein_coding") && (coefficient == "spearman")) { 
+    	df_dend <- rotate(df_dend,c(25:27,22:24,1:6,19:21,16:18,7:15))
+    }
+
+    # Get color vector for reordered dendrogram
+    brc_col <- label_col[substr(colnames(x[, 4:ncol(x)]),1,3)]
+    brc_col <- brc_col[order.dendrogram(df_dend)]
+    brc_col <- factor(brc_col, unique(brc_col))
+
+    plot(df_dend, dLeaf = d_leaf)
+    df_dend = colored_bars(colors = brc_col, dend = df_dend, add=TRUE, sort_by_labels_order=FALSE, 
+    	y_shift = cby_shift, y_scale = cby_scale, rowLabels = "")
+    dev.off()
+}
+
+# Make Pearson cor dendrograms
+makeDendrogramC(AL_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.067, cby_shift = -0.01125, cby_scale=0.05)
+makeDendrogramC(CR_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.0675, cby_shift = -0.01125, cby_scale=0.0501)
+makeDendrogramC(ES_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.0678, cby_shift = -0.01125, cby_scale=0.0507)
+makeDendrogramC(TH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.065, cby_shift = -0.011, cby_scale=0.0484)
+makeDendrogramC(MT_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.0638, cby_shift = -0.0098, cby_scale=0.0485)
+makeDendrogramC(BD_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.052625, cby_shift = -0.008, cby_scale=0.04)
+
+# Make Spearman cor dendrograms
+makeDendrogramC(AL_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.047, cby_shift = -0.008, cby_scale=0.035)
+makeDendrogramC(CR_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.0355, cby_shift = -0.00575, cby_scale=0.0268)
+makeDendrogramC(ES_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.048, cby_shift = -0.0075, cby_scale=0.036)
+makeDendrogramC(TH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.047, cby_shift = -0.0076, cby_scale=0.035)
+makeDendrogramC(MT_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.0415, cby_shift = -0.0068, cby_scale=0.031)
+makeDendrogramC(BD_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
+	label_col = label_col_c, d_leaf = 0.0455, cby_shift = -0.0077, cby_scale=0.034)
 
 
 
