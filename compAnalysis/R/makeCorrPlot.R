@@ -202,8 +202,8 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#600303", "#a80606", "#d20808", "yellow", "lightgoldenrodyellow")
-    pal <- color.palette(steps, c(20, 20, 33, 4), space = "rgb")
+    steps <- c("#a61919", "#c53619", "#faa11b", "#fff415", "lightgoldenrodyellow")
+    pal <- color.palette(steps, c(25, 25, 25, 5), space = "rgb")
 
     # Set filename
     fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, sep="_"))
@@ -213,11 +213,11 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
     if (dataset_id == "DevSeq") {
 
-      exp_col <- c(AT="gray1", AL="cornsilk3", CR="floralwhite", ES="wheat4", TH="#f1da5b", 
-      	MT="#9f0000", BD="darkorchid4")
+      exp_col <- c(AT="gray1", AL="cornsilk3", CR="floralwhite", ES="wheat4", TH="lightgoldenrod2", 
+        MT="#9f0000", BD="#7c3979")
 
-      species_col <- c(roo="#52428c", hyp="#808dc2", mes="#808dc2", lea="#00994f", veg="#95b73a", 
-        inf="#eed410", spi="#eed410", flo="#de6daf", sta="#f23d29", mat="#a63126", car="#f2a529") # last two letters of experiment string
+      species_col <- c(roo="#52428c", hyp="#8591c7", mes="#8591c7", lea="#00994f", veg="#95b73a", 
+        inf="#fad819", spi="#fad819", flo="#de6daf", sta="#f23d29", mat="#a63126", car="#f2a529") # last two letters of experiment string
 
     } else if (dataset_id == "Brawand") {
 
@@ -277,8 +277,9 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     row_labels <- get_leaves_branches_col(row_dend) # get branch colors
     row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
   
+    
     # Make corrplots
-    png(height = 5000, width = 5000, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
+    png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
     par(lwd = 15) # dendrogram line width
     getRowOrder = heatmap.2(x,
          revC = F,
@@ -304,18 +305,30 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
          Colv=TRUE, 
          cexRow = 2,
          cexCol = 2,
-         margins = c(60, 60),
+         margins = c(35, 35),
          key.par = list(cex = 2.75),
-         lwid = c(0.5,4,17.5), # column width
-         lhei = c(0.5,4,17.5), # column height
+         lwid = c(0.325,2.75,17.5), # column width
+         lhei = c(0.325,2.75,17.5), # column height
          offsetRow = 1,
          offsetCol = 1,
          key.xlab = NA,
          key.title = NULL,
          distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
          hclustfun = function(x) hclust(x_dist, method = "average"))
-
     dev.off()
+
+
+    # Save colorbar
+    png(height = 1000, width = 850, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_comp_colorbar.png"))
+    par(cex = 7, mar = c(1,2.75,1,1), cex.lab = 1.25)
+    x=1
+    y=seq(0,1,len = 100)
+    z=matrix(1:100, nrow = 1)
+    ylabel <- seq(0, 1, by = 0.5)
+    image(x,y,z,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
+    axis(2, at = ylabel, las = 1, lwd = 15)
+    dev.off()
+
 }
 
 makeCorrPlot(dataset="DevSeq", expr_estimation="counts", coefficient="pearson")
