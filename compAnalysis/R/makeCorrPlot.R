@@ -202,7 +202,7 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#a61919", "#c53619", "#faa11b", "#fff415", "lightgoldenrodyellow")
+    steps <- c("#c42d2d", "#cf3c1f", "#faa11b", "#fff415", "#fcfce2")
     pal <- color.palette(steps, c(25, 25, 25, 5), space = "rgb")
 
     # Set filename
@@ -280,7 +280,7 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     
     # Make corrplots
     png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
-    par(lwd = 15) # dendrogram line width
+    par(lwd = 17) # dendrogram line width
     getRowOrder = heatmap.2(x,
          revC = F,
          ColSideColors = col_cols, 
@@ -307,8 +307,8 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
          cexCol = 2,
          margins = c(35, 35),
          key.par = list(cex = 2.75),
-         lwid = c(0.325,2.75,17.5), # column width
-         lhei = c(0.325,2.75,17.5), # column height
+         lwid = c(0.3,2.5,17.5), # column width
+         lhei = c(0.3,2.5,17.5), # column height
          offsetRow = 1,
          offsetCol = 1,
          key.xlab = NA,
