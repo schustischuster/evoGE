@@ -127,19 +127,27 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
 
 	# Read expression data
 	if (is.element("DevSeq", dataset)) {
-	x <- read.table(genesExpr, sep=",", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
-	colnames(x)[1] <- "gene_id"
+	   x <- read.table(genesExpr, sep=",", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
+	   colnames(x)[1] <- "gene_id"
+
 	} else if (is.element("Brawand", dataset)) {
-	x <- read.table(genesExpr, sep=",", dec=".", header=TRUE, stringsAsFactors=FALSE)
-	colnames(x)[1] <- "gene_id"
+	   x <- read.table(genesExpr, sep=",", dec=".", header=TRUE, stringsAsFactors=FALSE)
+	   colnames(x)[1] <- "gene_id"
+       Br_spec <- substring(names(x)[-1], 1, 3)
+       Br_org <- substring(names(x)[-1], 5)
+       colnames(x)[-1] <- paste0(Br_org, "_", Br_spec)
 	}
 
 
     # Stop function here to allow specific analysis of a single data set
+    # For DevSeq
     # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names)
+    # For Brawand
+    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient)
     # return(return_list)
     # }
     # return_objects <- makeCorrPlot(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
+    # return_objects <- makeCorrPlot(dataset="Brawand", expr_estimation="counts", coefficient="spearman") # read in Brawand expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
     # remove additional A.lyrata stamens samples from DevSeq data and update column names
@@ -203,7 +211,12 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
 
     # Define colors and number of steps for the plot
     steps <- c("#c42d2d", "#cf3c1f", "#faa11b", "#fff415", "#fcfce2")
-    pal <- color.palette(steps, c(25, 25, 25, 5), space = "rgb")
+
+    if (dataset_id == "DevSeq") {
+        pal <- color.palette(steps, c(25, 25, 25, 5), space = "rgb")
+    } else if (dataset_id == "Brawand") {
+        pal <- color.palette(steps, c(25, 25, 25, 15), space = "rgb")
+    }
 
     # Set filename
     fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, sep="_"))
@@ -213,18 +226,19 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
     if (dataset_id == "DevSeq") {
 
-      exp_col <- c(AT="gray1", AL="cornsilk3", CR="floralwhite", ES="wheat4", TH="lightgoldenrod2", 
-        MT="#9f0000", BD="#7c3979")
+        exp_col <- c(AT="gray1", AL="cornsilk3", CR="floralwhite", ES="wheat4", TH="lightgoldenrod2", 
+            MT="#9f0000", BD="#7c3979") # last two letters of sample name
 
-      species_col <- c(roo="#52428c", hyp="#8591c7", mes="#8591c7", lea="#00994f", veg="#95b73a", 
-        inf="#fad819", spi="#fad819", flo="#de6daf", sta="#f23d29", mat="#a63126", car="#f2a529") # last two letters of experiment string
+        species_col <- c(roo="#52428c", hyp="#8591c7", mes="#8591c7", lea="#00994f", veg="#95b73a", 
+            inf="#fad819", spi="#fad819", flo="#de6daf", sta="#f23d29", mat="#a63126", car="#f2a529")
 
     } else if (dataset_id == "Brawand") {
 
-      species_col <- c(se="palegreen4", fi="palegreen4", ap="orange2", hy="darkorchid4", fl="gold1", ro="orchid4", 
-              le="olivedrab3", co="olivedrab3", ca="olivedrab3")
+        exp_col <- c(sa="gray1", tr="cornsilk3", pa="floralwhite", go="wheat4", py="lightgoldenrod2", 
+            ml="#9f0000", mu="#7c3979", do="green") # last two letters of sample name
 
-      organ_col <- c(GE="navajowhite2", eq="maroon4") # last two letters of experiment string
+        species_col <- c(br_="#42448c", cb_="#6a76ad", ht_="gold1", kd_="olivedrab3", lv_="palegreen4", 
+            ts_="#e17a21")
     }
 
 
@@ -277,58 +291,112 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     row_labels <- get_leaves_branches_col(row_dend) # get branch colors
     row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
   
+
+    if (dataset_id == "DevSeq") {
     
-    # Make corrplots
-    png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
-    par(lwd = 17) # dendrogram line width
-    getRowOrder = heatmap.2(x,
-         revC = F,
-         ColSideColors = col_cols, 
-         RowSideColors = row_cols,
-         distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
-         hclustfun = function(x) hclust(x_dist, method = "average"))
+        # Make corrplots
+        png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
+        par(lwd = 17) # dendrogram line width
+        getRowOrder = heatmap.2(x,
+            revC = F,
+            ColSideColors = col_cols, 
+            RowSideColors = row_cols,
+            distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
+            hclustfun = function(x) hclust(x_dist, method = "average"))
 
-    # Get order of rows and rearrange "row_cols" vector
-    # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
-    ordinary_order = getRowOrder$rowInd
-    reversal = cbind(ordinary_order, rev(ordinary_order))
-    rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        # Get order of rows and rearrange "row_cols" vector
+        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
+        ordinary_order = getRowOrder$rowInd
+        reversal = cbind(ordinary_order, rev(ordinary_order))
+        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
 
-    # Create heatmap with reversed RowSideColors
-    heatmap.2(x, 
-         revC = T,
-         ColSideColors = col_cols, 
-         RowSideColors = rev_col, 
-         density.info = "none",
-         trace = "none",
-         col = pal(800),
-         Colv=TRUE, 
-         cexRow = 2,
-         cexCol = 2,
-         margins = c(35, 35),
-         key.par = list(cex = 2.75),
-         lwid = c(0.3,2.5,17.5), # column width
-         lhei = c(0.3,2.5,17.5), # column height
-         offsetRow = 1,
-         offsetCol = 1,
-         key.xlab = NA,
-         key.title = NULL,
-         distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
-         hclustfun = function(x) hclust(x_dist, method = "average"))
-    dev.off()
+        # Create heatmap with reversed RowSideColors
+        heatmap.2(x, 
+            revC = T,
+            ColSideColors = col_cols, 
+            RowSideColors = rev_col, 
+            density.info = "none",
+            trace = "none",
+            col = pal(800),
+            Colv=TRUE, 
+            cexRow = 2,
+            cexCol = 2,
+            margins = c(35, 35),
+            key.par = list(cex = 2.75),
+            lwid = c(0.3,2.5,17.5), # column width
+            lhei = c(0.3,2.5,17.5), # column height
+            offsetRow = 1,
+            offsetCol = 1,
+            key.xlab = NA,
+            key.title = NULL,
+            distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
+            hclustfun = function(x) hclust(x_dist, method = "average"))
+        dev.off()
 
+        # Save colorbar
+        png(height = 1000, width = 850, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_comp_colorbar.png"))
+        par(cex = 7, mar = c(1,2.75,1,1), cex.lab = 1.25)
+        x=1
+        y=seq(0,1,len = 100)
+        z=matrix(1:100, nrow = 1)
+        ylabel <- seq(0, 1, by = 0.5)
+        image(x,y,z,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
+        axis(2, at = ylabel, las = 1, lwd = 15)
+        dev.off()
 
-    # Save colorbar
-    png(height = 1000, width = 850, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_comp_colorbar.png"))
-    par(cex = 7, mar = c(1,2.75,1,1), cex.lab = 1.25)
-    x=1
-    y=seq(0,1,len = 100)
-    z=matrix(1:100, nrow = 1)
-    ylabel <- seq(0, 1, by = 0.5)
-    image(x,y,z,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
-    axis(2, at = ylabel, las = 1, lwd = 15)
-    dev.off()
+    } else if (dataset_id == "Brawand") {
 
+        # Make corrplots
+        png(height = 4000, width = 4000, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
+        par(lwd = 19) # dendrogram line width
+        getRowOrder = heatmap.2(x,
+            revC = F,
+            ColSideColors = col_cols, 
+            RowSideColors = row_cols,
+            distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
+            hclustfun = function(x) hclust(x_dist, method = "average"))
+
+        # Get order of rows and rearrange "row_cols" vector
+        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
+        ordinary_order = getRowOrder$rowInd
+        reversal = cbind(ordinary_order, rev(ordinary_order))
+        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+
+        # Create heatmap with reversed RowSideColors
+        heatmap.2(x, 
+            revC = T,
+            ColSideColors = col_cols, 
+            RowSideColors = rev_col, 
+            density.info = "none",
+            trace = "none",
+            col = pal(800),
+            Colv=TRUE, 
+            cexRow = 2,
+            cexCol = 2,
+            margins = c(30, 30),
+            key.par = list(cex = 2.75),
+            lwid = c(0.35,2.75,17.5), # column width
+            lhei = c(0.35,2.75,17.5), # column height
+            offsetRow = 1,
+            offsetCol = 1,
+            key.xlab = NA,
+            key.title = NULL,
+            distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
+            hclustfun = function(x) hclust(x_dist, method = "average"))
+        dev.off()
+
+        # Save colorbar
+        png(height = 1000, width = 850, pointsize = 20, file = file.path(out_dir, "output", "plots", "Brawand_comp_colorbar.png"))
+        par(cex = 7, mar = c(1,2.75,1,1), cex.lab = 1.25)
+        x=1
+        y=seq(0,1,len = 100)
+        z=matrix(1:100, nrow = 1)
+        ylabel <- seq(0, 1, by = 0.5)
+        image(x,y,z,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
+        axis(2, at = ylabel, las = 1, lwd = 15)
+        dev.off()
+
+    }
 }
 
 makeCorrPlot(dataset="DevSeq", expr_estimation="counts", coefficient="pearson")
@@ -337,7 +405,8 @@ makeCorrPlot(dataset="DevSeq", expr_estimation="counts", coefficient="spearman")
 makeCorrPlot(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson")
 makeCorrPlot(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman")
 
-
+makeCorrPlot(dataset="Brawand", expr_estimation="counts", coefficient="pearson")
+makeCorrPlot(dataset="Brawand", expr_estimation="counts", coefficient="spearman")
 
 
 
