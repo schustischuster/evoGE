@@ -35,7 +35,7 @@ out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Anal
 
 
 # Read expression data
-makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
+makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
 	coefficient = c("pearson", "spearman")) {
 	
 	# Show error message if no species is chosen
@@ -116,30 +116,29 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     }
 
 
-  # Define simplified Brawand and DevSeq column names
-  if (is.element("DevSeq", dataset)) {
-    col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
-      "flower", "carpel", "stamen"), each=3)
-    replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
-	  col_names <- paste0(col_names,replicate_tag_samples)
-	  col_names <- rep(col_names, times=7)
-    spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
-      "_MT", "_BD"), each=24)
-    col_names <- paste0(col_names, spec_names)
+	# Define simplified Brawand and DevSeq column names
+	if (is.element("DevSeq", dataset)) {
+		col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
+			"flower", "carpel", "stamen"), each=3)
+		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
+		col_names <- paste0(col_names,replicate_tag_samples)
+		col_names <- rep(col_names, times=7)
+		spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), each=24)
+		col_names <- paste0(col_names, spec_names)
 	}
 
 
 	# Read expression data
 	if (is.element("DevSeq", dataset)) {
-	   x <- read.table(genesExpr, sep=",", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
-	   colnames(x)[1] <- "gene_id"
+		x <- read.table(genesExpr, sep=",", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
+		colnames(x)[1] <- "gene_id"
 
 	} else if (is.element("Brawand", dataset)) {
-	   x <- read.table(genesExpr, sep=",", dec=".", header=TRUE, stringsAsFactors=FALSE)
-	   colnames(x)[1] <- "gene_id"
-       Br_spec <- substring(names(x)[-1], 1, 3)
-       Br_org <- substring(names(x)[-1], 5)
-       colnames(x)[-1] <- paste0(Br_org, "_", Br_spec)
+		x <- read.table(genesExpr, sep=",", dec=".", header=TRUE, stringsAsFactors=FALSE)
+		colnames(x)[1] <- "gene_id"
+		Br_spec <- substring(names(x)[-1], 1, 3)
+		Br_org <- substring(names(x)[-1], 5)
+		colnames(x)[-1] <- paste0(Br_org, "_", Br_spec)
 	}
 
 
@@ -174,7 +173,7 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
 
 
 
-#----------------------------- Calculate correlation and make plot -----------------------------
+#--------------------- Calculate correlation and prepare data for corrplot ---------------------
 
 
     # Create "plots" folder in /out_dir/output/plots
@@ -247,22 +246,22 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
 
 
     x[is.na(x)] <- 0 # replaces NAs by 0
-    x_f_cor <- x
 
+    # Log2 transform data if expr_estimation=TPM is chosen
     # Compute correlation and build distance matrix
     if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
-        x <- cor(x[, 2:ncol(x)], method = "pearson")
-        x_dist <- get_dist(x, stand = FALSE, method = "pearson")
+        x_cor <- cor(x[, 2:ncol(x)], method = "pearson")
+        x_dist <- get_dist(x_cor, stand = FALSE, method = "pearson")
         # correlation matrix does not need to be transposed for get_dist method (since ncol=nrow)
 
     } else if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
         x[,2:ncol(x)] <- log2(x[,2:ncol(x)] + 1)
-        x <- cor(x[, 2:ncol(x)], method = "pearson")
-        x_dist <- get_dist(x, stand = FALSE, method = "pearson")
+        x_cor <- cor(x[, 2:ncol(x)], method = "pearson")
+        x_dist <- get_dist(x_cor, stand = FALSE, method = "pearson")
 
     } else if (is.element("spearman", coefficient)) {
-        x <- cor(x[, 2:ncol(x)], method = "spearman")
-        x_dist <- get_dist(x, stand = FALSE, method = "spearman")
+        x_cor <- cor(x[, 2:ncol(x)], method = "spearman")
+        x_dist <- get_dist(x_cor, stand = FALSE, method = "spearman")
     }   
 
 
@@ -295,18 +294,24 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
 
     row_labels <- get_leaves_branches_col(row_dend) # get branch colors
     row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
-  
 
-    if (dataset_id == "DevSeq") {
-    
+
+
+
+#---------------------------- Make corrplot for DevSeq and Brawand -----------------------------
+
+
+
+	if (dataset_id == "DevSeq") {
+
         # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
         par(lwd = 17) # dendrogram line width
-        getRowOrder = heatmap.2(x,
+        getRowOrder = heatmap.2(x_cor,
             revC = F,
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
-            distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
+            distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
             hclustfun = function(x) hclust(x_dist, method = "average"))
 
         # Get order of rows and rearrange "row_cols" vector
@@ -316,7 +321,7 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
         rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
 
         # Create heatmap with reversed RowSideColors
-        heatmap.2(x, 
+        heatmap.2(x_cor, 
             revC = T,
             ColSideColors = col_cols, 
             RowSideColors = rev_col, 
@@ -334,18 +339,18 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
             offsetCol = 1,
             key.xlab = NA,
             key.title = NULL,
-            distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
+            distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
             hclustfun = function(x) hclust(x_dist, method = "average"))
         dev.off()
 
         # Save colorbar
         png(height = 1000, width = 850, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_comp_colorbar.png"))
         par(cex = 7, mar = c(1,2.75,1,1), cex.lab = 1.25)
-        x=1
-        y=seq(0,1,len = 100)
-        z=matrix(1:100, nrow = 1)
+        x_c = 1
+        y_c = seq(0,1,len = 100)
+        z_c = matrix(1:100, nrow = 1)
         ylabel <- seq(0, 1, by = 0.5)
-        image(x,y,z,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
+        image(x_c,y_c,z_c,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
         axis(2, at = ylabel, las = 1, lwd = 15)
         dev.off()
 
@@ -354,11 +359,11 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
         # Make corrplots
         png(height = 4000, width = 4000, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
         par(lwd = 19) # dendrogram line width
-        getRowOrder = heatmap.2(x,
+        getRowOrder = heatmap.2(x_cor,
             revC = F,
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
-            distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
+            distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
             hclustfun = function(x) hclust(x_dist, method = "average"))
 
         # Get order of rows and rearrange "row_cols" vector
@@ -368,7 +373,7 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
         rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
 
         # Create heatmap with reversed RowSideColors
-        heatmap.2(x, 
+        heatmap.2(x_cor, 
             revC = T,
             ColSideColors = col_cols, 
             RowSideColors = rev_col, 
@@ -386,32 +391,28 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
             offsetCol = 1,
             key.xlab = NA,
             key.title = NULL,
-            distfun = function(c) get_dist(x, stand = FALSE, method = "pearson"), 
+            distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
             hclustfun = function(x) hclust(x_dist, method = "average"))
         dev.off()
 
         # Save colorbar
         png(height = 1000, width = 850, pointsize = 20, file = file.path(out_dir, "output", "plots", "Brawand_comp_colorbar.png"))
         par(cex = 7, mar = c(1,2.75,1,1), cex.lab = 1.25)
-        x=1
-        y=seq(0,1,len = 100)
-        z=matrix(1:100, nrow = 1)
+        x_c = 1
+        y_c = seq(0,1,len = 100)
+        z_c = matrix(1:100, nrow = 1)
         ylabel <- seq(0, 1, by = 0.5)
-        image(x,y,z,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
+        image(x_c,y_c,z_c,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
         axis(2, at = ylabel, las = 1, lwd = 15)
         dev.off()
 
     }
+    
 
 
 
-#----------- Merge replicates and retrieve number of expressed genes for each sample -----------
+#-------------------------------------- Merge replicates ---------------------------------------
 
-
-    # Log-transform TPM values for Pearson cor
-    if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
-        x_f_cor[,2:ncol(x_f_cor)] <- log2(x_f_cor[,2:ncol(x_f_cor)] + 1)
-    }
 
     calculateAvgExpr <- function(df) {
 
@@ -431,7 +432,7 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
     }
 
 
-    x_avg <- calculateAvgExpr(x_f_cor)
+    x_avg <- calculateAvgExpr(x)
 
     if (dataset_id == "DevSeq") {
 
@@ -453,15 +454,15 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
 
     if (dataset_id == "DevSeq") {
 
-        x_cor <- cor(x_avg[2:ncol(x_avg)]) 
+        x_cor_avg <- cor(x_avg[2:ncol(x_avg)]) 
 
-        AT <- as.data.frame(unique(as.vector(x_cor[1:8,1:8])))[-1,]
-        AL <- as.data.frame(unique(as.vector(x_cor[9:16,9:16])))[-1,]
-        CR <- as.data.frame(unique(as.vector(x_cor[17:24,17:24])))[-1,]
-        ES <- as.data.frame(unique(as.vector(x_cor[25:32,25:32])))[-1,]
-        TH <- as.data.frame(unique(as.vector(x_cor[33:40,33:40])))[-1,]
-        MT <- as.data.frame(unique(as.vector(x_cor[41:48,41:48])))[-1,]
-        BD <- as.data.frame(unique(as.vector(x_cor[49:56,49:56])))[-1,]
+        AT <- as.data.frame(unique(as.vector(x_cor_avg[1:8,1:8])))[-1,]
+        AL <- as.data.frame(unique(as.vector(x_cor_avg[9:16,9:16])))[-1,]
+        CR <- as.data.frame(unique(as.vector(x_cor_avg[17:24,17:24])))[-1,]
+        ES <- as.data.frame(unique(as.vector(x_cor_avg[25:32,25:32])))[-1,]
+        TH <- as.data.frame(unique(as.vector(x_cor_avg[33:40,33:40])))[-1,]
+        MT <- as.data.frame(unique(as.vector(x_cor_avg[41:48,41:48])))[-1,]
+        BD <- as.data.frame(unique(as.vector(x_cor_avg[49:56,49:56])))[-1,]
 
         df_names <- c("Species" , "Correlation")
 
@@ -474,19 +475,20 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
         colnames(cor_df) <- df_names
 
         # Cor values of meristematic tssues apex_inf apex_veg and carpel
-        AT_m <- as.data.frame(unique(as.vector(x_cor[c(4:5,7),c(4:5,7)])))[-1,]
-        AL_m <- as.data.frame(unique(as.vector(x_cor[c(12:13,15),c(12:13,15)])))[-1,]
-        CR_m <- as.data.frame(unique(as.vector(x_cor[c(20:21,23),c(20:21,23)])))[-1,]
-        ES_m <- as.data.frame(unique(as.vector(x_cor[c(28:29,31),c(28:29,31)])))[-1,]
-        TH_m <- as.data.frame(unique(as.vector(x_cor[c(36:37,39),c(36:37,39)])))[-1,]
-        MT_m <- as.data.frame(unique(as.vector(x_cor[c(44:45,47),c(44:45,47)])))[-1,]
-        BD_m <- as.data.frame(unique(as.vector(x_cor[c(52:53,55),c(52:53,55)])))[-1,]
+        AT_m <- as.data.frame(unique(as.vector(x_cor_avg[c(4:5,7),c(4:5,7)])))[-1,]
+        AL_m <- as.data.frame(unique(as.vector(x_cor_avg[c(12:13,15),c(12:13,15)])))[-1,]
+        CR_m <- as.data.frame(unique(as.vector(x_cor_avg[c(20:21,23),c(20:21,23)])))[-1,]
+        ES_m <- as.data.frame(unique(as.vector(x_cor_avg[c(28:29,31),c(28:29,31)])))[-1,]
+        TH_m <- as.data.frame(unique(as.vector(x_cor_avg[c(36:37,39),c(36:37,39)])))[-1,]
+        MT_m <- as.data.frame(unique(as.vector(x_cor_avg[c(44:45,47),c(44:45,47)])))[-1,]
+        BD_m <- as.data.frame(unique(as.vector(x_cor_avg[c(52:53,55),c(52:53,55)])))[-1,]
 
         species_names_m <- as.data.frame(rep(species_DevSeq, each=3))
         organ_cor_m <- as.data.frame(c(AT_m,AL_m,CR_m,ES_m,TH_m,MT_m,BD_m))
 
         cor_df_m <- cbind(species_names_m, organ_cor_m)
         colnames(cor_df_m) <- df_names
+
 
 
 
@@ -497,6 +499,14 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
 
             coef_lab <- ifelse(coefficient == "pearson", "Pearson's r", "Spearman's rho")
 
+            if(coefficient == "pearson") {
+            	y_min = 0.435
+            	y_max = 1.025
+            } else if(coefficient == "spearman") {
+            	y_min = 0
+            	y_max = 1.025
+            }
+
             cor_colors <- rep(c("#808080","#c99407","#4fa722","#1c9c6f","#2690c1","#795fcf","#c91e1b"), each=28)
 
             p <- ggplot(data, aes(x=factor(Species, levels = Species), y=Correlation, fill=Species)) + 
@@ -505,8 +515,8 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
                 outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
             geom_beeswarm(data = data, priority = c("ascending"), colour=cor_colors, cex=2, size=3) +
             geom_beeswarm(data = data_m, priority = c("descending"), colour="black", cex=2, size=5, shape=18, fill="black") + 
-            scale_y_continuous(limits = c(0.435,1.025), expand = c(0, 0)) + 
-            annotate("rect", xmin=0.35, xmax=7.65, ymin=0.435, ymax=1.025, fill="white", alpha=0, 
+            scale_y_continuous(limits = c(y_min, y_max), expand = c(0, 0)) + 
+            annotate("rect", xmin=0.35, xmax=7.65, ymin=y_min, ymax=y_max, fill="white", alpha=0, 
                 color="gray15", size=1.35)
 
             q <- p + scale_fill_manual(values=c("#f5d88c","#cacaca","#efb0ae","#add89a","#8adcc0","#d0c7f1","#9ed0e7")) + 
@@ -537,17 +547,56 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
         plotOrganDist(data=cor_df, data_m=cor_df_m) 
 
     }
+
+
+
+
+#------------------------------------------ Make PCAs ------------------------------------------
+
+
+    # Perform PCA analysis on log-transformed data (if TPM chosen) or rlog counts
+    comp_pca <- prcomp(x[,2:ncol(x)], center = TRUE, scale = TRUE) 
+
+    # Get eigenvalues, explained variance (%) and cumulative variance (%) 
+	eig_val <- get_eigenvalue(comp_pca)
+	pc1_var <- round(((eig_val$variance.percent[1])/100), digits = 3) # variance explained by PC1
+	pc2_var <- round(((eig_val$variance.percent[2])/100), digits = 3) # variance explained by PC2
+	pc3_var <- round(((eig_val$variance.percent[3])/100), digits = 3) # variance explained by PC1
+
+	# Results for Variables
+	res_var <- get_pca_var(comp_pca)          # Show output results
+	pca_coord <- as.data.frame(res_var$coord) # Get coordinates as dataframe
+	pca_coord_1_2 <- pca_coord[,1:2]
+	colnames(pca_coord_1_2) <- c(paste("PC1 (explained variance=", pc1_var, ")", sep=""), 
+		paste("PC2 (explained variance=", pc2_var, ")", sep=""))
+	pca_coord_2_3 <- pca_coord[,2:3]
+	colnames(pca_coord_2_3) <- c(paste("PC2 (explained variance=", pc2_var, ")", sep=""), 
+		paste("PC3 (explained variance=", pc3_var, ")", sep=""))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
-makeCorrPlot(dataset="DevSeq", expr_estimation="counts", coefficient="pearson")
-makeCorrPlot(dataset="DevSeq", expr_estimation="counts", coefficient="spearman")
 
-makeCorrPlot(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson")
-makeCorrPlot(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="spearman")
 
-makeCorrPlot(dataset="Brawand", expr_estimation="counts", coefficient="pearson")
-makeCorrPlot(dataset="Brawand", expr_estimation="counts", coefficient="spearman")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman")
 
+makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson")
+makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="spearman")
 
 
 
@@ -560,31 +609,31 @@ makeCorrPlot(dataset="Brawand", expr_estimation="counts", coefficient="spearman"
 
 # Make corrplots with corrplot function
 # See SO https://stackoverflow.com/questions/45896231/r-corrplot-with-clustering-default-dissimilarity-measure-for-correlation-matrix
-    png(height = 5000, width = 5000, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_TPM_hclust_avg_corrplot.png"))
-    par(lwd = 15) # dendrogram line width
-    corrplot(x,
-         method = "color", 
-         order = "hclust", 
-         hclust.method = "average", 
-         col=pal(100), 
-         addrect = NULL, 
-         rect.lwd = 0,
-         number.cex = 4.25
-         )
-    dev.off()
+   # png(height = 5000, width = 5000, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_TPM_hclust_avg_corrplot.png"))
+   # par(lwd = 15) # dendrogram line width
+   # corrplot(x,
+        # method = "color", 
+        # order = "hclust", 
+        # hclust.method = "average", 
+        # col=pal(100), 
+        # addrect = NULL, 
+        # rect.lwd = 0,
+        # number.cex = 4.25
+        # )
+  # dev.off()
 
 
 # Make corrplots with base R heatmap function
 # This gives exact same reults as using heatmap.2 function
-    png(height = 5000, width = 5000, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_TPM_pearson_dist_baseR_heatmap.png"))
-    par(lwd = 15) # dendrogram line width
-    heatmap(x,
-         col = pal(200),
-         margins = c(20, 20),
-         key.title = NULL,
-         distfun = function(c) get_dist(x, method = "pearson"), 
-         hclustfun = function(x) hclust(x, method = "average")
-         )
-    dev.off()
+   # png(height = 5000, width = 5000, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_TPM_pearson_dist_baseR_heatmap.png"))
+   # par(lwd = 15) # dendrogram line width
+   # heatmap(x,
+        # col = pal(200),
+        # margins = c(20, 20),
+        # key.title = NULL,
+        # distfun = function(c) get_dist(x, method = "pearson"), 
+        # hclustfun = function(x) hclust(x, method = "average")
+        # )
+   # dev.off()
 
 
