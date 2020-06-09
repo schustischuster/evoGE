@@ -17,10 +17,14 @@ if (!require(corrplot)) install.packages('corrplot')
 library(corrplot)
 if (!require(gplots)) install.packages('gplots')
 library(gplots)
+if (!require(ggplot2)) install.packages('ggplot2')
+library(ggplot2)
 if (!require(factoextra)) install.packages('factoextra')
 library(factoextra)
 if (!require(dendextend)) install.packages('dendextend')
 library(dendextend)
+if (!require(ggbeeswarm)) install.packages('ggbeeswarm')
+library(ggbeeswarm)
 
 
 # Set file path and input files
@@ -243,6 +247,7 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
 
 
     x[is.na(x)] <- 0 # replaces NAs by 0
+    x_f_cor <- x
 
     # Compute correlation and build distance matrix
     if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
@@ -395,6 +400,141 @@ makeCorrPlot <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("
         image(x,y,z,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
         axis(2, at = ylabel, las = 1, lwd = 15)
         dev.off()
+
+    }
+
+
+
+#----------- Merge replicates and retrieve number of expressed genes for each sample -----------
+
+
+    # Log-transform TPM values for Pearson cor
+    if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
+        x_f_cor[,2:ncol(x_f_cor)] <- log2(x_f_cor[,2:ncol(x_f_cor)] + 1)
+    }
+
+    calculateAvgExpr <- function(df) {
+
+    # Split data frame by sample replicates into a list
+    # then get rowMeans for each subset and bind averaged data to gene_id column
+    
+    averaged_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
+            rep(seq_along(df), 
+            each = 3, 
+            length.out=ncol(df)-1)
+            ), rowMeans)
+        )
+
+        averaged_replicates <- cbind(df[1], averaged_replicates)
+        
+        return(averaged_replicates)
+    }
+
+
+    x_avg <- calculateAvgExpr(x_f_cor)
+
+    if (dataset_id == "DevSeq") {
+
+        DevSeq_col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
+            "flower", "carpel", "stamen"), times=7)
+        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
+            "_MT", "_BD"), each=8)
+        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
+
+        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
+
+    }
+
+
+
+
+#---------- Get replicate correlations and generate DevSeq inter-organ distance plot ----------
+
+
+    if (dataset_id == "DevSeq") {
+
+        x_cor <- cor(x_avg[2:ncol(x_avg)]) 
+
+        AT <- as.data.frame(unique(as.vector(x_cor[1:8,1:8])))[-1,]
+        AL <- as.data.frame(unique(as.vector(x_cor[9:16,9:16])))[-1,]
+        CR <- as.data.frame(unique(as.vector(x_cor[17:24,17:24])))[-1,]
+        ES <- as.data.frame(unique(as.vector(x_cor[25:32,25:32])))[-1,]
+        TH <- as.data.frame(unique(as.vector(x_cor[33:40,33:40])))[-1,]
+        MT <- as.data.frame(unique(as.vector(x_cor[41:48,41:48])))[-1,]
+        BD <- as.data.frame(unique(as.vector(x_cor[49:56,49:56])))[-1,]
+
+        df_names <- c("Species" , "Correlation")
+
+        species_DevSeq <- c("A.thaliana", "A.lyrata", "C.rubella", "E.salsugineum", 
+            "T.hassleriana", "M.truncatula", "B.distachyon")
+        species_names <- as.data.frame(rep(species_DevSeq, each=28))
+        organ_cor <- as.data.frame(c(AT,AL,CR,ES,TH,MT,BD))
+
+        cor_df <- cbind(species_names, organ_cor)
+        colnames(cor_df) <- df_names
+
+        # Cor values of meristematic tssues apex_inf apex_veg and carpel
+        AT_m <- as.data.frame(unique(as.vector(x_cor[c(4:5,7),c(4:5,7)])))[-1,]
+        AL_m <- as.data.frame(unique(as.vector(x_cor[c(12:13,15),c(12:13,15)])))[-1,]
+        CR_m <- as.data.frame(unique(as.vector(x_cor[c(20:21,23),c(20:21,23)])))[-1,]
+        ES_m <- as.data.frame(unique(as.vector(x_cor[c(28:29,31),c(28:29,31)])))[-1,]
+        TH_m <- as.data.frame(unique(as.vector(x_cor[c(36:37,39),c(36:37,39)])))[-1,]
+        MT_m <- as.data.frame(unique(as.vector(x_cor[c(44:45,47),c(44:45,47)])))[-1,]
+        BD_m <- as.data.frame(unique(as.vector(x_cor[c(52:53,55),c(52:53,55)])))[-1,]
+
+        species_names_m <- as.data.frame(rep(species_DevSeq, each=3))
+        organ_cor_m <- as.data.frame(c(AT_m,AL_m,CR_m,ES_m,TH_m,MT_m,BD_m))
+
+        cor_df_m <- cbind(species_names_m, organ_cor_m)
+        colnames(cor_df_m) <- df_names
+
+
+
+        # Make inter-organ distance plot
+        plotOrganDist <- function(data, data_m) {
+
+            fname <- paste('DevSeq_inter_organ_dist_', coefficient, '.jpg', sep="")
+
+            coef_lab <- ifelse(coefficient == "pearson", "Pearson's r", "Spearman's rho")
+
+            cor_colors <- rep(c("#808080","#c99407","#4fa722","#1c9c6f","#2690c1","#795fcf","#c91e1b"), each=28)
+
+            p <- ggplot(data, aes(x=factor(Species, levels = Species), y=Correlation, fill=Species)) + 
+            stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
+            geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
+                outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
+            geom_beeswarm(data = data, priority = c("ascending"), colour=cor_colors, cex=2, size=3) +
+            geom_beeswarm(data = data_m, priority = c("descending"), colour="black", cex=2, size=5, shape=18, fill="black") + 
+            scale_y_continuous(limits = c(0.435,1.025), expand = c(0, 0)) + 
+            annotate("rect", xmin=0.35, xmax=7.65, ymin=0.435, ymax=1.025, fill="white", alpha=0, 
+                color="gray15", size=1.35)
+
+            q <- p + scale_fill_manual(values=c("#f5d88c","#cacaca","#efb0ae","#add89a","#8adcc0","#d0c7f1","#9ed0e7")) + 
+            theme_minimal() + 
+            xlab("") + 
+            ylab(coef_lab) + 
+            theme(legend.position = "none", 
+                text=element_text(size=20.5), 
+                panel.grid.major.y = element_line(size = 0.7, color = c("gray85")),
+                panel.grid.minor.y = element_line(size = 0.5, color = c("gray85")), 
+                panel.grid.major.x = element_line(size = 0.5, color = c("gray85")), 
+                axis.ticks.length = unit(.3, "cm"),
+                axis.ticks = element_line(colour = "gray15", size = 0.7), 
+                axis.title.x = element_text(colour = "black", size=21, 
+                    margin = margin(t = 17.5, r = 0, b = 0, l = 0)), 
+                axis.title.y = element_text(colour = "black", size=21, 
+                    margin = margin(t = 0, r = 12.5, b = 0, l = 0.5)), 
+                axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
+                    margin = margin(t = 7.0, r = 0, b = 0, l = 0), hjust=1.0, vjust=0.35),
+                axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),  
+                plot.margin = unit(c(35, 35, 0, 35), "points"))
+
+            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+                scale = 1, width = 9.1, height = 8.0, units = c("in"), 
+                dpi = 600, limitsize = FALSE)
+        }
+
+        plotOrganDist(data=cor_df, data_m=cor_df_m) 
 
     }
 }
