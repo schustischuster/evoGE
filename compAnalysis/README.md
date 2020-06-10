@@ -1,7 +1,7 @@
 
 ## Perform comparative analysis of DevSeq and Brawand data
 
-This code allows to reproduce the intra-species, inter-species and cross-kingdom analyses of the DevSeq and Brawand [(Brawand et al., 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) data sets. 
+This code allows to reproduce the inter-organ intra-species, inter-species and cross-kingdom analyses of the DevSeq and Brawand [(Brawand et al., 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) data sets. 
 
 
 ## Contents
@@ -48,12 +48,21 @@ source("exprGenes/R/makeCompAnalysis.R")
 
 ## Data analysis and vizualization
 
-The following function will merge the DevSeq mapping statistics and create a data table for each the _A.thaliana_ data set, the non-ATH data, and the comparative data set. 
+The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots. 
 
 ```R
-getStats()
+makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))
 
 ```
+To reproduce the plots of this study, run the function with the following parameters:
+
+```R
+makeCompAnylsis(dataset = "Brawand", expr_estimation = "TPM", coefficient = "spearman")
+makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "spearman")
+makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "pearson")
+
+```
+
 
 
 The plotting functions will generate the panels for the following figures:
