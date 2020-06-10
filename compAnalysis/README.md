@@ -10,7 +10,6 @@ This code allows to reproduce the intra-species, inter-species and cross-kingdom
   * [Required Packages](#required-packages)
   * [Data input](#data-input)
 * [Data analysis and vizualization](#data-analysis-and-vizualization)
-  * [Retrieve mapping statistics](#retrieve-mapping-statistics)
 * [Session info](#session-info)
 
 
@@ -47,9 +46,7 @@ source("exprGenes/R/makeCompAnalysis.R")
 
 ```
 
-## Data analysis
-
-### Retrieve mapping statistics
+## Data analysis and vizualization
 
 The following function will merge the DevSeq mapping statistics and create a data table for each the _A.thaliana_ data set, the non-ATH data, and the comparative data set. 
 
@@ -58,15 +55,5 @@ getStats()
 
 ```
 
-## Visualization
-
-Set the file path for the data generated in the previous steps and source the R script:
-
-```R
-in_dir_cd <- "./output/mapping_statistics"
-
-source("exprGenes_plots.R")
-
-```
 
 The plotting functions will generate the panels for the following figures:
