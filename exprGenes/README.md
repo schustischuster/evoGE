@@ -1,7 +1,7 @@
 
 ## Expressed genes and data statistics
 
-This code allows to summarize the DevSeq data statistics and to reproduce the results of the single species transcriptome analyses. 
+This code allows to summarize the DevSeq data statistics and to reproduce the results of the intra-species transcriptome analyses. 
 
 
 ## Contents
