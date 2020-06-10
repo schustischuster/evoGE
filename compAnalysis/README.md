@@ -51,10 +51,10 @@ source("exprGenes/R/makeCompAnalysis.R")
 The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots. 
 
 ```R
-makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))
+makeCompAnylsis(dataset=c("Brawand", "DevSeq"), expr_estimation=c("TPM", "counts"), coefficient=c("pearson", "spearman"))
 
 ```
-To reproduce the plots of this study, run the function with the following parameters:
+To reproduce the results of this study, execute the following function calls:
 
 ```R
 makeCompAnylsis(dataset = "Brawand", expr_estimation = "TPM", coefficient = "spearman")
@@ -63,6 +63,4 @@ makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "pear
 
 ```
 
-
-
-The plotting functions will generate the panels for the following figures:
+This will generate the panels for the following figures:
