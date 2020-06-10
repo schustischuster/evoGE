@@ -1,7 +1,7 @@
 
 ## Perform comparative analysis of DevSeq and Brawand data
 
-This code allows to reproduce the inter-organ intra-species, inter-species and cross-kingdom analyses of the DevSeq and Brawand [(Brawand et al., 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) data sets. 
+This code allows to reproduce the intra-species, inter-species and cross-kingdom analyses of the DevSeq and Brawand [(Brawand et al., 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) data sets. 
 
 
 ## Contents
@@ -37,11 +37,11 @@ library(scales)
 ```
 
 ### Data input
-Download the entire subdirectory containing the [data](https://github.com/schustischuster/evoGEx/tree/master/exprGenes/data) folder and [R scripts](https://github.com/schustischuster/evoGEx/tree/master/exprGenes/R) to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
+Download the entire subdirectory containing the [data](https://github.com/schustischuster/evoGEx/tree/master/compAnalysis/data) folder and [R script](https://github.com/schustischuster/evoGEx/tree/master/compAnalysis/R) to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
 
 ```R
-in_dir <- "./exprGenes/data"
-out_dir <- "./exprGenes"
+in_dir <- "./compAnalysis/data"
+out_dir <- "./compAnalysis"
 
 source("exprGenes/R/getStats.R")
 source("exprGenes/R/getExprGenes.R")
