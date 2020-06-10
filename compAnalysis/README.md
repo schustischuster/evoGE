@@ -20,18 +20,18 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-if (!require(plyr)) install.packages('plyr')
-library(plyr)
 if (!require(dplyr)) install.packages('dplyr')
 library(dplyr)
+if (!require(gplots)) install.packages('gplots')
+library(gplots)
 if (!require(ggplot2)) install.packages('ggplot2')
 library(ggplot2)
-if (!require(mgcv)) install.packages('mgcv')
-library(mgcv)
-if (!require(grid)) install.packages('grid')
-library(grid)
-if (!require(scales)) install.packages('scales')
-library(scales)
+if (!require(factoextra)) install.packages('factoextra')
+library(factoextra)
+if (!require(dendextend)) install.packages('dendextend')
+library(dendextend)
+if (!require(ggbeeswarm)) install.packages('ggbeeswarm')
+library(ggbeeswarm)
 
 ```
 
@@ -42,7 +42,7 @@ Download the entire subdirectory containing the [data](https://github.com/schust
 in_dir <- "./compAnalysis/data"
 out_dir <- "./compAnalysis"
 
-source("exprGenes/R/makeCompAnalysis.R")
+source("compAnalysis/R/makeCompAnalysis.R")
 
 ```
 
