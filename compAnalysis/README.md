@@ -43,8 +43,7 @@ Download the entire subdirectory containing the [data](https://github.com/schust
 in_dir <- "./compAnalysis/data"
 out_dir <- "./compAnalysis"
 
-source("exprGenes/R/getStats.R")
-source("exprGenes/R/getExprGenes.R")
+source("exprGenes/R/makeCompAnalysis.R")
 
 ```
 
