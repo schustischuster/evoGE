@@ -3,38 +3,10 @@
 # Data input: Brawand and DevSeq TPM expression tables of all samples
 
 
-#------------------- Load packages, set directories and read sample tables ---------------------
+
+#-------------------------------------- Read data tables ---------------------------------------
 
 
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(data.table)) install.packages('data.table')
-library(data.table)
-if (!require(plyr)) install.packages('plyr')
-library(plyr)
-if (!require(corrplot)) install.packages('corrplot')
-library(corrplot)
-if (!require(gplots)) install.packages('gplots')
-library(gplots)
-if (!require(ggplot2)) install.packages('ggplot2')
-library(ggplot2)
-if (!require(factoextra)) install.packages('factoextra')
-library(factoextra)
-if (!require(dendextend)) install.packages('dendextend')
-library(dendextend)
-if (!require(ggbeeswarm)) install.packages('ggbeeswarm')
-library(ggbeeswarm)
-
-
-# Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200527_CS_comparative/data"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200527_CS_comparative"
-
-
-
-
-# Read expression data
 makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
 	coefficient = c("pearson", "spearman")) {
 	
@@ -149,8 +121,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient)
     # return(return_list)
     # }
-    # return_objects <- makeCorrPlot(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
-    # return_objects <- makeCorrPlot(dataset="Brawand", expr_estimation="counts", coefficient="spearman") # read in Brawand expression data
+    # return_objects <- makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
+    # return_objects <- makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="spearman") # read in Brawand expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
     # remove additional A.lyrata stamens samples from DevSeq data and update column names
@@ -554,28 +526,238 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 #------------------------------------------ Make PCAs ------------------------------------------
 
 
-    # Perform PCA analysis on log-transformed data (if TPM chosen) or rlog counts
-    comp_pca <- prcomp(x[,2:ncol(x)], center = TRUE, scale = TRUE) 
+    makePCA <- function(df, pca_dim = c("1_2", "2_3")) {
 
-    # Get eigenvalues, explained variance (%) and cumulative variance (%) 
-	eig_val <- get_eigenvalue(comp_pca)
-	pc1_var <- round(((eig_val$variance.percent[1])/100), digits = 3) # variance explained by PC1
-	pc2_var <- round(((eig_val$variance.percent[2])/100), digits = 3) # variance explained by PC2
-	pc3_var <- round(((eig_val$variance.percent[3])/100), digits = 3) # variance explained by PC1
+        # Perform PCA analysis on log-transformed data (if TPM chosen) or rlog counts
+        comp_pca <- prcomp(x[,2:ncol(x)], center = TRUE, scale = TRUE) 
 
-	# Results for Variables
-	res_var <- get_pca_var(comp_pca)          # Show output results
-	pca_coord <- as.data.frame(res_var$coord) # Get coordinates as dataframe
-	pca_coord_1_2 <- pca_coord[,1:2]
-	colnames(pca_coord_1_2) <- c(paste("PC1 (explained variance=", pc1_var, ")", sep=""), 
-		paste("PC2 (explained variance=", pc2_var, ")", sep=""))
-	pca_coord_2_3 <- pca_coord[,2:3]
-	colnames(pca_coord_2_3) <- c(paste("PC2 (explained variance=", pc2_var, ")", sep=""), 
-		paste("PC3 (explained variance=", pc3_var, ")", sep=""))
+        # Get eigenvalues, explained variance (%) and cumulative variance (%) 
+	    eig_val <- get_eigenvalue(comp_pca)
+	    pc1_var <- round(((eig_val$variance.percent[1])/100), digits = 3) # variance explained by PC1
+	    pc2_var <- round(((eig_val$variance.percent[2])/100), digits = 3) # variance explained by PC2
+	    pc3_var <- round(((eig_val$variance.percent[3])/100), digits = 3) # variance explained by PC1
+
+	    # Results for Variables
+	    res_var <- get_pca_var(comp_pca)          # Show output results
+	    pca_coord <- as.data.frame(res_var$coord) # Get coordinates as dataframe
+
+	    if (is.element("1_2", pca_dim)) {
+	        pca_coord <- pca_coord[,1:2]
+
+	    } else if (is.element("2_3", pca_dim)) {
+	        pca_coord <- pca_coord[,2:3]
+	    }
+
+        pca_sample_names <- rownames(pca_coord)
+
+        # Get last two characters of each string from pca_sample_names
+        substrRight <- function(x, n){ 
+    	    substr(x, nchar(x)-n+1, nchar(x))
+        }
+
+        pca_species <- substrRight(pca_sample_names, 2)
+
+        # Get organ names from pca_sample_names
+        pca_organs <- gsub('.{5}$', '', pca_sample_names)
+
+        pca_df <- cbind(pca_coord, pca_species, pca_organs)
+        colnames(pca_df) <- c("PC1", "PC2", "Species", "Tissue")
+
+        return_list <- list("pca_df"=pca_df, "pc1_var"=pc1_var, "pc2_var"=pc2_var, "pc3_var"=pc3_var, "eig_val"=eig_val)
+        return(return_list)
+    }
+
+
+    # Make PCA for DevSeq w/ stamen data
+    pca_return_objects <- makePCA(df = x, pca_dim = "1_2")
+    list2env(pca_return_objects, envir = .GlobalEnv)
+    DevSeq_pca_1_2_w_stamen <- pca_df
+    DevSeq_pc1_var_w_stamen <- pc1_var
+    DevSeq_pc2_var_w_stamen <- pc2_var
+    DevSeq_pc3_var_w_stamen <- pc3_var
 
 
 
 
+
+
+	StatBag <- ggproto("Statbag", Stat,
+                   compute_group = function(data, scales, prop = 0.5) {
+
+                     #################################
+                     #################################
+                     # originally from aplpack package, plotting functions removed
+                     plothulls_ <- function(x, y, fraction, n.hull = 1,
+                                            col.hull, lty.hull, lwd.hull, density=0, ...){
+                       # function for data peeling:
+                       # x,y : data
+                       # fraction.in.inner.hull : max percentage of points within the hull to be drawn
+                       # n.hull : number of hulls to be plotted (if there is no fractiion argument)
+                       # col.hull, lty.hull, lwd.hull : style of hull line
+                       # plotting bits have been removed, BM 160321
+                       # pw 130524
+                       if(ncol(x) == 2){ y <- x[,2]; x <- x[,1] }
+                       n <- length(x)
+                       if(!missing(fraction)) { # find special hull
+                         n.hull <- 1
+                         if(missing(col.hull)) col.hull <- 1
+                         if(missing(lty.hull)) lty.hull <- 1
+                         if(missing(lwd.hull)) lwd.hull <- 1
+                         x.old <- x; y.old <- y
+                         idx <- chull(x,y); x.hull <- x[idx]; y.hull <- y[idx]
+                         for( i in 1:(length(x)/3)){
+                           x <- x[-idx]; y <- y[-idx]
+                           if( (length(x)/n) < fraction ){
+                             return(cbind(x.hull,y.hull))
+                           }
+                           idx <- chull(x,y); x.hull <- x[idx]; y.hull <- y[idx];
+                         }
+                       }
+                       if(missing(col.hull)) col.hull <- 1:n.hull
+                       if(length(col.hull)) col.hull <- rep(col.hull,n.hull)
+                       if(missing(lty.hull)) lty.hull <- 1:n.hull
+                       if(length(lty.hull)) lty.hull <- rep(lty.hull,n.hull)
+                       if(missing(lwd.hull)) lwd.hull <- 1
+                       if(length(lwd.hull)) lwd.hull <- rep(lwd.hull,n.hull)
+                       result <- NULL
+                       for( i in 1:n.hull){
+                         idx <- chull(x,y); x.hull <- x[idx]; y.hull <- y[idx]
+                         result <- c(result, list( cbind(x.hull,y.hull) ))
+                         x <- x[-idx]; y <- y[-idx]
+                         if(0 == length(x)) return(result)
+                       }
+                       result
+                     } # end of definition of plothulls
+                     #################################
+
+
+                     # prepare data to go into function below
+                     the_matrix <- matrix(data = c(data$x, data$y), ncol = 2)
+
+                     # get data out of function as df with names
+                     setNames(data.frame(plothulls_(the_matrix, fraction = prop)), nm = c("x", "y"))
+                     # how can we get the hull and loop vertices passed on also?
+                   },
+
+                   required_aes = c("x", "y")
+    )
+
+#' @inheritParams ggplot2::stat_identity
+#' @param prop Proportion of all the points to be included in the bag (default is 0.5)
+
+    stat_bag <- function(mapping = NULL, data = NULL, geom = "polygon",
+                     position = "identity", na.rm = FALSE, show.legend = NA, 
+                     inherit.aes = TRUE, prop = 0.5, alpha = 0.3, ...) {
+        layer(
+            stat = StatBag, data = data, mapping = mapping, geom = geom, 
+            position = position, show.legend = show.legend, inherit.aes = inherit.aes,
+            params = list(na.rm = na.rm, prop = prop, alpha = alpha, ...)
+        )
+    }
+
+
+    geom_bag <- function(mapping = NULL, data = NULL,
+                     stat = "identity", position = "identity",
+                     prop = 0.5, 
+                     alpha = 0.3,
+                     ...,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+        layer(
+        	data = data,
+        	mapping = mapping,
+        	stat = StatBag,
+        	geom = GeomBag,
+        	position = position,
+        	show.legend = show.legend,
+        	inherit.aes = inherit.aes,
+        	params = list(
+        	 	na.rm = na.rm,
+        	 	alpha = alpha,
+        	 	prop = prop,
+        	 	...
+        	 	)
+        	)
+    }
+
+#' @rdname ggplot2-ggproto
+#' @format NULL
+#' @usage NULL
+#' @export
+
+    GeomBag <- ggproto("GeomBag", Geom,
+    	        draw_group = function(data, panel_scales, coord) {
+    	        	n <- nrow(data)
+                    if (n == 1) return(zeroGrob())
+
+                    munched <- coord_munch(coord, data, panel_scales)
+                    # Sort by group to make sure that colors, fill, etc. come in same order
+                    munched <- munched[order(munched$group), ]
+
+                    # For gpar(), there is one entry per polygon (not one entry per point).
+                    # We'll pull the first value from each group, and assume all these values
+                    # are the same within each group.
+                    first_idx <- !duplicated(munched$group)
+                    first_rows <- munched[first_idx, ]
+
+                    ggplot2:::ggname("geom_bag",
+                    	grid:::polygonGrob(munched$x, munched$y, default.units = "native",
+                    		id = munched$group,
+                            gp = grid::gpar(
+                                col = first_rows$colour,
+                                fill = alpha(first_rows$fill, first_rows$alpha),
+                                lwd = first_rows$size * .pt,
+                                lty = first_rows$linetype
+                            )
+                        )
+                    )
+        },
+
+        default_aes = aes(colour = "NA", fill = "grey20", size = 0.5, linetype = 1,
+    	                  alpha = NA, prop = 0.5),
+                          handle_na = function(data, params) {data},
+                          required_aes = c("x", "y"),
+                          draw_key = draw_key_polygon
+    )
+
+
+
+    # Make inter-organ distance plot
+    plotPCA <- function(data, organ_set=c("w_stamen","wo_stamen")) {
+
+        fname <- sprintf('%s.png', paste(dataset_id, "pca", expr_estimation, organ_set, sep="_"))
+
+        plot <- ggplot(data, aes(x = PC1, y = PC2, colour=Tissue, fill = Tissue)) + 
+        stat_bag(prop = 0.95, size=0.8) + 
+        geom_point(aes(shape=Species, color=Tissue, size=Species,stroke=1.14)) + 
+        scale_shape_manual(values=c(1.6, 1.7, 0, 1.8, 1.5, 0.2, 0.6))  + 
+        theme(text = element_text(size=16)) + 
+        guides(colour = guide_legend(override.aes = list(size=4))) + 
+        guides(shape = guide_legend(override.aes = list(size = 4))) + 
+        scale_size_manual(values=c(3.34,3.14,2.6,4.2,3.14,2.6,2.6)) + 
+        scale_color_manual(values=c('#feba1e','#d78e17', '#c4719a', '#00be67','#1676ae', '#19a078','#20a5d6', '#84ba00')) + 
+        scale_fill_manual(values=c('#feba1e','#d78e17', '#c4719a', '#00be67','#1676ae', '#19a078','#20a5d6', '#84ba00')) + 
+        labs(x = "PC1 (16.1%)", y = "PC2 (13.6%)") + 
+        theme(axis.line = element_line(colour = "black"), 
+        	panel.grid.major = element_blank(), 
+        	panel.grid.minor = element_blank(), 
+        	panel.border = element_rect(colour = "black", fill=NA, size=1), 
+        	panel.background = element_blank(), 
+        	axis.title.y = element_text(margin = margin(t = 0, r = 8, b = 0, l = 4)), 
+        	axis.title.x = element_text(margin = margin(t = 8, r = 4, b = 4, l = 0)), 
+        	axis.text.x = element_text(size=10, angle=0, margin = margin(t = 4)), 
+        	axis.text.y = element_text(size=10, angle=0, margin = margin(r = 4)), 
+        	axis.ticks.length=unit(1.8, "cm"), 
+        	axis.ticks = element_line(colour = "black", size = 0.6), 
+        	plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
+            width = 10.5, height = 8, dpi = 300, units = c("in"), 
+            limitsize = FALSE)
+    }
+
+    plotPCA(data=DevSeq_pca_1_2_w_stamen, organ_set="w_stamen") 
 
 
 
@@ -606,6 +788,8 @@ makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="spearm
 
 #---------- Check clustering results of correlation plot with other implementations #-----------
 
+# if (!require(corrplot)) install.packages('corrplot')
+# library(corrplot)
 
 # Make corrplots with corrplot function
 # See SO https://stackoverflow.com/questions/45896231/r-corrplot-with-clustering-default-dissimilarity-measure-for-correlation-matrix
