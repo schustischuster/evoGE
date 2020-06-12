@@ -51,8 +51,8 @@ source("compAnalysis/R/makeCompAnalysis.R")
 The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots. 
 
 ```R
-makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
-    coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"))
+makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"),
+    devseq_spec = c("Brassicaceae", "all"))
 
 ```
 To reproduce the results of this study, execute the following function calls:
