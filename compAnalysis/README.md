@@ -59,10 +59,10 @@ To reproduce the results of this study, execute the following function calls:
 
 ```R
 makeCompAnylsis(dataset = "Brawand", expr_estimation = "TPM", coefficient = "spearman")
-makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "spearman", devseq_spec = "all")
 makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "spearman", devseq_spec = "Brassicaceae")
-makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "pearson", devseq_spec = "all")
+makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "spearman", devseq_spec = "all")
 makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "pearson", devseq_spec = "Brassicaceae")
+makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "pearson", devseq_spec = "all")
 
 ```
 
