@@ -8,7 +8,7 @@
 
 
 makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
-	coefficient = c("pearson", "spearman")) {
+	coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all")) {
 	
 	# Show error message if no species or unknown data set is chosen
     if ((missing(dataset)) | (!is.element(dataset, c("Brawand", "DevSeq"))))
@@ -37,6 +37,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 	   call. = TRUE
        )
 
+    # Show error message if no devseq_spec or unknown devseq_spec is chosen
+    if ((is.element("DevSeq", dataset)) && ((missing(devseq_spec)) | (!is.element(devseq_spec, c("Brassicaceae", "all")))))
+   
+       stop(
+       "Please choose one of the available DevSeq species sets: 
+	   'Brassicaceae', 'all'",
+	   call. = TRUE
+       )
+
 
     # Show startup message
     message("Reading data...")
@@ -51,24 +60,45 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         genesExpr = file.path(in_dir, "Expression_data", "rlog_Brawand_norm.csv")
         dataset_id <- "Brawand"
 
-    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation))) {
+    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
+    	&& (is.element("Brassicaceae", devseq_spec))) {
+		genesExpr = file.path(in_dir, "Expression_data", "protein_gene_tpm_DESeq2_norm_Brassicaceae.csv")
+		dataset_id <- "DevSeq"
+
+	} else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
+    	&& (is.element("all", devseq_spec))) {
 		genesExpr = file.path(in_dir, "Expression_data", "protein_gene_tpm_DESeq2_norm.csv")
 		dataset_id <- "DevSeq"
 
-    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation))) {
+    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
+    	&& (is.element("Brassicaceae", devseq_spec))) {
+		genesExpr = file.path(in_dir, "Expression_data", "rlog_counts_DESeq_norm_Brassicaceae.csv")
+		dataset_id <- "DevSeq"
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
+    	&& (is.element("all", devseq_spec))) {
 		genesExpr = file.path(in_dir, "Expression_data", "rlog_counts_DESeq_norm.csv")
 		dataset_id <- "DevSeq"
     }
 
 
 	# Define simplified Brawand and DevSeq column names
-	if (is.element("DevSeq", dataset)) {
+	if (is.element("DevSeq", dataset) && (is.element("all", devseq_spec))) {
 		col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
 			"flower", "carpel", "stamen"), each=3)
 		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
 		col_names <- paste0(col_names,replicate_tag_samples)
 		col_names <- rep(col_names, times=7)
 		spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), each=24)
+		col_names <- paste0(col_names, spec_names)
+
+	} else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec))) {
+		col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
+			"flower", "carpel", "stamen"), each=3)
+		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
+		col_names <- paste0(col_names,replicate_tag_samples)
+		col_names <- rep(col_names, times=4)
+		spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=24)
 		col_names <- paste0(col_names, spec_names)
 	}
 
@@ -89,12 +119,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     # Stop function here to allow specific analysis of a single data set
     # For DevSeq
-    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names)
+    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names, "devseq_spec" = devseq_spec)
     # For Brawand
     # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient)
     # return(return_list)
     # }
-    # return_objects <- makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
+    # return_objects <- makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all") # read in DevSeq expression data
     # return_objects <- makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="spearman") # read in Brawand expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
@@ -250,7 +280,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
 
-	if (dataset_id == "DevSeq") {
+	if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) {
 
         # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
@@ -382,7 +412,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     x_avg <- calculateAvgExpr(x)
 
-    if (dataset_id == "DevSeq") {
+    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) {
 
         DevSeq_col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
             "flower", "carpel", "stamen"), times=7)
@@ -400,7 +430,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 #---------- Get replicate correlations and generate DevSeq inter-organ distance plot ----------
 
 
-    if (dataset_id == "DevSeq") {
+    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) {
 
         x_cor_avg <- cor(x_avg[2:ncol(x_avg)]) 
 
@@ -701,23 +731,23 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
     # Set order for DevSeq organs
-    DevSeq_pca_1_2_w_stamen$Tissue <- factor(DevSeq_pca_1_2_w_stamen$Tissue, c("root", "hypocotyl", 
-    "leaf", "veg_apex", "inf_apex", "flower", "carpel", "stamen"))
-    DevSeq_pca_2_3_w_stamen$Tissue <- factor(DevSeq_pca_2_3_w_stamen$Tissue, c("root", "hypocotyl", 
-    "leaf", "veg_apex", "inf_apex", "flower", "carpel", "stamen"))
+        DevSeq_pca_1_2_w_stamen$Tissue <- factor(DevSeq_pca_1_2_w_stamen$Tissue, c("root", "hypocotyl", 
+        	"leaf", "veg_apex", "inf_apex", "carpel", "stamen", "flower"))
+        DevSeq_pca_2_3_w_stamen$Tissue <- factor(DevSeq_pca_2_3_w_stamen$Tissue, c("root", "hypocotyl", 
+        	"leaf", "veg_apex", "inf_apex", "carpel", "stamen", "flower"))
 
 
     # Make PCA plots for main figure
-    plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2","pc2_3")) {
+    plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2","pc2_3"), spec=c("Brassicaceae", "all")) {
 
         fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", expr_estimation, sep="_"))
         
         if(set == "pc1_2") {
-            x_coord <- "PC1 ("
-            y_coord <- "PC2 ("
+        	x_coord <- "PC1 ("
+        	y_coord <- "PC2 ("
         } else if(set == "pc2_3") {
-            x_coord <- "PC2 ("
-            y_coord <- "PC3 ("
+        	x_coord <- "PC2 ("
+        	y_coord <- "PC3 ("
         }
 
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
@@ -729,46 +759,53 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         scale_shape_manual(values=c(16, 17, 0, 18, 15, 2, 6))  + 
         theme(text = element_text(size=22.5)) + 
         guides(colour = guide_legend(override.aes = list(size=4))) + 
-        guides(shape = guide_legend(override.aes = list(size = 4))) + 
+        guides(shape = guide_legend(override.aes = list(size = c(5.0, 4.5, 3.5, 6.75, 5.0, 3.15, 3.15)))) + 
         scale_size_manual(values=c(5.0, 4.5, 3.5, 6.75, 5.0, 3.15, 3.15)) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
         scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
         scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
         labs(x = x_lab, y = y_lab) + 
         theme(axis.line = element_line(colour = "black"), 
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank(), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1), 
-            panel.background = element_blank(), 
-            axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 4)), 
-            axis.title.x = element_text(margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
-            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
-            axis.ticks.length=unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.7), 
-            plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
+        	panel.grid.major = element_blank(), 
+        	panel.grid.minor = element_blank(), 
+        	panel.border = element_rect(colour = "black", fill=NA, size=1), 
+        	panel.background = element_blank(), 
+        	axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 4)), 
+        	axis.title.x = element_text(margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
+        	axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
+        	axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
+        	axis.ticks.length=unit(0.35, "cm"), 
+        	axis.ticks = element_line(colour = "black", size = 0.7), 
+        	plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
             width = 10.25, height = 8, dpi = 300, units = c("in"), 
             limitsize = FALSE)
     }
 
-    plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc1_var_w_stamen, pc_var2=DevSeq_pc2_var_w_stamen, set="pc1_2") 
-    plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, set="pc2_3") 
+
+    if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec))) {
+    	plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc1_var_w_stamen, pc_var2=DevSeq_pc2_var_w_stamen, 
+    		set="pc1_2", spec="Brassicaeae") 
+
+    } else if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) { 
+    	plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc1_var_w_stamen, pc_var2=DevSeq_pc2_var_w_stamen, 
+    		set="pc1_2", spec="all") 
+    }
 
 
 
-    # Make PCA plots for supplement (different font/line/shape sizes)
-    plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2","pc2_3")) {
+	# Make PCA plots for supplement (different font/line/shape sizes)
+    plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2","pc2_3"), spec=c("Brassicaceae", "all")) {
 
         fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", expr_estimation, sep="_"))
         
         if(set == "pc1_2") {
-            x_coord <- "PC1 ("
-            y_coord <- "PC2 ("
+        	x_coord <- "PC1 ("
+        	y_coord <- "PC2 ("
         } else if(set == "pc2_3") {
-            x_coord <- "PC2 ("
-            y_coord <- "PC3 ("
+        	x_coord <- "PC2 ("
+        	y_coord <- "PC3 ("
         }
 
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
@@ -780,32 +817,39 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         scale_shape_manual(values=c(16, 17, 0, 18, 15, 2, 6))  + 
         theme(text = element_text(size=22.5)) + 
         guides(colour = guide_legend(override.aes = list(size=4))) + 
-        guides(shape = guide_legend(override.aes = list(size = 4))) + 
+        guides(shape = guide_legend(override.aes = list(size = c(5.0, 4.5, 3.5, 6.75, 5.0, 3.15, 3.15)))) + 
         scale_size_manual(values=c(5.0, 4.5, 3.5, 6.75, 5.0, 3.15, 3.15)) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
-        scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
-        scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
+        scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#f2a529', '#f23d29', '#de6daf')) + 
+        scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#f2a529', '#f23d29', '#de6daf')) + 
         labs(x = x_lab, y = y_lab) + 
         theme(axis.line = element_line(colour = "black"), 
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank(), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1), 
-            panel.background = element_blank(), 
-            axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 4)), 
-            axis.title.x = element_text(margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
-            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
-            axis.ticks.length=unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.7), 
-            plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
+        	panel.grid.major = element_blank(), 
+        	panel.grid.minor = element_blank(), 
+        	panel.border = element_rect(colour = "black", fill=NA, size=1), 
+        	panel.background = element_blank(), 
+        	axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 4)), 
+        	axis.title.x = element_text(margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
+        	axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
+        	axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
+        	axis.ticks.length=unit(0.35, "cm"), 
+        	axis.ticks = element_line(colour = "black", size = 0.7), 
+        	plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
             width = 10.25, height = 8, dpi = 300, units = c("in"), 
             limitsize = FALSE)
     }
 
-    plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc1_var_w_stamen, pc_var2=DevSeq_pc2_var_w_stamen, set="pc1_2") 
-    plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, set="pc2_3") 
+
+    if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec))) {
+    	plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
+    		set="pc2_3", spec="Brassicaeae") 
+
+    } else if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) { 
+    	plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
+    		set="pc2_3", spec="all") 
+    }
 
 
 
@@ -819,11 +863,17 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 }
 
 
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="spearman")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaeae")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="spearman", spec="Brassicaeae")
 
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="spearman", spec="all")
+
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman", spec="Brassicaeae")
+
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman", spec="all")
 
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson")
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="spearman")
