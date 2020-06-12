@@ -10,8 +10,8 @@
 makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
 	coefficient = c("pearson", "spearman")) {
 	
-	# Show error message if no species is chosen
-    if (missing(dataset))
+	# Show error message if no species or unknown data set is chosen
+    if ((missing(dataset)) | (!is.element(dataset, c("Brawand", "DevSeq"))))
    
        stop(
        "Please choose one of the available data sets: 
@@ -19,17 +19,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 	   call. = TRUE
        )
 
-    # Show error message if unknown data set is chosen 
-    if (!is.element(dataset, c("Brawand", "DevSeq")))
-   
-       stop(
-       "Please choose one of the available data sets: 
-	   'Brawand', 'DevSeq'",
-	   call. = TRUE
-       )
-
-   	# Show error message if no species is chosen
-    if (missing(expr_estimation))
+   	# Show error message if expression estimation or unknown expression estimation is chosen
+    if ((missing(expr_estimation)) | (!is.element(expr_estimation, c("TPM", "counts"))))
    
        stop(
        "Please choose one of the available expression estimations: 
@@ -37,26 +28,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 	   call. = TRUE
        )
 
-    # Show error message if unknown expression estimation is chosen
-    if (!is.element(expr_estimation, c("TPM", "counts")))
-   
-       stop(
-       "Please choose one of the available expression estimations: 
-	   'TPM', 'counts'",
-	   call. = TRUE
-       )
-
-    # Show error message if no correlation coefficient is chosen
-    if (missing(coefficient))
-   
-       stop(
-       "Please choose one of the available correlation coefficients: 
-	   'pearson', 'spearman'",
-	   call. = TRUE
-       )
-
-    # Show error message if unknown correlation coefficient is chosen
-    if (!is.element(coefficient, c("pearson", "spearman")))
+    # Show error message if no correlation or unknown correlation coefficient is chosen
+    if ((missing(coefficient)) | (!is.element(coefficient, c("pearson", "spearman"))))
    
        stop(
        "Please choose one of the available correlation coefficients: 
@@ -151,6 +124,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # Create "plots" folder in /out_dir/output/plots
     if (!dir.exists(file.path(out_dir, "output", "plots"))) 
         dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
+
+    # Show message
+    message("Starting analysis and generate plots...")
 
 
     # This is a wrapper function for the colorRampPalette. It allows to define intermediate colors
@@ -533,9 +509,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         # Get eigenvalues, explained variance (%) and cumulative variance (%) 
 	    eig_val <- get_eigenvalue(comp_pca)
-	    pc1_var <- round(((eig_val$variance.percent[1])/100), digits = 3) # variance explained by PC1
-	    pc2_var <- round(((eig_val$variance.percent[2])/100), digits = 3) # variance explained by PC2
-	    pc3_var <- round(((eig_val$variance.percent[3])/100), digits = 3) # variance explained by PC1
+	    pc1_var <- round((eig_val$variance.percent[1]), digits = 1) # variance explained by PC1
+	    pc2_var <- round((eig_val$variance.percent[2]), digits = 1) # variance explained by PC2
+	    pc3_var <- round((eig_val$variance.percent[3]), digits = 1) # variance explained by PC3
 
 	    # Results for Variables
 	    res_var <- get_pca_var(comp_pca)          # Show output results
@@ -568,16 +544,17 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     }
 
 
-    # Make PCA for DevSeq w/ stamen data
+    # Make PCA for DevSeq w/ stamen data PC1/2
     pca_return_objects <- makePCA(df = x, pca_dim = "1_2")
     list2env(pca_return_objects, envir = .GlobalEnv)
     DevSeq_pca_1_2_w_stamen <- pca_df
     DevSeq_pc1_var_w_stamen <- pc1_var
     DevSeq_pc2_var_w_stamen <- pc2_var
     DevSeq_pc3_var_w_stamen <- pc3_var
-
-
-
+    # Make PCA for DevSeq w/ stamen data PC2/3
+    pca_return_objects <- makePCA(df = x, pca_dim = "2_3")
+    list2env(pca_return_objects, envir = .GlobalEnv)
+    DevSeq_pca_2_3_w_stamen <- pca_df
 
 
 
@@ -723,41 +700,112 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
 
-    # Make inter-organ distance plot
-    plotPCA <- function(data, organ_set=c("w_stamen","wo_stamen")) {
+    # Set order for DevSeq organs
+    DevSeq_pca_1_2_w_stamen$Tissue <- factor(DevSeq_pca_1_2_w_stamen$Tissue, c("root", "hypocotyl", 
+    "leaf", "veg_apex", "inf_apex", "flower", "carpel", "stamen"))
+    DevSeq_pca_2_3_w_stamen$Tissue <- factor(DevSeq_pca_2_3_w_stamen$Tissue, c("root", "hypocotyl", 
+    "leaf", "veg_apex", "inf_apex", "flower", "carpel", "stamen"))
 
-        fname <- sprintf('%s.png', paste(dataset_id, "pca", expr_estimation, organ_set, sep="_"))
+
+    # Make PCA plots for main figure
+    plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2","pc2_3")) {
+
+        fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", expr_estimation, sep="_"))
+        
+        if(set == "pc1_2") {
+            x_coord <- "PC1 ("
+            y_coord <- "PC2 ("
+        } else if(set == "pc2_3") {
+            x_coord <- "PC2 ("
+            y_coord <- "PC3 ("
+        }
+
+        x_lab <- paste(x_coord, pc_var1, "%)", sep="")
+        y_lab <- paste(y_coord, pc_var2, "%)", sep="")
 
         plot <- ggplot(data, aes(x = PC1, y = PC2, colour=Tissue, fill = Tissue)) + 
-        stat_bag(prop = 0.95, size=0.8) + 
-        geom_point(aes(shape=Species, color=Tissue, size=Species,stroke=1.14)) + 
-        scale_shape_manual(values=c(1.6, 1.7, 0, 1.8, 1.5, 0.2, 0.6))  + 
-        theme(text = element_text(size=16)) + 
+        stat_bag(prop = 0.95, size=1.5) + 
+        geom_point(aes(shape=Species, color=Tissue, size=Species, stroke=2.25)) + 
+        scale_shape_manual(values=c(16, 17, 0, 18, 15, 2, 6))  + 
+        theme(text = element_text(size=22.5)) + 
         guides(colour = guide_legend(override.aes = list(size=4))) + 
         guides(shape = guide_legend(override.aes = list(size = 4))) + 
-        scale_size_manual(values=c(3.34,3.14,2.6,4.2,3.14,2.6,2.6)) + 
-        scale_color_manual(values=c('#feba1e','#d78e17', '#c4719a', '#00be67','#1676ae', '#19a078','#20a5d6', '#84ba00')) + 
-        scale_fill_manual(values=c('#feba1e','#d78e17', '#c4719a', '#00be67','#1676ae', '#19a078','#20a5d6', '#84ba00')) + 
-        labs(x = "PC1 (16.1%)", y = "PC2 (13.6%)") + 
+        scale_size_manual(values=c(5.0, 4.5, 3.5, 6.75, 5.0, 3.15, 3.15)) + 
+        # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
+        scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
+        scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
+        labs(x = x_lab, y = y_lab) + 
         theme(axis.line = element_line(colour = "black"), 
-        	panel.grid.major = element_blank(), 
-        	panel.grid.minor = element_blank(), 
-        	panel.border = element_rect(colour = "black", fill=NA, size=1), 
-        	panel.background = element_blank(), 
-        	axis.title.y = element_text(margin = margin(t = 0, r = 8, b = 0, l = 4)), 
-        	axis.title.x = element_text(margin = margin(t = 8, r = 4, b = 4, l = 0)), 
-        	axis.text.x = element_text(size=10, angle=0, margin = margin(t = 4)), 
-        	axis.text.y = element_text(size=10, angle=0, margin = margin(r = 4)), 
-        	axis.ticks.length=unit(1.8, "cm"), 
-        	axis.ticks = element_line(colour = "black", size = 0.6), 
-        	plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(), 
+            panel.border = element_rect(colour = "black", fill=NA, size=1), 
+            panel.background = element_blank(), 
+            axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 4)), 
+            axis.title.x = element_text(margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
+            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
+            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
+            axis.ticks.length=unit(0.35, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 0.7), 
+            plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
-            width = 10.5, height = 8, dpi = 300, units = c("in"), 
+            width = 10.25, height = 8, dpi = 300, units = c("in"), 
             limitsize = FALSE)
     }
 
-    plotPCA(data=DevSeq_pca_1_2_w_stamen, organ_set="w_stamen") 
+    plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc1_var_w_stamen, pc_var2=DevSeq_pc2_var_w_stamen, set="pc1_2") 
+    plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, set="pc2_3") 
+
+
+
+    # Make PCA plots for supplement (different font/line/shape sizes)
+    plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2","pc2_3")) {
+
+        fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", expr_estimation, sep="_"))
+        
+        if(set == "pc1_2") {
+            x_coord <- "PC1 ("
+            y_coord <- "PC2 ("
+        } else if(set == "pc2_3") {
+            x_coord <- "PC2 ("
+            y_coord <- "PC3 ("
+        }
+
+        x_lab <- paste(x_coord, pc_var1, "%)", sep="")
+        y_lab <- paste(y_coord, pc_var2, "%)", sep="")
+
+        plot <- ggplot(data, aes(x = PC1, y = PC2, colour=Tissue, fill = Tissue)) + 
+        stat_bag(prop = 0.95, size=1.5) + 
+        geom_point(aes(shape=Species, color=Tissue, size=Species, stroke=2.25)) + 
+        scale_shape_manual(values=c(16, 17, 0, 18, 15, 2, 6))  + 
+        theme(text = element_text(size=22.5)) + 
+        guides(colour = guide_legend(override.aes = list(size=4))) + 
+        guides(shape = guide_legend(override.aes = list(size = 4))) + 
+        scale_size_manual(values=c(5.0, 4.5, 3.5, 6.75, 5.0, 3.15, 3.15)) + 
+        # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
+        scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
+        scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
+        labs(x = x_lab, y = y_lab) + 
+        theme(axis.line = element_line(colour = "black"), 
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(), 
+            panel.border = element_rect(colour = "black", fill=NA, size=1), 
+            panel.background = element_blank(), 
+            axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 4)), 
+            axis.title.x = element_text(margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
+            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
+            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
+            axis.ticks.length=unit(0.35, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 0.7), 
+            plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
+            width = 10.25, height = 8, dpi = 300, units = c("in"), 
+            limitsize = FALSE)
+    }
+
+    plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc1_var_w_stamen, pc_var2=DevSeq_pc2_var_w_stamen, set="pc1_2") 
+    plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, set="pc2_3") 
 
 
 
