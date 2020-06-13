@@ -85,6 +85,19 @@ sessionInfo()
 #> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 #> attached base packages:
-#> [1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base    
+#> [1] stats     graphics  grDevices utils     datasets  methods   base
+
+#> other attached packages:
+#> [1] ggbeeswarm_0.6.0  dendextend_1.12.0 factoextra_1.0.5  ggplot2_2.2.1     gplots_3.0.1.1   
+#> [6] dplyr_0.7.4      
+
+#> loaded via a namespace (and not attached):
+#>  [1] Rcpp_0.12.14       bindr_0.1.1        magrittr_1.5       munsell_0.5.0     
+#>  [5] viridisLite_0.3.0  colorspace_1.3-2   R6_2.4.1           rlang_0.1.6       
+#>  [9] vipor_0.4.5        plyr_1.8.4         caTools_1.17.1     grid_3.3.3        
+#> [13] beeswarm_0.2.3     gtable_0.3.0       KernSmooth_2.23-15 gtools_3.5.0      
+#> [17] lazyeval_0.2.1     assertthat_0.2.1   tibble_1.3.4       bindrcpp_0.2      
+#> [21] gridExtra_2.3      viridis_0.5.1      bitops_1.0-6       ggrepel_0.7.0     
+#> [25] glue_1.2.0         gdata_2.18.0       scales_0.5.0       pkgconfig_2.0.3
 
 ```
