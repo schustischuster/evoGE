@@ -422,6 +422,14 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         colnames(x_avg)[2:ncol(x_avg)] <- repl_names
 
+    } else if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec))) {
+
+        DevSeq_col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
+            "flower", "carpel", "stamen"), times=4)
+        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=8)
+        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
+
+        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
     }
 
 
