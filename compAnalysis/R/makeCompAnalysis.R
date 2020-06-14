@@ -575,24 +575,89 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         pca_organs <- gsub('.{5}$', '', pca_sample_names)
 
         pca_df <- cbind(pca_coord, pca_species, pca_organs)
-        colnames(pca_df) <- c("PC1", "PC2", "Species", "Tissue")
+        colnames(pca_df) <- c("PC1", "PC2", "Species", "Organ")
 
         return_list <- list("pca_df"=pca_df, "pc1_var"=pc1_var, "pc2_var"=pc2_var, "pc3_var"=pc3_var, "eig_val"=eig_val)
         return(return_list)
     }
 
 
-    # Make PCA for DevSeq w/ stamen data PC1/2
-    pca_return_objects <- makePCA(df = x, pca_dim = "1_2")
-    list2env(pca_return_objects, envir = .GlobalEnv)
-    DevSeq_pca_1_2_w_stamen <- pca_df
-    DevSeq_pc1_var_w_stamen <- pc1_var
-    DevSeq_pc2_var_w_stamen <- pc2_var
-    DevSeq_pc3_var_w_stamen <- pc3_var
-    # Make PCA for DevSeq w/ stamen data PC2/3
-    pca_return_objects <- makePCA(df = x, pca_dim = "2_3")
-    list2env(pca_return_objects, envir = .GlobalEnv)
-    DevSeq_pca_2_3_w_stamen <- pca_df
+
+    if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec))) {
+
+    	# Make PCA for DevSeq w/ stamen data PC1/2
+        pca_return_objects <- makePCA(df = x, pca_dim = "1_2")
+        list2env(pca_return_objects, envir = .GlobalEnv)
+        DevSeq_pca_1_2_w_stamen <- pca_df
+        DevSeq_pc1_var_w_stamen <- pc1_var
+        DevSeq_pc2_var_w_stamen <- pc2_var
+        DevSeq_pc3_var_w_stamen <- pc3_var
+
+        # Make PCA for DevSeq w/ stamen data PC2/3
+        pca_return_objects <- makePCA(df = x, pca_dim = "2_3")
+        list2env(pca_return_objects, envir = .GlobalEnv)
+        DevSeq_pca_2_3_w_stamen <- pca_df
+
+
+        # Read PCA data from Brassicaceae species - remove this once Brassicaceae expression data
+        # for ortholog genes is available and use makeCompAnalysis function as follows:
+        # makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae")
+        # Brass_file1_to_replace <- file.path(in_dir, "Expression_data", "DevSeq_pca_1_2_w_stamen.csv")
+        # DevSeq_pca_1_2_w_stamen <- read.table(Brass_file1_to_replace, sep=";", dec=",", header=TRUE, stringsAsFactors=FALSE)
+        # DevSeq_pc1_var_w_stamen <- "24.2"
+        # DevSeq_pc2_var_w_stamen <- "19.9"
+        # DevSeq_pc3_var_w_stamen <- ""
+
+
+        # Replace species abbreviations by more detailed names
+        DevSeq_pca_1_2_w_stamen$Species <- DevSeq_pca_1_2_w_stamen$Species %>% gsub('AT', 'A.thaliana', .) %>% 
+        gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsug.', .)
+
+        # Replace species abbreviations by more detailed names
+        DevSeq_pca_2_3_w_stamen$Species <- DevSeq_pca_2_3_w_stamen$Species %>% gsub('AT', 'A.thaliana', .) %>% 
+        gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsug.', .)
+
+        # Modify organ names
+        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('veg_apex', 'apex veg', .) %>% 
+        gsub('inf_apex', 'apex inf', .)
+
+        # Modify organ names
+        # DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('veg_apex', 'apex veg', .) %>% 
+        # gsub('inf_apex', 'apex inf', .)
+
+    } else if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) { 
+    	
+        # Make PCA for DevSeq w/ stamen data PC1/2
+        pca_return_objects <- makePCA(df = x, pca_dim = "1_2")
+        list2env(pca_return_objects, envir = .GlobalEnv)
+        DevSeq_pca_1_2_w_stamen <- pca_df
+        DevSeq_pc1_var_w_stamen <- pc1_var
+        DevSeq_pc2_var_w_stamen <- pc2_var
+        DevSeq_pc3_var_w_stamen <- pc3_var
+
+        # Make PCA for DevSeq w/ stamen data PC2/3
+        pca_return_objects <- makePCA(df = x, pca_dim = "2_3")
+        list2env(pca_return_objects, envir = .GlobalEnv)
+        DevSeq_pca_2_3_w_stamen <- pca_df
+
+        # Replace species abbreviations by more detailed names
+        DevSeq_pca_1_2_w_stamen$Species <- DevSeq_pca_1_2_w_stamen$Species %>% gsub('AT', 'A.thaliana', .) %>% 
+        gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsugineum', .)  %>% 
+        gsub('TH', 'T.hassleriana.', .) %>% gsub('MT', 'M.truncatula', .) %>% gsub('BD', 'B.distachyon', .)
+
+        # Replace species abbreviations by more detailed names
+        DevSeq_pca_2_3_w_stamen$Species <- DevSeq_pca_2_3_w_stamen$Species %>% gsub('AT', 'A.thaliana', .) %>% 
+        gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsugineum', .)  %>% 
+        gsub('TH', 'T.hassleriana.', .) %>% gsub('MT', 'M.truncatula', .) %>% gsub('BD', 'B.distachyon', .)
+
+        # Modify organ names
+        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('veg_apex', 'apex veg', .) %>% 
+        gsub('inf_apex', 'apex inf', .)
+
+        # Modify organ names
+        DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('veg_apex', 'apex veg', .) %>% 
+        gsub('inf_apex', 'apex inf', .)
+    }
 
 
 
@@ -739,16 +804,16 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
     # Set order for DevSeq organs
-        DevSeq_pca_1_2_w_stamen$Tissue <- factor(DevSeq_pca_1_2_w_stamen$Tissue, c("root", "hypocotyl", 
-        	"leaf", "veg_apex", "inf_apex", "carpel", "stamen", "flower"))
-        DevSeq_pca_2_3_w_stamen$Tissue <- factor(DevSeq_pca_2_3_w_stamen$Tissue, c("root", "hypocotyl", 
-        	"leaf", "veg_apex", "inf_apex", "carpel", "stamen", "flower"))
+        DevSeq_pca_1_2_w_stamen$Organ <- factor(DevSeq_pca_1_2_w_stamen$Organ, c("root", "hypocotyl", 
+        	"leaf", "apex veg", "apex inf", "carpel", "stamen", "flower"))
+        DevSeq_pca_2_3_w_stamen$Organ <- factor(DevSeq_pca_2_3_w_stamen$Organ, c("root", "hypocotyl", 
+        	"leaf", "apex veg", "apex inf", "carpel", "stamen", "flower"))
 
 
     # Make PCA plots for main figure
     plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2","pc2_3"), spec=c("Brassicaceae", "all")) {
 
-        fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", expr_estimation, sep="_"))
+        fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", expr_estimation, spec, sep="_"))
         
         if(set == "pc1_2") {
         	x_coord <- "PC1 ("
@@ -758,43 +823,55 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         	y_coord <- "PC3 ("
         }
 
+        if(spec == "all") {
+        	spec_shape <- c(16, 17, 0, 18, 15, 2, 6)
+        	spec_shape_size <- c(5.0, 4.5, 3.5, 6.75, 4.5, 3.15, 3.15)
+        } else if(spec == "Brassicaceae") {
+        	spec_shape <- c(16, 17, 18, 15)
+        	spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
+        }
+
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
         y_lab <- paste(y_coord, pc_var2, "%)", sep="")
 
-        plot <- ggplot(data, aes(x = PC1, y = PC2, colour=Tissue, fill = Tissue)) + 
+        plot <- ggplot(data, aes(x = PC1, y = PC2, colour=Organ, fill = Organ)) + 
         stat_bag(prop = 0.95, size=1.5) + 
-        geom_point(aes(shape=Species, color=Tissue, size=Species, stroke=2.25)) + 
-        scale_shape_manual(values=c(16, 17, 0, 18, 15, 2, 6))  + 
-        theme(text = element_text(size=22.5)) + 
-        guides(colour = guide_legend(override.aes = list(size=4))) + 
-        guides(shape = guide_legend(override.aes = list(size = c(5.0, 4.5, 3.5, 6.75, 5.0, 3.15, 3.15)))) + 
-        scale_size_manual(values=c(5.0, 4.5, 3.5, 6.75, 5.0, 3.15, 3.15)) + 
+        geom_point(aes(shape=Species, color=Organ, size=Species, stroke=2.25)) + 
+        scale_shape_manual(values=spec_shape)  + 
+        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.25), order=2)) + 
+        guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
+        scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
-        scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
-        scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#de6daf','#f2a529', '#f23d29')) + 
+        scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#f2a529', '#f23d29', '#de6daf')) + 
+        scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#f2a529', '#f23d29', '#de6daf')) + 
         labs(x = x_lab, y = y_lab) + 
         theme(axis.line = element_line(colour = "black"), 
         	panel.grid.major = element_blank(), 
         	panel.grid.minor = element_blank(), 
         	panel.border = element_rect(colour = "black", fill=NA, size=1), 
         	panel.background = element_blank(), 
-        	axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 4)), 
-        	axis.title.x = element_text(margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
+        	axis.title.y = element_text(size=25, margin = margin(t = 0, r = 10, b = 0, l = 4)), 
+        	axis.title.x = element_text(size=25, margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
         	axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
         	axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
         	axis.ticks.length=unit(0.35, "cm"), 
         	axis.ticks = element_line(colour = "black", size = 0.7), 
-        	plot.margin=unit(c(0.5,1,0.5,0.5),"cm"))
+        	legend.key.size = unit(1.6,"line"), # default is 1.2
+        	legend.text = element_text(size=20), 
+        	legend.title = element_text(size=22),
+        	legend.spacing.y = unit(4.5,'cm'), 
+        	legend.position=c(0.835, 0.235),
+        	plot.margin=unit(c(0.55, 1, 0.5, 0.5),"cm"))
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
-            width = 10.25, height = 8, dpi = 300, units = c("in"), 
+            width = 8.35, height = 8, dpi = 300, units = c("in"), 
             limitsize = FALSE)
     }
 
 
     if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec))) {
     	plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc1_var_w_stamen, pc_var2=DevSeq_pc2_var_w_stamen, 
-    		set="pc1_2", spec="Brassicaeae") 
+    		set="pc1_2", spec="Brassicaceae") 
 
     } else if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) { 
     	plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc1_var_w_stamen, pc_var2=DevSeq_pc2_var_w_stamen, 
