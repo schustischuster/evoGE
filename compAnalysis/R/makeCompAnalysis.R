@@ -84,8 +84,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 	# Define simplified Brawand and DevSeq column names
 	if (is.element("DevSeq", dataset) && (is.element("all", devseq_spec))) {
-		col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
-			"flower", "carpel", "stamen"), each=3)
+		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "Veg_apex", "Inf_apex", 
+			"Flower", "Carpel", "Stamen"), each=3)
 		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
 		col_names <- paste0(col_names,replicate_tag_samples)
 		col_names <- rep(col_names, times=7)
@@ -93,8 +93,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 		col_names <- paste0(col_names, spec_names)
 
 	} else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec))) {
-		col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
-			"flower", "carpel", "stamen"), each=3)
+		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "Veg_apex", "Inf_apex", 
+			"Flower", "Carpel", "Stamen"), each=3)
 		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
 		col_names <- paste0(col_names,replicate_tag_samples)
 		col_names <- rep(col_names, times=4)
@@ -414,8 +414,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) {
 
-        DevSeq_col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
-            "flower", "carpel", "stamen"), times=7)
+        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "Veg_apex", "Inf_apex", 
+            "Flower", "Carpel", "Stamen"), times=7)
         DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
             "_MT", "_BD"), each=8)
         repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
@@ -424,8 +424,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     } else if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec))) {
 
-        DevSeq_col_names <- rep(c("root", "hypocotyl", "leaf", "veg_apex", "inf_apex", 
-            "flower", "carpel", "stamen"), times=4)
+        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "Veg_apex", "Inf_apex", 
+            "Flower", "Carpel", "Stamen"), times=4)
         DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=8)
         repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
 
@@ -620,12 +620,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsug.', .)
 
         # Modify organ names
-        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('veg_apex', 'apex veg', .) %>% 
-        gsub('inf_apex', 'apex inf', .)
+        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('Veg_apex', 'Apex veg', .) %>% 
+        gsub('Inf_apex', 'Apex inf', .)
 
         # Modify organ names
-        # DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('veg_apex', 'apex veg', .) %>% 
-        # gsub('inf_apex', 'apex inf', .)
+        DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('Veg_apex', 'Apex veg', .) %>% 
+        gsub('Inf_apex', 'Apex inf', .)
 
     } else if (is.element("all", devseq_spec)) { 
     	
@@ -653,12 +653,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         gsub('TH', 'T.hassleriana', .) %>% gsub('MT', 'M.truncatula', .) %>% gsub('BD', 'B.distachyon', .)
 
         # Modify organ names
-        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('veg_apex', 'apex veg', .) %>% 
-        gsub('inf_apex', 'apex inf', .)
+        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('Veg_apex', 'Apex veg', .) %>% 
+        gsub('Inf_apex', 'Apex inf', .)
 
         # Modify organ names
-        DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('veg_apex', 'apex veg', .) %>% 
-        gsub('inf_apex', 'apex inf', .)
+        DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('Veg_apex', 'Apex veg', .) %>% 
+        gsub('Inf_apex', 'Apex inf', .)
     }
 
 
@@ -806,10 +806,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
     # Set order for DevSeq organs
-        DevSeq_pca_1_2_w_stamen$Organ <- factor(DevSeq_pca_1_2_w_stamen$Organ, c("root", "hypocotyl", 
-        	"leaf", "apex veg", "apex inf", "carpel", "stamen", "flower"))
-        DevSeq_pca_2_3_w_stamen$Organ <- factor(DevSeq_pca_2_3_w_stamen$Organ, c("root", "hypocotyl", 
-        	"leaf", "apex veg", "apex inf", "carpel", "stamen", "flower"))
+        DevSeq_pca_1_2_w_stamen$Organ <- factor(DevSeq_pca_1_2_w_stamen$Organ, c("Root", "Hypocotyl", 
+        	"Leaf", "Apex veg", "Apex inf", "Carpel", "Stamen", "Flower"))
+        DevSeq_pca_2_3_w_stamen$Organ <- factor(DevSeq_pca_2_3_w_stamen$Organ, c("Root", "Hypocotyl", 
+        	"Leaf", "Apex veg", "Apex inf", "Carpel", "Stamen", "Flower"))
 
 
     # Make PCA plots for main figure
@@ -828,19 +828,21 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         if(spec == "all") {
         	spec_shape <- c(16, 17, 0, 18, 15, 2, 6)
         	spec_shape_size <- c(5.0, 4.5, 3.5, 6.75, 4.5, 3.15, 3.15)
-        	legend_pos <- c(0.155, 0.159)
+        	legend_pos <- c(0.155, 1.4635)
         	legend_title <- element_blank()
         	col_guide <- FALSE
         	order_guide <- 0
         	legend_spacing <- 15
+            plot_margin <- unit(c(0.55, 0.38, 0.5, 0.5),"cm")
         } else if(spec == "Brassicaceae") {
         	spec_shape <- c(16, 17, 18, 15)
         	spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
-        	legend_pos <- c(0.835, 0.235)
-        	legend_title <- element_text(size=22)
+        	legend_pos <- c(0.835, 0.2325)
+        	legend_title <- element_blank()
         	col_guide <- "legend"
         	order_guide <- 2
-        	legend_spacing <- 4.5
+        	legend_spacing <- 5.35
+            plot_margin <- unit(c(0.55, 1, 0.5, 0.5),"cm")
         }
 
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
@@ -870,12 +872,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         	axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
         	axis.ticks.length=unit(0.35, "cm"), 
         	axis.ticks = element_line(colour = "black", size = 0.7), 
-        	legend.key.size = unit(1.6,"line"), # default is 1.2
-        	legend.text = element_text(size=20), 
+        	legend.key.size = unit(1.65,"line"), # default is 1.2
+        	legend.text = element_text(size=21.25), 
         	legend.title = legend_title,
         	legend.spacing.y = unit(legend_spacing,'cm'), 
-        	legend.position=legend_pos,
-        	plot.margin=unit(c(0.55, 1, 0.5, 0.5),"cm"))
+        	legend.position = legend_pos,
+        	plot.margin = plot_margin)
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
             width = 8.35, height = 8, dpi = 300, units = c("in"), 
