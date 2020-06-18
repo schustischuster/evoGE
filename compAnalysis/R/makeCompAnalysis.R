@@ -84,7 +84,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 	# Define simplified Brawand and DevSeq column names
 	if (is.element("DevSeq", dataset) && (is.element("all", devseq_spec))) {
-		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "Veg_apex", "Inf_apex", 
+		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
 			"Flower", "Carpel", "Stamen"), each=3)
 		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
 		col_names <- paste0(col_names,replicate_tag_samples)
@@ -93,7 +93,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 		col_names <- paste0(col_names, spec_names)
 
 	} else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec))) {
-		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "Veg_apex", "Inf_apex", 
+		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
 			"Flower", "Carpel", "Stamen"), each=3)
 		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
 		col_names <- paste0(col_names,replicate_tag_samples)
@@ -208,10 +208,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     if (dataset_id == "DevSeq") {
 
         exp_col <- c(AT="gray1", AL="cornsilk3", CR="floralwhite", ES="wheat4", TH="lightgoldenrod2", 
-            MT="#9f0000", BD="#7c3979") # last two letters of sample name
+            MT="#b30000", BD="#9f3c9b") # last two letters of sample name
 
-        species_col <- c(roo="#52428c", hyp="#8591c7", mes="#8591c7", lea="#00994f", veg="#95b73a", 
-            inf="#fad819", spi="#fad819", flo="#de6daf", sta="#f23d29", mat="#a63126", car="#f2a529")
+        species_col <- c(Roo="#52428c", Hyp="#8591c7", Lea="#008544", veg="#95b73a", 
+            inf="#fad819", Flo="#de6daf", Sta="#f23d29", Mat="#a63126", Car="#f2a72f")
 
     } else if (dataset_id == "Brawand") {
 
@@ -620,12 +620,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsug.', .)
 
         # Modify organ names
-        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('Veg_apex', 'Apex veg', .) %>% 
-        gsub('Inf_apex', 'Apex inf', .)
+        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('veg_apex', 'Apex veg', .) %>% 
+        gsub('inf_apex', 'Apex inf', .)
 
         # Modify organ names
-        DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('Veg_apex', 'Apex veg', .) %>% 
-        gsub('Inf_apex', 'Apex inf', .)
+        DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('veg_apex', 'Apex veg', .) %>% 
+        gsub('inf_apex', 'Apex inf', .)
 
     } else if (is.element("all", devseq_spec)) { 
     	
@@ -653,12 +653,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         gsub('TH', 'T.hassleriana', .) %>% gsub('MT', 'M.truncatula', .) %>% gsub('BD', 'B.distachyon', .)
 
         # Modify organ names
-        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('Veg_apex', 'Apex veg', .) %>% 
-        gsub('Inf_apex', 'Apex inf', .)
+        DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('veg_apex', 'Apex veg', .) %>% 
+        gsub('inf_apex', 'Apex inf', .)
 
         # Modify organ names
-        DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('Veg_apex', 'Apex veg', .) %>% 
-        gsub('Inf_apex', 'Apex inf', .)
+        DevSeq_pca_2_3_w_stamen$Organ <- DevSeq_pca_2_3_w_stamen$Organ %>% gsub('veg_apex', 'Apex veg', .) %>% 
+        gsub('inf_apex', 'Apex inf', .)
     }
 
 
@@ -724,8 +724,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
                    required_aes = c("x", "y")
     )
 
-#' @inheritParams ggplot2::stat_identity
-#' @param prop Proportion of all the points to be included in the bag (default is 0.5)
+    # inheritParams: ggplot2::stat_identity
+    # param: prop Proportion of all the points to be included in the bag (default is 0.5)
 
     stat_bag <- function(mapping = NULL, data = NULL, geom = "polygon",
                      position = "identity", na.rm = FALSE, show.legend = NA, 
@@ -763,10 +763,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         	)
     }
 
-#' @rdname ggplot2-ggproto
-#' @format NULL
-#' @usage NULL
-#' @export
+    # rdname: ggplot2-ggproto
+    # format: NULL
+    # usage: NULL
 
     GeomBag <- ggproto("GeomBag", Geom,
     	        draw_group = function(data, panel_scales, coord) {
@@ -856,15 +855,14 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
         scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
-        scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#f2a529', '#f23d29', '#de6daf'), 
+        scale_color_manual(values=c('#5850a3','#8591c7', '#008544', '#95b73a','#fad819', '#f2a72f', '#f23d29', '#de6daf'), 
         	guide = col_guide) + 
-        scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#f2a529', '#f23d29', '#de6daf'), 
+        scale_fill_manual(values=c('#5850a3','#8591c7', '#008544', '#95b73a','#fad819', '#f2a72f', '#f23d29', '#de6daf'), 
         	guide = col_guide) + 
         labs(x = x_lab, y = y_lab) + 
-        theme(axis.line = element_line(colour = "black"), 
-        	panel.grid.major = element_blank(), 
+        theme(panel.grid.major = element_blank(), 
         	panel.grid.minor = element_blank(), 
-        	panel.border = element_rect(colour = "black", fill=NA, size=1), 
+        	panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
         	panel.background = element_blank(), 
         	axis.title.y = element_text(size=25, margin = margin(t = 0, r = 10, b = 0, l = 4)), 
         	axis.title.x = element_text(size=25, margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
@@ -872,6 +870,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         	axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
         	axis.ticks.length=unit(0.35, "cm"), 
         	axis.ticks = element_line(colour = "black", size = 0.7), 
+            legend.key = element_rect(colour = "transparent", fill = "white"), 
         	legend.key.size = unit(1.65,"line"), # default is 1.2
         	legend.text = element_text(size=21.25), 
         	legend.title = legend_title,
