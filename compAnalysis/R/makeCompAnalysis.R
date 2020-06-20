@@ -493,34 +493,34 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             	y_max = 1.025
             }
 
-            cor_colors <- rep(c("#808080","#c99407","#4fa722","#1c9c6f","#2690c1","#795fcf","#c91e1b"), each=28)
+            cor_colors <- rep(c("#808080","#b1971e","#419730","#2e9d76","#3889af","#7d67c7","#b72f2d"), each=28)
 
             p <- ggplot(data, aes(x=factor(Species, levels = Species), y=Correlation, fill=Species)) + 
             stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
             geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
                 outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
             geom_beeswarm(data = data, priority = c("ascending"), colour=cor_colors, cex=2, size=3) +
-            geom_beeswarm(data = data_m, priority = c("descending"), colour="black", cex=2, size=5, shape=18, fill="black") + 
+            geom_beeswarm(data = data_m, priority = c("none"), colour="red", cex=2, size=2.25, shape=8, stroke=2) + 
             scale_y_continuous(limits = c(y_min, y_max), expand = c(0, 0)) + 
             annotate("rect", xmin=0.35, xmax=7.65, ymin=y_min, ymax=y_max, fill="white", alpha=0, 
                 color="gray15", size=1.35)
 
-            q <- p + scale_fill_manual(values=c("#f5d88c","#cacaca","#efb0ae","#add89a","#8adcc0","#d0c7f1","#9ed0e7")) + 
+            q <- p + scale_fill_manual(values=c("#f0dd91","#cacaca","#ebb4b1","#b3daad","#ace1ce","#ccc3f0","#b2d7e7")) + 
             theme_minimal() + 
             xlab("") + 
             ylab(coef_lab) + 
             theme(legend.position = "none", 
-                text=element_text(size=20.5), 
-                panel.grid.major.y = element_line(size = 0.7, color = c("gray85")),
-                panel.grid.minor.y = element_line(size = 0.5, color = c("gray85")), 
-                panel.grid.major.x = element_line(size = 0.5, color = c("gray85")), 
+                text=element_text(size=20), 
+                panel.grid.major.y = element_line(size = 0.75, color = c("gray85")),
+                panel.grid.minor.y = element_line(size = 0.75, color = c("gray85")), 
+                panel.grid.major.x = element_line(size = 0.75, color = c("gray85")), 
                 axis.ticks.length = unit(.3, "cm"),
-                axis.ticks = element_line(colour = "gray15", size = 0.7), 
-                axis.title.x = element_text(colour = "black", size=21, 
+                axis.ticks = element_line(colour = "gray15", size = 0.75), 
+                axis.title.x = element_text(colour = "black", size=20.5, 
                     margin = margin(t = 17.5, r = 0, b = 0, l = 0)), 
-                axis.title.y = element_text(colour = "black", size=21, 
+                axis.title.y = element_text(colour = "black", size=20.5, 
                     margin = margin(t = 0, r = 12.5, b = 0, l = 0.5)), 
-                axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
+                axis.text.x = element_text(colour = "black", size=18, angle=90, 
                     margin = margin(t = 7.0, r = 0, b = 0, l = 0), hjust=1.0, vjust=0.35),
                 axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),  
                 plot.margin = unit(c(35, 35, 0, 35), "points"))
@@ -898,22 +898,34 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 	# Make PCA plots for supplement (different font/line/shape sizes)
     plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2","pc2_3"), spec=c("Brassicaceae", "all")) {
 
-        fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", expr_estimation, spec, sep="_"))
+        fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", "suppl", expr_estimation, spec, sep="_"))
         
         if(set == "pc1_2") {
-        	x_coord <- "PC1 ("
-        	y_coord <- "PC2 ("
+            x_coord <- "PC1 ("
+            y_coord <- "PC2 ("
         } else if(set == "pc2_3") {
-        	x_coord <- "PC2 ("
-        	y_coord <- "PC3 ("
+            x_coord <- "PC2 ("
+            y_coord <- "PC3 ("
         }
 
         if(spec == "all") {
-        	spec_shape <- c(16, 17, 0, 18, 15, 2, 6)
-        	spec_shape_size <- c(5.0, 4.5, 3.5, 6.75, 4.5, 3.15, 3.15)
+            spec_shape <- c(16, 17, 0, 18, 15, 2, 6)
+            spec_shape_size <- c(5.0, 4.5, 3.5, 6.75, 4.5, 3.15, 3.15)
+            legend_pos <- c(-0.45, 0.5)
+            col_guide <- "legend"
+            order_guide <- 0
+            legend_spacing <- 2
+            plot_width <- 11.5
+            plot_margin <- unit(c(0.55, 0.38, 0.5, 8.5),"cm")
         } else if(spec == "Brassicaceae") {
-        	spec_shape <- c(16, 17, 18, 15)
-        	spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
+            spec_shape <- c(16, 17, 18, 15)
+            spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
+            legend_pos <- 'none'
+            col_guide <- "legend"
+            order_guide <- 2
+            legend_spacing <- 5.35
+            plot_width <- 8.35
+            plot_margin <- unit(c(0.55, 1, 0.5, 0.5),"cm")
         }
 
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
@@ -923,44 +935,47 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         stat_bag(prop = 0.95, size=1.5) + 
         geom_point(aes(shape=Species, color=Organ, size=Species, stroke=2.25)) + 
         scale_shape_manual(values=spec_shape)  + 
-        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.25), order=2)) + 
+        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.25), order = order_guide)) + 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
         scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
-        scale_color_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#f2a529', '#f23d29', '#de6daf')) + 
-        scale_fill_manual(values=c('#5850a3','#8591c7', '#00994f', '#95b73a','#fad819', '#f2a529', '#f23d29', '#de6daf')) + 
+        scale_color_manual(values=c('#5850a3','#8591c7', '#008544', '#95b73a','#fad819', '#f2a72f', '#f23d29', '#de6daf'), 
+            guide = col_guide) + 
+        scale_fill_manual(values=c('#5850a3','#8591c7', '#008544', '#95b73a','#fad819', '#f2a72f', '#f23d29', '#de6daf'), 
+            guide = col_guide) + 
         labs(x = x_lab, y = y_lab) + 
-        theme(axis.line = element_line(colour = "black"), 
-        	panel.grid.major = element_blank(), 
-        	panel.grid.minor = element_blank(), 
-        	panel.border = element_rect(colour = "black", fill=NA, size=1), 
-        	panel.background = element_blank(), 
-        	axis.title.y = element_text(size=25, margin = margin(t = 0, r = 10, b = 0, l = 4)), 
-        	axis.title.x = element_text(size=25, margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
-        	axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
-        	axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
-        	axis.ticks.length=unit(0.35, "cm"), 
-        	axis.ticks = element_line(colour = "black", size = 0.7), 
-        	legend.key.size = unit(1.6,"line"), # default is 1.2
-        	legend.text = element_text(size=20), 
-        	legend.title = element_text(size=22),
-        	legend.spacing.y = unit(4.5,'cm'), 
-        	legend.position=c(0.835, 0.235),
-        	plot.margin=unit(c(0.55, 1, 0.5, 0.5),"cm"))
+        theme(panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(), 
+            panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
+            panel.background = element_blank(), 
+            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 10, b = 0, l = 4)), 
+            axis.title.x = element_text(size=20.5, margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
+            axis.text.x = element_text(size=18, angle=0, margin = margin(t = 5)), 
+            axis.text.y = element_text(size=18, angle=0, margin = margin(r = 5)), 
+            axis.ticks.length=unit(0.35, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 0.7), 
+            legend.key = element_rect(colour = "transparent", fill = "white"), 
+            legend.key.size = unit(1.65,"line"), # default is 1.2
+            legend.text = element_text(size=18), 
+            legend.title = element_text(size=20.5), 
+            legend.spacing.y = unit(legend_spacing,'cm'), 
+            legend.position = legend_pos,
+            plot.margin = plot_margin)
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
-            width = 8.35, height = 8, dpi = 300, units = c("in"), 
+            width = plot_width, height = 8, dpi = 300, units = c("in"), 
             limitsize = FALSE)
     }
 
 
     if (is.element("Brassicaceae", devseq_spec)) {
-    	plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
-    		set="pc2_3", spec="Brassicaeae") 
+        plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
+            set="pc2_3", spec="Brassicaceae") 
+        # Change data input to PC2/3 once Brassicaceae data is available!
 
     } else if (is.element("all", devseq_spec)) { 
-    	plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
-    		set="pc2_3", spec="all") 
+        plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
+            set="pc2_3", spec="all") 
     }
 
   }
