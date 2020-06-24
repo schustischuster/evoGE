@@ -116,23 +116,23 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 		 	}) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35) + 
-		 annotate("text", x = 2.65, y = Inf, hjust = 0, vjust = 1.5, size=7, label = total_dedupl)
+		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
 
 	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
 	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
-		text=element_text(size=23), 
+		text=element_text(size=21), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.y = element_text(colour = "black", size=22, 
-  			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
-  		axis.text.x = element_text(colour = "black", size=21, angle=90, 
-  			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5),
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
-  		plot.title = element_text(colour = "black", size=24, 
+  		axis.title.y = element_text(colour = "black", size=21, 
+  			margin = margin(t = 0, r = 11, b = 0, l = 0)), 
+  		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
+  			margin = margin(t = 4, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5),
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
+  		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 7, 3.6, 14), "points"))
+  		plot.margin = unit(c(1.5, 17, 14.1, 14), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -163,32 +163,32 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 		 geom_violin(trim=TRUE, width = 1.5, size=1.25, scale="area", color="gray15") + 
 		 geom_boxplot(data=data, aes(x=class, y=reads),alpha=0, color="gray15", fill="white", width=medw, 
 		 	size=0.0005, fatten = 5000) +
-		 geom_point(aes(x=3, y=data_outl[1,2]), shape=21, colour="gray35", size=2.5, fill="white", stroke=2) + 
-		 geom_point(aes(x=3, y=data_outl[2,2]), shape=21, colour="gray35", size=2.5, fill="white", stroke=2) + 
-		 geom_point(aes(x=3, y=data_outl[3,2]), shape=21, colour="gray35", size=2.5, fill="white", stroke=2) + 
+		 geom_point(aes(x=3, y=data_outl[1,2]), shape=21, colour="gray35", size=2.25, fill="white", stroke=2) + 
+		 geom_point(aes(x=3, y=data_outl[2,2]), shape=21, colour="gray35", size=2.25, fill="white", stroke=2) + 
+		 geom_point(aes(x=3, y=data_outl[3,2]), shape=21, colour="gray35", size=2.25, fill="white", stroke=2) + 
 		 scale_y_continuous(limits = c(0,lim_y), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35) + 
-		 annotate("text", x = 2.65, y = Inf, hjust = 0, vjust = 1.5, size=7, label = total_dedupl)
+		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
 
 	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
 	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
-		text=element_text(size=23), 
+		text=element_text(size=21), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.y = element_text(colour = "black", size=22, 
-  			margin = margin(t = 0, r = 15, b = 0, l = 0)), 
-  		axis.text.x = element_text(colour = "black", size=21, angle=90, 
-  			margin = margin(t = 5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
-  		plot.title = element_text(colour = "black", size=24, 
+  		axis.title.y = element_text(colour = "black", size=21, 
+  			margin = margin(t = 0, r = 11, b = 0, l = 0)), 
+  		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
+  			margin = margin(t = 4, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
+  		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 7, 3.6, 14), "points"))
+  		plot.margin = unit(c(1.5, 17, 14.1, 14), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -205,13 +205,13 @@ makePlotStatsOS(data=non_ATH_stats_df, lim_y=226000000, medw = 0.415, plot_title
 makeRepl <- function(x) {
 
 	repl_names_ATH <- data.frame(c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2",
-		"hypocotyl.3","leaf.1","leaf.2","leaf.3","apex_veg.1","apex_veg.2","apex_veg.3",
-		"apex_infl.1","apex_infl.2","apex_infl.3","flower.1","flower.2","flower.3","stamen.1",
+		"hypocotyl.3","leaf.1","leaf.2","leaf.3","apex.veg.1","apex.veg.2","apex.veg.3",
+		"apex.infl.1","apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","stamen.1",
 		"stamen.2","stamen.3","pollen.1","pollen.2","pollen.3","carpel.1","carpel.2","carpel.3"))
 	names(repl_names_ATH) <- "Sample_repl"
 	repl_names_non_ATH <- c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2","hypocotyl.3",
-		"leaf.1","leaf.2","leaf.3","apex_veg.1","apex_veg.2","apex_veg.3","apex_infl.1",
-		"apex_infl.2","apex_infl.3","flower.1","flower.2","flower.3","pollen.1","pollen.2",
+		"leaf.1","leaf.2","leaf.3","apex.veg.1","apex.veg.2","apex.veg.3","apex.infl.1",
+		"apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","pollen.1","pollen.2",
 		"pollen.3","carpel.1","carpel.2","carpel.3","stamen.1","stamen.2","stamen.3")
 
 	repl_names_non_ATH <- as.data.frame(rep(repl_names_non_ATH, times = 6))
@@ -232,72 +232,42 @@ plotDedupReads <- function(data, plot_title) {
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
 	level_order <- c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2","hypocotyl.3",
-		"leaf.1","leaf.2","leaf.3","apex_veg.1","apex_veg.2","apex_veg.3","apex_infl.1",
-		"apex_infl.2","apex_infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
+		"leaf.1","leaf.2","leaf.3","apex.veg.1","apex.veg.2","apex.veg.3","apex.infl.1",
+		"apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
 		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
 
 	species_order <- c("ATH","AL","CR","ES","TH","MT","BD")
 
-	x_labels <- rep(c("root","hypocotyl","leaf","apex.veg","apex.infl","flower","stamen",
-		"pollen","carpel"),times=7) ## order of labels has to match the order in first species (ATH)
-
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
 	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.5) + 
   	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.25) + 
-  	scale_y_continuous(limits = c(0,8e7), expand = c(0, 0), 
+  	scale_y_continuous(limits = c(0,7.4e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
-  	scale_x_discrete(labels=x_labels, breaks=data$Sample_repl[seq(1, length(data$Sample_repl), by = 3)]) + 
-  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=8e7, fill="white", alpha=0, 
+  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=7.4e7, fill="white", alpha=0, 
 		 	color="black", size=0.7) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=1, xmax=3,ymin=-1950000, ymax=-1950000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=1, xmax=1,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=3, xmax=3,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=4, xmax=6,ymin=-1950000, ymax=-1950000) +
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=4, xmax=4,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=6, xmax=6,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=7, xmax=9,ymin=-1950000, ymax=-1950000) +
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=7, xmax=7,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=9, xmax=9,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=10, xmax=12,ymin=-1950000, ymax=-1950000) +
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=10, xmax=10,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=12, xmax=12,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=13, xmax=15,ymin=-1950000, ymax=-1950000) +
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=13, xmax=13,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=15, xmax=15,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=16, xmax=18,ymin=-1950000, ymax=-1950000) +
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=16, xmax=16,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=18, xmax=18,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=19, xmax=21,ymin=-1950000, ymax=-1950000) +
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=19, xmax=19,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=21, xmax=21,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=22, xmax=24,ymin=-1950000, ymax=-1950000) +
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=22, xmax=22,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=24, xmax=24,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=25, xmax=27,ymin=-1950000, ymax=-1950000) +
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=25, xmax=25,ymin=-1950000, ymax=-1000000) + 
-	annotation_custom(segmentsGrob(gp=gpar(col="black", lwd=2)), xmin=27, xmax=27,ymin=-1950000, ymax=-1000000) + 
   	labs(color="Species")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("PE dedupl. reads") + 
 	scale_color_manual(values=c("#dca207","#a8a8a8","#ea6965","#46ae12","#1fac7b","#967cee","#36a5d8"), breaks=species_order) + 
 		guides(colour = guide_legend(nrow = 1)) + 
-  		theme(text=element_text(size=23), 
+  		theme(text=element_text(size=21), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.y = element_text(colour = "black", size=22, 
-  			margin = margin(t = 0, r = 10.25, b = 0, l = 2.2)), 
-  		axis.text.x = element_text(colour = "black", size=21, angle=90, 
-  			margin = margin(t = 5.75, r = 0, b = 0, l = 0), hjust = 1, vjust = 1.75), 
-  		axis.ticks.x = element_blank(),
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
-  		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 18, r = 0, b = 14.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 2, 4.25, 1), "points"),
-		legend.position = c(0.385,0.125),
-		legend.title = element_text(colour = "black", size=20.5, face ="bold"),
-		legend.text=element_text(size=20.5), 
+  		axis.title.y = element_text(colour = "black", size=21, 
+  			margin = margin(t = 0, r = 11, b = 0, l = 2.2)), 
+  		axis.text.x = element_text(colour = "black", size=18, angle=90, 
+  			margin = margin(t = 2.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 1)), 
+  		plot.title = element_text(colour = "black", size=22, 
+  			margin = margin(t = 18, r = 0, b = 15, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 2, 3, 1), "points"),
+		legend.position = c(0.355,0.115),
+		legend.background = element_rect(fill = NA),
+		legend.key = element_rect(fill = NA),
+		legend.title = element_text(colour = "black", size=19.5, face ="bold"),
+		legend.text=element_text(size=19.5), 
 		legend.spacing.x = unit(0.25, 'cm'),
 		legend.key.size = unit(0.775, "cm"),
   		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
@@ -307,7 +277,7 @@ plotDedupReads <- function(data, plot_title) {
 	r$layout$clip[r$layout$name=="panel"] <- "off"
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
-		scale = 1, width = 9.1, height = 7.09, units = c("in"), 
+		scale = 1, width = 9.4, height = 7.09, units = c("in"), 
 		dpi = 600, limitsize = FALSE)
 }
 
