@@ -122,17 +122,17 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
-		text=element_text(size=21), 
+		text=element_text(size=20.75), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.y = element_text(colour = "black", size=21, 
+  		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 11, b = 0, l = 0)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
   			margin = margin(t = 4, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(1.5, 17, 14.1, 14), "points"))
+  		plot.margin = unit(c(1.5, 26, 14.1, 5.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -178,17 +178,17 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
-		text=element_text(size=21), 
+		text=element_text(size=20.75), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.y = element_text(colour = "black", size=21, 
+  		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 11, b = 0, l = 0)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
   			margin = margin(t = 4, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(1.5, 17, 14.1, 14), "points"))
+  		plot.margin = unit(c(1.5, 2, 14.1, 29.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -350,21 +350,21 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 		pltymin <- 1.375e4
 		pltymax <- 2.77e4
 		xtepos <- 30.25
-		y_margin <- margin(t = 0, r = 15, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 12, b = 0, l = 1.5)
 
 	} else if (is.element("NAT", biotype)) {
 		breaksY <- c(1e3,2e3,3e3)
 		pltymin <- 5.25e2
 		pltymax <- 3.7e3
 		xtepos <- 31.25
-		y_margin <- margin(t = 0, r = 15, b = 0, l = 10)
+		y_margin <- margin(t = 0, r = 11, b = 0, l = 0)
 
 	} else if (is.element("linc", biotype)) {
 		breaksY <- c(5e2,1e3,1.5e3)
 		pltymin <- 2.0e2
 		pltymax <- 1.575e3
 		xtepos <- 31.05
-		y_margin <- margin(t = 0, r = 10, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 6.85, b = 0, l = 1.5)
 	}
 
 	level_order <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
@@ -378,7 +378,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
 
-	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
+	geom_line(aes(x = factor(Sample, level= level_order)), size=1.7) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
@@ -404,20 +404,19 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of Genes") + 
 	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
-  		theme(text=element_text(size=23), 
+  		theme(text=element_text(size=23.5), 
   		panel.grid.major = element_line(colour = "white"), 
   		panel.grid.minor = element_line(colour = "white"),  
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.ticks.x = element_blank(),
-  		axis.title.y = element_text(colour = "black", size=22, 
+  		axis.title.y = element_text(colour = "black", size=21, 
   			margin = y_margin), 
-  		axis.text.x = element_text(colour = "black", size=14.5, angle=90, 
-  			margin = margin(t = -4, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
-  		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 2, 26.5, 4), "points"),
+  		axis.text.x = element_text(colour = "black", size=16.5, angle=90, 
+  			margin = margin(t = 2.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 1)), 
+  		plot.title = element_text(colour = "black", size=23.5, 
+  			margin = margin(t = 17, r = 0, b = 16, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 2, 0, 4), "points"),
 		legend.position = c(0.225,0.115),
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
 		legend.text = element_text(size=20), 
@@ -432,14 +431,14 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 	r$layout$clip[r$layout$name=="panel"] <- "off"
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
-		scale = 1, width = 9.1, height = 7.09, units = c("in"), 
+		scale = 1, width = 10.25, height = 7.3, units = c("in"), 
 		dpi = 600, limitsize = FALSE)
 }
 
 
-plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed protein-coding genes in ATH", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
-plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in ATH", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
-plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in ATH", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
+plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed protein-coding genes in A.thaliana", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
+plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in A.thaliana", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
+plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thaliana", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
 
 
 
