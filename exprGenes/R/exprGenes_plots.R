@@ -132,7 +132,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(1.5, 26, 14.1, 5.1), "points"))
+  		plot.margin = unit(c(1.5, 30, 14.1, 5.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -188,7 +188,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(1.5, 2, 14.1, 29.1), "points"))
+  		plot.margin = unit(c(1.5, 2, 14.1, 33.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -236,7 +236,7 @@ plotDedupReads <- function(data, plot_title) {
 		"apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
 		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
 
-	species_order <- c("ATH","AL","CR","ES","TH","MT","BD")
+	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
 	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.5) + 
@@ -261,8 +261,8 @@ plotDedupReads <- function(data, plot_title) {
   			margin = margin(t = 2.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 18, r = 0, b = 15, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 2, 3, 1), "points"),
+  			margin = margin(t = 18, r = 0, b = 14.95, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 2, 3, 4.5), "points"),
 		legend.position = c(0.355,0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
@@ -277,7 +277,7 @@ plotDedupReads <- function(data, plot_title) {
 	r$layout$clip[r$layout$name=="panel"] <- "off"
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
-		scale = 1, width = 9.4, height = 7.09, units = c("in"), 
+		scale = 1, width = 9.8, height = 7.09, units = c("in"), 
 		dpi = 600, limitsize = FALSE)
 }
 
@@ -290,23 +290,23 @@ plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
 
 
 # Prepare data for ggplot
-prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0, th_0_01, th_0_05, 
-	th_0_1) {
+prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0_01, th_0_05, th_0_1, 
+	th_0_5) {
 
 	df_names <- c("Detailed_name" , "Sample" , "Threshold", "Expressed")
 
 	if (is.element("coding", biotype)) {
-		data <- cbind(th_0[1,3:ncol(th_0)], th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)])
+		data <- cbind(th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)], th_0_5[1,3:ncol(th_0_5)])
 	} else if (is.element("NAT", biotype)) {
-		data <- cbind(th_0[2,3:ncol(th_0)], th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)])
+		data <- cbind(th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)], th_0_5[2,3:ncol(th_0_5)])
 	} else  if (is.element("lincRNA", biotype)) {
-		data <- cbind(th_0[3,3:ncol(th_0)], th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)])
+		data <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0_5[3,3:ncol(th_0_5)])
 	}
 
 	colnames(data) <- NULL
 	data <- as.data.frame(t(data))
 
-	detailed_sample_name <- names(th_0)[3:ncol(th_0)]
+	detailed_sample_name <- names(th_0_5)[3:ncol(th_0_5)]
 	detailed_sample_name <- as.data.frame(rep(detailed_sample_name, times=4))
 
 	sample_names <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
@@ -319,7 +319,7 @@ prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0, th_0
 		"fruit stg.16", "fruit stg.17a", "seeds st16", "seeds st17a", "seeds st18")
 	sample_names <- as.data.frame(rep(sample_names, times=4))
 
-	threshold <- c("0", "0.01", "0.05", "0.1")
+	threshold <- c("0.01", "0.05", "0.1", "0.5")
 	threshold <- as.data.frame(rep(threshold, each=44))
 
 	expr_df <- cbind(detailed_sample_name,sample_names, threshold, data)
@@ -329,12 +329,12 @@ prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0, th_0
 }
 
 
-expr_coding_genes_ATH <- prepareExprGenes(biotype = "coding", th_0 = ATH_expr_genes_0,
-	th_0_01 = ATH_expr_genes_0.01, th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1)
-expr_NATs_ATH <- prepareExprGenes(biotype = "NAT", th_0 = ATH_expr_genes_0,
-	th_0_01 = ATH_expr_genes_0.01, th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1)
-expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0 = ATH_expr_genes_0,
-	th_0_01 = ATH_expr_genes_0.01, th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1)
+expr_coding_genes_ATH <- prepareExprGenes(biotype = "coding", th_0_01 = ATH_expr_genes_0.01, 
+	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0_5 = ATH_expr_genes_0_5)
+expr_NATs_ATH <- prepareExprGenes(biotype = "NAT", th_0_01 = ATH_expr_genes_0.01, 
+	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0_5 = ATH_expr_genes_0_5)
+expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0_01 = ATH_expr_genes_0.01, 
+	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0_5 = ATH_expr_genes_0_5)
 
 
 
@@ -349,22 +349,22 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 		breaksY <- c(1.5e4,2e4,2.5e4)
 		pltymin <- 1.375e4
 		pltymax <- 2.77e4
-		xtepos <- 30.25
-		y_margin <- margin(t = 0, r = 12, b = 0, l = 1.5)
+		xtepos <- 31.4
+		y_margin <- margin(t = 0, r = 12, b = 0, l = 0)
 
 	} else if (is.element("NAT", biotype)) {
 		breaksY <- c(1e3,2e3,3e3)
 		pltymin <- 5.25e2
 		pltymax <- 3.7e3
-		xtepos <- 31.25
-		y_margin <- margin(t = 0, r = 11, b = 0, l = 0)
+		xtepos <- 32.15
+		y_margin <- margin(t = 0, r = 12, b = 0, l = 10.5)
 
 	} else if (is.element("linc", biotype)) {
 		breaksY <- c(5e2,1e3,1.5e3)
 		pltymin <- 2.0e2
 		pltymax <- 1.575e3
-		xtepos <- 31.05
-		y_margin <- margin(t = 0, r = 6.85, b = 0, l = 1.5)
+		xtepos <- 32.15
+		y_margin <- margin(t = 0, r = 6.85, b = 0, l = 0)
 	}
 
 	level_order <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
@@ -390,15 +390,15 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
   	annotate("rect", xmin=25.5, xmax=29.5, ymin=pltymin, ymax=pltymax, fill="#747474", alpha=0.34) + 
   	annotate("rect", xmin=38.5, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="#db4a10", alpha=0.34) +
   	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
-  	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 21.26, size=7.01, label = total_expr) + 
-  	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 19.7, size=7.01, label = "Threshold", fontface = 2) + 
-  	annotate("text", x = 2, y = Inf, hjust = 0, vjust = 2.4, size=7.25, label = "root") + 
-  	annotate("text", x = 6.75, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "stem") + 
-  	annotate("text", x = 13.65, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "leaf") + 
-  	annotate("text", x = 20.75, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "apex") + 
-  	annotate("text", x = 26.0, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "flow.") + 
-  	annotate("text", x = 30.05, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "floral organ") + 
-  	annotate("text", x = 40.15, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "fruit") + 
+  	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.75, size=7.01, label = total_expr) + 
+  	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
+  	annotate("text", x = 2.15, y = Inf, hjust = 0, vjust = 2.4, size=7.25, label = "root") + 
+  	annotate("text", x = 7.0, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "stem") + 
+  	annotate("text", x = 13.8, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "leaf") + 
+  	annotate("text", x = 20.95, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "apex") + 
+  	annotate("text", x = 26.2, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "flow.") + 
+  	annotate("text", x = 30.55, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "floral organ") + 
+  	annotate("text", x = 40.4, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "fruit") + 
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of Genes") + 
@@ -413,11 +413,11 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
   			margin = y_margin), 
   		axis.text.x = element_text(colour = "black", size=16.5, angle=90, 
   			margin = margin(t = 2.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 1)), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=23.5, 
   			margin = margin(t = 17, r = 0, b = 16, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 2, 0, 4), "points"),
-		legend.position = c(0.225,0.115),
+  		plot.margin = unit(c(0, 2, 0, 1), "points"),
+		legend.position = c(0.197, 0.11275),
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
 		legend.text = element_text(size=20), 
 		legend.key.size = unit(0.775, "cm"),
@@ -449,11 +449,11 @@ plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thalia
 # Prepare data for ggplot
 prepareReplStats <- function(ATH,AL,CR,ES,TH,MT,BD) {
 
-	number_values_ATH <- (ncol(ATH))
+	number_values_AT <- (ncol(ATH))
 	number_values_AL <- (ncol(AL))
 	number_values_other <- (ncol(CR))
 
-	class_ATH_key = as.data.frame(rep(c("ATH"), times = number_values_ATH))
+	class_ATH_key = as.data.frame(rep(c("ATH"), times = number_values_AT))
 	names(class_ATH_key) <- "Species"
 	class_ATH <- cbind(class_ATH_key, as.data.frame(t(ATH)))
 	names(class_ATH)[2] <- "Correlation"
@@ -509,19 +509,19 @@ makePlotReplCorr <- function(data, plot_title) {
 	theme_minimal() + 
 	xlab("Species") + ylab("Pearson's r") + ggtitle(plot_title) + 
 	theme(legend.position = "none", 
-		text=element_text(size=23), 
+		text=element_text(size=20.75), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.x = element_text(colour = "black", size=22, 
+  		axis.title.x = element_text(colour = "black", size=20, 
   			margin = margin(t = 17.5, r = 0, b = 0, l = 0)), 
-  		axis.title.y = element_text(colour = "black", size=22, 
+  		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 12.5, b = 0, l = 0.5)), 
-  		axis.text.x = element_text(colour = "black", size=20, angle=0, 
+  		axis.text.x = element_text(colour = "black", size=18.5, angle=0, 
   			margin = margin(t = 7.5, r = 0, b = 0, l = 0), hjust = 0.5, vjust = 0.5),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
-  		plot.title = element_text(colour = "black", size=24, 
-  			margin = margin(t = 16, r = 0, b = 15.75, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 1.25, 67.15, 2.0), "points"))
+  		plot.title = element_text(colour = "black", size=22, 
+  			margin = margin(t = 21.5, r = 0, b = 13.5, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 1.25, 69.75, 8.0), "points"))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
 		scale = 1, width = 9.1, height = 7.09, units = c("in"), 
