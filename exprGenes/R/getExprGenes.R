@@ -299,8 +299,9 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	}
 
 
+	# Set static threshold of 0.5 TPM for "0 ERCC threshold"
 	if (threshold == 0) {
-		th_values <- data.frame(t(rep(0, ncol(ERCC)-3)))
+		th_values <- data.frame(t(rep(0.5, ncol(ERCC)-3)))
 		names(th_values) <- colnames(all_genes_tpm)[4:ncol(all_genes_tpm)]
 		ERCC_cutoff <- data.frame(gene_id="TPM_cutoff", biotype="NA", source="NA", th_values)
 		all_genes_tpm_cutoff <- rbind(all_genes_tpm, ERCC_cutoff)
@@ -350,10 +351,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 			return(th_replicates)
 		}
 
-		if (threshold > 0) {
-			df <- getSampleTH(express_df)
-		} else 
-			df <- express_df
+		df <- getSampleTH(express_df)
 
 		# Define threshold function
 		# This function will remove all rows that do not show expression in at least two of three
@@ -579,7 +577,8 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
-thresholds <- list(0, 0.01, 0.05, 0.1) # threshold values are 0 or perc of expressed spike-ins
+thresholds <- list(0, 0.01, 0.05, 0.1) # ERCC threshold values are 0 (a fixed TPM threshold of 0.05)
+# or perc of expressed spike-ins for 0.01/0.05/0.1
 
 lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
 lapply(thresholds, getExprGenes, species = "AL", experiment = "comparative")
