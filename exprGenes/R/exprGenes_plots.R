@@ -236,7 +236,7 @@ plotDedupReads <- function(data, plot_title) {
 		"apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
 		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
 
-	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
+	species_order <- c("ATH","AL","CR","ES","TH","MT","BD")
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
 	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.5) + 
@@ -263,7 +263,7 @@ plotDedupReads <- function(data, plot_title) {
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.95, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 2, 3, 4.5), "points"),
-		legend.position = c(0.355,0.115),
+		legend.position = c(0.337, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
 		legend.title = element_text(colour = "black", size=19.5, face ="bold"),
@@ -291,22 +291,22 @@ plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
 
 # Prepare data for ggplot
 prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0_01, th_0_05, th_0_1, 
-	th_0_5) {
+	th_0) {
 
 	df_names <- c("Detailed_name" , "Sample" , "Threshold", "Expressed")
 
 	if (is.element("coding", biotype)) {
-		data <- cbind(th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)], th_0_5[1,3:ncol(th_0_5)])
+		data <- cbind(th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)], th_0[1,3:ncol(th_0)])
 	} else if (is.element("NAT", biotype)) {
-		data <- cbind(th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)], th_0_5[2,3:ncol(th_0_5)])
+		data <- cbind(th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)], th_0[2,3:ncol(th_0)])
 	} else  if (is.element("lincRNA", biotype)) {
-		data <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0_5[3,3:ncol(th_0_5)])
+		data <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0[3,3:ncol(th_0)])
 	}
 
 	colnames(data) <- NULL
 	data <- as.data.frame(t(data))
 
-	detailed_sample_name <- names(th_0_5)[3:ncol(th_0_5)]
+	detailed_sample_name <- names(th_0)[3:ncol(th_0)]
 	detailed_sample_name <- as.data.frame(rep(detailed_sample_name, times=4))
 
 	sample_names <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
@@ -330,11 +330,11 @@ prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0_01, t
 
 
 expr_coding_genes_ATH <- prepareExprGenes(biotype = "coding", th_0_01 = ATH_expr_genes_0.01, 
-	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0_5 = ATH_expr_genes_0_5)
+	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
 expr_NATs_ATH <- prepareExprGenes(biotype = "NAT", th_0_01 = ATH_expr_genes_0.01, 
-	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0_5 = ATH_expr_genes_0_5)
+	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
 expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0_01 = ATH_expr_genes_0.01, 
-	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0_5 = ATH_expr_genes_0_5)
+	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
 
 
 
@@ -347,22 +347,22 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 
 	if (is.element("coding", biotype)) {
 		breaksY <- c(1.5e4,2e4,2.5e4)
-		pltymin <- 1.375e4
-		pltymax <- 2.77e4
-		xtepos <- 31.4
+		pltymin <- 1.0e4
+		pltymax <- 2.78e4
+		xtepos <- 20.35
 		y_margin <- margin(t = 0, r = 12, b = 0, l = 0)
 
 	} else if (is.element("NAT", biotype)) {
 		breaksY <- c(1e3,2e3,3e3)
-		pltymin <- 5.25e2
-		pltymax <- 3.7e3
+		pltymin <- 2.0e2
+		pltymax <- 3.68e3
 		xtepos <- 32.15
 		y_margin <- margin(t = 0, r = 12, b = 0, l = 10.5)
 
 	} else if (is.element("linc", biotype)) {
 		breaksY <- c(5e2,1e3,1.5e3)
-		pltymin <- 2.0e2
-		pltymax <- 1.575e3
+		pltymin <- 0.35e2
+		pltymax <- 1.585e3
 		xtepos <- 32.15
 		y_margin <- margin(t = 0, r = 6.85, b = 0, l = 0)
 	}
@@ -417,7 +417,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
   		plot.title = element_text(colour = "black", size=23.5, 
   			margin = margin(t = 17, r = 0, b = 16, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 2, 0, 1), "points"),
-		legend.position = c(0.197, 0.11275),
+		legend.position = c(0.21, 0.11275),
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
 		legend.text = element_text(size=20), 
 		legend.key.size = unit(0.775, "cm"),
@@ -449,11 +449,11 @@ plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thalia
 # Prepare data for ggplot
 prepareReplStats <- function(ATH,AL,CR,ES,TH,MT,BD) {
 
-	number_values_AT <- (ncol(ATH))
+	number_values_ATH <- (ncol(ATH))
 	number_values_AL <- (ncol(AL))
 	number_values_other <- (ncol(CR))
 
-	class_ATH_key = as.data.frame(rep(c("ATH"), times = number_values_AT))
+	class_ATH_key = as.data.frame(rep(c("ATH"), times = number_values_ATH))
 	names(class_ATH_key) <- "Species"
 	class_ATH <- cbind(class_ATH_key, as.data.frame(t(ATH)))
 	names(class_ATH)[2] <- "Correlation"
