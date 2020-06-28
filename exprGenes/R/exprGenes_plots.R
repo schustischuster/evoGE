@@ -132,7 +132,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(1.5, 30, 14.1, 5.1), "points"))
+  		plot.margin = unit(c(7.0, 30, 14.1, 5.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -188,7 +188,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(1.5, 2, 14.1, 33.1), "points"))
+  		plot.margin = unit(c(7.0, 2, 14.1, 33.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -262,7 +262,7 @@ plotDedupReads <- function(data, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.95, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 2, 3, 4.5), "points"),
+  		plot.margin = unit(c(5.5, 2, 3, 4.5), "points"),
 		legend.position = c(0.337, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
