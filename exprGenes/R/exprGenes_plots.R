@@ -995,9 +995,16 @@ BD_total_cod <- paste("Total:", expr_genes_OS[730,2], sep=" ")
 
 
 dat_text <- data.frame(
-    label = c(AT_total_cod, CR_total_cod, ES_total_cod, TH_total_cod, MT_total_cod, BD_total_cod),
-    x     = c(0.314, 1.376, 2.438, 3.5, 4.562, 5.625),
-    y     = c(32.4, 32.4, 32.4, 32.4, 32.4, 32.4)
+    label = c(AT_total_cod, CR_total_cod, ES_total_cod, TH_total_cod, MT_total_cod, BD_total_cod, 
+    	expr_genes_OS[46,2], expr_genes_OS[190,2], expr_genes_OS[334,2], expr_genes_OS[478,2], 
+    	expr_genes_OS[622,2], expr_genes_OS[766,2], expr_genes_OS[82,2], expr_genes_OS[226,2], 
+    	expr_genes_OS[370,2], expr_genes_OS[514,2], expr_genes_OS[658,2], expr_genes_OS[802,2], 
+    	expr_genes_OS[118,2], expr_genes_OS[262,2], expr_genes_OS[406,2], expr_genes_OS[550,2], 
+    	expr_genes_OS[694,2], expr_genes_OS[838,2]),
+    x = c(0.314, 1.376, 2.438, 3.5, 4.562, 5.625, 0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 
+    	0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 0.189, 1.251, 2.313, 3.375, 4.437, 5.5),
+    y = c(32.4, 32.4, 32.4, 32.4, 32.4, 32.4, 29.94, 29.94, 29.94, 29.94, 29.94, 29.94, 
+    	21.29, 21.29, 21.29, 21.29, 21.29, 21.29, 12.67, 12.67, 12.67, 12.67, 12.67, 12.67)
     )
 
 p <- ggplot(df_blank) + geom_point() + xlim(0, 6) + ylim(0, 40) + theme_void() + 
