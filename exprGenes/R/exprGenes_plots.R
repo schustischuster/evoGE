@@ -128,9 +128,9 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
-  			margin = margin(t = 0, r = 11, b = 0, l = 0)), 
+  			margin = margin(t = 0, r = 10, b = 0, l = 0)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
-  			margin = margin(t = 4, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5),
+  			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
@@ -184,9 +184,9 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
-  			margin = margin(t = 0, r = 11, b = 0, l = 0)), 
+  			margin = margin(t = 0, r = 10, b = 0, l = 0)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
-  			margin = margin(t = 4, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
+  			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
@@ -258,9 +258,9 @@ plotDedupReads <- function(data, plot_title) {
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=21, 
-  			margin = margin(t = 0, r = 11, b = 0, l = 2.2)), 
+  			margin = margin(t = 0, r = 10, b = 0, l = 2.2)), 
   		axis.text.x = element_text(colour = "black", size=18, angle=90, 
-  			margin = margin(t = 2.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
+  			margin = margin(t = 2.0, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.95, l = 0), hjust = 0.5), 
@@ -303,6 +303,10 @@ prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0_01, t
 		data <- cbind(th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)], th_0[2,3:ncol(th_0)])
 	} else  if (is.element("lincRNA", biotype)) {
 		data <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0[3,3:ncol(th_0)])
+	# Add linc data as dummy data for circRNAs
+	# Change this once real data is available!
+    } else  if (is.element("circRNA", biotype)) {
+		data <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0[3,3:ncol(th_0)])
 	}
 
 	colnames(data) <- NULL
@@ -337,6 +341,8 @@ expr_NATs_ATH <- prepareExprGenes(biotype = "NAT", th_0_01 = ATH_expr_genes_0.01
 	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
 expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0_01 = ATH_expr_genes_0.01, 
 	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
+expr_circRNAs_ATH <- prepareExprGenes(biotype = "circRNA", th_0_01 = ATH_expr_genes_0.01, 
+	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
 
 
 
@@ -352,21 +358,28 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 		pltymin <- 1.0e4
 		pltymax <- 2.78e4
 		xtepos <- 20.35
-		y_margin <- margin(t = 0, r = 12, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 0)
 
 	} else if (is.element("NAT", biotype)) {
 		breaksY <- c(1e3,2e3,3e3)
 		pltymin <- 2.0e2
 		pltymax <- 3.68e3
 		xtepos <- 32.15
-		y_margin <- margin(t = 0, r = 12, b = 0, l = 10.5)
+		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 10.5)
 
 	} else if (is.element("linc", biotype)) {
 		breaksY <- c(5e2,1e3,1.5e3)
 		pltymin <- 0.35e2
 		pltymax <- 1.585e3
 		xtepos <- 32.15
-		y_margin <- margin(t = 0, r = 6.85, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
+
+	} else if (is.element("circ", biotype)) {
+		breaksY <- c(5e2,1e3,1.5e3)
+		pltymin <- 0.35e2
+		pltymax <- 1.585e3
+		xtepos <- 32.15
+		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
 	}
 
 	level_order <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
@@ -411,10 +424,10 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
   		panel.grid.minor = element_line(colour = "white"),  
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.y = element_text(colour = "black", size=21, 
+  		axis.title.y = element_text(colour = "black", size=21.5, 
   			margin = y_margin), 
   		axis.text.x = element_text(colour = "black", size=16.5, angle=90, 
-  			margin = margin(t = 2.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
+  			margin = margin(t = 2.0, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
   		plot.title = element_text(colour = "black", size=23.5, 
   			margin = margin(t = 17, r = 0, b = 16, l = 0), hjust = 0.5), 
@@ -441,6 +454,8 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed protein-coding genes in A.thaliana", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
 plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in A.thaliana", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
 plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thaliana", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
+# For circRNAs: change value for texpr to ATH_expr_genes_0.05[4,2]!
+plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thaliana", biotype = "circ", texpr=ATH_expr_genes_0.05[3,2])
 
 
 
@@ -519,7 +534,7 @@ makePlotReplCorr <- function(data, plot_title) {
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 12.5, b = 0, l = 0.5)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=0, 
-  			margin = margin(t = 7.5, r = 0, b = 0, l = 0), hjust = 0.5, vjust = 0.5),
+  			margin = margin(t = 6.5, r = 0, b = 0.5, l = 0), hjust = 0.5, vjust = 0.5),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 21.5, r = 0, b = 13.5, l = 0), hjust = 0.5), 
