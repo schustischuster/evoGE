@@ -131,7 +131,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   			margin = margin(t = 0, r = 10, b = 0, l = 0)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
   			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5),
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 30, 14.1, 5.1), "points"))
@@ -187,7 +187,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   			margin = margin(t = 0, r = 10, b = 0, l = 0)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
   			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 2, 14.1, 33.1), "points"))
@@ -261,7 +261,7 @@ plotDedupReads <- function(data, plot_title) {
   			margin = margin(t = 0, r = 10, b = 0, l = 2.2)), 
   		axis.text.x = element_text(colour = "black", size=18, angle=90, 
   			margin = margin(t = 2.0, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 1)), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.95, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(5.5, 2, 3, 4.5), "points"),
@@ -292,8 +292,8 @@ plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
 
 
 # Prepare data for ggplot
-prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA"), th_0_01, th_0_05, th_0_1, 
-	th_0) {
+prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA", "circRNA"), th_0_01, th_0_05, 
+	th_0_1, th_0) {
 
 	df_names <- c("Detailed_name" , "Sample" , "Threshold", "Expressed")
 
@@ -428,7 +428,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
   			margin = y_margin), 
   		axis.text.x = element_text(colour = "black", size=16.5, angle=90, 
   			margin = margin(t = 2.0, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=23.5, 
   			margin = margin(t = 17, r = 0, b = 16, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 2, 0, 1), "points"),
@@ -534,8 +534,8 @@ makePlotReplCorr <- function(data, plot_title) {
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 12.5, b = 0, l = 0.5)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=0, 
-  			margin = margin(t = 6.5, r = 0, b = 0.5, l = 0), hjust = 0.5, vjust = 0.5),
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)), 
+  			margin = margin(t = 7.0, r = 0, b = 0.5, l = 0), hjust = 0.5, vjust = 0.5),
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)),
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 21.5, r = 0, b = 13.5, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 1.25, 69.75, 8.0), "points"))
