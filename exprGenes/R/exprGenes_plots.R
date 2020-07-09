@@ -258,7 +258,7 @@ plotDedupReads <- function(data, plot_title) {
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20.5, 
-  			margin = margin(t = 0, r = 10.5, b = 0, l = 2.2)), 
+  			margin = margin(t = 0, r = 10.5, b = 0, l = 8.5)), 
   		axis.text.x = element_text(colour = "black", size=18, angle=90, 
   			margin = margin(t = 2.0, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 2)), 
@@ -459,6 +459,126 @@ plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thalia
 
 
 
+# Plot number of expressed genes at different thresholds for ATH
+# This plotting function generates plots without individual sample labels
+plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), texpr) {
+
+	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), "domain", sep="_"))
+
+	total_expr <- paste("Total:", texpr, "at 0.05" , sep=" ")
+
+	if (is.element("coding", biotype)) {
+		breaksY <- c(1.0e4,1.5e4,2e4,2.5e4)
+		pltymin <- 0.9e4
+		pltymax <- 2.6e4
+		xtepos <- 30.7
+		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 0)
+		y_axs_title <- "Number of Genes"
+
+	} else if (is.element("NAT", biotype)) {
+		breaksY <- c(1e3,2e3,3e3)
+		pltymin <- 1.0e2
+		pltymax <- 3.32e3
+		xtepos <- 31.42
+		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 10.5)
+		y_axs_title <- "Number of NATs"
+
+	} else if (is.element("linc", biotype)) {
+		breaksY <- c(0,5e2,1e3,1.5e3)
+		pltymin <- 0
+		pltymax <- 1.43e3
+		xtepos <- 31.45
+		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
+		y_axs_title <- "Number of lincRNAs"
+
+	} else if (is.element("circ", biotype)) {
+		breaksY <- c(5e2,1e3,1.5e3)
+		pltymin <- 0.35e2
+		pltymax <- 1.585e3
+		xtepos <- 31.45
+		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
+		y_axs_title <- "Number of circRNAs"
+	}
+
+	level_order <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
+		"whole rt.21d", "hypocotyl10", "3.internode", "2.internode", "1.internode", "cotyledons", 
+		"leaf 1+2 7d", "leaf 1.2 10d", "leaf petiole", "leaf tip 10d", "leaf 5.6 17d", "leaf 910 27d", "leaf sen.35d", 
+		"cauline leaf", "apex veg.7d", "apex veg.10", "apex veg.14", "apex inf 21d", "apex inf clv1", 
+		"apex inf 28d", "flower stg.9", "flower 10.11", "flower st12", "flower st15", 
+		"sepals st12", "sepals st15", "petals st12", "petals st15", "stamen st12", 
+		"stamen st15", "pollen mat.", "carpel st12e", "carpel st12l", "carpels st15", 
+		"fruit stg.16", "fruit stg.17a", "seeds st16", "seeds st17a", "seeds st18")
+
+	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
+
+	geom_line(aes(x = factor(Sample, level= level_order)), size=1.7) + 
+	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
+		 	labels = function(l) { 
+		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
+		 	}) +
+  	annotate("rect", xmin=0.25, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="white", alpha=0, 
+		 	color="black", size=0.7) + 
+  	annotate("rect", xmin=0.25, xmax=6.5, ymin=pltymin, ymax=pltymax, fill="#747474", alpha=0.34) + 
+  	annotate("rect", xmin=10.5, xmax=19.5, ymin=pltymin, ymax=pltymax, fill="#0fc94d", alpha=0.34) + 
+  	annotate("rect", xmin=25.5, xmax=29.5, ymin=pltymin, ymax=pltymax, fill="#747474", alpha=0.34) + 
+  	annotate("rect", xmin=38.5, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="#db4a10", alpha=0.34) +
+  	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
+  	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.9, size=7.01, label = total_expr) + 
+  	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
+  	annotate("text", x = 2.1, y = Inf, hjust = 0, vjust = 25.55, size=7.25, label = "root") + 
+  	annotate("text", x = 6.95, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "stem") + 
+  	annotate("text", x = 13.8, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "leaf") + 
+  	annotate("text", x = 20.9, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "apex") + 
+  	annotate("text", x = 26.15, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "flow.") + 
+  	annotate("text", x = 30.5, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "floral organ") + 
+  	annotate("text", x = 40.35, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "fruit") + 
+  	labs(color="")
+
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Organ") + ylab(y_axs_title) + 
+	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
+		guides(colour = guide_legend(nrow = 1)) + 
+  		theme(text = element_text(size=23.5), 
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+  		panel.grid.major = element_line(colour = "white"), 
+  		panel.grid.minor = element_line(colour = "white"),  
+  		axis.ticks.length = unit(.3, "cm"),
+  		axis.ticks = element_line(colour = "gray15", size = 0.7),
+  		axis.title.x = element_text(colour = "black", size=21.5, 
+  			margin = margin(t = 42, r = 0, b = 40.25, l = 0)),  
+  		axis.title.y = element_text(colour = "black", size=21.5, 
+  			margin = y_margin), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
+  		plot.title = element_text(colour = "black", size=23.5, 
+  			margin = margin(t = 34, r = 0, b = 16, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 22, 0, 1), "points"),
+		legend.position = c(0.22, 0.108),
+		legend.title = element_text(colour = "black", size=20, face ="bold"),
+		legend.text = element_text(size=20), 
+		legend.key.size = unit(0.775, "cm"),
+		legend.key.height = unit(0.4, "cm"),
+		legend.background = element_rect(fill = NA),
+		legend.key = element_rect(fill = NA),
+  		panel.border = element_rect(colour = "gray15", fill=NA, size=0.5))
+
+  	png("NUL")
+	r <- ggplotGrob(q)
+	r$layout$clip[r$layout$name=="panel"] <- "off"
+
+	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
+		scale = 1, width = 10.25, height = 7.3, units = c("in"), 
+		dpi = 600, limitsize = FALSE)
+}
+
+
+plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed genes in A.thaliana", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
+plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in A.thaliana", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
+plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thaliana", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
+# For circRNAs: change value for texpr to ATH_expr_genes_0.05[4,2]!
+plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thaliana", biotype = "circ", texpr=ATH_expr_genes_0.05[3,2])
+
+
+
 
 #----------------------------- Plotting replicate correlations ------------------------------
 
@@ -530,18 +650,18 @@ makePlotReplCorr <- function(data, plot_title) {
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.x = element_text(colour = "black", size=20, 
-  			margin = margin(t = 17.5, r = 0, b = 0, l = 0)), 
+  			margin = margin(t = 18.0, r = 0, b = -1, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=20, 
-  			margin = margin(t = 0, r = 12.5, b = 0, l = 0.5)), 
+  			margin = margin(t = 0, r = 11.0, b = 0, l = 2)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=0, 
   			margin = margin(t = 6.5, r = 0, b = 0.5, l = 0), hjust = 0.5, vjust = 0.5),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)),
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 21.0, r = 0, b = 14.0, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 1.25, 69.75, 8.0), "points"))
+  		plot.margin = unit(c(0, 0.5, 69.75, 0), "points"))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 9.1, height = 7.09, units = c("in"), 
+		scale = 1, width = 9.16, height = 7.09, units = c("in"), 
 		dpi = 600, limitsize = FALSE)
 }
 
