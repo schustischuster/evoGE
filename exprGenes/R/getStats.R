@@ -40,7 +40,7 @@ getStats <- function() {
 	# ATH_all data
 	ATH_data <- A_thaliana[-5]
 	names(ATH_data)[1] <- "Sample"
-	species_tag = as.data.frame(rep(c("ATH"),each=nrow(ATH_data)))
+	species_tag = as.data.frame(rep(c("AT"),each=nrow(ATH_data)))
 	names(species_tag) <- "Species"
 	ATH_stats <- cbind(species_tag, ATH_data, samples_repl[1:132,c(2,5,7,6)])
 	rownames(ATH_stats) <- c()
@@ -79,7 +79,7 @@ getStats <- function() {
 	# Create list of stat tables
 	stat_list <- list(ATH_stats = ATH_stats, non_ATH_stats = non_ATH_stats, comp_stats = comp_stats)
 
-	# Write final data tables to csv files and store them in /out_dir/output/data_tables
+	# Write final data tables to csv files and store them in /out_dir/output/mapping_statistics
 	if (!dir.exists(file.path(out_dir, "output", "mapping_statistics"))) 
 		dir.create(file.path(out_dir, "output", "mapping_statistics"), recursive = TRUE)
 
