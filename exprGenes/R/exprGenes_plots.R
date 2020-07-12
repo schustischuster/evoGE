@@ -121,7 +121,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
 
 	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
-	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
+	xlab("") + ylab("Number of PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
 		text=element_text(size=20.75), 
@@ -134,7 +134,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 30, 14.1, 5.1), "points"))
+  		plot.margin = unit(c(7.0, 23, 14.1, 5.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -142,7 +142,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 		dpi = 600, limitsize = FALSE)
 }
 
-makePlotStatsATH(data=ATH_stats_df, lim_y=212000000, medw = 0.277, plot_title="A.thaliana") 
+makePlotStatsATH(data=ATH_stats_df, lim_y=226000000, medw = 0.277, plot_title="A.thaliana") 
 # 1 data point for trimmed raw reads above lim_y
 
 
@@ -190,7 +190,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 2, 14.1, 33.1), "points"))
+  		plot.margin = unit(c(7.0, 2, 14.1, 26.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -238,7 +238,7 @@ plotDedupReads <- function(data, plot_title) {
 		"apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
 		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
 
-	species_order <- c("ATH","AL","CR","ES","TH","MT","BD")
+	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
 	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.5) + 
@@ -251,21 +251,24 @@ plotDedupReads <- function(data, plot_title) {
 		 	color="black", size=0.7) + 
   	labs(color="Species")
 
-	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("PE dedupl. reads") + 
-	scale_color_manual(values=c("#dca207","#a8a8a8","#ea6965","#46ae12","#1fac7b","#967cee","#36a5d8"), breaks=species_order) + 
-		guides(colour = guide_legend(nrow = 1)) + 
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of PE dedupl. reads") + 
+	scale_color_manual(values=c("#dea80c","#a8a8a8","#ea6965","#46ae12","#069870","#4fb6f0","#0770ab"), 
+		# Order of color vector is in alphabetical order of species (AL/AT/BD/CR/ES/MT/TH)
+		# It uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
+		breaks=species_order) + 
+		guides(colour = guide_legend(nrow = 1)) +  
   		theme(text=element_text(size=21), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20.5, 
-  			margin = margin(t = 0, r = 10.5, b = 0, l = 8.5)), 
+  			margin = margin(t = 0, r = 10.5, b = 0, l = 21)), 
   		axis.text.x = element_text(colour = "black", size=18, angle=90, 
   			margin = margin(t = 2.0, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.95, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(5.5, 2, 3, 4.5), "points"),
-		legend.position = c(0.337, 0.115),
+		legend.position = c(0.334, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
 		legend.title = element_text(colour = "black", size=19.5, face ="bold"),
@@ -417,7 +420,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of Genes") + 
-	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
+	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dca207")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(text=element_text(size=23.5), 
   		panel.grid.major = element_line(colour = "white"), 
@@ -511,7 +514,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
 
-	geom_line(aes(x = factor(Sample, level= level_order)), size=1.7) + 
+	geom_line(aes(x = factor(Sample, level= level_order)), size=1.8) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
@@ -535,7 +538,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Organ") + ylab(y_axs_title) + 
-	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
+	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(text = element_text(size=23.5), 
         axis.text.x = element_blank(),
@@ -590,7 +593,7 @@ prepareReplStats <- function(ATH,AL,CR,ES,TH,MT,BD) {
 	number_values_AL <- (ncol(AL))
 	number_values_other <- (ncol(CR))
 
-	class_ATH_key = as.data.frame(rep(c("ATH"), times = number_values_ATH))
+	class_ATH_key = as.data.frame(rep(c("AT"), times = number_values_ATH))
 	names(class_ATH_key) <- "Species"
 	class_ATH <- cbind(class_ATH_key, as.data.frame(t(ATH)))
 	names(class_ATH)[2] <- "Correlation"
@@ -638,11 +641,12 @@ makePlotReplCorr <- function(data, plot_title) {
 	     stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
 		 geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
 		 	outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
-		 scale_y_continuous(limits = c(0.9658,1.0005), expand = c(0, 0)) + 
-		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9658, ymax=1.0005, fill="white", alpha=0, 
+		 scale_y_continuous(limits = c(0.9655,1.0005), expand = c(0, 0)) + 
+		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9655, ymax=1.0005, fill="white", alpha=0,  
 		 	color="black", size=1.35)
 
-	q <- p + scale_fill_manual(values=c("#b2b2b2","#dca207","#46ae12","#1fac7b","#36a5d8","#967cee","#ea6965")) + 
+	q <- p + scale_fill_manual(values=c("#b2b2b2","#dea80c","#46ae12","#069870","#0770ab","#4fb6f0","#ea6965")) + 
+	# Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
 	theme_minimal() + 
 	xlab("Species") + ylab("Pearson's r") + ggtitle(plot_title) + 
 	theme(legend.position = "none", 
