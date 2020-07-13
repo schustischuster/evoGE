@@ -830,7 +830,7 @@ plotExprGenesOS <- function(data, plot_title, species = c("dicot", "BD"), texpr,
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of Genes") + 
-	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
+	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(   
   		axis.ticks.length = unit(.3, "cm"),
@@ -1020,7 +1020,7 @@ plotExprGenesOS <- function(data) {
 
 	q <- p + facet_wrap(class ~ species, scales='free_y', ncol = 6) + 
 	theme_bw() + xlab("Samples") + ylab("Number of Genes") + 
-	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
+	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(
   		strip.text = element_blank(), 
@@ -1056,11 +1056,11 @@ plotExprGenesOS <- function(data) {
 
 	qg <- pg + facet_grid(class ~ species, scales='free') + 
 	theme_bw() + xlab("Samples") + ylab("Number of Genes") + 
-	scale_color_manual(values=c("gray45","#ea6965","#967cee","#dca207")) + 
+	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(
-  		strip.text.x = element_text(margin = margin(0.105, 0, 0.105, 0, "cm"), size = 5.75), 
-        strip.text.y = element_text(margin = margin(0, 0.105, 0, 0.105, "cm"), size = 5.75),
+  		strip.text.x = element_text(margin = margin(0.105, 0, 0.105, 0, "cm"), size = 5.5), 
+        strip.text.y = element_text(margin = margin(0, 0.105, 0, 0.105, "cm"), size = 5.5),
         strip.background = element_rect(colour="grey70", size=0.7), 
   		plot.margin = unit(c(15, 0, 0, 2), "points"),
   		axis.ticks.length = unit(.075, "cm"),
