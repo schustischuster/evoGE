@@ -13,7 +13,7 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Retrieve non-coding-coding gene overlapp](#retrieve-non-coding-coding-gene-overlapp)
   * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
   * [Get intergenic distance of neighboring genes](#get-intergenic-distance-of-neighboring-genes)
-  * [Get bootstrap replicates of expression correlation between randomized gene pairs](#get-bootstrap-replicates-of-expression-correlation-between-randomized-gene-pairs)
+  * [Retrieve expression correlation between randomized protein-coding gene pairs](#retrieve-expression-correlation-between-randomized-protein-coding-gene-pairs)
   * [Get expression intensity and ratio of SAS pairs](#get-expression-intensity-and-ratio-of-sas-pairs)
 * [Visualization](#visualization)
 * [Session info](#session-info)
@@ -131,15 +131,15 @@ getPcPcNO("ATH", "single-species")
 
 ```
 
-### Get bootstrap replicates of expression correlation between randomized gene pairs
+### Retrieve expression correlation between randomized protein-coding gene pairs
 
 ...
 
 ```R
 getRandGeneCor(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
-          cor_method = c("Pearson", "Spearman"),
-          experiment = c("single-species", "comparative"), 
-          bootstrap_repl)
+              cor_method = c("Pearson", "Spearman"),
+              experiment = c("single-species", "comparative"), 
+              bootstrap_repl)
 
 ```
 To generate the data table for _Arabidopsis thaliana_ used in this study, execute the following function call. It will generate 100 bootstrap replicates of 10.000 randomized protein-coding gene pairs:
