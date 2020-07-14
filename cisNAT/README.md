@@ -136,6 +136,16 @@ getPcPcNO("ATH", "single-species")
 ...
 
 ```R
+getRandGeneCor(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
+          cor_method = c("Pearson", "Spearman"),
+          experiment = c("single-species", "comparative"), 
+          bootstrap_repl)
+
+```
+To generate the data table for _Arabidopsis thaliana_ used in this study, execute the following function call. It will generate 100 bootstrap replicates of 10.000 randomized protein-coding gene pairs:
+
+```R
+getRandGeneCor(species = "ATH", cor_method = "Pearson", experiment = "single-species", bootstrap_repl = 100)
 
 ```
 
