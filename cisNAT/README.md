@@ -14,6 +14,7 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
   * [Get intergenic distance of neighboring genes](#get-intergenic-distance-of-neighboring-genes)
   * [Retrieve expression correlation between randomized protein-coding gene pairs](#retrieve-expression-correlation-between-randomized-protein-coding-gene-pairs)
+  * [Extract in-paralog genes from OrthoFinder output](#extract-in-paralog-genes-from-orthoFinder-output)
   * [Get expression intensity and ratio of SAS pairs](#get-expression-intensity-and-ratio-of-sas-pairs)
 * [Visualization](#visualization)
 * [Session info](#session-info)
@@ -146,6 +147,15 @@ To generate the data table for _Arabidopsis thaliana_ used in this study, execut
 
 ```R
 getRandGeneCor(species = "ATH", cor_method = "Pearson", experiment = "single-species", bootstrap_repl = 100)
+
+```
+
+### Extract in-paralog genes from OrthoFinder output
+
+...
+
+```R
+getInParalogs(species = "ATH")
 
 ```
 
