@@ -37,6 +37,7 @@ readTable <- function(path, pattern = "*.csv") {
 coding_genes_tables <- readTable(in_dir_cd)
 NAT_genes_tables <- readTable(in_dir_nc)
 NAT_expr_cor <- readTable(in_dir_expr)
+cd_gene_pairs <- readTable(in_dir_pairs)
 
 
 # Get file names and save them in character vector
@@ -49,6 +50,9 @@ NAT_genes_table_names <- gsub('\\.csv$', '', NAT_genes_table_list)
 NAT_expr_cor_list <- as.character(list.files(in_dir_expr, pattern = "*.csv"))
 NAT_expr_cor_names <- gsub('\\.csv$', '', NAT_expr_cor_list)
 
+cd_gene_pairs_list <- as.character(list.files(in_dir_pairs, pattern = "*.csv"))
+cd_gene_pairs_names <- gsub('\\.csv$', '', cd_gene_pairs_list)
+
 
 # Change data frame names in list
 names(coding_genes_tables) <- coding_genes_table_names
@@ -60,15 +64,12 @@ list2env(NAT_genes_tables, envir = .GlobalEnv)
 names(NAT_expr_cor) <- NAT_expr_cor_names
 list2env(NAT_expr_cor, envir = .GlobalEnv)
 
+names(cd_gene_pairs) <- cd_gene_pairs_names
+list2env(cd_gene_pairs, envir = .GlobalEnv)
+
 
 # Read ATGE_NAT ID table
 ATGE_NAT_ID <- read.table(file=file.path(in_dir_ATGE, "ATH_cd_nc_SAS_cor_wo_pollen_0.5_in_ATGE.csv"), 
-	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
-
-# Read ATH non-overlapping protein-coding gene pair tables
-ATH_same_strand_PCT <- read.table(file=file.path(in_dir_pairs, "ATH_same_strand_PCT_pairs.csv"), 
-	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
-ATH_SAS_PCT <- read.table(file=file.path(in_dir_pairs, "ATH_SAS_PCT_pairs.csv"), 
 	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
 
@@ -735,14 +736,14 @@ n_ATH_pc_all_wo_pollen <- length(ATH_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_all_wo_pollen <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
 n_ATH_pc_comp_wo_pollen <- length(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_comp_wo_pollen <- length(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-n_ATH_same_strand_PCT <- length(ATH_same_strand_PCT[,16])
-n_ATH_SAS_PCT <- length(ATH_SAS_PCT[,16])
+n_ATH_same_strand_PCT <- length(ATH_same_strand_PCT_pairs[,16])
+n_ATH_SAS_PCT <- length(ATH_SAS_PCT_pairs[,16])
 
 
 png(file=file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_ATH_all_vs_comp.png"), 
 	width = 2850, height = 4000, res = 825)
 par(mar = c(4.5, 4.5, 4, 2.4))
-boxplot(ATH_same_strand_PCT[,16], ATH_SAS_PCT[,16], 
+boxplot(ATH_same_strand_PCT_pairs[,16], ATH_SAS_PCT_pairs[,16], 
 	ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
 	ylim = c(-1.2, 1.35), 
 	names = FALSE, 
@@ -1400,24 +1401,24 @@ getDistanceRange <- function(x, min_dist, max_dist) {
 }
 
 # for cd-cd gene pairs that are on same strand
-range_1_50_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 1, max_dist = 50)
-range_50_100_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 50, max_dist = 100)
-range_100_200_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 100, max_dist = 200)
-range_200_500_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 200, max_dist = 500)
-range_500_1000_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 500, max_dist = 1000)
-range_1000_2000_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 1000, max_dist = 2000)
-range_2000_5000_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 2000, max_dist = 5000)
-range_5000_SSN <- getDistanceRange(ATH_same_strand_PCT, min_dist = 5000, max_dist = 50000)
+range_1_50_SSN <- getDistanceRange(ATH_same_strand_PCT_pairs, min_dist = 1, max_dist = 50)
+range_50_100_SSN <- getDistanceRange(ATH_same_strand_PCT_pairs, min_dist = 50, max_dist = 100)
+range_100_200_SSN <- getDistanceRange(ATH_same_strand_PCT_pairs, min_dist = 100, max_dist = 200)
+range_200_500_SSN <- getDistanceRange(ATH_same_strand_PCT_pairs, min_dist = 200, max_dist = 500)
+range_500_1000_SSN <- getDistanceRange(ATH_same_strand_PCT_pairs, min_dist = 500, max_dist = 1000)
+range_1000_2000_SSN <- getDistanceRange(ATH_same_strand_PCT_pairs, min_dist = 1000, max_dist = 2000)
+range_2000_5000_SSN <- getDistanceRange(ATH_same_strand_PCT_pairs, min_dist = 2000, max_dist = 5000)
+range_5000_SSN <- getDistanceRange(ATH_same_strand_PCT_pairs, min_dist = 5000, max_dist = 50000)
 
 # for cd-cd gene pairs that are on opposite strand
-range_1_50_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 1, max_dist = 50)
-range_50_100_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 50, max_dist = 100)
-range_100_200_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 100, max_dist = 200)
-range_200_500_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 200, max_dist = 500)
-range_500_1000_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 500, max_dist = 1000)
-range_1000_2000_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 1000, max_dist = 2000)
-range_2000_5000_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 2000, max_dist = 5000)
-range_5000_OSN <- getDistanceRange(ATH_SAS_PCT, min_dist = 5000, max_dist = 50000)
+range_1_50_OSN <- getDistanceRange(ATH_SAS_PCT_pairs, min_dist = 1, max_dist = 50)
+range_50_100_OSN <- getDistanceRange(ATH_SAS_PCT_pairs, min_dist = 50, max_dist = 100)
+range_100_200_OSN <- getDistanceRange(ATH_SAS_PCT_pairs, min_dist = 100, max_dist = 200)
+range_200_500_OSN <- getDistanceRange(ATH_SAS_PCT_pairs, min_dist = 200, max_dist = 500)
+range_500_1000_OSN <- getDistanceRange(ATH_SAS_PCT_pairs, min_dist = 500, max_dist = 1000)
+range_1000_2000_OSN <- getDistanceRange(ATH_SAS_PCT_pairs, min_dist = 1000, max_dist = 2000)
+range_2000_5000_OSN <- getDistanceRange(ATH_SAS_PCT_pairs, min_dist = 2000, max_dist = 5000)
+range_5000_OSN <- getDistanceRange(ATH_SAS_PCT_pairs, min_dist = 5000, max_dist = 50000)
 
 
 SSN_list <- list(range_1_50_SSN=range_1_50_SSN,range_50_100_SSN=range_50_100_SSN,
