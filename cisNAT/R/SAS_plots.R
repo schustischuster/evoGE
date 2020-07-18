@@ -17,6 +17,8 @@ if (!require(ggplot2)) install.packages('ggplot2')
 library(ggplot2)
 if (!require(mgcv)) install.packages('mgcv')
 library(mgcv)
+if (!require(data.table)) install.packages('data.table')
+library(data.table)
 
 
 # Set file path and input files
@@ -740,10 +742,54 @@ n_ATH_same_strand_PCT <- length(ATH_same_strand_PCT_pairs[,16])
 n_ATH_SAS_PCT <- length(ATH_SAS_PCT_pairs[,16])
 
 
+# Remove inparalog gene pairs from protein-coding gene pairs of same strand data
+ATH_same_strand_PCT_pair_ID <- as.data.frame(seq(1:nrow(ATH_same_strand_PCT_pairs)))
+names(ATH_same_strand_PCT_pair_ID) <- "ID_PCT"
+ATH_same_strand_PCT_pairs <- cbind(ATH_same_strand_PCT_pair_ID, ATH_same_strand_PCT_pairs)
+ATH_same_strand_PCT_pair_AGI <- ATH_same_strand_PCT_pairs[,c(1:2,7)]
+
+
+# Below code adapted from https://stackoverflow.com/questions/36504545
+ATH_same_strand_PCT_pair_AGI_dt <- ATH_same_strand_PCT_pair_AGI
+All_orthogroups_ATH_dt <- All_orthogroups_ATH
+
+table_1 <- setDT(ATH_same_strand_PCT_pair_AGI_dt)
+table_2 <- setDT(All_orthogroups_ATH_dt)
+
+setnames(table_1, "ID_PCT", "ID")
+setnames(table_2, "ID_orth", "ID")
+
+tabs = rbind(
+  melt(table_1, id="ID")[, variable := NULL],
+  melt(table_2, id="ID")[, variable := NULL],
+  idcol = TRUE)
+
+# Get all combinations with at least one match
+pairs_w_count <- tabs[, 
+  if (uniqueN(.id) > 1L) CJ(ID1 = ID[.id == 1L], ID2 = ID[.id == 2L])
+  , by=value][, .N
+  , by=.(ID1, ID2)]
+
+pairs_2_count <- pairs_w_count[pairs_w_count$N > 1, ]
+
+
+# Generate protein-coding gene pair of same strand data expression tables w/ w/o tandem dupl
+ATH_same_strand_PCT_pair_AGI_wo_ortho <- 
+    ATH_same_strand_PCT_pairs[!ATH_same_strand_PCT_pairs$ID_PCT %in% pairs_2_count$ID1, ]
+
+ATH_same_strand_PCT_pair_AGI_ortho <- 
+    ATH_same_strand_PCT_pairs[ATH_same_strand_PCT_pairs$ID_PCT %in% pairs_2_count$ID1, ]
+
+n_ATH_same_strand_PCT_wo_ortho <- length(ATH_same_strand_PCT_pair_AGI_wo_ortho[,17])
+
+n_ATH_same_strand_PCT_ortho <- length(ATH_same_strand_PCT_pair_AGI_ortho[,17])
+
+
+
 png(file=file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_ATH_all_vs_comp.png"), 
 	width = 2850, height = 4000, res = 825)
 par(mar = c(4.5, 4.5, 4, 2.4))
-boxplot(ATH_same_strand_PCT_pairs[,16], ATH_SAS_PCT_pairs[,16], 
+boxplot(ATH_same_strand_PCT_pairs[,17], ATH_SAS_PCT_pairs[,16], 
 	ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
 	ylim = c(-1.2, 1.35), 
 	names = FALSE, 
