@@ -171,9 +171,7 @@ coding_genes_tables_wo_pollen_list <- list(
 	AL_coding_SAS_cor_wo_pollen = AL_coding_SAS_cor_wo_pollen, 
 	AL_comp_samples_coding_SAS_cor_wo_pollen = AL_comparative_samples_coding_SAS_cor_wo_pollen, 
 	ATH_coding_SAS_cor_wo_pollen = ATH_coding_SAS_cor_wo_pollen,
-	ATH_coding_SAS_cor = ATH_coding_SAS_cor, #including pollen samples for ATH
 	ATH_comp_samples_coding_SAS_cor_wo_pollen = ATH_comparative_samples_coding_SAS_cor_wo_pollen,
-	ATH_comp_samples_coding_SAS_cor = ATH_comparative_samples_coding_SAS_cor, #including pollen samples for ATH
 	BD_coding_SAS_cor_wo_pollen = BD_coding_SAS_cor_wo_pollen,
 	CR_coding_SAS_cor_wo_pollen = CR_coding_SAS_cor_wo_pollen,
 	ES_coding_SAS_cor_wo_pollen = ES_coding_SAS_cor_wo_pollen,
