@@ -39,6 +39,8 @@ if (!require(ggplot2)) install.packages('ggplot2')
 library(ggplot2)
 if (!require(mgcv)) install.packages('mgcv')
 library(mgcv)
+if (!require(data.table)) install.packages('data.table')
+library(data.table)
 
 ```
   
