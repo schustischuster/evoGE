@@ -241,7 +241,7 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_tpm" = all_genes_tpm)
     # return(return_list)
     # }
-    # return_objects <- getPcPc("ATH", "single-species") # read in GTF and expression data for A.thaliana
+    # return_objects <- getPcPcNO("ATH", "single-species") # read in GTF and expression data for A.thaliana
     # list2env(return_objects, envir = .GlobalEnv)
 
 
@@ -263,13 +263,12 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	# Find nearest protein-coding gene for plus and minus strands
 	GTF_df_cd_GR <- makeGRangesFromDataFrame(GTF_df_cd, keep.extra.columns=FALSE, 
-		ignore.strand=FALSE, seqinfo=NULL, seqnames.field=c(
-		"seqnames", "seqname","chromosome", "chrom","chr", "chromosome_name","seqid"),
-		start.field="start", end.field=c("end", "stop"),starts.in.df.are.0based=FALSE)
+		ignore.strand=FALSE, seqinfo=NULL, seqnames.field="seqnames",
+		start.field="start", end.field="end", starts.in.df.are.0based=FALSE)
 
 	# Get nearest protein-coding genes and their distance to each other
 	# a distance <= 0 indicates overlapping genes on same or opposite strand -> remove them afterwards!
-	transcript_pairs <- distanceToNearest(GTF_df_cd_GR, select=c("arbitrary"), ignore.strand=TRUE)
+	transcript_pairs <- distanceToNearest(GTF_df_cd_GR, select="arbitrary", ignore.strand=TRUE)
 	transcript_pairs_df <- as.data.frame(transcript_pairs)
 	transcript_pairs_df <- subset(transcript_pairs_df, distance != 0)
 
@@ -290,8 +289,8 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	strand_plus_minus_query_genes$id  <- seq(1, nrow(strand_plus_minus_query_genes), 1)
 	strand_plus_minus_query_genes = strand_plus_minus_query_genes %>% select(
 		id,
-		subjectHits,
 		queryHits,
+		subjectHits,
 		distance,
 		gene_id,
 		seqnames, 
@@ -303,8 +302,8 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	strand_plus_minus_subject_genes$id  <- seq(1, nrow(strand_plus_minus_subject_genes), 1)
 	strand_plus_minus_subject_genes = strand_plus_minus_subject_genes %>% select(
 		id,
-		queryHits,
 		subjectHits,
+		queryHits,
 		distance,
 		gene_id,
 		seqnames, 
@@ -319,6 +318,23 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	strand_plus_minus_query_genes_tpm <- join(strand_plus_minus_query_genes, all_genes_tpm, by="gene_id")
 	strand_plus_minus_subject_genes_tpm <- join(strand_plus_minus_subject_genes, all_genes_tpm, by="gene_id")
+
+
+
+
+    #-------------------------- Get expression table w/o pollen data  --------------------------
+
+
+	# Remove pollen triplicates from expression table
+	strand_plus_minus_query_genes_tpm_wo_pollen <- dplyr::select(strand_plus_minus_query_genes_tpm, -c(
+		flowers_mature_pollen_1, 
+		flowers_mature_pollen_2, 
+		flowers_mature_pollen_3)) #tibble w/o pollen samles
+
+	strand_plus_minus_subject_genes_tpm_wo_pollen <- dplyr::select(strand_plus_minus_subject_genes_tpm, -c(
+		flowers_mature_pollen_1, 
+		flowers_mature_pollen_2, 
+		flowers_mature_pollen_3)) #tibble w/o pollen samles
 
 
 
@@ -340,6 +356,8 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		# Add keys to data frame
 		key <- seq(1, nrow(df), 1)
 		df <- cbind(as.data.frame(key),df)
+
+		df <- na.omit(df)
 
 		# Define threshold function
 		getThreshold <- function(df) {
@@ -378,8 +396,8 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Apply threshold function
-	strand_plus_minus_query_genes_tpm_0.5 <- applyThreshold(strand_plus_minus_query_genes_tpm,0.5)
-	strand_plus_minus_subject_genes_tpm_0.5 <- applyThreshold(strand_plus_minus_subject_genes_tpm,0.5)
+	strand_plus_minus_query_genes_tpm_0.5 <- applyThreshold(strand_plus_minus_query_genes_tpm_wo_pollen,0.5)
+	strand_plus_minus_subject_genes_tpm_0.5 <- applyThreshold(strand_plus_minus_subject_genes_tpm_wo_pollen,0.5)
 
 	strand_plus_minus_query_genes_tpm_0.5 <- strand_plus_minus_query_genes_tpm_0.5[(
 		strand_plus_minus_query_genes_tpm_0.5$id %in% strand_plus_minus_subject_genes_tpm_0.5$id),]
@@ -396,54 +414,28 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	PCT_pairs_subject_minus <- subset(strand_plus_minus_subject_genes_tpm_0.5, strand == "-")
 
 	same_strand_PCT_pairs_query_plus <- PCT_pairs_query_plus[(
-		PCT_pairs_query_plus$id %in% PCT_pairs_subject_plus$id),]
+		PCT_pairs_query_plus$id %in% PCT_pairs_subject_plus$id),] # query_id/subject on plus
 	same_strand_PCT_pairs_subject_plus <- PCT_pairs_subject_plus[(
-		PCT_pairs_subject_plus$id %in% PCT_pairs_query_plus$id),]
+		PCT_pairs_subject_plus$id %in% PCT_pairs_query_plus$id),] # subject_id/query on plus
 	same_strand_PCT_pairs_query_minus <- PCT_pairs_query_minus[(
-		PCT_pairs_query_minus$id %in% PCT_pairs_subject_minus$id),]
+		PCT_pairs_query_minus$id %in% PCT_pairs_subject_minus$id),] # query_id/subject on minus
 	same_strand_PCT_pairs_subject_minus <- PCT_pairs_subject_minus[(
-		PCT_pairs_subject_minus$id %in% PCT_pairs_query_minus$id),]
+		PCT_pairs_subject_minus$id %in% PCT_pairs_query_minus$id),] # subject_id/query on minus
 
 	same_strand_PCT_pairs_query <- rbind(same_strand_PCT_pairs_query_plus, same_strand_PCT_pairs_query_minus)
 	same_strand_PCT_pairs_subject <- rbind(same_strand_PCT_pairs_subject_plus, same_strand_PCT_pairs_subject_minus)
 
 	SAS_PCT_pairs_query_plus <- PCT_pairs_query_plus[(
-		PCT_pairs_query_plus$id %in% PCT_pairs_subject_minus$id),]
+		PCT_pairs_query_plus$id %in% PCT_pairs_subject_minus$id),] # query_id/subject on plus/minus
 	SAS_PCT_pairs_subject_plus <- PCT_pairs_subject_plus[(
-		PCT_pairs_subject_plus$id %in% PCT_pairs_query_minus$id),]
+		PCT_pairs_subject_plus$id %in% PCT_pairs_query_minus$id),] # subject_id/subject on plus/minus
 	SAS_PCT_pairs_query_minus <- PCT_pairs_query_minus[(
-		PCT_pairs_query_minus$id %in% PCT_pairs_subject_plus$id),]
+		PCT_pairs_query_minus$id %in% PCT_pairs_subject_plus$id),] # query_id/subject on minus/plus
 	SAS_PCT_pairs_subject_minus <- PCT_pairs_subject_minus[(
-		PCT_pairs_subject_minus$id %in% PCT_pairs_query_plus$id),]
+		PCT_pairs_subject_minus$id %in% PCT_pairs_query_plus$id),] # subject_id/query on minus/plus
 
 	SAS_PCT_pairs_query <- rbind(SAS_PCT_pairs_query_plus, SAS_PCT_pairs_query_minus)
 	SAS_PCT_pairs_subject <- rbind(SAS_PCT_pairs_subject_minus, SAS_PCT_pairs_subject_plus)
-
-
-
-	#-------------------------- Get expression table w/o pollen data  --------------------------
-
-
-	# Remove pollen triplicates from expression table
-	same_strand_PCT_pairs_query_wo_pollen <- dplyr::select(same_strand_PCT_pairs_query, -c(
-		flowers_mature_pollen_1, 
-		flowers_mature_pollen_2, 
-		flowers_mature_pollen_3)) #tibble w/o pollen samles
-
-	same_strand_PCT_pairs_subject_wo_pollen <- dplyr::select(same_strand_PCT_pairs_subject, -c(
-		flowers_mature_pollen_1, 
-		flowers_mature_pollen_2, 
-		flowers_mature_pollen_3)) #tibble w/o pollen samles
-
-	SAS_PCT_pairs_query_wo_pollen <- dplyr::select(SAS_PCT_pairs_query, -c(
-		flowers_mature_pollen_1, 
-		flowers_mature_pollen_2, 
-		flowers_mature_pollen_3)) #tibble w/o pollen samles
-
-	SAS_PCT_pairs_subject_wo_pollen <- dplyr::select(SAS_PCT_pairs_subject, -c(
-		flowers_mature_pollen_1, 
-		flowers_mature_pollen_2, 
-		flowers_mature_pollen_3)) #tibble w/o pollen samles
 
 
 
@@ -474,9 +466,9 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	same_strand_PCT_pairs_wo_pollen <- getCor(
-		same_strand_PCT_pairs_query_wo_pollen, same_strand_PCT_pairs_subject_wo_pollen)
+		same_strand_PCT_pairs_query, same_strand_PCT_pairs_subject)
 	SAS_PCT_pairs_wo_pollen <- getCor(
-		SAS_PCT_pairs_query_wo_pollen, SAS_PCT_pairs_subject_wo_pollen)
+		SAS_PCT_pairs_query, SAS_PCT_pairs_subject)
 
 
 
@@ -485,10 +477,10 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Create data table containing both strand plus and minus genes and cor values
-	same_strand_PCT_pairs_subject_descript = same_strand_PCT_pairs_subject_wo_pollen %>% select(id, gene_id, start, end, strand, biotype)
+	same_strand_PCT_pairs_subject_descript = same_strand_PCT_pairs_subject %>% select(id, gene_id, start, end, strand, biotype)
 	names(same_strand_PCT_pairs_subject_descript) <- c("key_subject" ,"id_subject", "start_subject", "end_subject", "strand_subject", "biotype_subject")
 	same_strand_PCT_pairs_wo_pollen_descript <- same_strand_PCT_pairs_wo_pollen
-	names(same_strand_PCT_pairs_wo_pollen_descript)[1:10] <- c("key_query", "subjectHits", "queryHits", "distance", "id_query", "seqnames", "start_query", "end_query", "strand_query", "biotype_query")
+	names(same_strand_PCT_pairs_wo_pollen_descript)[1:10] <- c("key_query", "queryHits", "subjectHits", "distance", "id_query", "seqnames", "start_query", "end_query", "strand_query", "biotype_query")
 	same_strand_PCT_pairs <- cbind(same_strand_PCT_pairs_wo_pollen_descript, same_strand_PCT_pairs_subject_descript)
 	same_strand_PCT_pairs = same_strand_PCT_pairs %>% select(
 		id_query, 
@@ -509,10 +501,10 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		Pearson)
 
 
-	SAS_PCT_pairs_subject_descript = SAS_PCT_pairs_subject_wo_pollen %>% select(id, gene_id, start, end, strand, biotype)
+	SAS_PCT_pairs_subject_descript = SAS_PCT_pairs_subject %>% select(id, gene_id, start, end, strand, biotype)
 	names(SAS_PCT_pairs_subject_descript) <- c("key_subject" ,"id_subject", "start_subject", "end_subject", "strand_subject", "biotype_subject")
 	SAS_PCT_pairs_wo_pollen_descript <- SAS_PCT_pairs_wo_pollen
-	names(SAS_PCT_pairs_wo_pollen_descript)[1:10] <- c("key_query", "subjectHits", "queryHits", "distance", "id_query", "seqnames", "start_query", "end_query", "strand_query", "biotype_query")
+	names(SAS_PCT_pairs_wo_pollen_descript)[1:10] <- c("key_query", "queryHits", "subjectHits", "distance", "id_query", "seqnames", "start_query", "end_query", "strand_query", "biotype_query")
 	SAS_PCT_pairs <- cbind(SAS_PCT_pairs_wo_pollen_descript, SAS_PCT_pairs_subject_descript)
 	SAS_PCT_pairs = SAS_PCT_pairs %>% select(
 		id_query, 
