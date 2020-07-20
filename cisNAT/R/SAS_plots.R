@@ -1133,7 +1133,7 @@ testAdjRsqlm <- function(x,y) {
 # Calculate adjusted R squared value for pearson vs spearman data
 rsqd_ATH_all_PS <- testAdjRsqlm(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 rsqd_ATH_comp_PS <- testAdjRsqlm(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-rsqd_AL_PS <- testAdjRsqlm(AL_comparative_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+rsqd_AL_PS <- testAdjRsqlm(AL_comparative_samples_coding_SAS_cor_wo_pollen_pearson, AL_comparative_samples_coding_SAS_cor_wo_pollen_spearman)
 rsqd_CR_PS <- testAdjRsqlm(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 rsqd_ES_PS <- testAdjRsqlm(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 rsqd_TH_PS <- testAdjRsqlm(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
@@ -1231,7 +1231,7 @@ abs_overlap_BD <- scatterDensity(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, 
 # for pearson vs spearman plots
 ATH_all_PS <- scatterDensity(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 ATH_comp_PS <- scatterDensity(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-AL_comp_PS <- scatterDensity(AL_comparative_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+AL_comp_PS <- scatterDensity(AL_comparative_samples_coding_SAS_cor_wo_pollen_pearson, AL_comparative_samples_coding_SAS_cor_wo_pollen_spearman)
 CR_comp_PS <- scatterDensity(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 ES_comp_PS <- scatterDensity(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 TH_comp_PS <- scatterDensity(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
