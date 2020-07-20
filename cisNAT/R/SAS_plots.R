@@ -166,19 +166,6 @@ BD_cd_nc_SAS_cor_wo_pollen_5_10 <- BD_cd_nc_SAS_cor_wo_pollen_5 %>% filter(
 #------------------------ Prepare data for plotting and test statistics ------------------------
 
 
-# Create list of coding SAS cor tables excluding pollen samples
-coding_genes_tables_wo_pollen_list <- list(
-	AL_coding_SAS_cor_wo_pollen = AL_coding_SAS_cor_wo_pollen, 
-	AL_comp_samples_coding_SAS_cor_wo_pollen = AL_comparative_samples_coding_SAS_cor_wo_pollen, 
-	ATH_coding_SAS_cor_wo_pollen = ATH_coding_SAS_cor_wo_pollen,
-	ATH_comp_samples_coding_SAS_cor_wo_pollen = ATH_comparative_samples_coding_SAS_cor_wo_pollen,
-	BD_coding_SAS_cor_wo_pollen = BD_coding_SAS_cor_wo_pollen,
-	CR_coding_SAS_cor_wo_pollen = CR_coding_SAS_cor_wo_pollen,
-	ES_coding_SAS_cor_wo_pollen = ES_coding_SAS_cor_wo_pollen,
-	MT_coding_SAS_cor_wo_pollen = MT_coding_SAS_cor_wo_pollen,
-	TH_coding_SAS_cor_wo_pollen = TH_coding_SAS_cor_wo_pollen)
-
-
 # Create list of non-coding NAT SAS cor tables excluding pollen samples
 NAT_genes_tables_wo_pollen_list <- list(
 	ATH_cd_nc_SAS_cor_wo_pollen_0.5 = ATH_cd_nc_SAS_cor_wo_pollen_0.5,
@@ -246,12 +233,12 @@ NAT_genes_tables_wo_pollen_list <- list(
 # attached type of correlation measure, e.g. "AL_coding_SAS_cor_wo_pollen_pearson"
 
 # Coding SAS pairs
-coding_genes_tables_wo_pollen_list_spearman <- lapply(coding_genes_tables_wo_pollen_list, function(x) {
+coding_genes_tables_wo_pollen_list_spearman <- lapply(coding_genes_tables, function(x) {
 	as.numeric(unlist(x[, 11]))})
 names(coding_genes_tables_wo_pollen_list_spearman) <- paste(names(
 	coding_genes_tables_wo_pollen_list_spearman),"_spearman", sep="")
 
-coding_genes_tables_wo_pollen_list_pearson <- lapply(coding_genes_tables_wo_pollen_list, function(x) {
+coding_genes_tables_wo_pollen_list_pearson <- lapply(coding_genes_tables, function(x) {
 	as.numeric(unlist(x[, 12]))})
 names(coding_genes_tables_wo_pollen_list_pearson) <- paste(names(
 	coding_genes_tables_wo_pollen_list_pearson),"_pearson", sep="")
@@ -734,7 +721,7 @@ write.table(wilcox_spearman_cor, file=file.path(out_dir, "output", "plots", "wil
 # Pearson plot of cd-cd SAS / nc-cd SAS pairs ATH all samples and comparative samples
 n_ATH_pc_all_wo_pollen <- length(ATH_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_all_wo_pollen <- length(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-n_ATH_pc_comp_wo_pollen <- length(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson)
+n_ATH_pc_comp_wo_pollen <- length(ATH_comparative_samples_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_comp_wo_pollen <- length(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
 n_ATH_same_strand_PCT <- length(ATH_same_strand_PCT_pairs[,16])
 n_ATH_SAS_PCT <- length(ATH_SAS_PCT_pairs[,16])
@@ -787,7 +774,7 @@ n_ATH_same_strand_PCT_ortho <- length(ATH_same_strand_PCT_pair_AGI_ortho[,17])
 png(file=file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_ATH_all_vs_comp.png"), 
 	width = 2850, height = 4000, res = 825)
 par(mar = c(4.5, 4.5, 4, 2.4))
-boxplot(ATH_same_strand_PCT_pairs[,17], ATH_SAS_PCT_pairs[,16], 
+boxplot(ATH_same_strand_PCT_pair_AGI_wo_ortho[,17], ATH_SAS_PCT_pairs[,16], 
 	ATH_coding_SAS_cor_wo_pollen_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
 	ylim = c(-1.2, 1.35), 
 	names = FALSE, 
@@ -798,14 +785,14 @@ boxplot(ATH_same_strand_PCT_pairs[,17], ATH_SAS_PCT_pairs[,16],
 	cex.axis = 1.1, #adapt size of axis labels
 	ylab = "Pearson ρ", 
 	col = c("#e0e0e0", "#c4c4c4", "#a8a8a8", "#d8a900"), 
-	boxwex = 0.75, 
+	boxwex = 0.74, 
 	pars = list(outcol = "gray50"), 
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2,3,4), 
-	notch = FALSE
+	notch = TRUE
 	)
-	title("SAS pairs in ATH", adj = 0.50, line = 1.3, font.main = 1, cex.main = 1.2)
+	title("SAS pairs in ATH", adj = 0.50, line = 1.0, font.main = 1, cex.main = 1.2)
 	box(lwd = 1.35)
 	axis(side = 2, lwd = 1.35, las = 2)
 	text(x= 2.5, y = 1.3, labels= "p<1e-100", col = "black", cex = 1) #ATH_all p-value
@@ -813,12 +800,12 @@ boxplot(ATH_same_strand_PCT_pairs[,17], ATH_SAS_PCT_pairs[,16],
 	segments(x0=2,x1=4,y0=1.2,y1=1.2, col="gray10", lwd = 1.35)
 	segments(x0=2,x1=2,y0=1.1,y1=1.2, col="gray10", lwd = 1.35)
 	segments(x0=4,x1=4,y0=1.1,y1=1.2, col="gray10", lwd = 1.35)
-	text(x= 1, y= -1.175, labels= n_ATH_same_strand_PCT, col= "gray40", cex= 0.97) #ATH_all no.genes
+	text(x= 1, y= -1.175, labels= n_ATH_same_strand_PCT_wo_ortho, col= "gray40", cex= 0.97) #ATH_all no.genes
 	text(x= 2, y= -1.04, labels= n_ATH_SAS_PCT, col= "gray40", cex= 0.97)
 	text(x= 3, y= -1.175, labels= n_ATH_pc_all_wo_pollen, col= "gray40", cex= 0.97) #AL_comp no.genes
 	text(x= 4, y= -1.04, labels= n_ATH_nc_all_wo_pollen, col= "gray40", cex= 0.97)
 	par(xpd=TRUE)
-	legend(-0.35,-1.385,c("cd-cd SSN", "cd-cd OSN"),  
+	legend(-0.35,-1.385,c("cd-cd SNO", "cd-cd ONO"),  
 	bty='n', horiz = TRUE, fill = c("#e0e0e0", "#c4c4c4"), cex = 1.1, x.intersp = 0.5, 
 	text.width=c(2,1.81))
 	legend(-0.35,-1.625,c("cd-cd SAS", "nc-cd SAS"),  
@@ -829,9 +816,9 @@ dev.off()
 
 
 # Pearson plot of cd-cd SAS / nc-cd SAS pairs all species comparative samples
-n_ATH_pc_comp_wo_pollen <- length(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson)
+n_ATH_pc_comp_wo_pollen <- length(ATH_comparative_samples_coding_SAS_cor_wo_pollen_pearson)
 n_ATH_nc_comp_wo_pollen <- length(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
-n_AL_pc_comp_wo_pollen <- length(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson)
+n_AL_pc_comp_wo_pollen <- length(AL_comparative_samples_coding_SAS_cor_wo_pollen_pearson)
 n_AL_nc_comp_wo_pollen <- length(AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
 n_CR_pc_wo_pollen <- length(CR_coding_SAS_cor_wo_pollen_pearson)
 n_CR_nc_wo_pollen <- length(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
@@ -847,8 +834,8 @@ n_BD_nc_wo_pollen <- length(BD_cd_nc_SAS_cor_wo_pollen_0.5_pearson)
 png(file = file.path(out_dir, "output", "plots", "cd_cd_SAS_NAT_cd_SAS_pearson_wo_pollen.png"), 
 	width = 7200, height = 4000, res = 825)
 par(mar = c(4.5, 4.5, 4, 1.5))
-boxplot(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson,
-	AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson,
+boxplot(ATH_comparative_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson,
+	AL_comparative_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson,
 	CR_coding_SAS_cor_wo_pollen_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
 	ES_coding_SAS_cor_wo_pollen_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
 	TH_coding_SAS_cor_wo_pollen_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, 
@@ -869,9 +856,9 @@ boxplot(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_n
 	lwd = 1.35, 
 	whisklty = 1, 
 	at = c(1,2,4,5,7,8,10,11,13,14,16,17,19,20), 
-	notch = FALSE
+	notch = TRUE
 	)
-	title("SAS pairs in all species", adj = 0.5, line = 1.3, font.main = 1, cex.main = 1.2)
+	title("SAS pairs in all species", adj = 0.5, line = 1.0, font.main = 1, cex.main = 1.2)
 	rug(x = c(3, 6, 9, 12, 15, 18), ticksize = -0.08, side = 1, lwd=1.35, col="gray60") #x-axis ticks
 	abline(v = c(3, 6, 9, 12, 15, 18), col="gray60")
 	box(lwd = 1.35)
@@ -897,7 +884,7 @@ boxplot(ATH_comp_samples_coding_SAS_cor_wo_pollen_pearson, ATH_comp_samples_cd_n
 	text(x= 17, y= -1.04, labels= n_MT_nc_wo_pollen, col= "gray40", cex=0.97)
 	text(x= 19, y= -1.175, labels= n_BD_pc_wo_pollen, col= "gray40", cex=0.97) #BD no.genes
 	text(x= 20, y= -1.04, labels= n_BD_nc_wo_pollen, col= "gray40", cex=0.97)
-	mtext('ATH', side=1, line=0.5, at=1.5)
+	mtext('AT', side=1, line=0.5, at=1.5)
 	mtext('AL', side=1, line=0.5, at=4.5)
 	mtext('CR', side=1, line=0.5, at=7.5)
 	mtext('ES', side=1, line=0.5, at=10.5)
@@ -921,6 +908,8 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05_2, threshold_2_5, th
     n_values_5_10 <- length(threshold_5_10)
     n_values_greater10 <- length(threshold_greater10)
 
+    if (species == "ATH")
+    	species <- "AT"
     if (is.element("all", samples))
     	title_plot = paste(species, "all", sep="_")
     if (is.element("comparative", samples))
@@ -947,9 +936,9 @@ make_Boxplot_All_Thresholds_Labels <- function(threshold_05_2, threshold_2_5, th
 		lwd = 1.35, 
 		whisklty = 1, 
 		at = c(1,2,3,4), 
-		notch = FALSE
+		notch = TRUE
 		)
-		title(title_plot, adj = 0.5, line = 1.25, font.main = 1, cex.main = 1.2)
+		title(title_plot, adj = 0.5, line = 0.95, font.main = 1, cex.main = 1.2)
 		title(xlab = "cis-NAT expression (TPM)", line = 2.65, cex.lab = 1.1)
 		box(lwd = 1.35)
 		axis(side=2, lwd = 1.35, las = 2)
@@ -976,6 +965,8 @@ make_Boxplot_All_Thresholds <- function(threshold_05_2, threshold_2_5, threshold
     n_values_5_10 <- length(threshold_5_10)
     n_values_greater10 <- length(threshold_greater10)
 
+    if (species == "ATH")
+    	species <- "AT"
     if (is.element("all", samples))
     	title_plot = paste(species, "all", sep="_")
     if (is.element("comparative", samples))
@@ -1001,9 +992,9 @@ make_Boxplot_All_Thresholds <- function(threshold_05_2, threshold_2_5, threshold
 		whisklty = 1, 
 		at = c(1,2,3,4), 
 		pars = list(outcol = "gray50"),
-		notch = FALSE
+		notch = TRUE
 		)
-		title(title_plot, adj = 0.5, line = 1.25, font.main = 1, cex.main = 1.2)
+		title(title_plot, adj = 0.5, line = 0.95, font.main = 1, cex.main = 1.2)
 		title(xlab = "cis-NAT expression (TPM)", line = 2.65, cex.lab = 1.1)
 		box(lwd = 1.35)
 		axis(side=2, lwd = 1.35, las = 2)
@@ -1142,7 +1133,7 @@ testAdjRsqlm <- function(x,y) {
 # Calculate adjusted R squared value for pearson vs spearman data
 rsqd_ATH_all_PS <- testAdjRsqlm(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 rsqd_ATH_comp_PS <- testAdjRsqlm(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-rsqd_AL_PS <- testAdjRsqlm(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+rsqd_AL_PS <- testAdjRsqlm(AL_comparative_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
 rsqd_CR_PS <- testAdjRsqlm(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 rsqd_ES_PS <- testAdjRsqlm(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 rsqd_TH_PS <- testAdjRsqlm(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
@@ -1240,7 +1231,7 @@ abs_overlap_BD <- scatterDensity(BD_cd_nc_SAS_wo_pollen_0.5_cor_length$Pearson, 
 # for pearson vs spearman plots
 ATH_all_PS <- scatterDensity(ATH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 ATH_comp_PS <- scatterDensity(ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ATH_comp_samples_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
-AL_comp_PS <- scatterDensity(AL_comp_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
+AL_comp_PS <- scatterDensity(AL_comparative_samples_coding_SAS_cor_wo_pollen_pearson, AL_comp_samples_coding_SAS_cor_wo_pollen_spearman)
 CR_comp_PS <- scatterDensity(CR_cd_nc_SAS_cor_wo_pollen_0.5_pearson, CR_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 ES_comp_PS <- scatterDensity(ES_cd_nc_SAS_cor_wo_pollen_0.5_pearson, ES_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
 TH_comp_PS <- scatterDensity(TH_cd_nc_SAS_cor_wo_pollen_0.5_pearson, TH_cd_nc_SAS_cor_wo_pollen_0.5_spearman)
