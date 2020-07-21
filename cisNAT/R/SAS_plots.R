@@ -792,7 +792,7 @@ boxplot(ATH_same_strand_PCT_pair_AGI_wo_ortho[,17], ATH_SAS_PCT_pairs[,16],
 	at = c(1,2,3,4), 
 	notch = TRUE
 	)
-	title("SAS pairs in ATH", adj = 0.50, line = 1.0, font.main = 1, cex.main = 1.2)
+	title("SAS pairs in AT", adj = 0.50, line = 1.0, font.main = 1, cex.main = 1.2)
 	box(lwd = 1.35)
 	axis(side = 2, lwd = 1.35, las = 2)
 	text(x= 2.5, y = 1.3, labels= "p<1e-100", col = "black", cex = 1) #ATH_all p-value
