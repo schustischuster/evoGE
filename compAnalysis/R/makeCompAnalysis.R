@@ -8,7 +8,8 @@
 
 
 makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
-	coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all")) {
+	coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"), 
+    data_norm = c("intra-organ", "inter-organ")) {
 	
 	# Show error message if no species or unknown data set is chosen
     if ((missing(dataset)) | (!is.element(dataset, c("Brawand", "DevSeq"))))
@@ -46,6 +47,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 	   call. = TRUE
        )
 
+    # Show error message if expression estimation or unknown expression estimation is chosen
+    if ((missing(data_norm)) | (!is.element(data_norm, c("intra-organ", "inter-organ"))))
+   
+       stop(
+       "Please choose one of the available data_norm data normalizations: 
+       'intra-organ', 'inter-organ'",
+       call. = TRUE
+       )
+
 
     # Show startup message
     message("Reading data...")
@@ -67,7 +77,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 	} else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
     	&& (is.element("all", devseq_spec))) {
-		genesExpr = file.path(in_dir, "Expression_data", "protein_gene_tpm_DESeq2_norm.csv")
+		genesExpr = file.path(in_dir, "Expression_data", "inter_tissue_ATH_count_mat_vsd_sample_names.csv")
 		dataset_id <- "DevSeq"
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
@@ -77,22 +87,40 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
     	&& (is.element("all", devseq_spec))) {
-		genesExpr = file.path(in_dir, "Expression_data", "rlog_counts_DESeq_norm.csv")
+		genesExpr = file.path(in_dir, "Expression_data", "inter_tissue_ATH_count_mat_vsd_sample_names.csv")
 		dataset_id <- "DevSeq"
     }
 
 
+    # Get data normalization method
+    if (is.element("intra-organ", data_norm)) {
+        data_norm <- "intra-organ"
+
+    } else if (is.element("inter-organ", data_norm)) {
+        data_norm <- "inter-organ"
+    }
+
+
 	# Define simplified Brawand and DevSeq column names
-	if (is.element("DevSeq", dataset) && (is.element("all", devseq_spec))) {
+	if (is.element("DevSeq", dataset) && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
 		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-			"Flower", "Carpel", "Stamen"), each=3)
+			"Flower", "Stamen", "Carpel"), each=21)
 		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
 		col_names <- paste0(col_names,replicate_tag_samples)
-		col_names <- rep(col_names, times=7)
-		spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), each=24)
+		spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), each=3)
+        spec_names <- rep(spec_names, times=8)
 		col_names <- paste0(col_names, spec_names)
 
-	} else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec))) {
+    } else if (is.element("DevSeq", dataset) && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
+        col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+            "Flower", "Stamen", "Carpel", "Pollen"), each=21)
+        replicate_tag_samples <- rep(c(".1",".2",".3"), times=9)
+        col_names <- paste0(col_names,replicate_tag_samples)
+        spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), each=3)
+        spec_names <- rep(spec_names, times=9)
+        col_names <- paste0(col_names, spec_names)
+
+    } else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec))) {
 		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
 			"Flower", "Carpel", "Stamen"), each=3)
 		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
@@ -105,8 +133,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 	# Read expression data
 	if (is.element("DevSeq", dataset)) {
-		x <- read.table(genesExpr, sep=",", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
-		colnames(x)[1] <- "gene_id"
+		x <- read.table(genesExpr, sep=";", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
 
 	} else if (is.element("Brawand", dataset)) {
 		x <- read.table(genesExpr, sep=",", dec=".", header=TRUE, stringsAsFactors=FALSE)
@@ -119,27 +146,34 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     # Stop function here to allow specific analysis of a single data set
     # For DevSeq
-    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names, "devseq_spec" = devseq_spec)
+    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names, "devseq_spec" = devseq_spec, "data_norm" = data_norm)
     # For Brawand
     # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient)
     # return(return_list)
     # }
-    # return_objects <- makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all") # read in DevSeq expression data
+    # return_objects <- makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="intra-organ") # read in DevSeq expression data
     # return_objects <- makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="spearman") # read in Brawand expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
     # remove additional A.lyrata stamens samples from DevSeq data and update column names
     if ((dataset_id == "DevSeq") && is.element("counts", expr_estimation)) {
 
-    	x <- x[,-(50:61),drop=FALSE]
-    	x <- x[c(1:19,23:25,20:22,26:ncol(x))] # ATH stamen and carpel samples in inverted compared to other species
+        # Generate a sequence to replace missing gene_id column
+        # Remove this in case input table will have gene_id column again
+    	ID_repl <- as.data.frame(seq(1:nrow(x)))
+        colnames(ID_repl) <- "gene_id"
+        x <- cbind(ID_repl, x)
 
     	# set column names
     	colnames(x)[2:ncol(x)] <- col_names
 
     } else if ((dataset_id == "DevSeq") && is.element("TPM", expr_estimation)) {
 
-        x <- x[c(1:19,23:25,20:22,26:ncol(x))] # ATH stamen and carpel samples in inverted compared to other species
+        # Generate a sequence to replace missing gene_id column
+        # Remove this in case input table will have gene_id column again
+        ID_repl <- as.data.frame(seq(1:nrow(x)))
+        colnames(ID_repl) <- "gene_id"
+        x <- cbind(ID_repl, x)
 
         # set column names
         colnames(x)[2:ncol(x)] <- col_names
@@ -225,21 +259,31 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     x[is.na(x)] <- 0 # replaces NAs by 0
 
+    x_df <- x
+
+    # Remove pollen samples for hclust heatmap if "intra-organ" normalization is selected
+    if (data_norm == "intra-organ") {
+        x_df <- x_df %>% select (-c(Pollen.1_AT, Pollen.2_AT, Pollen.3_AT, Pollen.1_AL, Pollen.2_AL, 
+            Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES, 
+            Pollen.1_TH, Pollen.2_TH, Pollen.3_TH, Pollen.1_MT, Pollen.2_MT, Pollen.3_MT, Pollen.1_BD, 
+            Pollen.2_BD, Pollen.3_BD))
+    }
+
     # Log2 transform data if expr_estimation=TPM is chosen
     # Compute correlation and build distance matrix
     if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
-        x_cor <- cor(x[, 2:ncol(x)], method = "pearson")
-        x_dist <- get_dist(x_cor, stand = FALSE, method = "pearson")
+        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
+        x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
         # correlation matrix does not need to be transposed for get_dist method (since ncol=nrow)
 
     } else if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
-        x[,2:ncol(x)] <- log2(x[,2:ncol(x)] + 1)
-        x_cor <- cor(x[, 2:ncol(x)], method = "pearson")
-        x_dist <- get_dist(x_cor, stand = FALSE, method = "pearson")
+        x_df[,2:ncol(x_df)] <- log2(x_df[,2:ncol(x_df)] + 1)
+        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
+        x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
 
     } else if (is.element("spearman", coefficient)) {
-        x_cor <- cor(x[, 2:ncol(x)], method = "spearman")
-        x_dist <- get_dist(x_cor, stand = FALSE, method = "spearman")
+        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "spearman")
+        x_dist <- get_dist(x_cor, stand = TRUE, method = "spearman")
     }   
 
 
@@ -544,8 +588,11 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     makePCA <- function(df, pca_dim = c("1_2", "2_3")) {
 
+        # Transpose data
+        x_df <- t(x_df[,-1])
+
         # Perform PCA analysis on log-transformed data (if TPM chosen) or rlog counts
-        comp_pca <- prcomp(x[,2:ncol(x)], center = TRUE, scale = TRUE) 
+        comp_pca <- prcomp(x_df, center = TRUE, scale = TRUE) 
 
         # Get eigenvalues, explained variance (%) and cumulative variance (%) 
 	    eig_val <- get_eigenvalue(comp_pca)
@@ -553,9 +600,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 	    pc2_var <- round((eig_val$variance.percent[2]), digits = 1) # variance explained by PC2
 	    pc3_var <- round((eig_val$variance.percent[3]), digits = 1) # variance explained by PC3
 
-	    # Results for Variables
-	    res_var <- get_pca_var(comp_pca)          # Show output results
-	    pca_coord <- as.data.frame(res_var$coord) # Get coordinates as dataframe
+	    # Get PCA coordinates of individuals
+	    pc_scores <- get_pca_ind(comp_pca)          # Show output results
+	    pca_coord <- as.data.frame(pc_scores$coord) # Get coordinates as dataframe
 
 	    if (is.element("1_2", pca_dim)) {
 	        pca_coord <- pca_coord[,1:2]
@@ -588,7 +635,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     if (is.element("Brassicaceae", devseq_spec)) {
 
     	# Make PCA for DevSeq w/ stamen data PC1/2
-        pca_return_objects <- makePCA(df = x, pca_dim = "1_2")
+        pca_return_objects <- makePCA(df = x_df, pca_dim = "1_2")
         list2env(pca_return_objects, envir = .GlobalEnv)
         DevSeq_pca_1_2_w_stamen <- pca_df
         DevSeq_pc1_var_w_stamen <- pc1_var
@@ -596,7 +643,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         DevSeq_pc3_var_w_stamen <- pc3_var
 
         # Make PCA for DevSeq w/ stamen data PC2/3
-        pca_return_objects <- makePCA(df = x, pca_dim = "2_3")
+        pca_return_objects <- makePCA(df = x_df, pca_dim = "2_3")
         list2env(pca_return_objects, envir = .GlobalEnv)
         DevSeq_pca_2_3_w_stamen <- pca_df
 
@@ -630,7 +677,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     } else if (is.element("all", devseq_spec)) { 
     	
         # Make PCA for DevSeq w/ stamen data PC1/2
-        pca_return_objects <- makePCA(df = x, pca_dim = "1_2")
+        pca_return_objects <- makePCA(df = x_df, pca_dim = "1_2")
         list2env(pca_return_objects, envir = .GlobalEnv)
         DevSeq_pca_1_2_w_stamen <- pca_df
         DevSeq_pc1_var_w_stamen <- pc1_var
@@ -638,7 +685,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         DevSeq_pc3_var_w_stamen <- pc3_var
 
         # Make PCA for DevSeq w/ stamen data PC2/3
-        pca_return_objects <- makePCA(df = x, pca_dim = "2_3")
+        pca_return_objects <- makePCA(df = x_df, pca_dim = "2_3")
         list2env(pca_return_objects, envir = .GlobalEnv)
         DevSeq_pca_2_3_w_stamen <- pca_df
 
