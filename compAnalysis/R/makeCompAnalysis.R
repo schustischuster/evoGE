@@ -241,8 +241,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
     if (dataset_id == "DevSeq") {
 
-        exp_col <- c(AT="gray1", AL="cornsilk3", CR="floralwhite", ES="wheat4", TH="lightgoldenrod2", 
-            MT="#b30000", BD="#9f3c9b") # last two letters of sample name
+        exp_col <- c(AT="gray1", AL="cornsilk3", CR="floralwhite", ES="wheat4", TH="#b30000", 
+            MT="lightgoldenrod2", BD="#9f3c9b") # last two letters of sample name
 
         species_col <- c(Roo="#52428c", Hyp="#8591c7", Lea="#008544", veg="#95b73a", 
             inf="#fad819", Flo="#de6daf", Sta="#f23d29", Mat="#a63126", Car="#f2a72f")
@@ -324,7 +324,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
 
-	if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) {
+    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) {
 
         # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
@@ -334,7 +334,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
             distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
-            hclustfun = function(x) hclust(x_dist, method = "average"))
+            hclustfun = function(x) hclust(x_dist, method = "average"), 
+            # Order dendrogram in a way that it starts with distant species BD, MT, TH
+            Rowv=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75)), 
+            Colv=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+            # Order dendrogram in a way that it starts with samples having the highest cor
+            # (starting with Brassicaceae meristematic tissue)
+            # Rowv=rotate(as.dendrogram(df_clust.res),c(40:99,16:39,7:9,4:6,10:15,1:3,100:137,141:143,138:140,144:168)),  
+            # Colv=rotate(as.dendrogram(df_clust.res),c(40:99,16:39,7:9,4:6,10:15,1:3,100:137,141:143,138:140,144:168))
+            )
 
         # Get order of rows and rearrange "row_cols" vector
         # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
@@ -350,7 +358,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             density.info = "none",
             trace = "none",
             col = pal(800),
-            Colv=TRUE, 
             cexRow = 2,
             cexCol = 2,
             margins = c(35, 35),
@@ -362,7 +369,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             key.xlab = NA,
             key.title = NULL,
             distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
-            hclustfun = function(x) hclust(x_dist, method = "average"))
+            hclustfun = function(x) hclust(x_dist, method = "average"), 
+            # Order dendrogram in a way that it starts with distant species BD, MT, TH
+            Rowv=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75)), 
+            Colv=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+            # Order dendrogram in a way that it starts with samples having the highest cor
+            # (starting with Brassicaceae meristematic tissue)
+            # Rowv=rotate(as.dendrogram(df_clust.res),c(40:99,16:39,7:9,4:6,10:15,1:3,100:137,141:143,138:140,144:168)), 
+            # Colv=rotate(as.dendrogram(df_clust.res),c(40:99,16:39,7:9,4:6,10:15,1:3,100:137,141:143,138:140,144:168))
+            )
         dev.off()
 
         # Save colorbar
