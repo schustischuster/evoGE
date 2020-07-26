@@ -225,10 +225,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#c42d2d", "#cf3c1f", "#faa11b", "#fff415", "#fcfce2")
+    steps <- c("#c42d2d", "#cf3c1f", "#faa11b", "#fff529", "#fcfce2")
 
     if (dataset_id == "DevSeq") {
-        pal <- color.palette(steps, c(25, 25, 25, 5), space = "rgb")
+        pal <- color.palette(steps, c(30, 30, 25, 10), space = "rgb")
     } else if (dataset_id == "Brawand") {
         pal <- color.palette(steps, c(25, 25, 25, 15), space = "rgb")
     }
@@ -274,16 +274,19 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
         x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
         x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
+        scale_data <- TRUE 
         # correlation matrix does not need to be transposed for get_dist method (since ncol=nrow)
 
     } else if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
         x_df[,2:ncol(x_df)] <- log2(x_df[,2:ncol(x_df)] + 1)
         x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
         x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
+        scale_data <- TRUE
 
     } else if (is.element("spearman", coefficient)) {
         x_cor <- cor(x_df[, 2:ncol(x_df)], method = "spearman")
-        x_dist <- get_dist(x_cor, stand = TRUE, method = "spearman")
+        x_dist <- get_dist(x_cor, stand = FALSE, method = "spearman")
+        scale_data <- FALSE 
     }   
 
 
@@ -317,7 +320,31 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     row_labels <- get_leaves_branches_col(row_dend) # get branch colors
     row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
 
+    
+    # Rotate leaves of dendrogram so that clusters appear in evolutionary order
+    if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
+        is.element("intra-organ", data_norm)) {
 
+        dend_order=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:144,100:102,112:120,103:111,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+        # or dend_order=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+
+    } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
+               is.element("inter-organ", data_norm)) {
+
+        dend_order=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:144,100:102,112:120,103:111,1:3,13:15,10:12,4:6,7:9,37:39,34:36,31:33,28:30,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+        # or dend_order=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,37:39,34:36,31:33,28:30,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+
+    } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
+               is.element("intra-organ", data_norm)) {
+
+        dend_order = TRUE
+
+    } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
+               is.element("inter-organ", data_norm)) {
+
+        dend_order = rotate(as.dendrogram(df_clust.res),c(151:162,163:168,145:150,109:120,121:144,85:108,10:12,7:9,4:6,1:3,13:24,61:72,79:84,73:78,25:60)) 
+
+    } else dend_order = TRUE 
 
 
 #---------------------------- Make corrplot for DevSeq and Brawand -----------------------------
@@ -333,11 +360,11 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             revC = F,
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
-            distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
+            distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
             hclustfun = function(x) hclust(x_dist, method = "average"), 
             # Order dendrogram in a way that it starts with distant species BD, MT, TH
-            Rowv=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75)), 
-            Colv=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+            Rowv = dend_order, 
+            Colv = "Rowv"
             # Order dendrogram in a way that it starts with samples having the highest cor
             # (starting with Brassicaceae meristematic tissue)
             # Rowv=rotate(as.dendrogram(df_clust.res),c(40:99,16:39,7:9,4:6,10:15,1:3,100:137,141:143,138:140,144:168)),  
@@ -368,11 +395,11 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             offsetCol = 1,
             key.xlab = NA,
             key.title = NULL,
-            distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
+            distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
             hclustfun = function(x) hclust(x_dist, method = "average"), 
             # Order dendrogram in a way that it starts with distant species BD, MT, TH
-            Rowv=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75)), 
-            Colv=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:126,127:132,133:144,103:120,100:102,1:3,13:15,10:12,4:6,7:9,28:33,37:39,34:36,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+            Rowv = dend_order, 
+            Colv = "Rowv"
             # Order dendrogram in a way that it starts with samples having the highest cor
             # (starting with Brassicaceae meristematic tissue)
             # Rowv=rotate(as.dendrogram(df_clust.res),c(40:99,16:39,7:9,4:6,10:15,1:3,100:137,141:143,138:140,144:168)), 
@@ -400,7 +427,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             revC = F,
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
-            distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
+            distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
             hclustfun = function(x) hclust(x_dist, method = "average"))
 
         # Get order of rows and rearrange "row_cols" vector
@@ -417,7 +444,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             density.info = "none",
             trace = "none",
             col = pal(800),
-            Colv=TRUE, 
+            Colv = TRUE, 
             cexRow = 2,
             cexCol = 2,
             margins = c(30, 30),
@@ -428,7 +455,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             offsetCol = 1,
             key.xlab = NA,
             key.title = NULL,
-            distfun = function(c) get_dist(x_cor, stand = FALSE, method = "pearson"), 
+            distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
             hclustfun = function(x) hclust(x_dist, method = "average"))
         dev.off()
 
