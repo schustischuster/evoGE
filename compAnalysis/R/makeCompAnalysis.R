@@ -71,33 +71,43 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         dataset_id <- "Brawand"
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
-        && (is.element("Brassicaceae", devseq_spec))) {
-        genesExpr = file.path(in_dir, "Expression_data", "protein_gene_tpm_DESeq2_norm_Brassicaceae.csv")
+        && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
+        dataset_id <- "DevSeq"
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
+        && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
         dataset_id <- "DevSeq"
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_all.csv")
         dataset_id <- "DevSeq"
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_all.csv")
         dataset_id <- "DevSeq"
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
-        && (is.element("Brassicaceae", devseq_spec))) {
-        genesExpr = file.path(in_dir, "Expression_data", "rlog_counts_DESeq_norm_Brassicaceae.csv")
+        && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
+        dataset_id <- "DevSeq"
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
+        && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
         dataset_id <- "DevSeq"
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_all.csv")
         dataset_id <- "DevSeq"
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_all.csv")
         dataset_id <- "DevSeq"
     }
 
@@ -130,15 +140,22 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         spec_names <- rep(spec_names, times=9)
         col_names <- paste0(col_names, spec_names)
 
-    } else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec))) {
-		col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-			"Flower", "Carpel", "Stamen"), each=3)
-		replicate_tag_samples <- rep(c(".1",".2",".3"), times=8)
-		col_names <- paste0(col_names,replicate_tag_samples)
-		col_names <- rep(col_names, times=4)
-		spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=24)
-		col_names <- paste0(col_names, spec_names)
-	}
+    } else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
+        col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+            "Flower", "Stamen", "Carpel"), each=12)
+        replicate_tag_samples <- rep(c(".1",".2",".3"), times=4)
+        col_names <- paste0(col_names,replicate_tag_samples)
+        spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=3, times=8)
+        col_names <- paste0(col_names, spec_names)
+
+    } else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
+        col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+            "Flower", "Stamen", "Carpel", "Pollen"), each=12)
+        replicate_tag_samples <- rep(c(".1",".2",".3"), times=4)
+        col_names <- paste0(col_names,replicate_tag_samples)
+        spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=3, times=9)
+        col_names <- paste0(col_names, spec_names) 
+    }
 
 
 	# Read expression data
@@ -699,17 +716,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         list2env(pca_return_objects, envir = .GlobalEnv)
         DevSeq_pca_2_3_w_stamen <- pca_df
 
-
-        # Read PCA data from Brassicaceae species - remove this once Brassicaceae expression data
-        # for ortholog genes is available and use makeCompAnalysis function as follows:
-        # makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae")
-        # Brass_file1_to_replace <- file.path(in_dir, "Expression_data", "DevSeq_pca_1_2_w_stamen.csv")
-        # DevSeq_pca_1_2_w_stamen <- read.table(Brass_file1_to_replace, sep=";", dec=",", header=TRUE, stringsAsFactors=FALSE)
-        # DevSeq_pc1_var_w_stamen <- "24.2"
-        # DevSeq_pc2_var_w_stamen <- "19.9"
-        # DevSeq_pc3_var_w_stamen <- ""
-
-
         # Replace species abbreviations by more detailed names
         DevSeq_pca_1_2_w_stamen$Species <- DevSeq_pca_1_2_w_stamen$Species %>% gsub('AT', 'A.thaliana', .) %>% 
         gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsug.', .)
@@ -937,9 +943,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
             legend_title <- element_blank()
             col_guide <- "legend"
-            order_guide <- 2
-            legend_spacing <- 5.35
-            plot_margin <- unit(c(0.55, 1, 0.5, 0.5),"cm")
+            plot_margin <- unit(c(0.55, 0.8, 0.5, 0.5),"cm")
         }
 
         if((spec == "all") && (data_norm == "intra-organ")) {
@@ -952,11 +956,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             x_lim <- c(-125, 55)
         } else if((spec == "Brassicaceae") && (data_norm == "intra-organ")) {
             legend_col <- 1
-            legend_pos <- c(0.835, 0.2325)
+            legend_pos <- c(0.16, 0.355)
+            legend_spacing <- 0
+            order_guide <- 0
             x_lim <- NULL
         } else if((spec == "Brassicaceae") && (data_norm == "inter-organ")) {
             legend_col <- 1
-            legend_pos <- c(0.835, 0.2325)
+            legend_pos <- c(0.16, 0.355)
+            legend_spacing <- 0
+            order_guide <- 0
             x_lim <- NULL
         }
 
@@ -969,7 +977,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         scale_shape_manual(values=spec_shape)  + 
         scale_x_continuous(expand = c(0.05, 0), limits = x_lim) + 
         scale_y_continuous(expand = c(0.05, 0)) +
-        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.0), 
+        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.25), 
                order = order_guide, ncol = legend_col)) + 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
         scale_size_manual(values=spec_shape_size) + 
@@ -1055,7 +1063,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         stat_bag(prop = 0.95, size=1.5) + 
         geom_point(aes(shape=Species, color=Organ, size=Species, stroke=2.25)) + 
         scale_shape_manual(values=spec_shape)  + 
-        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.0), order = order_guide)) + 
+        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.25), order = order_guide)) + 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
         scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
@@ -1089,7 +1097,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
     if (is.element("Brassicaceae", devseq_spec)) {
-        plotPCA(data=DevSeq_pca_1_2_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
+        plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
             set="pc2_3", spec="Brassicaceae") 
         # Change data input to PC2/3 once Brassicaceae data is available!
 
