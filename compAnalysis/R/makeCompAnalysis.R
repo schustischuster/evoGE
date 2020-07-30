@@ -1077,7 +1077,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         stat_bag(prop = 0.95, size=1.5) + 
         geom_point(aes(shape=Species, color=Organ, size=Species, stroke=2.25)) + 
         scale_shape_manual(values=spec_shape)  + 
-        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.25), order = order_guide)) + 
+        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=2.75), order = order_guide)) + 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
         scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
