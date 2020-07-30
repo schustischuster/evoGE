@@ -62,52 +62,61 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
 	# Set expression input file
-    if ((is.element("Brawand", dataset)) && (is.element("TPM", expr_estimation))) {
+    if ((is.element("Brawand", dataset)) && (is.element("TPM", expr_estimation)) 
+        && (is.element("intra-organ", data_norm))) {
         genesExpr = file.path(in_dir, "Expression_data", "TPM_Brawand_norm.csv")
-        dataset_id <- "Brawand"
 
-    } else if ((is.element("Brawand", dataset)) && (is.element("counts", expr_estimation))) {
+    } else if ((is.element("Brawand", dataset)) && (is.element("TPM", expr_estimation)) 
+        && (is.element("inter-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "TPM_Brawand_norm.csv")
+
+    } else if ((is.element("Brawand", dataset)) && (is.element("counts", expr_estimation))
+        && (is.element("intra-organ", data_norm))) {
         genesExpr = file.path(in_dir, "Expression_data", "rlog_Brawand_norm.csv")
+
+    } else if ((is.element("Brawand", dataset)) && (is.element("counts", expr_estimation))
+        && (is.element("inter-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "rlog_Brawand_norm.csv")
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
+        && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_tpm_mat_deseq_sample_names_Brassicaceae.csv")
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
+        && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_tpm_mat_deseq_sample_names_Brassicaceae.csv")
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
+        && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_tpm_mat_deseq_sample_names_all.csv")
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
+        && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_tpm_mat_deseq_sample_names_all.csv")
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
+        && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
+        && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
+        && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_all.csv")
+
+    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
+        && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
+        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_all.csv")
+    }
+
+
+    # Get data set is
+    if (is.element("Brawand", dataset)) {
         dataset_id <- "Brawand"
 
-    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
-        && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
-        dataset_id <- "DevSeq"
-
-    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
-        && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
-        dataset_id <- "DevSeq"
-
-    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
-        && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_all.csv")
-        dataset_id <- "DevSeq"
-
-    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
-        && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_all.csv")
-        dataset_id <- "DevSeq"
-
-    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
-        && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
-        dataset_id <- "DevSeq"
-
-    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
-        && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_Brassicaceae.csv")
-        dataset_id <- "DevSeq"
-
-    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
-        && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "intra_organ_count_mat_vsd_sample_names_all.csv")
-        dataset_id <- "DevSeq"
-
-    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
-        && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_all.csv")
+    } else if (is.element("DevSeq", dataset)) {
         dataset_id <- "DevSeq"
     }
 
@@ -289,11 +298,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     x_df <- x
 
     # Remove pollen samples for hclust heatmap if "intra-organ" normalization is selected
-    if (data_norm == "intra-organ") {
+    if ((data_norm == "intra-organ") && (devseq_spec == "all")) {
         x_df <- x_df %>% select (-c(Pollen.1_AT, Pollen.2_AT, Pollen.3_AT, Pollen.1_AL, Pollen.2_AL, 
             Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES, 
             Pollen.1_TH, Pollen.2_TH, Pollen.3_TH, Pollen.1_MT, Pollen.2_MT, Pollen.3_MT, Pollen.1_BD, 
             Pollen.2_BD, Pollen.3_BD))
+
+    } else if ((data_norm == "intra-organ") && (devseq_spec == "Brassicaceae")) {
+        x_df <- x_df %>% select (-c(Pollen.1_AT, Pollen.2_AT, Pollen.3_AT, Pollen.1_AL, Pollen.2_AL, 
+            Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES))
     }
 
     # Log2 transform data if expr_estimation=TPM is chosen
@@ -937,7 +950,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             col_guide <- FALSE
             order_guide <- 0
             legend_spacing <- 15
-            plot_margin <- unit(c(0.55, 0.38, 0.5, 0.5),"cm")
         } else if(spec == "Brassicaceae") {
             spec_shape <- c(16, 17, 18, 15)
             spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
@@ -950,15 +962,17 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             legend_col <- 2
             legend_pos <- c(0.284, 1.54)
             x_lim <- NULL
+            plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         } else if((spec == "all") && (data_norm == "inter-organ")) {
             legend_col <- 1
-            legend_pos <- c(0.154, 0.8665)
+            legend_pos <- c(0.154, 0.8728)
             x_lim <- c(-125, 55)
+            plot_margin <- unit(c(0.55, 0.55, 0.5, 0.9),"cm")
         } else if((spec == "Brassicaceae") && (data_norm == "intra-organ")) {
             legend_col <- 1
-            legend_pos <- c(0.16, 0.355)
-            legend_spacing <- 0
-            order_guide <- 0
+            legend_pos <- c(0.825, 0.24)
+            legend_spacing <- 5.1
+            order_guide <- 2
             x_lim <- NULL
         } else if((spec == "Brassicaceae") && (data_norm == "inter-organ")) {
             legend_col <- 1
@@ -977,7 +991,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         scale_shape_manual(values=spec_shape)  + 
         scale_x_continuous(expand = c(0.05, 0), limits = x_lim) + 
         scale_y_continuous(expand = c(0.05, 0)) +
-        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=3.25), 
+        guides(shape = guide_legend(override.aes = list(size = spec_shape_size, stroke=2.75), 
                order = order_guide, ncol = legend_col)) + 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
         scale_size_manual(values=spec_shape_size) + 
@@ -991,8 +1005,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             panel.grid.minor = element_blank(), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
             panel.background = element_blank(), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 10, b = 0, l = 4)), 
-            axis.title.x = element_text(size=25, margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 7, b = 0, l = 7)), 
+            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
             axis.ticks.length=unit(0.35, "cm"), 
@@ -1044,7 +1058,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             order_guide <- 0
             legend_spacing <- 2
             plot_width <- 11.5
-            plot_margin <- unit(c(0.55, 0.38, 0.5, 8.5),"cm")
+            plot_margin <- unit(c(0.55, 0.38, 0.5, 8.89),"cm")
         } else if(spec == "Brassicaceae") {
             spec_shape <- c(16, 17, 18, 15)
             spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
@@ -1076,8 +1090,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             panel.grid.minor = element_blank(), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
             panel.background = element_blank(), 
-            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 10, b = 0, l = 4)), 
-            axis.title.x = element_text(size=20.5, margin = margin(t = 12.75, r = 0, b = 4, l = 0)), 
+            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 7, b = 0, l = 7)), 
+            axis.title.x = element_text(size=20.5, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
             axis.text.x = element_text(size=18, angle=0, margin = margin(t = 5)), 
             axis.text.y = element_text(size=18, angle=0, margin = margin(r = 5)), 
             axis.ticks.length=unit(0.35, "cm"), 
