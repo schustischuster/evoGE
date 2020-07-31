@@ -1091,7 +1091,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             panel.grid.minor = element_blank(), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
             panel.background = element_blank(), 
-            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 7, b = 0, l = 7)), 
+            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 6, b = 0, l = 8)), 
             axis.title.x = element_text(size=20.5, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
             axis.text.x = element_text(size=18, angle=0, margin = margin(t = 5)), 
             axis.text.y = element_text(size=18, angle=0, margin = margin(r = 5)), 
