@@ -955,7 +955,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
             legend_title <- element_blank()
             col_guide <- "legend"
-            plot_margin <- unit(c(0.55, 0.8, 0.5, 0.5),"cm")
         }
 
         if((spec == "all") && (data_norm == "intra-organ")) {
@@ -974,12 +973,14 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             legend_spacing <- 5.1
             order_guide <- 2
             x_lim <- NULL
+            plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         } else if((spec == "Brassicaceae") && (data_norm == "inter-organ")) {
             legend_col <- 1
             legend_pos <- c(0.16, 0.355)
             legend_spacing <- 0
             order_guide <- 0
             x_lim <- NULL
+            plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         }
 
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
@@ -1005,7 +1006,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             panel.grid.minor = element_blank(), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
             panel.background = element_blank(), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 7, b = 0, l = 7)), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 5, b = 0, l = 9)), 
             axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
@@ -1058,7 +1059,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             order_guide <- 0
             legend_spacing <- 2
             plot_width <- 11.5
-            plot_margin <- unit(c(0.55, 0.38, 0.5, 8.89),"cm")
+            plot_margin <- unit(c(0.55, 0.55, 0.5, 8.89),"cm")
         } else if(spec == "Brassicaceae") {
             spec_shape <- c(16, 17, 18, 15)
             spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
@@ -1067,7 +1068,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             order_guide <- 2
             legend_spacing <- 5.35
             plot_width <- 8.35
-            plot_margin <- unit(c(0.55, 1, 0.5, 0.5),"cm")
+            plot_margin <- unit(c(0.55, 1.0, 0.5, 0.5),"cm")
         }
 
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
