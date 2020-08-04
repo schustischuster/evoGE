@@ -536,23 +536,52 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     }
 
 
-    x_avg <- calculateAvgExpr(x)
+    # log-transform data if TPM and Pearson are chosen
+    if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
+        x_repl <- x
+        x_repl[,2:ncol(x_repl)] <- log2(x_repl[,2:ncol(x_repl)] + 1)
 
-    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) {
+    } else {
+        x_repl <- x
+    }
 
-        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "Veg_apex", "Inf_apex", 
-            "Flower", "Carpel", "Stamen"), times=7)
+
+    x_avg <- calculateAvgExpr(x_repl)
+
+    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec)) && (data_norm == "inter-organ")) {
+
+        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+            "Flower", "Stamen", "Carpel"), each=7)
         DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
-            "_MT", "_BD"), each=8)
+            "_MT", "_BD"), times=8)
         repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
 
         colnames(x_avg)[2:ncol(x_avg)] <- repl_names
 
-    } else if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec))) {
+    } else if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec)) && (data_norm == "inter-organ")) {
 
-        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "Veg_apex", "Inf_apex", 
-            "Flower", "Carpel", "Stamen"), times=4)
-        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=8)
+        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+            "Flower", "Stamen", "Carpel"), each=4)
+        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), times=8)
+        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
+
+        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
+    
+    } else if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec)) && (data_norm == "intra-organ")) {
+
+        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+            "Flower", "Stamen", "Carpel", "Pollen"), each=7)
+        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
+            "_MT", "_BD"), times=9)
+        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
+
+        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
+
+    } else if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec)) && (data_norm == "intra-organ")) {
+
+        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+            "Flower", "Stamen", "Carpel", "Pollen"), each=4)
+        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), times=9)
         repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
 
         colnames(x_avg)[2:ncol(x_avg)] <- repl_names
@@ -660,6 +689,70 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     }
 
+
+
+
+#---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
+
+
+   # Use pearson correlation, intra-organ normalization and TPM
+   # Use previously merged replicates of DevSeq data including pollen sampless
+
+   if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (data_norm == "intra-organ")) {
+
+      getOrganCor <- function(df, organ, coefficient, expr_estimation) {
+
+         # log-transform data if TPM and Pearson are chosen
+         if ((coefficient == "pearson") && (expr_estimation == "TPM")) {
+            df <- log2(df + 1)
+         }
+
+         df_cor <- cor(df, method=coefficient)
+         df_cor <- df_cor[4:nrow(df_cor), 1:3]
+
+         # Reshape cor data frame so one column
+         df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+         sp1 <- mean(df_cor_rs[1:9,])
+         sp2 <- mean(df_cor_rs[10:18,])
+         sp3 <- mean(df_cor_rs[19:27,])
+         sp4 <- mean(df_cor_rs[28:36,])
+         sp5 <- mean(df_cor_rs[37:45,])
+         sp6 <- mean(df_cor_rs[46:54,])
+
+         df_cor_avg <- rbind(sp1, sp2, sp3, sp4, sp5, sp6)
+         colnames(df_cor_avg) <- organ
+
+         getRowNames = function(x,n){ substring(x,nchar(x)-n+1) }
+         row_names_repl <- getRowNames(rownames(df_cor),2)
+         rnames_div_rates <- unique(row_names_repl)
+         rownames(df_cor_avg) <- rnames_div_rates
+
+         return(df_cor_avg)
+
+      }
+
+      root_div <- getOrganCor(df=x[,2:22], organ="root", coefficient=coefficient, expr_estimation=expr_estimation)
+      hypocotyl_div <- getOrganCor(df=x[,23:43], organ="hypocotyl", coefficient=coefficient, expr_estimation=expr_estimation)
+      leaf_div <- getOrganCor(df=x[,44:64], organ="leaf", coefficient=coefficient, expr_estimation=expr_estimation)
+      veg_apex_div <- getOrganCor(df=x[,65:85], organ="veg_apex", coefficient=coefficient, expr_estimation=expr_estimation)
+      inf_apex_div <- getOrganCor(df=x[,86:106], organ="inf_apex", coefficient=coefficient, expr_estimation=expr_estimation)
+      flower_div <- getOrganCor(df=x[,107:127], organ="flower", coefficient=coefficient, expr_estimation=expr_estimation)
+      stamen_div <- getOrganCor(df=x[,128:148], organ="stamen", coefficient=coefficient, expr_estimation=expr_estimation)
+      carpel_div <- getOrganCor(df=x[,149:169], organ="carpel", coefficient=coefficient, expr_estimation=expr_estimation)
+      pollen_div <- getOrganCor(df=x[,170:190], organ="pollen", coefficient=coefficient, expr_estimation=expr_estimation)
+
+      DevSeq_div_rates <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
+        flower_div, stamen_div, carpel_div, pollen_div)
+
+
+
+
+
+
+
+   }
+   
 
 
 
