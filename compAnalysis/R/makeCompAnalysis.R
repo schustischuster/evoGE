@@ -710,7 +710,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
          df_cor <- cor(df, method=coefficient)
          df_cor <- df_cor[4:nrow(df_cor), 1:3]
 
-         # Reshape cor data frame so one column
+         # Reshape cor data frame to one column
          df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
 
          sp1 <- mean(df_cor_rs[1:9,])
@@ -742,9 +742,68 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
       carpel_div <- getOrganCor(df=x[,149:169], organ="carpel", coefficient=coefficient, expr_estimation=expr_estimation)
       pollen_div <- getOrganCor(df=x[,170:190], organ="pollen", coefficient=coefficient, expr_estimation=expr_estimation)
 
-      DevSeq_div_rates <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
+      DevSeq_organ_cor <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
         flower_div, stamen_div, carpel_div, pollen_div)
 
+
+      # Reshape data table for ggplot
+      # divergence times are estimated taxon pair times from TimeTree
+      # http://www.timetree.org/
+      div_times <- rep(c(7.1, 9.4, 25.6, 46, 106, 160), times=9)
+      comp_organ <- rep(colnames(DevSeq_organ_cor), each=6)
+      comp_spec <- rep(rownames(DevSeq_organ_cor), times=9)
+
+      DevSeq_GE_div <- rbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
+        flower_div, stamen_div, carpel_div, pollen_div)
+      rownames(DevSeq_GE_div) <- NULL
+      colnames(DevSeq_GE_div) <- "correlation"
+
+      DevSeq_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, DevSeq_GE_div), 
+        stringsAsFactors=FALSE)
+
+      DevSeq_div_rates$div_times <- as.numeric(DevSeq_div_rates$div_times)
+      DevSeq_div_rates$correlation <- as.numeric(DevSeq_div_rates$correlation)
+      DevSeq_div_rates$comp_organ <- factor(DevSeq_div_rates$comp_organ, levels = DevSeq_div_rates$comp_organ)
+      
+      
+
+      # Make connected scatter plot
+      makeScrPlotDistCor <- function(data, plot_title) {
+
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+        p <- ggplot(data, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
+        geom_line(size=2.75) + 
+        scale_x_continuous(limits = c(7, 160), expand = c(0.02, 0)) + 
+        scale_y_continuous(limits = c(0.44, 0.95), expand = c(0.02, 0)) + 
+        scale_color_manual(values = c("#52428c", "#8591c7", "#008544", "#95b73a", "#fad819", 
+            "#de6daf", "#f23d29", "#f2a72f", "#a63126")
+        # organ order: root/hypocotyl/leaf/veg_apex/inf_apex/flower/stamen/carpel/pollen
+        ) + 
+        guides(shape = guide_legend(ncol = 2))
+
+        q <- p + ggtitle(plot_title) + theme_bw() + xlab("Intergenic distance (bp)") + ylab("Pearson's r") + 
+        theme(text=element_text(size=16), 
+            axis.ticks.length = unit(.25, "cm"), 
+            plot.margin = unit(c(3.0, 10.5, 20, 8), "points"), 
+            axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 9, r = 0, b = 0, l = 0)), 
+            axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 9, b = 0, l = 0)), 
+            axis.title.x = element_text(colour = "black", size=18.25, margin = margin(t = 28, r = 0, b = 1, l = 0), face ="bold"), 
+            axis.title.y = element_text(colour = "black", size=18.25, margin = margin(t = 0, r = 27, b = 0, l = 10), face ="bold"), 
+            plot.title = element_text(colour = "black", size=20.25, margin = margin(t = 25, r = 0, b = 28, l = 0), hjust = 0.5), 
+            legend.position = c(0.85,0.85), 
+            legend.title = element_text(colour = "black", size=17, face ="bold"), 
+            legend.text=element_text(size=17), 
+            legend.spacing.x = unit(0.25, 'cm'), 
+            legend.key.size = unit(0.775, "cm"), 
+            panel.border = element_rect(colour = "black", fill=NA, size=1.0)) 
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+            scale = 1, width = 11.0, height = 8, units = c("in"), 
+            dpi = 450, limitsize = FALSE) 
+      }
+
+      makeScrPlotDistCor(data=DevSeq_div_rates, plot_title="Gene expression divergence rates")
 
 
 
