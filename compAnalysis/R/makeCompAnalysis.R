@@ -517,85 +517,93 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 #-------------------------------------- Merge replicates ---------------------------------------
 
+    # Prepare data for inter-organ distance analysis (DevSeq data set all species)
+    # Perform this part of analysis with TPM data, not with VST counts
 
-    calculateAvgExpr <- function(df) {
+    if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (expr_estimation == "TPM")) {
 
-    # Split data frame by sample replicates into a list
-    # then get rowMeans for each subset and bind averaged data to gene_id column
-    
-    averaged_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
+
+        calculateAvgExpr <- function(df) {
+
+        # Split data frame by sample replicates into a list
+        # then get rowMeans for each subset and bind averaged data to gene_id column
+
+        averaged_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
             rep(seq_along(df), 
             each = 3, 
             length.out=ncol(df)-1)
             ), rowMeans)
-        )
+          )
 
-        averaged_replicates <- cbind(df[1], averaged_replicates)
+          averaged_replicates <- cbind(df[1], averaged_replicates)
         
-        return(averaged_replicates)
-    }
+          return(averaged_replicates)
+        }
 
 
-    # log-transform data if TPM and Pearson are chosen
-    if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
-        x_repl <- x
-        x_repl[,2:ncol(x_repl)] <- log2(x_repl[,2:ncol(x_repl)] + 1)
+        # log-transform data if TPM and Pearson are chosen
+        if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
+            x_repl <- x
+            x_repl[,2:ncol(x_repl)] <- log2(x_repl[,2:ncol(x_repl)] + 1)
 
-    } else {
-        x_repl <- x
-    }
+        } else {
+            x_repl <- x
+        }
 
 
-    x_avg <- calculateAvgExpr(x_repl)
+        x_avg <- calculateAvgExpr(x_repl)
 
-    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec)) && (data_norm == "inter-organ")) {
 
-        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-            "Flower", "Stamen", "Carpel"), each=7)
-        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
-            "_MT", "_BD"), times=8)
-        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
+        if (data_norm == "inter-organ") {
 
-        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
+            DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+                "Flower", "Stamen", "Carpel"), each=7)
+            DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
+                "_MT", "_BD"), times=8)
+            repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
 
-    } else if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec)) && (data_norm == "inter-organ")) {
-
-        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-            "Flower", "Stamen", "Carpel"), each=4)
-        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), times=8)
-        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
-
-        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
+            colnames(x_avg)[2:ncol(x_avg)] <- repl_names
     
-    } else if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec)) && (data_norm == "intra-organ")) {
+        } else if (data_norm == "intra-organ") {
 
-        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-            "Flower", "Stamen", "Carpel", "Pollen"), each=7)
-        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
-            "_MT", "_BD"), times=9)
-        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
+            DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
+                "Flower", "Stamen", "Carpel", "Pollen"), each=7)
+            DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
+                "_MT", "_BD"), times=9)
+            repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
 
-        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
-
-    } else if ((dataset_id == "DevSeq") && (is.element("Brassicaceae", devseq_spec)) && (data_norm == "intra-organ")) {
-
-        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-            "Flower", "Stamen", "Carpel", "Pollen"), each=4)
-        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), times=9)
-        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
-
-        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
-    }
+            colnames(x_avg)[2:ncol(x_avg)] <- repl_names
+        }
 
 
 
 
-#---------- Get replicate correlations and generate DevSeq inter-organ distance plot ----------
+        #------ Get replicate correlations and generate DevSeq inter-organ distance plot -------
 
 
-    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec))) {
+        if (data_norm == "intra-organ") {
 
-        x_cor_avg <- cor(x_avg[2:ncol(x_avg)]) 
+            x_avg <- x_avg %>% select(-c(Pollen_AT, Pollen_AL, Pollen_CR, Pollen_ES, Pollen_TH, 
+                Pollen_MT, Pollen_BD))
+        }
+
+        # Reorder data frame columns
+        x_avg <- x_avg[,c(1, #gene_id column
+                          2,9,16,23,30,37,44,51, #AT
+                          3,10,17,24,31,38,45,52, #AL
+                          4,11,18,25,32,39,46,53, #CR
+                          5,12,19,26,33,40,47,54, #ES
+                          6,13,20,27,34,41,48,55, #TH
+                          7,14,21,28,35,42,49,56, #MT
+                          8,15,22,29,36,43,50,57)] #BD
+
+
+        if (coefficient == "pearson") {
+            x_cor_avg <- cor(x_avg[2:ncol(x_avg)], method = "pearson") 
+        } else if (coefficient == "spearman") {
+            x_cor_avg <- cor(x_avg[2:ncol(x_avg)], method = "spearman") 
+        }
+
 
         AT <- as.data.frame(unique(as.vector(x_cor_avg[1:8,1:8])))[-1,]
         AL <- as.data.frame(unique(as.vector(x_cor_avg[9:16,9:16])))[-1,]
@@ -616,13 +624,13 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         colnames(cor_df) <- df_names
 
         # Cor values of meristematic tssues apex_inf apex_veg and carpel
-        AT_m <- as.data.frame(unique(as.vector(x_cor_avg[c(4:5,7),c(4:5,7)])))[-1,]
-        AL_m <- as.data.frame(unique(as.vector(x_cor_avg[c(12:13,15),c(12:13,15)])))[-1,]
-        CR_m <- as.data.frame(unique(as.vector(x_cor_avg[c(20:21,23),c(20:21,23)])))[-1,]
-        ES_m <- as.data.frame(unique(as.vector(x_cor_avg[c(28:29,31),c(28:29,31)])))[-1,]
-        TH_m <- as.data.frame(unique(as.vector(x_cor_avg[c(36:37,39),c(36:37,39)])))[-1,]
-        MT_m <- as.data.frame(unique(as.vector(x_cor_avg[c(44:45,47),c(44:45,47)])))[-1,]
-        BD_m <- as.data.frame(unique(as.vector(x_cor_avg[c(52:53,55),c(52:53,55)])))[-1,]
+        AT_m <- as.data.frame(unique(as.vector(x_cor_avg[c(4:5,8),c(4:5,8)])))[-1,]
+        AL_m <- as.data.frame(unique(as.vector(x_cor_avg[c(12:13,16),c(12:13,16)])))[-1,]
+        CR_m <- as.data.frame(unique(as.vector(x_cor_avg[c(20:21,24),c(20:21,24)])))[-1,]
+        ES_m <- as.data.frame(unique(as.vector(x_cor_avg[c(28:29,32),c(28:29,32)])))[-1,]
+        TH_m <- as.data.frame(unique(as.vector(x_cor_avg[c(36:37,40),c(36:37,40)])))[-1,]
+        MT_m <- as.data.frame(unique(as.vector(x_cor_avg[c(44:45,48),c(44:45,48)])))[-1,]
+        BD_m <- as.data.frame(unique(as.vector(x_cor_avg[c(52:53,56),c(52:53,56)])))[-1,]
 
         species_names_m <- as.data.frame(rep(species_DevSeq, each=3))
         organ_cor_m <- as.data.frame(c(AT_m,AL_m,CR_m,ES_m,TH_m,MT_m,BD_m))
@@ -631,21 +639,27 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         colnames(cor_df_m) <- df_names
 
 
+        cor_df$Correlation <- as.numeric(cor_df$Correlation)
+        cor_df_m$Correlation <- as.numeric(cor_df_m$Correlation)
 
 
         # Make inter-organ distance plot
-        plotOrganDist <- function(data, data_m) {
+        plotOrganDist <- function(data, data_m, data_norm) {
 
             fname <- paste('DevSeq_inter_organ_dist_', coefficient, '.jpg', sep="")
 
             coef_lab <- ifelse(coefficient == "pearson", "Pearson's r", "Spearman's rho")
 
-            if(coefficient == "pearson") {
-            	y_min = 0.435
-            	y_max = 1.025
-            } else if(coefficient == "spearman") {
-            	y_min = 0
-            	y_max = 1.025
+            y_max = 1.025
+
+            if((coefficient == "pearson") && (data_norm == "intra-organ")) {
+                y_min = 0.37
+            } else if((coefficient == "pearson") && (data_norm == "inter-organ")) {
+                y_min = 0.378
+            } else if((coefficient == "spearman") && (data_norm == "intra-organ")) {
+                y_min = 0.3575
+            } else if((coefficient == "spearman") && (data_norm == "inter-organ")) {
+                y_min = 0.357
             }
 
             cor_colors <- rep(c("#808080","#b1971e","#419730","#2e9d76","#3889af","#7d67c7","#b72f2d"), each=28)
@@ -655,7 +669,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
                 outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
             geom_beeswarm(data = data, priority = c("ascending"), colour=cor_colors, cex=2, size=3) +
-            geom_beeswarm(data = data_m, priority = c("none"), colour="red", cex=2, size=2.25, shape=8, stroke=2) + 
+            geom_beeswarm(data = data_m, priority = c("ascending"), colour="red", cex=2, size=2.25, shape=8, stroke=2) + 
             scale_y_continuous(limits = c(y_min, y_max), expand = c(0, 0)) + 
             annotate("rect", xmin=0.35, xmax=7.65, ymin=y_min, ymax=y_max, fill="white", alpha=0, 
                 color="gray15", size=1.35)
@@ -685,7 +699,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
                 dpi = 600, limitsize = FALSE)
         }
 
-        plotOrganDist(data=cor_df, data_m=cor_df_m) 
+        plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm) 
 
     }
 
