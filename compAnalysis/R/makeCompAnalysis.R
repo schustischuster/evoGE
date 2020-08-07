@@ -746,15 +746,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
       }
 
-      root_div <- getOrganCor(df=x[,2:22], organ="root", coefficient=coefficient, expr_estimation=expr_estimation)
-      hypocotyl_div <- getOrganCor(df=x[,23:43], organ="hypocotyl", coefficient=coefficient, expr_estimation=expr_estimation)
-      leaf_div <- getOrganCor(df=x[,44:64], organ="leaf", coefficient=coefficient, expr_estimation=expr_estimation)
-      veg_apex_div <- getOrganCor(df=x[,65:85], organ="veg_apex", coefficient=coefficient, expr_estimation=expr_estimation)
-      inf_apex_div <- getOrganCor(df=x[,86:106], organ="inf_apex", coefficient=coefficient, expr_estimation=expr_estimation)
-      flower_div <- getOrganCor(df=x[,107:127], organ="flower", coefficient=coefficient, expr_estimation=expr_estimation)
-      stamen_div <- getOrganCor(df=x[,128:148], organ="stamen", coefficient=coefficient, expr_estimation=expr_estimation)
-      carpel_div <- getOrganCor(df=x[,149:169], organ="carpel", coefficient=coefficient, expr_estimation=expr_estimation)
-      pollen_div <- getOrganCor(df=x[,170:190], organ="pollen", coefficient=coefficient, expr_estimation=expr_estimation)
+      root_div <- getOrganCor(df=x[,2:22], organ="root ", coefficient=coefficient, expr_estimation=expr_estimation)
+      hypocotyl_div <- getOrganCor(df=x[,23:43], organ="hypocotyl ", coefficient=coefficient, expr_estimation=expr_estimation)
+      leaf_div <- getOrganCor(df=x[,44:64], organ="leaf ", coefficient=coefficient, expr_estimation=expr_estimation)
+      veg_apex_div <- getOrganCor(df=x[,65:85], organ="veg_apex ", coefficient=coefficient, expr_estimation=expr_estimation)
+      inf_apex_div <- getOrganCor(df=x[,86:106], organ="inf_apex ", coefficient=coefficient, expr_estimation=expr_estimation)
+      flower_div <- getOrganCor(df=x[,107:127], organ="flower ", coefficient=coefficient, expr_estimation=expr_estimation)
+      stamen_div <- getOrganCor(df=x[,128:148], organ="stamen ", coefficient=coefficient, expr_estimation=expr_estimation)
+      carpel_div <- getOrganCor(df=x[,149:169], organ="carpel ", coefficient=coefficient, expr_estimation=expr_estimation)
+      pollen_div <- getOrganCor(df=x[,170:190], organ="pollen ", coefficient=coefficient, expr_estimation=expr_estimation)
 
       DevSeq_organ_cor <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
         flower_div, stamen_div, carpel_div, pollen_div)
@@ -777,47 +777,68 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
       DevSeq_div_rates$div_times <- as.numeric(DevSeq_div_rates$div_times)
       DevSeq_div_rates$correlation <- as.numeric(DevSeq_div_rates$correlation)
-      DevSeq_div_rates$comp_organ <- factor(DevSeq_div_rates$comp_organ, levels = DevSeq_div_rates$comp_organ)
       
+      # Change order of organs in df
+      DevSeq_div_rates <- DevSeq_div_rates[c(7:12,37:42,31:36,1:6,19:30,43:48,13:18,49:54),]
+      DevSeq_div_rates_wo_pollen <- DevSeq_div_rates[1:48,]
+      DevSeq_div_rates_mesocotyl <- DevSeq_div_rates_wo_pollen[5:6,]
+      DevSeq_div_rates_wo_pollen <- DevSeq_div_rates_wo_pollen[-6,] # remove mesocotyl data
+      DevSeq_div_rates_pollen <- DevSeq_div_rates[49:54,]
+      DevSeq_div_rates_wo_pollen$comp_organ <- factor(DevSeq_div_rates_wo_pollen$comp_organ, 
+        levels = unique(DevSeq_div_rates_wo_pollen$comp_organ))
+      DevSeq_div_rates_mesocotyl$comp_organ <- factor(DevSeq_div_rates_mesocotyl$comp_organ, 
+        levels = unique(DevSeq_div_rates_mesocotyl$comp_organ))
+      DevSeq_div_rates_pollen$comp_organ <- factor(DevSeq_div_rates_pollen$comp_organ, 
+        levels = unique(DevSeq_div_rates_pollen$comp_organ))
+
       
 
       # Make connected scatter plot
-      makeScrPlotDistCor <- function(data, plot_title) {
+      makeScrPlotDistCor <- function(data1, data2, data3, plot_title) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(data1)), sep="_"))
 
-        p <- ggplot(data, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
+        p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
+        geom_line(aes(x=div_times, y=correlation), data=data2, color = "#8591c7",  
+            size = 2.75) + # mesocotyl solid line;
+        geom_line(aes(x=div_times, y=correlation), data=data2, color = "#252c50", lty = "22", 
+            lwd = 2.75) + # mesocotyl; for dotted line, use lty="11"
         geom_line(size=2.75) + 
-        scale_x_continuous(limits = c(7, 160), expand = c(0.02, 0)) + 
-        scale_y_continuous(limits = c(0.44, 0.95), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#52428c", "#8591c7", "#008544", "#95b73a", "#fad819", 
-            "#de6daf", "#f23d29", "#f2a72f", "#a63126")
-        # organ order: root/hypocotyl/leaf/veg_apex/inf_apex/flower/stamen/carpel/pollen
-        ) + 
-        guides(shape = guide_legend(ncol = 2))
+        scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
+        scale_y_continuous(limits = c(0.445, 0.91), expand = c(0.02, 0)) + 
+        scale_color_manual(values = c("#8591c7", "#f23d29", "#de6daf", "#52428c", "#95b73a", "#fad819", 
+            "#f2a72f", "#008544"), 
+            # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
+            breaks=c("root ", "hypocotyl ", "leaf ", "veg_apex ", "inf_apex ", "flower ", "stamen ", 
+            "carpel ")) + 
+        geom_line(aes(x=div_times, y=correlation), data=data3, color = "#a63126", lty = "22", 
+            lwd = 2.75) + # pollen
+        guides(color = guide_legend(ncol = 3))
 
-        q <- p + ggtitle(plot_title) + theme_bw() + xlab("Intergenic distance (bp)") + ylab("Pearson's r") + 
+        q <- p + ggtitle(plot_title) + theme_bw() + xlab("Divergence time from A.thaliana (Myr)") + ylab("Pearson's r w/ A.thaliana") + 
         theme(text=element_text(size=16), 
             axis.ticks.length = unit(.25, "cm"), 
             plot.margin = unit(c(3.0, 10.5, 20, 8), "points"), 
-            axis.text.x = element_text(colour = "black", size=16, angle=0, margin = margin(t = 9, r = 0, b = 0, l = 0)), 
-            axis.text.y = element_text(colour = "black", size=16, angle=0, margin = margin(t = 0, r = 9, b = 0, l = 0)), 
-            axis.title.x = element_text(colour = "black", size=18.25, margin = margin(t = 28, r = 0, b = 1, l = 0), face ="bold"), 
-            axis.title.y = element_text(colour = "black", size=18.25, margin = margin(t = 0, r = 27, b = 0, l = 10), face ="bold"), 
-            plot.title = element_text(colour = "black", size=20.25, margin = margin(t = 25, r = 0, b = 28, l = 0), hjust = 0.5), 
-            legend.position = c(0.85,0.85), 
-            legend.title = element_text(colour = "black", size=17, face ="bold"), 
-            legend.text=element_text(size=17), 
-            legend.spacing.x = unit(0.25, 'cm'), 
-            legend.key.size = unit(0.775, "cm"), 
+            axis.text.x = element_text(colour = "black", size=19, angle=0, margin = margin(t = 9, r = 0, b = 0, l = 0)), 
+            axis.text.y = element_text(colour = "black", size=19, angle=0, margin = margin(t = 0, r = 9, b = 0, l = 0)), 
+            axis.title.x = element_text(colour = "black", size=23.5, margin = margin(t = 28, r = 0, b = 1, l = 0)), 
+            axis.title.y = element_text(colour = "black", size=23.5, margin = margin(t = 0, r = 27, b = 0, l = 10)), 
+            plot.title = element_text(colour = "black", size=23.5, margin = margin(t = 25, r = 0, b = 28, l = 0), hjust = 0.5), 
+            panel.grid.major = element_line(color="#d5d5d5"),
+            panel.grid.minor.x = element_blank(), 
+            legend.position = c(0.72, 0.877), 
+            legend.title = element_blank(), 
+            legend.text = element_text(size=19.5), 
+            legend.spacing.x = unit(0.5, 'cm'), 
+            legend.key.size = unit(0.95, "cm"), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.0)) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            scale = 1, width = 11.0, height = 8, units = c("in"), 
-            dpi = 450, limitsize = FALSE) 
+            width = 10.5, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
-      makeScrPlotDistCor(data=DevSeq_div_rates, plot_title="Gene expression divergence rates")
+      makeScrPlotDistCor(data1 = DevSeq_div_rates_wo_pollen, data2 = DevSeq_div_rates_mesocotyl, 
+            data3 = DevSeq_div_rates_pollen, plot_title="Gene expression divergence rates")
 
 
 
