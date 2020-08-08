@@ -746,15 +746,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
       }
 
-      root_div <- getOrganCor(df=x[,2:22], organ="root ", coefficient=coefficient, expr_estimation=expr_estimation)
-      hypocotyl_div <- getOrganCor(df=x[,23:43], organ="hypocotyl ", coefficient=coefficient, expr_estimation=expr_estimation)
-      leaf_div <- getOrganCor(df=x[,44:64], organ="leaf ", coefficient=coefficient, expr_estimation=expr_estimation)
-      veg_apex_div <- getOrganCor(df=x[,65:85], organ="veg_apex ", coefficient=coefficient, expr_estimation=expr_estimation)
-      inf_apex_div <- getOrganCor(df=x[,86:106], organ="inf_apex ", coefficient=coefficient, expr_estimation=expr_estimation)
-      flower_div <- getOrganCor(df=x[,107:127], organ="flower ", coefficient=coefficient, expr_estimation=expr_estimation)
-      stamen_div <- getOrganCor(df=x[,128:148], organ="stamen ", coefficient=coefficient, expr_estimation=expr_estimation)
-      carpel_div <- getOrganCor(df=x[,149:169], organ="carpel ", coefficient=coefficient, expr_estimation=expr_estimation)
-      pollen_div <- getOrganCor(df=x[,170:190], organ="pollen ", coefficient=coefficient, expr_estimation=expr_estimation)
+      root_div <- getOrganCor(df=x[,2:22], organ="Root  ", coefficient=coefficient, expr_estimation=expr_estimation)
+      hypocotyl_div <- getOrganCor(df=x[,23:43], organ="Hypocotyl  ", coefficient=coefficient, expr_estimation=expr_estimation)
+      leaf_div <- getOrganCor(df=x[,44:64], organ="Leaf  ", coefficient=coefficient, expr_estimation=expr_estimation)
+      veg_apex_div <- getOrganCor(df=x[,65:85], organ="Apex veg  ", coefficient=coefficient, expr_estimation=expr_estimation)
+      inf_apex_div <- getOrganCor(df=x[,86:106], organ="Apex inf  ", coefficient=coefficient, expr_estimation=expr_estimation)
+      flower_div <- getOrganCor(df=x[,107:127], organ="Flower  ", coefficient=coefficient, expr_estimation=expr_estimation)
+      stamen_div <- getOrganCor(df=x[,128:148], organ="Stamen  ", coefficient=coefficient, expr_estimation=expr_estimation)
+      carpel_div <- getOrganCor(df=x[,149:169], organ="Carpel  ", coefficient=coefficient, expr_estimation=expr_estimation)
+      pollen_div <- getOrganCor(df=x[,170:190], organ="Pollen  ", coefficient=coefficient, expr_estimation=expr_estimation)
 
       DevSeq_organ_cor <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
         flower_div, stamen_div, carpel_div, pollen_div)
@@ -781,64 +781,57 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
       # Change order of organs in df
       DevSeq_div_rates <- DevSeq_div_rates[c(7:12,37:42,31:36,1:6,19:30,43:48,13:18,49:54),]
       DevSeq_div_rates_wo_pollen <- DevSeq_div_rates[1:48,]
-      DevSeq_div_rates_mesocotyl <- DevSeq_div_rates_wo_pollen[5:6,]
-      DevSeq_div_rates_wo_pollen <- DevSeq_div_rates_wo_pollen[-6,] # remove mesocotyl data
       DevSeq_div_rates_pollen <- DevSeq_div_rates[49:54,]
       DevSeq_div_rates_wo_pollen$comp_organ <- factor(DevSeq_div_rates_wo_pollen$comp_organ, 
         levels = unique(DevSeq_div_rates_wo_pollen$comp_organ))
-      DevSeq_div_rates_mesocotyl$comp_organ <- factor(DevSeq_div_rates_mesocotyl$comp_organ, 
-        levels = unique(DevSeq_div_rates_mesocotyl$comp_organ))
       DevSeq_div_rates_pollen$comp_organ <- factor(DevSeq_div_rates_pollen$comp_organ, 
         levels = unique(DevSeq_div_rates_pollen$comp_organ))
 
       
 
-      # Make connected scatter plot
-      makeScrPlotDistCor <- function(data1, data2, data3, plot_title) {
+      # Make GE divergence plot
+      makeGEDivPlot <- function(data1, data2, plot_title, coefficient) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(data1)), sep="_"))
+        fname <- sprintf('%s.jpg', paste("GE_divergence_rates", coefficient, sep="_"))
 
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
-        geom_line(aes(x=div_times, y=correlation), data=data2, color = "#8591c7",  
-            size = 2.75) + # mesocotyl solid line;
-        geom_line(aes(x=div_times, y=correlation), data=data2, color = "#252c50", lty = "22", 
-            lwd = 2.75) + # mesocotyl; for dotted line, use lty="11"
         geom_line(size=2.75) + 
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.445, 0.91), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#8591c7", "#f23d29", "#de6daf", "#52428c", "#95b73a", "#fad819", 
             "#f2a72f", "#008544"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
-            breaks=c("root ", "hypocotyl ", "leaf ", "veg_apex ", "inf_apex ", "flower ", "stamen ", 
-            "carpel ")) + 
-        geom_line(aes(x=div_times, y=correlation), data=data3, color = "#a63126", lty = "22", 
+            breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
+                "Stamen  ", "Carpel  ")) + 
+        geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
             lwd = 2.75) + # pollen
         guides(color = guide_legend(ncol = 3))
 
-        q <- p + ggtitle(plot_title) + theme_bw() + xlab("Divergence time from A.thaliana (Myr)") + ylab("Pearson's r w/ A.thaliana") + 
+        q <- p + theme_bw() + xlab("Divergence time from A.thaliana (Myr)") + ylab("Pearson's r w/ A.thaliana") + 
         theme(text=element_text(size=16), 
-            axis.ticks.length = unit(.25, "cm"), 
-            plot.margin = unit(c(3.0, 10.5, 20, 8), "points"), 
-            axis.text.x = element_text(colour = "black", size=19, angle=0, margin = margin(t = 9, r = 0, b = 0, l = 0)), 
-            axis.text.y = element_text(colour = "black", size=19, angle=0, margin = margin(t = 0, r = 9, b = 0, l = 0)), 
-            axis.title.x = element_text(colour = "black", size=23.5, margin = margin(t = 28, r = 0, b = 1, l = 0)), 
-            axis.title.y = element_text(colour = "black", size=23.5, margin = margin(t = 0, r = 27, b = 0, l = 10)), 
-            plot.title = element_text(colour = "black", size=23.5, margin = margin(t = 25, r = 0, b = 28, l = 0), hjust = 0.5), 
+            axis.ticks.length=unit(0.35, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 0.7),  
+            plot.margin = unit(c(0.55, 1.0, 0.5, 0.4),"cm"), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
+            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
+            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
+            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
+            legend.box.background = element_rect(colour = "#d5d5d5", size=1.5), 
+            panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
-            legend.position = c(0.72, 0.877), 
+            legend.position = c(0.7315, 0.88), 
             legend.title = element_blank(), 
-            legend.text = element_text(size=19.5), 
+            legend.text = element_text(size=21.5), 
             legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(0.95, "cm"), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1.0)) 
+            legend.key.size = unit(0.95, "cm")) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 10.5, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
+            width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
-      makeScrPlotDistCor(data1 = DevSeq_div_rates_wo_pollen, data2 = DevSeq_div_rates_mesocotyl, 
-            data3 = DevSeq_div_rates_pollen, plot_title="Gene expression divergence rates")
+      makeGEDivPlot(data1 = DevSeq_div_rates_wo_pollen, data2 = DevSeq_div_rates_pollen, 
+        coefficient = coefficient)
 
 
 
