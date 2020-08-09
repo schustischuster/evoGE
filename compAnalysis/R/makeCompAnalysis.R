@@ -805,6 +805,20 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
                 "Stamen  ", "Carpel  ")) + 
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
             lwd = 2.75) + # pollen
+        annotate("text", x=147.44, y=0.8318, label= "Pollen", size=7.56) + 
+        geom_segment(x=135.55, xend=137.15, y=0.8318, yend=0.8318, color="#a63126", size=2.7) + 
+        geom_segment(x=138.3, xend=139.9, y=0.8318, yend=0.8318, color="#a63126", size=2.7) + 
+        geom_segment(x=156, xend=159, y= 0.455, yend= 0.455, color="white", size=8) + 
+        annotate("text", x=19.5, y=0.459, label= "Brassicaceae", size=8) + 
+        annotate("text", x=46, y=0.459, label= "TH", size=8) + 
+        annotate("text", x=106, y=0.459, label= "MT", size=8) + 
+        annotate("text", x=158.6, y=0.459, label= "BD", size=8) + 
+        geom_segment(x=7, xend=7, y=0.435, yend=0.445, color="black", size=0.7) + 
+        geom_segment(x=9, xend=9, y=0.435, yend=0.445, color="black", size=0.7) + 
+        geom_segment(x=25, xend=25, y=0.435, yend=0.445, color="black", size=0.7) + 
+        geom_segment(x=46, xend=46, y=0.435, yend=0.445, color="black", size=0.7) + 
+        geom_segment(x=106, xend=106, y=0.435, yend=0.445, color="black", size=0.7) + 
+        geom_segment(x=160, xend=160, y=0.435, yend=0.445, color="black", size=0.7) + 
         guides(color = guide_legend(ncol = 3))
 
         q <- p + theme_bw() + xlab("Divergence time from A.thaliana (Myr)") + ylab("Pearson's r w/ A.thaliana") + 
@@ -816,15 +830,17 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
-            legend.box.background = element_rect(colour = "#d5d5d5", size=1.5), 
+            legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
-            legend.position = c(0.7315, 0.88), 
+            panel.grid.minor.y = element_blank(), 
+            legend.position = c(0.723, 0.88), 
             legend.title = element_blank(), 
             legend.text = element_text(size=21.5), 
             legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(0.95, "cm")) 
+            legend.key.size = unit(0.95, "cm"), 
+            legend.background=element_blank()) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
             width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
