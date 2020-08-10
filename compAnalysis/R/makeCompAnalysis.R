@@ -395,7 +395,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
-        par(lwd = 17) # dendrogram line width
+        par(lwd = 16) # dendrogram line width
         getRowOrder = heatmap.2(x_cor,
             revC = F,
             ColSideColors = col_cols, 
@@ -462,7 +462,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         # Make corrplots
         png(height = 4000, width = 4000, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
-        par(lwd = 19) # dendrogram line width
+        par(lwd = 17) # dendrogram line width
         getRowOrder = heatmap.2(x_cor,
             revC = F,
             ColSideColors = col_cols, 
@@ -806,9 +806,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
             lwd = 2.75) + # pollen
         annotate("text", x=147.44, y=0.8318, label= "Pollen", size=7.56) + 
-        geom_segment(x=135.55, xend=137.15, y=0.8318, yend=0.8318, color="#a63126", size=2.7) + 
-        geom_segment(x=138.3, xend=139.9, y=0.8318, yend=0.8318, color="#a63126", size=2.7) + 
-        geom_segment(x=156, xend=159, y= 0.455, yend= 0.455, color="white", size=8) + 
+        geom_segment(x=135.55, xend=137.25, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
+        geom_segment(x=138.3, xend=139.975, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
+        geom_segment(x=156, xend=159.5, y= 0.455, yend= 0.455, color="white", size=8) + 
         annotate("text", x=19.5, y=0.459, label= "Brassicaceae", size=8) + 
         annotate("text", x=46, y=0.459, label= "TH", size=8) + 
         annotate("text", x=106, y=0.459, label= "MT", size=8) + 
@@ -825,13 +825,13 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         theme(text=element_text(size=16), 
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7),  
-            plot.margin = unit(c(0.55, 1.0, 0.5, 0.4),"cm"), 
+            plot.margin = unit(c(0.55, 1.1, 0.5, 0.4),"cm"), 
             axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
             axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
             legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
+            panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
@@ -1157,11 +1157,13 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             legend_col <- 2
             legend_pos <- c(0.284, 1.54)
             x_lim <- NULL
+            y_title_mrg <- margin(t = 0, r = 5, b = 0, l = 9)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         } else if((spec == "all") && (data_norm == "inter-organ")) {
             legend_col <- 1
             legend_pos <- c(0.154, 0.8728)
             x_lim <- c(-125, 55)
+            y_title_mrg <- margin(t = 0, r = 8.5, b = 0, l = 6.5)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.9),"cm")
         } else if((spec == "Brassicaceae") && (data_norm == "intra-organ")) {
             legend_col <- 1
@@ -1169,6 +1171,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             legend_spacing <- 5.1
             order_guide <- 2
             x_lim <- NULL
+            y_title_mrg <- margin(t = 0, r = 5, b = 0, l = 9)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         } else if((spec == "Brassicaceae") && (data_norm == "inter-organ")) {
             legend_col <- 1
@@ -1176,6 +1179,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             legend_spacing <- 0
             order_guide <- 0
             x_lim <- NULL
+            y_title_mrg <- margin(t = 0, r = 0, b = 0, l = 14.5)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         }
 
@@ -1200,10 +1204,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         labs(x = x_lab, y = y_lab) + 
         theme(panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
+            panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
             panel.background = element_blank(), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 5, b = 0, l = 9)), 
-            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
+            axis.title.y = element_text(size=24, margin = y_title_mrg), 
+            axis.title.x = element_text(size=24, margin = margin(t = 14.75, r = 0, b = 2.5, l = 0)), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
             axis.ticks.length=unit(0.35, "cm"), 
