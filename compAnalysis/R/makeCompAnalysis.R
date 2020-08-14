@@ -303,7 +303,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     if (dataset_id == "DevSeq") {
         pal <- color.palette(steps, c(30, 30, 25, 10), space = "rgb")
     } else if (dataset_id == "Brawand") {
-        pal <- color.palette(steps, c(25, 25, 25, 15), space = "rgb")
+        pal <- color.palette(steps, c(25, 30, 25, 15), space = "rgb")
     }
 
     # Set filename
@@ -314,7 +314,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
     if (dataset_id == "DevSeq") {
 
-        exp_col <- c(AT="gray1", AL="cornsilk3", CR="floralwhite", ES="wheat4", TH="#b30000", 
+        exp_col <- c(AT="gray1", AL="cornsilk3", CR="#fff7e8", ES="wheat4", TH="#b30000", 
             MT="lightgoldenrod2", BD="#9f3c9b") # last two letters of sample name
 
         species_col <- c(Roo="#52428c", Hyp="#8591c7", Lea="#008544", veg="#95b73a", 
@@ -322,8 +322,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     } else if (dataset_id == "Brawand") {
 
-        exp_col <- c(sa="gray1", tr="cornsilk3", pa="floralwhite", go="wheat4", py="lightgoldenrod2", 
-            ml="#9f0000", mu="#7c3979", do="green") # last two letters of sample name
+        exp_col <- c(sa="gray1", tr="cornsilk3", pa="#fff7e8", go="#998c74", py="lightgoldenrod2", 
+            ml="#bd0000", mu="#8f428c", do="green") # last two letters of sample name
 
         species_col <- c(br_="#42448c", cb_="#6a76ad", ht_="gold1", kd_="olivedrab3", lv_="palegreen4", 
             ts_="#e17a21")
@@ -421,6 +421,11 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         dend_order = rotate(as.dendrogram(df_clust.res),c(151:162,163:168,145:150,109:120,121:144,85:108,10:12,7:9,4:6,1:3,13:24,61:72,79:84,73:78,25:60)) 
 
+    } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
+        (dataset_id == "Brawand") && is.element("inter-organ", data_norm)) {
+
+        dend_order = rotate(as.dendrogram(df_clust.res),c(25:31,32:35,36:37,46:47,44:45,38:43,23:24,17:22,2,1,3,4,8:10,5:7,11,15:16,12:14)) 
+
     } else dend_order = TRUE 
 
 
@@ -505,7 +510,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
             distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
-            hclustfun = function(x) hclust(x_dist, method = "average"))
+            hclustfun = function(x) hclust(x_dist, method = "average"),
+            Rowv = dend_order, 
+            Colv = "Rowv")
 
         # Get order of rows and rearrange "row_cols" vector
         # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
@@ -521,7 +528,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             density.info = "none",
             trace = "none",
             col = pal(800),
-            Colv = TRUE, 
+            Rowv = dend_order, 
+            Colv = "Rowv", 
             cexRow = 2,
             cexCol = 2,
             margins = c(30, 30),
