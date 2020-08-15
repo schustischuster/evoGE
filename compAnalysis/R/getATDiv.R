@@ -34,12 +34,12 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 
 
     # Set file path for input files
-    if (is.element(expr_estimation, "TPM")) {
+    if (is.element("TPM", expr_estimation)) {
         
         genesExprDS = file.path(in_dir, "Expression_data", "inter_organ_tpm_mat_deseq_sample_names_all.csv")
         genesExprBr = file.path(in_dir, "Expression_data", "TPM_Brawand_norm_inter_organ.csv")
 
-    } else if (is.element(expr_estimation, "counts")) {
+    } else if (is.element("counts", expr_estimation)) {
         
         genesExprDS = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_all.csv")
         genesExprBr = file.path(in_dir, "Expression_data", "count_Brawand_norm_inter_organ.csv")
