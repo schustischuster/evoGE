@@ -7,7 +7,7 @@
 #-------------------------------------- Read data tables ---------------------------------------
 
 
-getATDiv <- function(coefficient = c("pearson", "spearman")) {
+getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c("TPM", "counts")) {
 	
 
     # Show error message if no correlation or unknown correlation coefficient is chosen
@@ -19,14 +19,32 @@ getATDiv <- function(coefficient = c("pearson", "spearman")) {
 	   call. = TRUE
        )
 
+    # Show error message if expression estimation or unknown expression estimation is chosen
+    if ((missing(expr_estimation)) | (!is.element(expr_estimation, c("TPM", "counts"))))
+   
+       stop(
+       "Please choose one of the available expression estimations: 
+       'TPM', 'counts'",
+       call. = TRUE
+       )
+
 
     # Show startup message
     message("Reading data...")
 
 
     # Set file path for input files
-    genesExprDS = file.path(in_dir, "Expression_data", "inter_organ_tpm_mat_deseq_sample_names_all.csv")
-    genesExprBr = file.path(in_dir, "Expression_data", "TPM_Brawand_norm.csv")
+    if (is.element(expr_estimation, "TPM")) {
+        
+        genesExprDS = file.path(in_dir, "Expression_data", "inter_organ_tpm_mat_deseq_sample_names_all.csv")
+        genesExprBr = file.path(in_dir, "Expression_data", "TPM_Brawand_norm_inter_organ.csv")
+
+    } else if (is.element(expr_estimation, "counts")) {
+        
+        genesExprDS = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_all.csv")
+        genesExprBr = file.path(in_dir, "Expression_data", "count_Brawand_norm_inter_organ.csv")
+
+    }
 
     
     # Set colnames
@@ -52,19 +70,25 @@ getATDiv <- function(coefficient = c("pearson", "spearman")) {
 
 
 	# Read Brawand table and set colnames
-	x_Br <- read.table(genesExprBr, sep=",", dec=".", header=TRUE, stringsAsFactors=FALSE)
-	colnames(x_Br)[1] <- "gene_id"
-	Br_spec <- substring(names(x_Br)[-1], 1, 3)
-	Br_org <- substring(names(x_Br)[-1], 5)
-	colnames(x_Br)[-1] <- paste0(Br_org, "_", Br_spec)
+	x_Br <- read.table(genesExprBr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+
+    # Remove later on once expression table has gene_id column
+    ID_repl <- as.data.frame(seq(1:nrow(x_Br)))
+    colnames(ID_repl) <- "gene_id"
+    x_Br <- cbind(ID_repl, x_Br)
+
+	# colnames(x_Br)[1] <- "gene_id"
+
+    # Remove biological replicates that show log2 TPM Pearson's r < 0.85
+    x_Br <- x_Br %>% select (-c(Human_brain__.1., Human_brain__.2..1, Human_heart__.1., Human_kidney__.2.))
 	
 
 
     # Stop function here to allow specific analysis of a single data set
-    # return_list <- list("x_DS" = x_DS, "x_Br" = x_Br, "coefficient" = coefficient)
+    # return_list <- list("x_DS" = x_DS, "x_Br" = x_Br, "coefficient" = coefficient, "expr_estimation" = expr_estimation)
     # return(return_list)
     # }
-    # return_objects <- makeCompBrDS(coefficient="pearson") # read in Comparative expression data
+    # return_objects <- getATDiv(coefficient="pearson", expr_estimation=TPM) # read in Comparative expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
     
@@ -86,7 +110,7 @@ getATDiv <- function(coefficient = c("pearson", "spearman")) {
     x_DS[is.na(x_DS)] <- 0 # replaces NAs by 0
 
 
-    if (is.element("pearson", coefficient)) {
+    if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
             
         x_Br[,2:ncol(x_Br)] <- log2(x_Br[,2:ncol(x_Br)] + 1)
         x_DS[,2:ncol(x_DS)] <- log2(x_DS[,2:ncol(x_DS)] + 1)
@@ -111,7 +135,7 @@ getATDiv <- function(coefficient = c("pearson", "spearman")) {
 
     # Use pearson correlation, inter-organ normalization and TPM for ms
 
-    getOrganCor <- function(df, organ, coefficient) {
+    getDSOrganCor <- function(df, organ, coefficient) {
 
         df_cor <- cor(df, method=coefficient)
         df_cor <- df_cor[4:nrow(df_cor), 1:3]
@@ -138,14 +162,14 @@ getATDiv <- function(coefficient = c("pearson", "spearman")) {
 
     }
 
-    root_div <- getOrganCor(df=x_DS[,2:22], organ="Root  ", coefficient=coefficient)
-    hypocotyl_div <- getOrganCor(df=x_DS[,23:43], organ="Hypocotyl  ", coefficient=coefficient)
-    leaf_div <- getOrganCor(df=x_DS[,44:64], organ="Leaf  ", coefficient=coefficient)
-    veg_apex_div <- getOrganCor(df=x_DS[,65:85], organ="Apex veg  ", coefficient=coefficient)
-    inf_apex_div <- getOrganCor(df=x_DS[,86:106], organ="Apex inf  ", coefficient=coefficient)
-    flower_div <- getOrganCor(df=x_DS[,107:127], organ="Flower  ", coefficient=coefficient)
-    stamen_div <- getOrganCor(df=x_DS[,128:148], organ="Stamen  ", coefficient=coefficient)
-    carpel_div <- getOrganCor(df=x_DS[,149:169], organ="Carpel  ", coefficient=coefficient)
+    root_div <- getDSOrganCor(df=x_DS[,2:22], organ="Root", coefficient=coefficient)
+    hypocotyl_div <- getDSOrganCor(df=x_DS[,23:43], organ="Hypocotyl", coefficient=coefficient)
+    leaf_div <- getDSOrganCor(df=x_DS[,44:64], organ="Leaf", coefficient=coefficient)
+    veg_apex_div <- getDSOrganCor(df=x_DS[,65:85], organ="Apex veg", coefficient=coefficient)
+    inf_apex_div <- getDSOrganCor(df=x_DS[,86:106], organ="Apex inf", coefficient=coefficient)
+    flower_div <- getDSOrganCor(df=x_DS[,107:127], organ="Flower", coefficient=coefficient)
+    stamen_div <- getDSOrganCor(df=x_DS[,128:148], organ="Stamen", coefficient=coefficient)
+    carpel_div <- getDSOrganCor(df=x_DS[,149:169], organ="Carpel", coefficient=coefficient)
 
     DevSeq_organ_cor <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
         flower_div, stamen_div, carpel_div)
@@ -177,21 +201,168 @@ getATDiv <- function(coefficient = c("pearson", "spearman")) {
         levels = unique(DevSeq_div_rates$comp_organ))
 
 
+
+
+#---------------- Get gene expression divergence rates for Human vs species X ------------------
+
+
+    # Use pearson correlation, inter-organ normalization and TPM for ms
+
+    getBrBrainCor <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[5:nrow(df_cor), 1:4]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ppa <- mean(df_cor_rs[1:12,]) # bonobo
+        Pan <- mean(df_cor_rs[13:36,]) # chimp
+        Ggo <- mean(df_cor_rs[37:44,]) # gorilla
+        Ppy <- mean(df_cor_rs[45:52,]) # orangutan
+        Mml <- mean(df_cor_rs[53:64,]) # macaque
+        Mmu <- mean(df_cor_rs[65:76,]) # mouse
+        Mdo <- mean(df_cor_rs[77:84,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    brain_div <- getBrBrainCor(df=x_Br[,2:26], organ="Brain", coefficient=coefficient)
+
+
+    getBrCerebCor <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ppa <- mean(df_cor_rs[1:4,]) # bonobo
+        Pan <- mean(df_cor_rs[5:8,]) # chimp
+        Ggo <- mean(df_cor_rs[9:12,]) # gorilla
+        Ppy <- mean(df_cor_rs[13:14,]) # orangutan
+        Mml <- mean(df_cor_rs[15:18,]) # macaque
+        Mmu <- mean(df_cor_rs[19:24,]) # mouse
+        Mdo <- mean(df_cor_rs[25:28,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    cereb_div <- getBrCerebCor(df=x_Br[,27:42], organ="Cerebellum", coefficient=coefficient)
+
+
+    getBrHtKdLvCor <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ppa <- mean(df_cor_rs[1:4,]) # bonobo
+        Pan <- mean(df_cor_rs[5:8,]) # chimp
+        Ggo <- mean(df_cor_rs[9:12,]) # gorilla
+        Ppy <- mean(df_cor_rs[13:16,]) # orangutan
+        Mml <- mean(df_cor_rs[17:20,]) # macaque
+        Mmu <- mean(df_cor_rs[21:26,]) # mouse
+        Mdo <- mean(df_cor_rs[27:30,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    heart_div <- getBrHtKdLvCor(df=x_Br[,43:59], organ="Heart", coefficient=coefficient)
+    kidney_div <- getBrHtKdLvCor(df=x_Br[,60:76], organ="Kidney", coefficient=coefficient)
+    liver_div <- getBrHtKdLvCor(df=x_Br[,77:93], organ="Liver", coefficient=coefficient)
+
+
+    getBrTestisCor <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ppa <- mean(df_cor_rs[1:2,]) # bonobo
+        Pan <- mean(df_cor_rs[3:4,]) # chimp
+        Ggo <- mean(df_cor_rs[5:6,]) # gorilla
+        Ppy <- NA # orangutan: no data available
+        Mml <- mean(df_cor_rs[7:10,]) # macaque
+        Mmu <- mean(df_cor_rs[11:14,]) # mouse
+        Mdo <- mean(df_cor_rs[15:18,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    testis_div <- getBrTestisCor(df=x_Br[,94:104], organ="Testis", coefficient=coefficient)
+
+    Brawand_organ_cor <- cbind(brain_div, cereb_div, heart_div, kidney_div, liver_div, testis_div)
+
+
+    # Reshape data table for ggplot
+    # divergence times are estimated taxon pair times from TimeTree
+    # http://www.timetree.org/
+    div_times <- rep(c(6.7, 9.1, 15.8, 29.4, 90, 159), times=6)
+    comp_organ <- rep(colnames(Brawand_organ_cor), each=6)
+    comp_spec <- rep(rownames(Brawand_organ_cor), times=6)
+    dataset <- rep("Mammals", 36)
+
+    Brawand_GE_div <- rbind(brain_div, cereb_div, heart_div, kidney_div, liver_div, testis_div)
+    rownames(Brawand_GE_div) <- NULL
+    colnames(Brawand_GE_div) <- "correlation"
+
+    Brawand_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, Brawand_GE_div, dataset), 
+        stringsAsFactors=FALSE)
+
+    Brawand_div_rates$div_times <- as.numeric(Brawand_div_rates$div_times)
+    Brawand_div_rates$correlation <- as.numeric(Brawand_div_rates$correlation)
+
+    # Remove Orangutan testis (missing data) and Opossum kidney (replicate corr < 0.85) data
+    Brawand_div_rates <- Brawand_div_rates[c(-24,-33),]
+
+    Brawand_div_rates$comp_organ <- factor(Brawand_div_rates$comp_organ, 
+        levels = unique(Brawand_div_rates$comp_organ))
+
+
+    # Combine DevSeq and Brawand GE divergence data
+    compDivRates <- rbind(DevSeq_div_rates, Brawand_div_rates)
+
+
+
+
+#--------- Make gene expression divergence rates plot of mammalian and angiosperm data ---------
       
 
       # Make GE divergence plot
-      makeGEDivPlot <- function(data1, coefficient) {
+      makeGEDivPlot <- function(data1, coefficient, expr_estimation) {
 
-        fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, sep="_"))
+        fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, sep="_"))
 
         p <- ggplot(data=data1, aes(x = div_times, y = correlation, group = dataset, colour = dataset)) + 
         geom_point(size = 4) + 
         geom_smooth(method ='lm', size = 2) + 
         scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-        scale_y_continuous(limits = c(0.545, 0.93), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#8591c7"), 
+        scale_y_continuous(limits = c(0.565, 0.91), expand = c(0.02, 0)) + 
+        scale_color_manual(values = c("#8591c7", "red"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
-            breaks=c("Angiosperms")) + 
+            breaks=c("Angiosperms", "Mammals")) + 
         guides(color = guide_legend(ncol = 3))
 
         q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Pearson's r") + 
@@ -219,21 +390,16 @@ getATDiv <- function(coefficient = c("pearson", "spearman")) {
             width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
-      makeGEDivPlot(data1 = DevSeq_div_rates, 
-        coefficient = coefficient)
-
-   
-
-
-
-
+      makeGEDivPlot(data1 = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation)
 
 }
 
 
+getATDiv(coefficient = "pearson", expr_estimation = "TPM")
+getATDiv(coefficient = "spearman", expr_estimation = "TPM")
 
-getATDiv(coefficient="pearson")
-getATDiv(coefficient="spearman")
+getATDiv(coefficient = "pearson", expr_estimation = "counts")
+getATDiv(coefficient = "spearman", expr_estimation = "counts")
 
 
 
