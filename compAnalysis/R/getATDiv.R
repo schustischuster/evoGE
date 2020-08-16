@@ -80,7 +80,8 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 	# colnames(x_Br)[1] <- "gene_id"
 
     # Remove biological replicates that show log2 TPM Pearson's r < 0.85
-    x_Br <- x_Br %>% select (-c(Human_brain__.1., Human_brain__.2..1, Human_heart__.1., Human_kidney__.2.))
+    x_Br <- x_Br %>% select (-c(Human_brain__.1., Human_brain__.2..1, Human_heart__.1., 
+    	Human_kidney__.2., Opossum_kidney__.3.))
 	
 
 
@@ -88,7 +89,7 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
     # return_list <- list("x_DS" = x_DS, "x_Br" = x_Br, "coefficient" = coefficient, "expr_estimation" = expr_estimation)
     # return(return_list)
     # }
-    # return_objects <- getATDiv(coefficient="pearson", expr_estimation=TPM) # read in Comparative expression data
+    # return_objects <- getATDiv(coefficient = "pearson", expr_estimation = "TPM") # read in Comparative expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
     
@@ -181,7 +182,7 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
     div_times <- rep(c(7.1, 9.4, 25.6, 46, 106, 160), times=8)
     comp_organ <- rep(colnames(DevSeq_organ_cor), each=6)
     comp_spec <- rep(rownames(DevSeq_organ_cor), times=8)
-    dataset <- rep("Angiosperms", 48)
+    dataset <- rep("Angiosperms ", 48)
 
     DevSeq_GE_div <- rbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
         flower_div, stamen_div, carpel_div)
@@ -195,7 +196,7 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
     DevSeq_div_rates$correlation <- as.numeric(DevSeq_div_rates$correlation)
       
     # Remove Brachypodium mesocotyl data point
-    DevSeq_div_rates <- DevSeq_div_rates[-12,]
+    # DevSeq_div_rates <- DevSeq_div_rates[-12,]
 
     DevSeq_div_rates$comp_organ <- factor(DevSeq_div_rates$comp_organ, 
         levels = unique(DevSeq_div_rates$comp_organ))
@@ -274,7 +275,11 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
         Ppy <- mean(df_cor_rs[13:16,]) # orangutan
         Mml <- mean(df_cor_rs[17:20,]) # macaque
         Mmu <- mean(df_cor_rs[21:26,]) # mouse
-        Mdo <- mean(df_cor_rs[27:30,]) # opossum
+        if(organ == "Kidney") {
+        	Mdo <- mean(df_cor_rs[27:28,]) # opossum
+        } else {
+        	Mdo <- mean(df_cor_rs[27:30,]) # opossum
+        }
 
         df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
         colnames(df_cor_avg) <- organ
@@ -284,8 +289,8 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
     }
 
     heart_div <- getBrHtKdLvCor(df=x_Br[,43:59], organ="Heart", coefficient=coefficient)
-    kidney_div <- getBrHtKdLvCor(df=x_Br[,60:76], organ="Kidney", coefficient=coefficient)
-    liver_div <- getBrHtKdLvCor(df=x_Br[,77:93], organ="Liver", coefficient=coefficient)
+    kidney_div <- getBrHtKdLvCor(df=x_Br[,60:75], organ="Kidney", coefficient=coefficient)
+    liver_div <- getBrHtKdLvCor(df=x_Br[,76:92], organ="Liver", coefficient=coefficient)
 
 
     getBrTestisCor <- function(df, organ, coefficient) {
@@ -311,7 +316,7 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 
     }
 
-    testis_div <- getBrTestisCor(df=x_Br[,94:104], organ="Testis", coefficient=coefficient)
+    testis_div <- getBrTestisCor(df=x_Br[,93:103], organ="Testis", coefficient=coefficient)
 
     Brawand_organ_cor <- cbind(brain_div, cereb_div, heart_div, kidney_div, liver_div, testis_div)
 
@@ -335,7 +340,7 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
     Brawand_div_rates$correlation <- as.numeric(Brawand_div_rates$correlation)
 
     # Remove Orangutan testis (missing data) and Opossum kidney (replicate corr < 0.85) data
-    Brawand_div_rates <- Brawand_div_rates[c(-24,-33),]
+    Brawand_div_rates <- Brawand_div_rates[c(-33),]
 
     Brawand_div_rates$comp_organ <- factor(Brawand_div_rates$comp_organ, 
         levels = unique(Brawand_div_rates$comp_organ))
@@ -347,23 +352,112 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 
 
 
+#-------------------- Regression models and analysis of covariance (ANCOVA) --------------------
+
+
+    library(mblm)
+    library(lsmeans)
+
+    # Linear regression model
+    devseq_lm <- lm(correlation ~ div_times, data = DevSeq_div_rates)
+    brawand_lm <- lm(correlation ~ div_times, data = Brawand_div_rates)
+    
+    # Kendall–Theil Sen Siegel nonparametric linear regression model
+    devseq_kts <- mblm::mblm(correlation ~ div_times, data = DevSeq_div_rates)
+    brawand_kts <- mblm::mblm(correlation ~ div_times, data = Brawand_div_rates)
+    
+    # Kendall–Theil Sen Siegel model as ggplot2 geom_smooth function input
+    kts_model <- function(..., weights = NULL) {mblm::mblm(...)}
+
+
+    # Analysis of covariance (ANCOVA)
+    # Are the regression lines different from each other in either slope or intercept?
+    # Model1 - two regression lines have different slopes
+    m1 <- lm(correlation ~ div_times * dataset, data = compDivRates) # model that assumes an interaction between the slopes of the regression lines of the two data sets and the grouping variable
+    # this is same as
+    m1 = lm (correlation ~ div_times + dataset + div_times:dataset, data = compDivRates)
+    anova(m1)
+       ### Analysis of Variance Table
+
+       ### Response: correlation
+                         ### Df  Sum Sq Mean Sq  F value    Pr(>F)    
+       ### div_times          1 0.39347 0.39347 195.5662 < 2.2e-16 ***
+       ### dataset            1 0.00155 0.00155   0.7717    0.3823    
+       ### div_times:dataset  1 0.04917 0.04917  24.4382 4.222e-06 ***
+       ### Residuals         79 0.15894 0.00201                       
+
+       ### ---
+       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+       ### => Interaction (div_times:dataset) is significant (4.222e-06), 
+       ###    so the slope across groups is different
+
+    # Model1.null - different offset, but same slope
+    m1.null <- lm(correlation ~ div_times + dataset, data = compDivRates) # model that assumes the slopes of the regression lines of the two data sets are the same, but the lines have different offset
+    anova(m1.null)
+       ### Analysis of Variance Table
+
+       ### Response: correlation
+                 ### Df  Sum Sq Mean Sq  F value Pr(>F)    
+       ### div_times  1 0.39347 0.39347 151.2526 <2e-16 ***
+       ### dataset    1 0.00155 0.00155   0.5969 0.4421    
+       ### Residuals 80 0.20811 0.00260    
+       ### ---
+       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+       ### => The category variable (dataset) is not significant (0.4421), 
+       ###    so the intercepts among groups are different
+
+    anova(m1.null, m1)
+
+       ### Analysis of Variance Table
+
+       ### Model 1: correlation ~ div_times + dataset
+       ### Model 2: correlation ~ div_times + dataset + div_times:dataset
+         ### Res.Df     RSS Df Sum of Sq      F    Pr(>F)    
+       ### 1     80 0.20811                                  
+       ### 2     79 0.15894  1  0.049168 24.438 4.222e-06 ***
+
+       ### => Pr(>F) significant different 2.641e-05 
+       ### => Complex model (y ~ x * grouping variable) fits data better than simpler model (y ~ x + grouping variable)
+       ### => Two regression lines are significant different from beeing parallel
+
+    # Compare slopes using lstrends function of lsmeans library
+    m.lst <- lstrends(m1, "dataset", var="div_times")
+    pairs(m.lst) 
+
+       ### contrast                  estimate           SE df t.ratio p.value
+       ### Angiosperms - Mammals -0.000878518 0.0001777117 79  -4.944  <.0001
+
+
+
+
 #--------- Make gene expression divergence rates plot of mammalian and angiosperm data ---------
       
 
       # Make GE divergence plot
-      makeGEDivPlot <- function(data1, coefficient, expr_estimation) {
+      makeGEDivPlot <- function(data1, coefficient, expr_estimation, r_model, devseq_lm, brawand_lm) {
 
         fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, sep="_"))
 
+        if (r_model == "lm") {
+        	smooth_method <- 'lm'
+
+        } else if (r_model == "kts") {
+        	smooth_method <- kts_model
+        }
+
         p <- ggplot(data=data1, aes(x = div_times, y = correlation, group = dataset, colour = dataset)) + 
         geom_point(size = 4) + 
-        geom_smooth(method ='lm', size = 2) + 
+        geom_smooth(method = smooth_method, size = 2) + 
+        # geom_abline(intercept = coef(devseq_lm)[1], slope = coef(devseq_lm)[2]) + 
+        # geom_abline(intercept = coef(brawand_lm)[1], slope = coef(brawand_lm)[2]) + 
         scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-        scale_y_continuous(limits = c(0.565, 0.91), expand = c(0.02, 0)) + 
+        scale_y_continuous(limits = c(0.565, 0.9075), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#8591c7", "red"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
-            breaks=c("Angiosperms", "Mammals")) + 
-        guides(color = guide_legend(ncol = 3))
+            breaks=c("Angiosperms ", "Mammals")) + 
+        guides(color = guide_legend(ncol = 2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
         q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Pearson's r") + 
         theme(text=element_text(size=16), 
@@ -390,7 +484,9 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
             width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
-      makeGEDivPlot(data1 = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation)
+      makeGEDivPlot(data1 = compDivRates, coefficient = coefficient, 
+      	expr_estimation = expr_estimation, r_model = "lm", devseq_lm = devseq_lm, 
+      	brawand_lm = brawand_lm)
 
 }
 
