@@ -32,6 +32,12 @@ if (!require(dendextend)) install.packages('dendextend')
 library(dendextend)
 if (!require(ggbeeswarm)) install.packages('ggbeeswarm')
 library(ggbeeswarm)
+if (!require(mblm)) install.packages('mblm')
+library(mblm)
+if (!require(lsmeans)) install.packages('lsmeans')
+library(lsmeans)
+if (!require(rcompanion)) install.packages('rcompanion')
+library(rcompanion)
 
 ```
 
