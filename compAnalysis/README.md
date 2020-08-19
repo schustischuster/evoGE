@@ -58,17 +58,17 @@ The following function will load and analyze the DevSeq and Brawand ortholog exp
 
 ```R
 makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
-	               coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"), 
+	        coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"), 
                 data_norm = c("intra-organ", "inter-organ"))
 
 ```
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all", data_norm="inter-organ")
 makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
 makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="all", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all", data_norm="inter-organ")
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 ```
