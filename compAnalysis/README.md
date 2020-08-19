@@ -65,20 +65,11 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaeae")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="spearman", spec="Brassicaeae")
-
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="spearman", spec="all")
-
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman", spec="Brassicaeae")
-
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman", spec="all")
-
-makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson")
-makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="spearman")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="all", data_norm="inter-organ")
+makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 ```
 
