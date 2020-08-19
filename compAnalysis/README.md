@@ -58,17 +58,27 @@ The following function will load and analyze the DevSeq and Brawand ortholog exp
 
 ```R
 makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
-                coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"))
+	               coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"), 
+                data_norm = c("intra-organ", "inter-organ"))
 
 ```
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-makeCompAnylsis(dataset = "Brawand", expr_estimation = "TPM", coefficient = "spearman")
-makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "spearman", devseq_spec = "Brassicaceae")
-makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "spearman", devseq_spec = "all")
-makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "pearson", devseq_spec = "Brassicaceae")
-makeCompAnylsis(dataset = "DevSeq", expr_estimation = "TPM", coefficient = "pearson", devseq_spec = "all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaeae")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="spearman", spec="Brassicaeae")
+
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="spearman", spec="all")
+
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman", spec="Brassicaeae")
+
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="spearman", spec="all")
+
+makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson")
+makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="spearman")
 
 ```
 
