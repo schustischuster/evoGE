@@ -357,11 +357,8 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 
     library(mblm)
     library(lsmeans)
+    library(rcompanion)
 
-    # Linear regression model
-    devseq_lm <- lm(correlation ~ div_times, data = DevSeq_div_rates)
-    brawand_lm <- lm(correlation ~ div_times, data = Brawand_div_rates)
-    
     # Kendall–Theil Sen Siegel nonparametric linear regression model
     devseq_kts <- mblm::mblm(correlation ~ div_times, data = DevSeq_div_rates)
     brawand_kts <- mblm::mblm(correlation ~ div_times, data = Brawand_div_rates)
@@ -370,13 +367,13 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
     kts_model <- function(..., weights = NULL) {mblm::mblm(...)}
 
 
-    # Analysis of covariance (ANCOVA)
+    # Analysis of covariance (ANCOVA) of linear regression model
     # Are the regression lines different from each other in either slope or intercept?
     # Model1 - two regression lines have different slopes
-    m1 <- lm(correlation ~ div_times * dataset, data = compDivRates) # model that assumes an interaction between the slopes of the regression lines of the two data sets and the grouping variable
+    model_lm <- lm(correlation ~ div_times * dataset, data = compDivRates) # model that assumes an interaction between the slopes of the regression lines of the two data sets and the grouping variable
     # this is same as
-    m1 = lm (correlation ~ div_times + dataset + div_times:dataset, data = compDivRates)
-    anova(m1)
+    model_lm = lm (correlation ~ div_times + dataset + div_times:dataset, data = compDivRates)
+    anova(model_lm)
        ### Analysis of Variance Table
 
        ### Response: correlation
@@ -393,8 +390,8 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
        ###    so the slope across groups is different
 
     # Model1.null - different offset, but same slope
-    m1.null <- lm(correlation ~ div_times + dataset, data = compDivRates) # model that assumes the slopes of the regression lines of the two data sets are the same, but the lines have different offset
-    anova(m1.null)
+    model_lm.null <- lm(correlation ~ div_times + dataset, data = compDivRates) # model that assumes the slopes of the regression lines of the two data sets are the same, but the lines have different offset
+    anova(model_lm.null)
        ### Analysis of Variance Table
 
        ### Response: correlation
@@ -408,7 +405,7 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
        ### => The category variable (dataset) is not significant (0.4421), 
        ###    so the intercepts among groups are different
 
-    anova(m1.null, m1)
+    anova(model_lm.null, model_lm)
 
        ### Analysis of Variance Table
 
@@ -428,6 +425,131 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 
        ### contrast                  estimate           SE df t.ratio p.value
        ### Angiosperms - Mammals -0.000878518 0.0001777117 79  -4.944  <.0001
+
+
+    # Analysis of covariance (ANCOVA) of polynomial regression analysis
+    # https://rcompanion.org/handbook/I_10.html
+    model_lmp.null = lm(correlation ~ poly(div_times, 2, raw = TRUE) + dataset, data = compDivRates) # no interaction
+    anova(model_lmp.null)
+
+       ### Analysis of Variance Table
+
+       ### Response: correlation
+                                      ### Df  Sum Sq  Mean Sq F value Pr(>F)    
+       ### poly(div_times, 2, raw = TRUE)  2 0.42691 0.213453 97.2625 <2e-16 ***
+       ### dataset                         1 0.00285 0.002852  1.2997 0.2577    
+       ### Residuals                      79 0.17337 0.002195                   
+       ### ---
+       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+    model_lmp = lm(correlation ~ poly(div_times, 2, raw = TRUE) * dataset, data = compDivRates) # includes interaction
+    anova(model_lmp)
+
+       ### Analysis of Variance Table
+
+       ### Response: correlation
+                                              ### Df  Sum Sq  Mean Sq  F value    Pr(>F)    
+       ### poly(div_times, 2, raw = TRUE)          2 0.42691 0.213453 139.7100 < 2.2e-16 ***
+       ### dataset                                 1 0.00285 0.002852   1.8669    0.1758    
+       ### poly(div_times, 2, raw = TRUE):dataset  2 0.05573 0.027866  18.2387  3.28e-07 ***
+       ### Residuals                              77 0.11764 0.001528                       
+       ### ---
+       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+    anova(model_lmp.null, model_lmp)
+
+       ### Analysis of Variance Table
+
+       ### Model 1: correlation ~ poly(div_times, 2, raw = TRUE) + dataset
+       ### Model 2: correlation ~ poly(div_times, 2, raw = TRUE) * dataset
+       ### Res.Df     RSS Df Sum of Sq      F   Pr(>F)    
+       ### 1     79 0.17337                                 
+       ### 2     77 0.11764  2  0.055731 18.239 3.28e-07 ***
+       ### ---
+       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+    # Compare slopes using lstrends function of lsmeans library
+    m.lst <- lstrends(model_lmp, "dataset", var="div_times")
+    pairs(m.lst) 
+
+       ### contrast                   estimate           SE df t.ratio p.value
+       ### Angiosperms  - Mammals -0.001245728 0.0002486821 77  -5.009  <.0001
+
+
+    ### ggplot2 implementations of all tested models
+
+    # (1) Polynomial regression with two polynomial terms
+    geom_smooth(method = "lm", formula = y ~ poly(x, 2, raw=TRUE))
+    # OR
+    geom_smooth(method = "lm", formula = y ~ x + I(x^2))
+
+    # (2) Linear regression
+    geom_smooth(method = "lm", formula = y ~ x)
+
+    # (3) Kendall–Theil Sen Siegel nonparametric model for robust regression
+    kts_model <- function(..., weights = NULL) {mblm::mblm(...)}
+    # call in ggplot2
+    geom_smooth(method = kts_model)
+
+    # (4) Linear regression with log-transformed independent variable
+    geom_smooth(method = "lm", formula = y ~ log(x))
+
+    # (5) Linear regression with sqrt-transformed independent variable
+    geom_smooth(method = "lm", formula = y ~ sqrt(x))
+
+    # (6) LOESS regression
+    geom_smooth(method = "loess")
+
+
+    ### Compare fit of all the linear models for DevSeq data
+    model.1 = lm(correlation ~ div_times, data = compDivRates[1:48,]) # lm
+    model.2 = lm(correlation ~ div_times + I(div_times^2), data = compDivRates[1:48,]) # polyg2
+    model.3 = lm(correlation ~ div_times + I(div_times^3), data = compDivRates[1:48,]) # polyg3
+    model.4 = lm(correlation ~ log(div_times), data = compDivRates[1:48,]) # lm with log transf
+    model.5 = lm(correlation ~ sqrt(div_times), data = compDivRates[1:48,]) # lm with sqrt transf
+
+    compareLM(model.1, model.2, model.3, model.4, model.5)
+
+    ### $Models
+       ### Formula                                   
+       ### 1 "correlation ~ div_times"                 
+       ### 2 "correlation ~ div_times + I(div_times^2)"
+       ### 3 "correlation ~ div_times + I(div_times^3)"
+       ### 4 "correlation ~ log(div_times)"            
+       ### 5 "correlation ~ sqrt(div_times)"           
+
+       ### $Fit.criteria
+       ### Rank Df.res    AIC   AICc    BIC R.squared Adj.R.sq   p.value Shapiro.W Shapiro.p
+       ### 1    2     46 -149.3 -148.8 -143.7    0.7776   0.7728 1.273e-16    0.8534 2.688e-05
+       ### 2    3     45 -166.8 -165.8 -159.3    0.8517   0.8451 2.238e-19    0.9351 1.059e-02
+       ### 3    3     45 -163.5 -162.5 -156.0    0.8412   0.8342 1.042e-18    0.9223 3.575e-03
+       ### 4    2     46 -163.5 -163.0 -157.9    0.8346   0.8310 1.348e-19    0.9680 2.122e-01
+       ### 5    2     46 -164.4 -163.8 -158.8    0.8376   0.8340 8.932e-20    0.9029 7.819e-04
+
+    ### Compare fit of all the linear models for Brawand data
+    model.1 = lm(correlation ~ div_times, data = compDivRates[49:83,]) # lm
+    model.2 = lm(correlation ~ div_times + I(div_times^2), data = compDivRates[49:83,]) # polyg2
+    model.3 = lm(correlation ~ div_times + I(div_times^3), data = compDivRates[49:83,]) # polyg3
+    model.4 = lm(correlation ~ log(div_times), data = compDivRates[49:83,]) # lm with log transf
+    model.5 = lm(correlation ~ sqrt(div_times), data = compDivRates[49:83,]) # lm with sqrt transf
+
+    compareLM(model.1, model.2, model.3, model.4, model.5)
+
+    ### $Models
+       ### Formula                                   
+       ### 1 "correlation ~ div_times"                 
+       ### 2 "correlation ~ div_times + I(div_times^2)"
+       ### 3 "correlation ~ div_times + I(div_times^3)"
+       ### 4 "correlation ~ log(div_times)"            
+       ### 5 "correlation ~ sqrt(div_times)"           
+
+       ### $Fit.criteria
+       ### Rank Df.res    AIC   AICc    BIC R.squared Adj.R.sq   p.value Shapiro.W Shapiro.p
+       ### 1    2     33 -125.1 -124.3 -120.5    0.5435   0.5297 4.387e-07    0.8020 2.238e-05
+       ### 2    3     32 -126.5 -125.2 -120.3    0.5855   0.5596 7.580e-07    0.8241 6.276e-05
+       ### 3    3     32 -125.8 -124.4 -119.5    0.5769   0.5504 1.056e-06    0.8204 5.270e-05
+       ### 4    2     33 -129.8 -129.0 -125.1    0.6006   0.5885 4.623e-08    0.8114 3.446e-05
+       ### 5    2     33 -128.7 -127.9 -124.0    0.5877   0.5752 7.914e-08    0.7885 1.225e-05
 
 
 
