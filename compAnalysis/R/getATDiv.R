@@ -355,10 +355,6 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 #-------------------- Regression models and analysis of covariance (ANCOVA) --------------------
 
 
-    library(mblm)
-    library(lsmeans)
-    library(rcompanion)
-
     # Kendall–Theil Sen Siegel nonparametric linear regression model
     devseq_kts <- mblm::mblm(correlation ~ div_times, data = DevSeq_div_rates)
     brawand_kts <- mblm::mblm(correlation ~ div_times, data = Brawand_div_rates)
