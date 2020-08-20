@@ -75,14 +75,14 @@ makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearso
 The following function will compare the gene expression divergence times between Angiosperms (DevSeq data set) and Vertebrates (Brawand data set). 
 
 ```R
-getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c("TPM", "counts"))
+getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))
 
 ```
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-getATDiv(coefficient = "pearson", expr_estimation = "TPM")
-getATDiv(coefficient = "pearson", expr_estimation = "counts")
+getATDiv(expr_estimation = "TPM", coefficient = "pearson")
+getATDiv(expr_estimation = "counts", coefficient = "pearson")
 
 ```
 These function calls will generate the panels for the following figures:
