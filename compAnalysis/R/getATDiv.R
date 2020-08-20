@@ -554,27 +554,25 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       
 
       # Make GE divergence plot
-      makeGEDivPlot <- function(data1, coefficient, expr_estimation, r_model, devseq_lm, brawand_lm) {
+      makeGEDivPlot <- function(data, coefficient, expr_estimation) {
 
         fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, sep="_"))
 
-        if (r_model == "lm") {
-        	smooth_method <- 'lm'
+        ds_col <- rep(c("#8591c7"), 48)
+        bw_col <- rep(c("red"), 35)
+        fill_col <- c(as.character(ds_col), as.character(bw_col))
 
-        } else if (r_model == "kts") {
-        	smooth_method <- kts_model
-        }
-
-        p <- ggplot(data=data1, aes(x = div_times, y = correlation, group = dataset, colour = dataset)) + 
+        p <- ggplot(data = data, aes(x = div_times, y = correlation, group = dataset, colour = dataset)) + 
+        geom_smooth(method = "lm", formula = y ~ poly(x, 2, raw=TRUE), se = TRUE,
+            size = 3.1, aes(fill=fill_col), alpha=0.14) + 
         geom_point(size = 4) + 
-        geom_smooth(method = smooth_method, size = 2) + 
-        # geom_abline(intercept = coef(devseq_lm)[1], slope = coef(devseq_lm)[2]) + 
-        # geom_abline(intercept = coef(brawand_lm)[1], slope = coef(brawand_lm)[2]) + 
+        # geom_abline(intercept = coef(devseq_kts)[1], slope = coef(devseq_kts)[2]) + 
+        # geom_abline(intercept = coef(brawand_kts)[1], slope = coef(brawand_kts)[2]) + 
         scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
         scale_y_continuous(limits = c(0.565, 0.9075), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#8591c7", "red"), 
-            # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
-            breaks=c("Angiosperms ", "Mammals")) + 
+        scale_color_manual(values = c("#8591c7", "red"), breaks=c("Angiosperms ", "Mammals")) + 
+        scale_fill_manual(values = c("#8591c7", "red"), breaks=c("Angiosperms ", "Mammals")) + 
+        scale_size(range = c(0.5, 12)) + 
         guides(color = guide_legend(ncol = 2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
         q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Pearson's r") + 
@@ -602,9 +600,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
-      makeGEDivPlot(data1 = compDivRates, coefficient = coefficient, 
-      	expr_estimation = expr_estimation, r_model = "lm", devseq_lm = devseq_lm, 
-      	brawand_lm = brawand_lm)
+      makeGEDivPlot(data = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation)
 
 }
 
