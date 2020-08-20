@@ -452,7 +452,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
        ### ---
        ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-    anova(model_lmp.null, model_lmp)
+    anova_poly <- anova(model_lmp.null, model_lmp)
+    poly_p_value <- anova_poly[2,6]
+    poly_p_value <- paste("p = ", round(poly_p_value, 9))
+    anova_poly
 
        ### Analysis of Variance Table
 
@@ -554,7 +557,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       
 
       # Make GE divergence plot
-      makeGEDivPlot <- function(data, coefficient, expr_estimation) {
+      makeGEDivPlot <- function(data, coefficient, expr_estimation, p_value) {
 
         fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, sep="_"))
 
@@ -573,6 +576,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         scale_color_manual(values = c("#8591c7", "red"), breaks=c("Angiosperms ", "Mammals")) + 
         scale_fill_manual(values = c("#8591c7", "red"), breaks=c("Angiosperms ", "Mammals")) + 
         scale_size(range = c(0.5, 12)) + 
+        geom_text(label = p_value, x = 145.2, y = 0.85, color = "black", size=7.5) + 
         guides(color = guide_legend(ncol = 2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
         q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Pearson's r") + 
@@ -589,9 +593,9 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
-            legend.position = c(0.723, 0.92), 
+            legend.position = c(0.7835, 0.914), 
             legend.title = element_blank(), 
-            legend.text = element_text(size=21.5), 
+            legend.text = element_text(size=22), 
             legend.spacing.x = unit(0.5, 'cm'), 
             legend.key.size = unit(0.95, "cm"), 
             legend.background=element_blank()) 
@@ -600,7 +604,8 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
-      makeGEDivPlot(data = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation)
+      makeGEDivPlot(data = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
+        p_value = poly_p_value)
 
 }
 
