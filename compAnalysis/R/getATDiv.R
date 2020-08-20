@@ -7,7 +7,7 @@
 #-------------------------------------- Read data tables ---------------------------------------
 
 
-getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c("TPM", "counts")) {
+getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman")) {
 	
 
     # Show error message if no correlation or unknown correlation coefficient is chosen
@@ -86,10 +86,10 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 
 
     # Stop function here to allow specific analysis of a single data set
-    # return_list <- list("x_DS" = x_DS, "x_Br" = x_Br, "coefficient" = coefficient, "expr_estimation" = expr_estimation)
+    # return_list <- list("x_DS" = x_DS, "x_Br" = x_Br, "expr_estimation" = expr_estimation, "coefficient" = coefficient)
     # return(return_list)
     # }
-    # return_objects <- getATDiv(coefficient = "pearson", expr_estimation = "TPM") # read in Comparative expression data
+    # return_objects <- getATDiv(expr_estimation = "TPM", coefficient = "pearson") # read in Comparative expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
     
@@ -609,11 +609,11 @@ getATDiv <- function(coefficient = c("pearson", "spearman"), expr_estimation = c
 }
 
 
-getATDiv(coefficient = "pearson", expr_estimation = "TPM")
-getATDiv(coefficient = "spearman", expr_estimation = "TPM")
+getATDiv(expr_estimation = "TPM", coefficient = "pearson")
+getATDiv(expr_estimation = "TPM", coefficient = "spearman")
 
-getATDiv(coefficient = "pearson", expr_estimation = "counts")
-getATDiv(coefficient = "spearman", expr_estimation = "counts")
+getATDiv(expr_estimation = "counts", coefficient = "pearson")
+getATDiv(expr_estimation = "counts", coefficient = "spearman")
 
 
 
