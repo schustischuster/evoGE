@@ -46,6 +46,9 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     }
 
+    # Read original Brawand ortholog expression data (RPKM) from 2011 Nature publication
+    genesExprBr2011 = file.path(in_dir, "Expression_data", "Brawand_Supplementary_Data1", "NormalizedRPKM_ConstitutiveAlignedExons_Amniote1to1Orthologues.txt")
+
     
     # Set colnames
     col_namesDS <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
@@ -82,11 +85,21 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     # Remove biological replicates that show log2 TPM Pearson's r < 0.85
     x_Br <- x_Br %>% select (-c(Human_brain__.1., Human_brain__.2..1, Human_heart__.1., 
     	Human_kidney__.2., Opossum_kidney__.3.))
-	
+
+
+    # Read original Brawand expression table from Nature 2011
+    x_Br2011 <- read.table(genesExprBr2011, sep="\t", dec=".", header=TRUE, stringsAsFactors=FALSE)
+
+    # Remove biological replicates that show log2 RPMK Pearson's r < 0.85
+    # remove ortholog names, two hsa samples with low cor and platypus and chicken data 
+    x_Br2011 <- x_Br2011 %>% select (-c(hsa:gga, hsa.br.M.4, hsa.br.M.5, oan.br.M.1:gga.ts.M.2))
+    ID_repl <- as.data.frame(seq(1:nrow(x_Br2011)))
+    colnames(ID_repl) <- "gene_id"
+    x_Br2011 <- cbind(ID_repl, x_Br2011)	
 
 
     # Stop function here to allow specific analysis of a single data set
-    # return_list <- list("x_DS" = x_DS, "x_Br" = x_Br, "expr_estimation" = expr_estimation, "coefficient" = coefficient)
+    # return_list <- list("x_DS" = x_DS, "x_Br" = x_Br, "expr_estimation" = expr_estimation, "coefficient" = coefficient, "x_Br2011" = x_Br2011)
     # return(return_list)
     # }
     # return_objects <- getATDiv(expr_estimation = "TPM", coefficient = "pearson") # read in Comparative expression data
@@ -109,24 +122,16 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     x_Br[is.na(x_Br)] <- 0 # replaces NAs by 0
     x_DS[is.na(x_DS)] <- 0 # replaces NAs by 0
+    x_Br2011[is.na(x_Br2011)] <- 0 # replaces NAs by 0
 
 
     if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
             
         x_Br[,2:ncol(x_Br)] <- log2(x_Br[,2:ncol(x_Br)] + 1)
         x_DS[,2:ncol(x_DS)] <- log2(x_DS[,2:ncol(x_DS)] + 1)
+        x_Br2011[,2:ncol(x_Br2011)] <- log2(x_Br2011[,2:ncol(x_Br2011)] + 1)
 
     }
-
-
-
-
-#------------------- Apply 0.5 TPM threshold to both DevSeq and Brawand data -------------------
-
-
-# Need to implement expression data thresholding here!!!
-# Use 0.5 TPM in at least 2 of 3 replicates; check condition for Brawand
-# (number of biological replicates in Brawand data set is different in various organs)
 
 
 
@@ -352,12 +357,190 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
 
+#---- Get GE divergence rates for Human vs species X (original data from Brawand 2011 paper)----
+
+
+    # Use pearson correlation, inter-organ normalization and TPM for ms
+
+    getBrBrainCor11 <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[5:nrow(df_cor), 1:4]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ptr <- mean(df_cor_rs[1:24,]) # chimp
+        Ppa <- mean(df_cor_rs[25:36,]) # bonobo
+        Ggo <- mean(df_cor_rs[37:44,]) # gorilla
+        Ppy <- mean(df_cor_rs[45:52,]) # orangutan
+        Mml <- mean(df_cor_rs[53:64,]) # macaque
+        Mmu <- mean(df_cor_rs[65:76,]) # mouse
+        Mdo <- mean(df_cor_rs[77:84,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    brain_div_11 <- getBrBrainCor11(df=x_Br2011[,c(2:5,18:23,33:35,45:46,56:57,65:67,78:80,95:96)], 
+        organ="Brain", coefficient=coefficient)
+
+
+    getBrCerebCor11 <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ptr <- mean(df_cor_rs[1:4,]) # chimp
+        Ppa <- mean(df_cor_rs[5:8,]) # bonobo
+        Ggo <- mean(df_cor_rs[9:12,]) # gorilla
+        Ppy <- mean(df_cor_rs[13:14,]) # orangutan
+        Mml <- mean(df_cor_rs[15:18,]) # macaque
+        Mmu <- mean(df_cor_rs[19:24,]) # mouse
+        Mdo <- mean(df_cor_rs[25:28,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    cereb_div_11 <- getBrCerebCor11(df=x_Br2011[,c(6:7,24:25,36:37,47:48,58,68:69,81:83,97:98)], 
+        organ="Cerebellum", coefficient=coefficient)
+
+
+    getBrHtKdCor11 <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[4:nrow(df_cor), 1:3]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ptr <- mean(df_cor_rs[1:6,]) # chimp
+        Ppa <- mean(df_cor_rs[7:12,]) # bonobo
+        Ggo <- mean(df_cor_rs[13:18,]) # gorilla
+        Ppy <- mean(df_cor_rs[19:24,]) # orangutan
+        Mml <- mean(df_cor_rs[25:30,]) # macaque
+        Mmu <- mean(df_cor_rs[31:39,]) # mouse
+        Mdo <- mean(df_cor_rs[40:45,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    heart_div_11 <- getBrHtKdCor11(df=x_Br2011[,c(8:10,26:27,38:39,49:50,59:60,70:71,84:86,99:100)], 
+        organ="Heart", coefficient=coefficient)
+    kidney_div_11 <- getBrHtKdCor11(df=x_Br2011[,c(11:13,28:29,40:41,51:52,61:62,72:73,87:89,101:102)], 
+        organ="Kidney", coefficient=coefficient)
+
+
+    getBrLvCor11 <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ptr <- mean(df_cor_rs[1:4,]) # chimp
+        Ppa <- mean(df_cor_rs[5:8,]) # bonobo
+        Ggo <- mean(df_cor_rs[9:12,]) # gorilla
+        Ppy <- mean(df_cor_rs[13:16,]) # orangutan
+        Mml <- mean(df_cor_rs[17:20,]) # macaque
+        Mmu <- mean(df_cor_rs[21:26,]) # mouse
+        Mdo <- mean(df_cor_rs[27:30,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    liver_div_11 <- getBrLvCor11(df=x_Br2011[,c(14:15,30:31,42:43,53:54,63:64,74:75,90:92,103:104)], 
+        organ="Liver", coefficient=coefficient)
+
+
+    getBrTestisCor11 <- function(df, organ, coefficient) {
+
+        df_cor <- cor(df, method=coefficient)
+        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+
+        # Reshape cor data frame to one column
+        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+
+        Ptr <- mean(df_cor_rs[1:2,]) # chimp
+        Ppa <- mean(df_cor_rs[3:4,]) # bonobo
+        Ggo <- mean(df_cor_rs[5:6,]) # gorilla
+        Ppy <- NA # orangutan: no data available
+        Mml <- mean(df_cor_rs[7:10,]) # macaque
+        Mmu <- mean(df_cor_rs[11:14,]) # mouse
+        Mdo <- mean(df_cor_rs[15:18,]) # opossum
+
+        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
+        colnames(df_cor_avg) <- organ
+
+        return(df_cor_avg)
+
+    }
+
+    testis_div_11 <- getBrTestisCor11(df=x_Br2011[,c(16:17,32,44,55,76:77,93:94,105:106)], 
+        organ="Testis", coefficient=coefficient)
+
+    Brawand11_organ_cor <- cbind(brain_div_11, cereb_div_11, heart_div_11, kidney_div_11, 
+        liver_div_11, testis_div_11)
+
+
+    # Reshape data table for ggplot
+    # divergence times are estimated taxon pair times from TimeTree
+    # http://www.timetree.org/
+    div_times <- rep(c(6.7, 9.1, 15.8, 29.4, 90, 159), times=6)
+    comp_organ <- rep(colnames(Brawand11_organ_cor), each=6)
+    comp_spec <- rep(rownames(Brawand11_organ_cor), times=6)
+    dataset <- rep("Mammals", 36)
+
+    Brawand11_GE_div <- rbind(brain_div_11, cereb_div_11, heart_div_11, kidney_div_11, 
+        liver_div_11, testis_div_11)
+    rownames(Brawand11_GE_div) <- NULL
+    colnames(Brawand11_GE_div) <- "correlation"
+
+    Brawand11_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, Brawand11_GE_div, dataset), 
+        stringsAsFactors=FALSE)
+
+    Brawand11_div_rates$div_times <- as.numeric(Brawand11_div_rates$div_times)
+    Brawand11_div_rates$correlation <- as.numeric(Brawand11_div_rates$correlation)
+
+    # Remove Orangutan testis (missing data) and Opossum kidney (replicate corr < 0.85) data
+    Brawand11_div_rates <- Brawand11_div_rates[c(-33),]
+
+    Brawand11_div_rates$comp_organ <- factor(Brawand11_div_rates$comp_organ, 
+        levels = unique(Brawand11_div_rates$comp_organ))
+
+
+    # Combine DevSeq and Brawand GE divergence data
+    compDivRates2 <- rbind(DevSeq_div_rates, Brawand11_div_rates)
+
+
+
+
 #-------------------- Regression models and analysis of covariance (ANCOVA) --------------------
 
 
     # Kendall–Theil Sen Siegel nonparametric linear regression model
     devseq_kts <- mblm::mblm(correlation ~ div_times, data = DevSeq_div_rates)
     brawand_kts <- mblm::mblm(correlation ~ div_times, data = Brawand_div_rates)
+    brawand11_kts <- mblm::mblm(correlation ~ div_times, data = Brawand11_div_rates)
     
     # Kendall–Theil Sen Siegel model as ggplot2 geom_smooth function input
     kts_model <- function(..., weights = NULL) {mblm::mblm(...)}
@@ -416,7 +599,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
        ### => Two regression lines are significant different from beeing parallel
 
     # Compare slopes using lstrends function of lsmeans library
-    m.lst <- lstrends(m1, "dataset", var="div_times")
+    m.lst <- lstrends(model_lm, "dataset", var="div_times")
     pairs(m.lst) 
 
        ### contrast                  estimate           SE df t.ratio p.value
@@ -473,6 +656,27 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
        ### contrast                   estimate           SE df t.ratio p.value
        ### Angiosperms  - Mammals -0.001245728 0.0002486821 77  -5.009  <.0001
+
+
+    # Regression analysis of DevSeq and Brawand11 (expression data from 2011 paper) data
+    model_lm11 <- lm(correlation ~ div_times * dataset, data = compDivRates2)
+    anova(model_lm11)
+    model_lm.null11 <- lm(correlation ~ div_times + dataset, data = compDivRates2)
+    anova(model_lm.null11)
+    anova(model_lm.null11, model_lm11)
+    m.lst <- lstrends(model_lm11, "dataset", var="div_times")
+    pairs(m.lst) 
+
+    model_lmp.null11 = lm(correlation ~ poly(div_times, 2, raw = TRUE) + dataset, data = compDivRates2) # no interaction
+    anova(model_lmp.null11)
+    model_lmp11 = lm(correlation ~ poly(div_times, 2, raw = TRUE) * dataset, data = compDivRates2) # includes interaction
+    anova(model_lmp11)
+    anova_poly11 <- anova(model_lmp.null11, model_lmp11)
+    anova_poly11
+    m.lst <- lstrends(model_lmp11, "dataset", var="div_times")
+    pairs(m.lst) 
+    poly_p_value11 <- anova_poly11[2,6]
+    poly_p_value11 <- paste("p = ", round(poly_p_value11, 9))
 
 
     ### ggplot2 implementations of all tested models
