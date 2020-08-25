@@ -529,7 +529,15 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Combine DevSeq and Brawand GE divergence data
-    compDivRates2 <- rbind(DevSeq_div_rates, Brawand11_div_rates)
+    compDivRates11 <- rbind(DevSeq_div_rates, Brawand11_div_rates)
+
+
+    # Generate data set with both Brawand data (re-analyzed = "Mammals_DS2020"; original = "Mammals_Br2011")
+    Brawand_div_rates_comp <- Brawand_div_rates
+    Brawand11_div_rates_comp <- Brawand11_div_rates
+    Brawand_div_rates_comp$dataset[Brawand_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_DS2020'
+    Brawand11_div_rates_comp$dataset[Brawand11_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_Br2011'
+    compDivRatesBr <- rbind(Brawand_div_rates_comp, Brawand11_div_rates_comp)
 
 
 
@@ -540,7 +548,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     # Kendall–Theil Sen Siegel nonparametric linear regression model
     devseq_kts <- mblm::mblm(correlation ~ div_times, data = DevSeq_div_rates)
     brawand_kts <- mblm::mblm(correlation ~ div_times, data = Brawand_div_rates)
-    brawand11_kts <- mblm::mblm(correlation ~ div_times, data = Brawand11_div_rates)
     
     # Kendall–Theil Sen Siegel model as ggplot2 geom_smooth function input
     kts_model <- function(..., weights = NULL) {mblm::mblm(...)}
@@ -582,7 +589,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
        ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
        ### => The category variable (dataset) is not significant (0.4421), 
-       ###    so the intercepts among groups are different
+       ###    so the intercepts among groups are not different
 
     anova(model_lm.null, model_lm)
 
@@ -659,24 +666,30 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Regression analysis of DevSeq and Brawand11 (expression data from 2011 paper) data
-    model_lm11 <- lm(correlation ~ div_times * dataset, data = compDivRates2)
-    anova(model_lm11)
-    model_lm.null11 <- lm(correlation ~ div_times + dataset, data = compDivRates2)
-    anova(model_lm.null11)
-    anova(model_lm.null11, model_lm11)
-    m.lst <- lstrends(model_lm11, "dataset", var="div_times")
-    pairs(m.lst) 
-
-    model_lmp.null11 = lm(correlation ~ poly(div_times, 2, raw = TRUE) + dataset, data = compDivRates2) # no interaction
+    model_lmp.null11 = lm(correlation ~ poly(div_times, 2, raw = TRUE) + dataset, data = compDivRates11) # no interaction
     anova(model_lmp.null11)
-    model_lmp11 = lm(correlation ~ poly(div_times, 2, raw = TRUE) * dataset, data = compDivRates2) # includes interaction
+    model_lmp11 = lm(correlation ~ poly(div_times, 2, raw = TRUE) * dataset, data = compDivRates11) # includes interaction
     anova(model_lmp11)
     anova_poly11 <- anova(model_lmp.null11, model_lmp11)
     anova_poly11
     m.lst <- lstrends(model_lmp11, "dataset", var="div_times")
     pairs(m.lst) 
     poly_p_value11 <- anova_poly11[2,6]
-    poly_p_value11 <- paste("p = ", round(poly_p_value11, 9))
+    poly_p_value11 <- format(round(poly_p_value11, 6), scientific = TRUE)
+    poly_p_value11 <- paste("p = ", poly_p_value11)
+
+
+    # Regression analysis of original and re-analyzed Brawand data
+    model_lmp.nullBr = lm(correlation ~ poly(div_times, 2, raw = TRUE) + dataset, data = compDivRatesBr) # no interaction
+    anova(model_lmp.nullBr)
+    model_lmpBr = lm(correlation ~ poly(div_times, 2, raw = TRUE) * dataset, data = compDivRatesBr) # includes interaction
+    anova(model_lmpBr)
+    anova_polyBr <- anova(model_lmp.nullBr, model_lmpBr)
+    anova_polyBr
+    m.lst <- lstrends(model_lmpBr, "dataset", var="div_times")
+    pairs(m.lst) 
+    poly_p_valueBr <- anova_polyBr[2,6]
+    poly_p_valueBr <- paste("p = ", round(poly_p_valueBr, 2))
 
 
     ### ggplot2 implementations of all tested models
