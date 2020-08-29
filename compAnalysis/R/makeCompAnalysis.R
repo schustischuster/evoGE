@@ -349,6 +349,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     # Log2 transform data if expr_estimation=TPM is chosen
     # Compute correlation and build distance matrix
+    # get_dist is an wrapper implemented in the factoextra package around
+    # as.dist(1-cor(t(scale(x_cor)))) if scale = TRUE; or
+    # as.dist(1-cor(t(x_cor))) if scale = FALSE
     if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
         x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
         x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
