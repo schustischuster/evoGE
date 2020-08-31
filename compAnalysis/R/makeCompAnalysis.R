@@ -776,20 +776,47 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
          # Reshape cor data frame to one column
          df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
 
+         getError <- function(cor_data) {
+            sd <- sd(cor_data)
+            error <- qt(0.975, df = 9-1) * sd/sqrt(9)
+         }
+
          sp1 <- mean(df_cor_rs[1:9,])
+         sp1_li <- sp1 - getError(df_cor_rs[1:9,])
+         sp1_ri <- sp1 + getError(df_cor_rs[1:9,])
+
          sp2 <- mean(df_cor_rs[10:18,])
+         sp2_li <- sp2 - getError(df_cor_rs[10:18,])
+         sp2_ri <- sp2 + getError(df_cor_rs[10:18,])
+
          sp3 <- mean(df_cor_rs[19:27,])
+         sp3_li <- sp3 - getError(df_cor_rs[19:27,])
+         sp3_ri <- sp3 + getError(df_cor_rs[19:27,])
+
          sp4 <- mean(df_cor_rs[28:36,])
+         sp4_li <- sp4 - getError(df_cor_rs[28:36,])
+         sp4_ri <- sp4 + getError(df_cor_rs[28:36,])
+
          sp5 <- mean(df_cor_rs[37:45,])
+         sp5_li <- sp5 - getError(df_cor_rs[37:45,])
+         sp5_ri <- sp5 + getError(df_cor_rs[37:45,])
+
          sp6 <- mean(df_cor_rs[46:54,])
+         sp6_li <- sp6 - getError(df_cor_rs[46:54,])
+         sp6_ri <- sp6 + getError(df_cor_rs[46:54,])
 
          df_cor_avg <- rbind(sp1, sp2, sp3, sp4, sp5, sp6)
          colnames(df_cor_avg) <- organ
+         lower <- rbind(sp1_li, sp2_li, sp3_li, sp4_li, sp5_li, sp6_li)
+         colnames(lower) <- "lower"
+         upper <- rbind(sp1_ri, sp2_ri, sp3_ri, sp4_ri, sp5_ri, sp6_ri)
+         colnames(upper) <- "upper"
 
          getRowNames = function(x,n){ substring(x,nchar(x)-n+1) }
          row_names_repl <- getRowNames(rownames(df_cor),2)
          rnames_div_rates <- unique(row_names_repl)
          rownames(df_cor_avg) <- rnames_div_rates
+         df_cor_avg <- cbind(df_cor_avg, lower, upper)
 
          return(df_cor_avg)
 
@@ -805,9 +832,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
       carpel_div <- getOrganCor(df=x[,149:169], organ="Carpel  ", coefficient=coefficient, expr_estimation=expr_estimation)
       pollen_div <- getOrganCor(df=x[,170:190], organ="Pollen  ", coefficient=coefficient, expr_estimation=expr_estimation)
 
-      DevSeq_organ_cor <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
-        flower_div, stamen_div, carpel_div, pollen_div)
-
 
       # Reshape data table for ggplot
       # divergence times are estimated taxon pair times from TimeTree
@@ -819,13 +843,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
       DevSeq_GE_div <- rbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
         flower_div, stamen_div, carpel_div, pollen_div)
       rownames(DevSeq_GE_div) <- NULL
-      colnames(DevSeq_GE_div) <- "correlation"
+      colnames(DevSeq_GE_div) <- c("correlation", "lower", "upper")
 
       DevSeq_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, DevSeq_GE_div), 
         stringsAsFactors=FALSE)
 
       DevSeq_div_rates$div_times <- as.numeric(DevSeq_div_rates$div_times)
       DevSeq_div_rates$correlation <- as.numeric(DevSeq_div_rates$correlation)
+      DevSeq_div_rates$lower <- as.numeric(DevSeq_div_rates$lower)
+      DevSeq_div_rates$upper <- as.numeric(DevSeq_div_rates$upper)
       
       # Change order of organs in df
       DevSeq_div_rates <- DevSeq_div_rates[c(7:12,37:42,31:36,1:6,19:30,43:48,13:18,49:54),]
@@ -844,7 +870,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         fname <- sprintf('%s.jpg', paste("GE_divergence_rates", coefficient, sep="_"))
 
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
-        geom_line(size=2.75) + 
+        geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
+            linetype = 0, show.legend = FALSE) + 
+        scale_fill_manual(values = c("Hypocotyl  "="#8591c7", "Stamen  "="#f23d29", "Flower  "="#de6daf", 
+                "Root  "="#52428c", "Apex veg  "="#95b73a", "Apex inf  "="#fad819", "Carpel  "="#f2a72f", 
+                "Leaf  "="#008544")) + 
+        geom_line(size = 3) +  
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.445, 0.91), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#8591c7", "#f23d29", "#de6daf", "#52428c", "#95b73a", "#fad819", 
@@ -853,11 +884,11 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ")) + 
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
-            lwd = 2.75) + # pollen
+            lwd = 3) + # pollen
         annotate("text", x=147.44, y=0.8318, label= "Pollen", size=7.56) + 
         geom_segment(x=135.55, xend=137.25, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
         geom_segment(x=138.3, xend=139.975, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
-        geom_segment(x=156, xend=159.5, y= 0.455, yend= 0.455, color="white", size=8) + 
+        geom_segment(x=156, xend=159.775, y= 0.455, yend= 0.455, color="white", size=8) + 
         annotate("text", x=19.5, y=0.459, label= "Brassicaceae", size=8) + 
         annotate("text", x=46, y=0.459, label= "TH", size=8) + 
         annotate("text", x=106, y=0.459, label= "MT", size=8) + 
