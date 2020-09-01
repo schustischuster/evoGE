@@ -837,8 +837,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
       # divergence times are estimated taxon pair times from TimeTree
       # http://www.timetree.org/
       div_times <- rep(c(7.1, 9.4, 25.6, 46, 106, 160), times=9)
-      comp_organ <- rep(colnames(DevSeq_organ_cor), each=6)
-      comp_spec <- rep(rownames(DevSeq_organ_cor), times=9)
+      comp_organ <- rep(c(colnames(root_div)[1], colnames(hypocotyl_div)[1], colnames(leaf_div)[1], 
+        colnames(veg_apex_div)[1], colnames(inf_apex_div)[1], colnames(flower_div)[1], 
+        colnames(stamen_div)[1], colnames(carpel_div)[1], colnames(pollen_div)[1]), each=6)
+      comp_spec <- c(rownames(root_div), rownames(hypocotyl_div), rownames(leaf_div), rownames(veg_apex_div), 
+        rownames(inf_apex_div), rownames(flower_div), rownames(stamen_div), rownames(carpel_div), 
+        rownames(pollen_div))
 
       DevSeq_GE_div <- rbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
         flower_div, stamen_div, carpel_div, pollen_div)
