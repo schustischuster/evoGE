@@ -20,24 +20,19 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(gplots)) install.packages('gplots')
-library(gplots)
-if (!require(ggplot2)) install.packages('ggplot2')
-library(ggplot2)
-if (!require(factoextra)) install.packages('factoextra')
-library(factoextra)
-if (!require(dendextend)) install.packages('dendextend')
-library(dendextend)
-if (!require(ggbeeswarm)) install.packages('ggbeeswarm')
-library(ggbeeswarm)
-if (!require(mblm)) install.packages('mblm')
-library(mblm)
-if (!require(lsmeans)) install.packages('lsmeans')
-library(lsmeans)
-if (!require(rcompanion)) install.packages('rcompanion')
-library(rcompanion)
+# Create list of required packages
+lib_List <- c("dplyr", "gplots", "ggplot2", "ggplot2", "factoextra", "dendextend", "ggbeeswarm", 
+	"mblm", "lsmeans", "rcompanion")
+
+loadLibrary <- function(x) { 
+    if (!require(x, character.only = T)) {
+        install.packages('x')
+        library(x)
+    }
+}
+
+# Load packages
+invisible(lapply(lib_List, loadLibrary))
 
 ```
 
@@ -66,11 +61,11 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
 
 | Arguments  |  |
 | :---  | :---  |
-| dataset  | Indicates which data set to use. Can be either `"Brawand"` or `"DevSeq"`. |
+| dataset  | Indicates which data set to use. Can be either `"Brawand"` (mammalian) or `"DevSeq"` (angiosperm) expression data. |
 | expr_estimation  | The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). |
 | coefficient  | A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. |
 | devseq_spec  | Use one of the two string options: `"Brassicaceae"` for Brassicaceae-specific analysis of the DevSeq data, or `"all"` to perform analysis on all DevSeq angiosperm species (7). |
-| data_norm  | This argument indicates how the input RNA-Seq data was normalized. For `"intra-organ"`, data was normalized within comparative organs across species, whereas for `"inter-organ"` data was normalized between organs and species. |
+| data_norm  | This argument indicates how the input data was normalized. For `"intra-organ"`, expression data will be loaded that was normalized between comparative organs across species, whereas for `"inter-organ"` data was normalized between organs AND species. |
 
 </br>
 
