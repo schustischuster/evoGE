@@ -70,11 +70,11 @@ getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
              experiment = c("single-species", "comparative"), threshold)
 
 ```
-To generate the panels of the figures, execute the following function calls:
+To reproduce the results of this study, execute the following function calls:
 
 ```R
-thresholds <- list(0, 0.01, 0.05, 0.1) # ERCC threshold values are 0 (a fixed TPM threshold of 0.05)
-# or perc of expressed spike-ins for 0.01/0.05/0.1
+thresholds <- list(0, 0.01, 0.05, 0.1)    # ERCC threshold values are 0 (a fixed TPM threshold of 0.05)
+                                          # or perc of expressed spike-ins for 0.01/0.05/0.1
 
 lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
 lapply(thresholds, getExprGenes, species = "AL", experiment = "comparative")
