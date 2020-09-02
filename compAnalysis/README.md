@@ -63,9 +63,9 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
 
 ```
 **Arguments**
-*dataset            Indicates which data set to use. Can be either `"Brawand"` or `"DevSeq"`. <br/>
-*expr_estimation    The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). <br/>
-*coefficient        A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. <br/>
+*dataset &nbsp; &nbsp; &nbsp; &nbsp; Indicates which data set to use. Can be either `"Brawand"` or `"DevSeq"`. <br/>
+*expr_estimation &nbsp; &nbsp; &nbsp; The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). <br/>
+*coefficient &nbsp; &nbsp; &nbsp; A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. <br/>
 *devseq_spec        Use one of the two string options: `"Brassicaceae"` for Brassicaceae-specific analysis of the DevSeq
                     data, or `"all"` to perform analysis on all DevSeq angiosperm species (7). <br/>
 *data_norm          This argument indicates the normalization method that was used for RNA-Seq data normalization; <br/>
