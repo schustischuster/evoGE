@@ -50,12 +50,17 @@ Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT
 ```R
 in_dir <- file.path("cisNAT", "data")
 out_dir <- file.path("cisNAT")
+path_to_R_scripts <- file.path("cisNAT", "R")
 
-source("cisNAT/R/getPcPc.R")
-source("cisNAT/R/getNcPc.R")
-source("cisNAT/R/getDevSeq_ATGE.R")
-source("cisNAT/R/getExprRatio.R")
-source("cisNAT/R/getPcPcNO.R")
+sourceDir <- function(path, trace = TRUE, ...) {
+      for (nm in list.files(path, pattern = "[.][RrSsQq]$")) {
+         if(trace) cat(nm,":")
+         source(file.path(path, nm), ...)
+         if(trace) cat("\n")
+      }
+   }
+ 
+sourceDir(path_to_R_scripts)
 
 ```
 
