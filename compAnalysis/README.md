@@ -12,6 +12,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 * [Data analysis and vizualization](#data-analysis-and-vizualization)
 * [Session info](#session-info)
 
+</br>
 
 ## Getting started
 
