@@ -56,6 +56,8 @@ source("compAnalysis/R/makeCompAnalysis.R")
 
 The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots. 
 
+</br>
+
 ```R
 makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
 	        coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"), 
@@ -72,6 +74,7 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
 | devseq_spec  | Use one of the two string options: `"Brassicaceae"` for Brassicaceae-specific analysis of the DevSeq data, or `"all"` to perform analysis on all DevSeq angiosperm species (7). |
 | data_norm  | This argument indicates how the input RNA-Seq data was normalized. For `"intra-organ"`, data was normalized within comparative organs across species, whereas for `"inter-organ"` data was normalized between organs and species. |
 
+</br>
 
 To reproduce the results of this study, execute the following function calls:
 
