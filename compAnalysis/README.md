@@ -54,7 +54,7 @@ source("compAnalysis/R/makeCompAnalysis.R")
 
 ## Data analysis and vizualization
 
-The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots. 
+The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots: 
 
 </br>
 
@@ -66,7 +66,7 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
 ```
 </br>
 
-| Arguments  | Details |
+| Arguments  |  |
 | :---  | :---  |
 | dataset  | Indicates which data set to use. Can be either `"Brawand"` or `"DevSeq"`. |
 | expr_estimation  | The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). |
