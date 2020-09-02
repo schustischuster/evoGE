@@ -42,7 +42,7 @@ Download the entire subdirectory containing the `data` and `R` folders to the wo
 in_dir <- file.path("ATGE-DevSeq", "data")
 out_dir <- file.path("ATGE-DevSeq")
 
-source("ATGE-DevSeq/R/DevSeq_ATGE_plots.R")
+source(file.path("ATGE-DevSeq", "R", "DevSeq_ATGE_plots.R"))
 
 ```
 
