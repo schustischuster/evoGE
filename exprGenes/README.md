@@ -63,7 +63,7 @@ getStats()
 
 ### Retrieve number of expressed genes
 
-The following function will apply a threshold function based on ERCC spike-ins at different threshold levels. 
+The following function will apply a threshold based on ERCC spike-ins at different threshold levels. 
 
 ```R
 getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
@@ -73,8 +73,8 @@ getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-thresholds <- list(0, 0.01, 0.05, 0.1)    # ERCC threshold values are 0 (a fixed TPM threshold of 0.05)
-                                          # or perc of expressed spike-ins for 0.01/0.05/0.1
+thresholds <- list(0, 0.01, 0.05, 0.1)  # ERCC threshold values are 0 (a fixed TPM threshold of 0.05)
+                                        # or percent of expressed spike-ins for 0.01/0.05/0.1
 
 lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
 lapply(thresholds, getExprGenes, species = "AL", experiment = "comparative")
