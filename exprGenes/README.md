@@ -42,11 +42,11 @@ invisible(lapply(lib_List, loadLibrary))
 Download the entire subdirectory containing the `data` and `R` folders to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts:  
 
 ```R
-in_dir <- "./exprGenes/data"
-out_dir <- "./exprGenes"
+in_dir <- file.path("exprGenes", "data")
+out_dir <- file.path("exprGenes")
 
-source("exprGenes/R/getStats.R")
-source("exprGenes/R/getExprGenes.R")
+source(file.path("exprGenes", "R", "getStats.R"))
+source(file.path("exprGenes", "R", "getExprGenes.R"))
 
 ```
 
