@@ -12,8 +12,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 * [Data analysis and vizualization](#data-analysis-and-vizualization)
 * [Session info](#session-info)
 
-</br>
-
+---
 ## Getting started
 
 
@@ -52,8 +51,7 @@ out_dir <- "./compAnalysis"
 source("compAnalysis/R/makeCompAnalysis.R")
 
 ```
-</br>
-
+---
 ## Data analysis and vizualization
 
 The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots: 
