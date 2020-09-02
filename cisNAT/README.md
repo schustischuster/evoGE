@@ -27,25 +27,24 @@ This code allows to reproduce the results of the protein-coding protein-coding s
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-if (!require(plyr)) install.packages('plyr')
-library(plyr)
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(GenomicRanges)) install.packages('GenomicRanges')
-library(GenomicRanges)
-if (!require(rtracklayer)) install.packages('rtracklayer')
-library(rtracklayer)
-if (!require(ggplot2)) install.packages('ggplot2')
-library(ggplot2)
-if (!require(mgcv)) install.packages('mgcv')
-library(mgcv)
-if (!require(data.table)) install.packages('data.table')
-library(data.table)
+
+# Create list of required packages
+lib_List <- c("plyr", "dplyr", "GenomicRanges", "rtracklayer", "ggplot2", "mgcv", "data.table")
+
+loadLibrary <- function(x) { 
+    if (!require(x, character.only = T)) {
+        install.packages('x')
+        library(x)
+    }
+}
+
+# Load packages
+invisible(lapply(lib_List, loadLibrary))
 
 ```
   
 ### Data input
-Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/data) folder and [R scripts](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/R) to the working directory on your computer. Then, set the file path for input and output files and source the scripts: 
+Download the entire subdirectory containing the `data` and `R` folders to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
 
 ```R
 in_dir <- file.path("cisNAT", "data")
