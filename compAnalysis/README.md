@@ -62,8 +62,9 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
                 data_norm = c("intra-organ", "inter-organ"))
 
 ```
+</br>
 
-| Arguments  | Description |
+| Arguments  | Details |
 | :---  | :---  |
 | dataset  | Indicates which data set to use. Can be either `"Brawand"` or `"DevSeq"`. |
 | expr_estimation  | The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). |
