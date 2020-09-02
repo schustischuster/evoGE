@@ -62,6 +62,16 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
                 data_norm = c("intra-organ", "inter-organ"))
 
 ```
+**Arguments**
+*dataset            Indicates which data set to use. Can be either `"Brawand"` or `"DevSeq"`. 
+*expr_estimation    The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST).
+*coefficient        A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`.
+*devseq_spec        Use one of the two string options: `"Brassicaceae"` for Brassicaceae-specific analysis of the DevSeq
+                    data, or `"all"` to perform analysis on all DevSeq angiosperm species (7).
+*data_norm          This argument indicates the normalization method that was used for RNA-Seq data normalization; 
+                    in case of `"intra-organ"`, data was normalized within comparative organs across species, whereas 
+		    for `"inter-organ"` data was normalized between organs and species
+
 To reproduce the results of this study, execute the following function calls:
 
 ```R
