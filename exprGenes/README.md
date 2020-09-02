@@ -61,6 +61,31 @@ getStats()
 
 ```
 
+### Retrieve number of expressed genes
+
+The following function will apply a threshold function based on ERCC spike-ins at different threshold levels. 
+
+```R
+getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+             experiment = c("single-species", "comparative"), threshold)
+
+```
+To generate the panels of the figures, execute the following function calls:
+
+```R
+thresholds <- list(0, 0.01, 0.05, 0.1) # ERCC threshold values are 0 (a fixed TPM threshold of 0.05)
+# or perc of expressed spike-ins for 0.01/0.05/0.1
+
+lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
+lapply(thresholds, getExprGenes, species = "AL", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "CR", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "ES", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "TH", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "MT", experiment = "comparative")
+lapply(thresholds, getExprGenes, species = "BD", experiment = "comparative")
+
+```
+
 ## Visualization
 
 Set the file path for the data generated in the previous steps and source the R script:
