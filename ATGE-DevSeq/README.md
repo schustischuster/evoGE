@@ -39,8 +39,8 @@ invisible(lapply(lib_List, loadLibrary))
 Download the entire subdirectory containing the `data` and `R` folders to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts:
 
 ```R
-in_dir <- "./ATGE-DevSeq/data"
-out_dir <- "./ATGE-DevSeq"
+in_dir <- file.path("ATGE-DevSeq", "data")
+out_dir <- file.path("ATGE-DevSeq")
 
 source("ATGE-DevSeq/R/DevSeq_ATGE_plots.R")
 
