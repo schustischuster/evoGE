@@ -51,12 +51,11 @@ out_dir <- "./compAnalysis"
 source("compAnalysis/R/makeCompAnalysis.R")
 
 ```
+</br>
 
 ## Data analysis and vizualization
 
 The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots: 
-
-</br>
 
 ```R
 makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
