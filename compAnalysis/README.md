@@ -85,23 +85,15 @@ The following function will compare the gene expression divergence times between
 getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))
 
 ```
-</br>
 
-| Arguments  |  |
-| :---  | :---  |
-| expr_estimation  | The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). |
-| coefficient  | A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. |
-
-</br>
-
-To reproduce the results of this study, execute the following function calls:
+The arguments of this function are described above. To reproduce the results of this study, execute the following function calls:
 
 ```R
 getATDiv(expr_estimation = "TPM", coefficient = "pearson")
 getATDiv(expr_estimation = "counts", coefficient = "pearson")
 
 ```
-These function calls will generate the panels for the following figures:
+Executing all function calls will generate the panels for the following figures:
 
 
 ---
