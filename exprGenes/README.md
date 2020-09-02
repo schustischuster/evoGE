@@ -11,6 +11,7 @@ This code allows to summarize the DevSeq data statistics and to reproduce the re
   * [Data input](#data-input)
 * [Data analysis](#data-analysis)
   * [Retrieve mapping statistics](#retrieve-mapping-statistics)
+  * [Retrieve number of expressed genes](#retrieve-number-of-expressed-genes)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
