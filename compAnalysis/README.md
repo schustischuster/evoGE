@@ -62,7 +62,7 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
                 data_norm = c("intra-organ", "inter-organ"))
 
 ```
-# Arguments
+### Arguments
 **dataset** &nbsp; &nbsp; &nbsp; &nbsp; Indicates which data set to use. Can be either `"Brawand"` or `"DevSeq"`. <br/>
 **expr_estimation**  &nbsp; &nbsp; &nbsp; &nbsp; The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). <br/>
 **coefficient**  &nbsp; &nbsp; &nbsp; &nbsp; A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. <br/>
