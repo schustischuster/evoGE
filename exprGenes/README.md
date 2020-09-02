@@ -66,7 +66,8 @@ getStats()
 Set the file path for the data generated in the previous steps and source the R script:
 
 ```R
-in_dir_cd <- file.path("exprGenes", "output", "mapping_statistics")
+in_dir_stats <- file.path("exprGenes", "output", "mapping_statistics")
+in_dir_expr_genes <- file.path("exprGenes", "output", "expr_genes")
 
 source(file.path("exprGenes", "R", "exprGenes_plots.R"))
 
