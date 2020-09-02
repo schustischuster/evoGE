@@ -22,24 +22,19 @@ This code allows to summarize the DevSeq data statistics and to reproduce the re
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(ggplot2)) install.packages('ggplot2')
-library(ggplot2)
-if (!require(data.table)) install.packages('data.table')
-library(data.table)
-if (!require(mgcv)) install.packages('mgcv')
-library(mgcv)
-if (!require(grid)) install.packages('grid')
-library(grid)
-if (!require(gtable)) install.packages('gtable')
-library(gtable)
-if (!require(scales)) install.packages('scales')
-library(scales)
-if (!require(factoextra)) install.packages('factoextra')
-library(factoextra)
-if (!require(dendextend)) install.packages('dendextend')
-library(dendextend)
+
+# Create list of required packages
+lib_List <- c("dplyr", "ggplot2", "data.table", "mgcv", "grid", "gtable", "scales", "factoextra", "dendextend")
+
+loadLibrary <- function(x) { 
+    if (!require(x, character.only = T)) {
+        install.packages('x')
+        library(x)
+    }
+}
+
+# Load packages
+invisible(lapply(lib_List, loadLibrary))
 
 ```
 
