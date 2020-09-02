@@ -48,14 +48,14 @@ library(data.table)
 Download the [data](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/data) folder and [R scripts](https://github.com/schustischuster/evoGEx/tree/master/cisNAT/R) to the working directory on your computer. Then, set the file path for input and output files and source the scripts: 
 
 ```R
-in_dir <- "./data"
-out_dir <- "."
+in_dir <- file.path("cisNAT", "data")
+out_dir <- file.path("cisNAT")
 
-source("getPcPc.R")
-source("getNcPc.R")
-source("getDevSeq_ATGE.R")
-source("getExprRatio.R")
-source("getPcPcNO.R")
+source("cisNAT/R/getPcPc.R")
+source("cisNAT/R/getNcPc.R")
+source("cisNAT/R/getDevSeq_ATGE.R")
+source("cisNAT/R/getExprRatio.R")
+source("cisNAT/R/getPcPcNO.R")
 
 ```
 
