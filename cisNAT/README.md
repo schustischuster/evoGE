@@ -49,7 +49,7 @@ Download the entire subdirectory containing the `data` and `R` folders to the wo
 ```R
 in_dir <- file.path("cisNAT", "data")
 out_dir <- file.path("cisNAT")
-path_to_R_scripts <- file.path("cisNAT", "R")
+path_to_R_files <- file.path("cisNAT", "R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
@@ -60,7 +60,7 @@ sourceDir <- function(path, trace = TRUE, ...) {
    }
 }
  
-sourceDir(path_to_R_scripts)
+sourceDir(path_to_R_files)
 
 ```
 
