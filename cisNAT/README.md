@@ -52,13 +52,14 @@ in_dir <- file.path("cisNAT", "data")
 out_dir <- file.path("cisNAT")
 path_to_R_scripts <- file.path("cisNAT", "R")
 
+# Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
-      for (nm in list.files(path, pattern = "[.][RrSsQq]$")) {
-         if(trace) cat(nm,":")
-         source(file.path(path, nm), ...)
-         if(trace) cat("\n")
-      }
+   for (nm in list.files(path, pattern = "[.][RrSsQq]$")) {
+      if(trace) cat(nm,":")
+      source(file.path(path, nm), ...)
+      if(trace) cat("\n")
    }
+}
  
 sourceDir(path_to_R_scripts)
 
