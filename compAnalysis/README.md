@@ -37,7 +37,7 @@ invisible(lapply(lib_List, loadLibrary))
 ```
 
 ### Data input
-Download the entire subdirectory containing the [data](https://github.com/schustischuster/evoGEx/tree/master/compAnalysis/data) folder and [R script](https://github.com/schustischuster/evoGEx/tree/master/compAnalysis/R) to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
+Download the entire subdirectory containing the `data` and `R` folders to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
 
 ```R
 in_dir <- "./compAnalysis/data"
@@ -61,7 +61,7 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
 
 | Arguments  |  |
 | :---  | :---  |
-| dataset  | Indicates which data set to use. Can be either `"Brawand"` (mammalian) or `"DevSeq"` (angiosperm) expression data. |
+| dataset  | Indicates which data set to use. Can be either `"Brawand"` (mammalian) or `"DevSeq"` (angiosperm) data. |
 | expr_estimation  | The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). |
 | coefficient  | A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. |
 | devseq_spec  | Use one of the two string options: `"Brassicaceae"` for Brassicaceae-specific analysis of the DevSeq data, or `"all"` to perform analysis on all DevSeq angiosperm species (7). |
