@@ -19,14 +19,19 @@ This code visualizes the results of the AtGenExpress (ATGE) and DevSeq comparati
 Install and load the following R packages before running the reproducible script:
 
 ```R
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(gplots)) install.packages('gplots')
-library(gplots)
-if (!require(factoextra)) install.packages('factoextra')
-library(factoextra)
-if (!require(dendextend)) install.packages('dendextend')
-library(dendextend)
+
+# Create list of required packages
+lib_List <- c("dplyr", "gplots", "factoextra", "dendextend")
+
+loadLibrary <- function(x) { 
+    if (!require(x, character.only = T)) {
+        install.packages('x')
+        library(x)
+    }
+}
+
+# Load packages
+invisible(lapply(lib_List, loadLibrary))
 
 ```
   
