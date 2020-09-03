@@ -71,6 +71,16 @@ getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
              experiment = c("single-species", "comparative"), threshold)
 
 ```
+</br>
+
+| Arguments  |  |
+| :---  | :---  |
+| species  | Indicates which data set to use. Can be either `"Brawand"` (mammalian) or `"DevSeq"` (angiosperm) data. |
+| experiment  | The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). |
+| threshold  | A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. |
+
+</br>
+
 To reproduce the results of this study, execute the following function calls:
 
 ```R
