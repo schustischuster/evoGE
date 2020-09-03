@@ -110,3 +110,6 @@ source(file.path("exprGenes", "R", "exprGenes_plots.R"))
 ```
 
 The plotting functions will generate the panels for the following figures:
+
+---
+## Session info
