@@ -116,7 +116,7 @@ lapply(thresholds, getNcPc, species = "BD", experiment = "comparative")
 
 ### Get DevSeq-ATGE non-coding-coding SAS pairs
 
-The following function will select all non-coding protein-coding sense-antisense pairs from the DevSeq A.thaliana data table (single-species, threshold = 0.5) that have previously been identified in the AtGenExpress data set ([Henz et al., 2007](https://www.ncbi.nlm.nih.gov/pubmed/17496106)). The results will be written to a CSV file. 
+The following function will select all non-coding protein-coding sense-antisense pairs from the DevSeq _Arabidopsis thaliana_ data table (single-species, threshold = 0.5) that have previously been identified in the AtGenExpress data set ([Henz et al., 2007](https://www.ncbi.nlm.nih.gov/pubmed/17496106)). The results will be written to a CSV file. 
 
 ```R
 getDevSeq_ATGE()
