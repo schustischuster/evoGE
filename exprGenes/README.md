@@ -75,7 +75,7 @@ getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 | Arguments  |  |
 | :---  | :---  |
-| species  | Indicates which data set to use. Can be either `"Brawand"` (mammalian) or `"DevSeq"` (angiosperm) data. |
+| species  | A character string that defines the species to be analyzed. Can be one of `"ATH"` (Arabidopsis thaliana), `"AL"` (Arabidopsis lyrata), `"CR"` (Capsella rubella), `"ES"` (Eutrema salsugineum), `"TH"` (Tarenaya hassleriana), `"MT"` (Mediacago truncatula) or `"BD"` (Brachypodium distachyon). |
 | experiment  | The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). |
 | threshold  | A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. |
 
