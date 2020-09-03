@@ -15,7 +15,7 @@ This code allows to summarize the DevSeq data statistics and to reproduce the re
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
-
+---
 ## Getting started
 
 
@@ -50,7 +50,7 @@ source(file.path("exprGenes", "R", "getStats.R"))
 source(file.path("exprGenes", "R", "getExprGenes.R"))
 
 ```
-
+---
 ## Data analysis
 
 ### Retrieve mapping statistics
@@ -96,7 +96,7 @@ lapply(thresholds, getExprGenes, species = "MT", experiment = "comparative")
 lapply(thresholds, getExprGenes, species = "BD", experiment = "comparative")
 
 ```
-
+---
 ## Visualization
 
 Set the file path for the data generated in the previous steps and source the R script:
