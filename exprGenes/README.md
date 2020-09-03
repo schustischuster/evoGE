@@ -75,8 +75,8 @@ getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 | Arguments  |  |
 | :---  | :---  |
-| species  | A character string that defines the species to be analyzed. Can be one of `"ATH"` (Arabidopsis thaliana), `"AL"` (Arabidopsis lyrata), `"CR"` (Capsella rubella), `"ES"` (Eutrema salsugineum), `"TH"` (Tarenaya hassleriana), `"MT"` (Mediacago truncatula) or `"BD"` (Brachypodium distachyon). |
-| experiment  | Defines which data set to use; `"single-species"` indicates all organ samples and stages, whereas `"comparative"` only includes comparative organs across species. |
+| species  | A character string that defines the species to be analyzed. Can be one of `"ATH"` (A. thaliana), `"AL"` (A. lyrata), `"CR"` (C. rubella), `"ES"` (E. salsugineum), `"TH"` (T. hassleriana), `"MT"` (M. truncatula) or `"BD"` (B. distachyon). |
+| experiment  | Defines which data set to use; `"single-species"` indicates all organ samples and stages, whereas `"comparative"` only includes organs of the comparative data set. |
 | threshold  | A positive number between 0 and 1 defining the threshold. |
 
 </br>
