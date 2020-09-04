@@ -188,7 +188,7 @@ in_dir_ATGE <- file.path("cisNAT", "output", "SAS_DevSeq_ATGE")
 in_dir_expr <- file.path("cisNAT", "output", "NAT_expr_cor")
 in_dir_pairs <- file.path("cisNAT", "output", "cd_gene_pairs")
 
-source("SAS_plots.R")
+source(file.path("cisNAT", "R", "SAS_plots.R"))
 
 ```
 
