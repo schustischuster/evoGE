@@ -171,7 +171,7 @@ getInParalogs(species = "ATH")
 The following function will retrieve the maximum expression level for both coding and non-coding transcripts, and will calculate the ratio between NAT and coding gene expression. The results will be written to CSV files. 
 
 ```R
-in_dir <- "./output/overlap_nc_genes"
+in_dir <- file.path("cisNAT", "output", "overlap_nc_genes")
 
 getExprRatio()
 
