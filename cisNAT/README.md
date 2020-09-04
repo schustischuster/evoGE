@@ -80,7 +80,7 @@ To generate all data tables used in this study, execute the following function c
 ```R
 species_list <- list("ATH", "AL", "CR", "ES", "TH", "MT", "BD")
 
-getPcPc("ATH", "single-species")
+getPcPc(species = "ATH", experiment = "single-species")
 
 lapply(species_list, getPcPc, experiment = "comparative")
 
