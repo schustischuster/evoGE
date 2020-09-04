@@ -78,7 +78,12 @@ getPcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
+species_list <- list("ATH", "AL", "CR", "ES", "TH", "MT", "BD")
+
 getPcPc("ATH", "single-species")
+
+lapply(species_list, getPcPc, experiment = "comparative")
+
 getPcPc("ATH", "comparative")
 getPcPc("AL", "comparative")
 getPcPc("CR", "comparative")
