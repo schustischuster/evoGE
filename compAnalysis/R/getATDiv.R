@@ -82,10 +82,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 	# colnames(x_Br)[1] <- "gene_id"
 
-    # Remove biological replicates that show log2 TPM Pearson's r < 0.85
-    x_Br <- x_Br %>% select (-c(Human_brain__.1., Human_brain__.2..1, Human_heart__.1., 
-    	Human_kidney__.2., Opossum_kidney__.3.))
-
 
     # Read original Brawand expression table from Nature 2011
     x_Br2011 <- read.table(genesExprBr2011, sep="\t", dec=".", header=TRUE, stringsAsFactors=FALSE)
@@ -532,11 +528,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     compDivRates11 <- rbind(DevSeq_div_rates, Brawand11_div_rates)
 
 
-    # Generate data set with both Brawand data (re-analyzed = "Mammals_DS2020"; original = "Mammals_Br2011")
+    # Generate data set with both Brawand data (re-analyzed = "Mammals_DevSeq"; original = "Mammals_Brawand")
     Brawand_div_rates_comp <- Brawand_div_rates
     Brawand11_div_rates_comp <- Brawand11_div_rates
-    Brawand_div_rates_comp$dataset[Brawand_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_DS2020'
-    Brawand11_div_rates_comp$dataset[Brawand11_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_Br2011'
+    Brawand_div_rates_comp$dataset[Brawand_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_DevSeq'
+    Brawand11_div_rates_comp$dataset[Brawand11_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_Brawand'
     compDivRatesBr <- rbind(Brawand_div_rates_comp, Brawand11_div_rates_comp)
 
 
@@ -644,7 +640,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     anova_poly <- anova(model_lmp.null, model_lmp)
     poly_p_value <- anova_poly[2,6]
-    poly_p_value <- paste("p = ", round(poly_p_value, 9))
+    poly_p_value <- paste("p =", round(poly_p_value, 8))
     anova_poly
 
        ### Analysis of Variance Table
@@ -675,8 +671,8 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     m.lst <- lstrends(model_lmp11, "dataset", var="div_times")
     pairs(m.lst) 
     poly_p_value11 <- anova_poly11[2,6]
-    poly_p_value11 <- format(round(poly_p_value11, 6), scientific = TRUE)
-    poly_p_value11 <- paste("p = ", poly_p_value11)
+    poly_p_value11 <- format(round(poly_p_value11, 5), scientific = TRUE)
+    poly_p_value11 <- paste("p =", poly_p_value11)
 
 
     # Regression analysis of original and re-analyzed Brawand data
@@ -689,7 +685,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     m.lst <- lstrends(model_lmpBr, "dataset", var="div_times")
     pairs(m.lst) 
     poly_p_valueBr <- anova_polyBr[2,6]
-    poly_p_valueBr <- paste("p = ", round(poly_p_valueBr, 2))
+    poly_p_valueBr <- paste("p =", round(poly_p_valueBr, 2))
 
 
     ### ggplot2 implementations of all tested models
@@ -776,24 +772,68 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       # Make GE divergence plot
       makeGEDivPlot <- function(data, coefficient, expr_estimation, p_value) {
 
-        fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, sep="_"))
+        if (deparse(substitute(data)) == "compDivRates") {
 
-        ds_col <- rep(c("#8591c7"), 48)
-        bw_col <- rep(c("red"), 35)
+            fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, sep="_"))
+            ds_col <- rep(c("#8591c7"), 48)
+            bw_col <- rep(c("red"), 35)
+            y_max <- 0.9075
+            legend_x_pos <- 0.7835
+            p_x_pos <- 147
+            p_y_pos <- 0.85
+            col_scale <- c("#8591c7", "red")
+            fill_scale <- c("#8591c7", "red")
+            col_breaks <- c("Angiosperms ", "Mammals")
+            fill_breaks <- c("Angiosperms ", "Mammals")
+            shape_scale <- c(16, 15)
+
+        } else if (deparse(substitute(data)) == "compDivRates11") {
+
+            fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, "Brawand2011", sep="_"))
+            ds_col <- rep(c("#8591c7"), 48)
+            bw_col <- rep(c("red"), 35)
+            y_max <- 0.935
+            legend_x_pos <- 0.7835
+            p_x_pos <- 147
+            p_y_pos <- 0.873
+            col_scale <- c("#8591c7", "red")
+            fill_scale <- c("#8591c7", "red")
+            col_breaks <- c("Angiosperms ", "Mammals")
+            fill_breaks <- c("Angiosperms ", "Mammals")
+            shape_scale <- c(16, 17)
+
+        } else if (deparse(substitute(data)) == "compDivRatesBr") {
+
+            fname <- sprintf('%s.jpg', paste("Brawand_vs_Brawand_2011", coefficient, expr_estimation, sep="_"))
+            ds_col <- rep(c("#8591c7"), 35)
+            bw_col <- rep(c("red"), 35)
+            y_max <- 0.935
+            legend_x_pos <- 0.6805
+            p_x_pos <- 151.35
+            p_y_pos <- 0.873
+            col_scale <- c("red3", "red")
+            fill_scale <- c("red", "red3")
+            col_breaks <- c("Mammals_Brawand ", "Mammals_DevSeq")
+            fill_breaks <- c("Mammals_Brawand ", "Mammals_DevSeq")
+            shape_scale <- c(17, 15)
+        }
+
         fill_col <- c(as.character(ds_col), as.character(bw_col))
 
-        p <- ggplot(data = data, aes(x = div_times, y = correlation, group = dataset, colour = dataset)) + 
+        p <- ggplot(data = data, aes(x = div_times, y = correlation, group = dataset, colour = dataset, 
+            shape = dataset)) + 
         geom_smooth(method = "lm", formula = y ~ poly(x, 2, raw=TRUE), se = TRUE,
-            size = 3.1, aes(fill=fill_col), alpha=0.14) + 
-        geom_point(size = 4) + 
+            size = 3, aes(fill=fill_col), alpha=0.14) + 
+        geom_point(size = 5) + 
         # geom_abline(intercept = coef(devseq_kts)[1], slope = coef(devseq_kts)[2]) + 
         # geom_abline(intercept = coef(brawand_kts)[1], slope = coef(brawand_kts)[2]) + 
         scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-        scale_y_continuous(limits = c(0.565, 0.9075), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#8591c7", "red"), breaks=c("Angiosperms ", "Mammals")) + 
-        scale_fill_manual(values = c("#8591c7", "red"), breaks=c("Angiosperms ", "Mammals")) + 
+        scale_y_continuous(limits = c(0.565, y_max), expand = c(0.02, 0)) + 
+        scale_color_manual(values = col_scale, breaks = col_breaks) + 
+        scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
+        scale_shape_manual(values = shape_scale) + 
         scale_size(range = c(0.5, 12)) + 
-        geom_text(label = p_value, x = 145.2, y = 0.85, color = "black", size=7.5) + 
+        geom_text(label = p_value, x = p_x_pos, y = p_y_pos, color = "black", size=7.5) + 
         guides(color = guide_legend(ncol = 2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
         q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Pearson's r") + 
@@ -810,7 +850,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
-            legend.position = c(0.7835, 0.914), 
+            legend.position = c(legend_x_pos, 0.914), 
             legend.title = element_blank(), 
             legend.text = element_text(size=22), 
             legend.spacing.x = unit(0.5, 'cm'), 
@@ -824,14 +864,16 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       makeGEDivPlot(data = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
         p_value = poly_p_value)
 
+      makeGEDivPlot(data = compDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
+        p_value = poly_p_value11)
+
+      makeGEDivPlot(data = compDivRatesBr, coefficient = coefficient, expr_estimation = expr_estimation, 
+        p_value = poly_p_valueBr)
+
 }
 
 
 getATDiv(expr_estimation = "TPM", coefficient = "pearson")
-getATDiv(expr_estimation = "TPM", coefficient = "spearman")
-
-getATDiv(expr_estimation = "counts", coefficient = "pearson")
-getATDiv(expr_estimation = "counts", coefficient = "spearman")
 
 
 
