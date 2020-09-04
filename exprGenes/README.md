@@ -127,33 +127,18 @@ sessionInfo()
 #> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base
+#> [1] grid      stats     graphics  grDevices utils     datasets  methods   base     
 
 #> other attached packages:
-#> [1] rcompanion_1.11.1 lsmeans_2.27-61   mblm_0.12         ggbeeswarm_0.6.0  dendextend_1.12.0
-#> [6] factoextra_1.0.5  ggplot2_2.2.1     gplots_3.0.1.1    dplyr_0.7.4            
+#> [1] dendextend_1.12.0   factoextra_1.0.5    scales_0.5.0        gtable_0.3.0       
+#> [5] mgcv_1.8-17         nlme_3.1-131        data.table_1.10.4-3 ggplot2_2.2.1      
+#> [9] dplyr_0.7.4        
 
 #> loaded via a namespace (and not attached):
-#>  [1] viridis_0.5.1        viridisLite_0.3.0    splines_3.3.3        BSDA_1.2.0          
-#>  [5] gtools_3.5.0         ucminf_1.1-4         assertthat_0.2.1     expm_0.999-2        
-#>  [9] stats4_3.3.3         coin_1.2-2           vipor_0.4.5          ggrepel_0.7.0       
-#> [13] lattice_0.20-34      quantreg_5.34        glue_1.2.0           minqa_1.2.4         
-#> [17] colorspace_1.3-2     sandwich_2.5-1       Matrix_1.2-8         plyr_1.8.4          
-#> [21] pkgconfig_2.0.3      SparseM_1.77         EMT_1.1              xtable_1.8-4        
-#> [25] mvtnorm_1.0-6        scales_0.5.0         gdata_2.18.0         manipulate_1.0.1    
-#> [29] lme4_1.1-15          MatrixModels_0.4-1   tibble_1.3.4         mgcv_1.8-17         
-#> [33] car_2.1-6            TH.data_1.0-10       maxLik_1.3-4         nnet_7.3-12         
-#> [37] lazyeval_0.2.1       pbkrtest_0.4-7       survival_2.40-1      magrittr_1.5        
-#> [41] ordinal_2015.6-28    estimability_1.2     nlme_3.1-131         MASS_7.3-45         
-#> [45] WRS2_0.9-2           RVAideMemoire_0.9-69 foreign_0.8-67       class_7.3-14        
-#> [49] beeswarm_0.2.3       vegan_2.4-5          tools_3.3.3          multcomp_1.4-8      
-#> [53] munsell_0.5.0        cluster_2.0.5        bindrcpp_0.2         ade4_1.7-10         
-#> [57] e1071_1.6-8          multcompView_0.1-7   caTools_1.17.1       rlang_0.1.6         
-#> [61] grid_3.3.3           nloptr_1.0.4         miscTools_0.6-22     hermite_1.1.1       
-#> [65] bitops_1.0-6         boot_1.3-18          DescTools_0.99.23    gtable_0.3.0        
-#> [69] codetools_0.2-15     reshape_0.8.7        R6_2.4.1             gridExtra_2.3       
-#> [73] zoo_1.8-1            mc2d_0.1-18          nortest_1.0-4        bindr_0.1.1         
-#> [77] KernSmooth_2.23-15   permute_0.9-4        modeltools_0.2-22    parallel_3.3.3      
-#> [81] Rcpp_0.12.14         lmtest_0.9-35        coda_0.19-1     
+#>  [1] Rcpp_0.12.14      bindr_0.1.1       magrittr_1.5      munsell_0.5.0    
+#>  [5] colorspace_1.3-2  viridisLite_0.3.0 lattice_0.20-34   R6_2.4.1         
+#>  [9] rlang_0.1.6       plyr_1.8.4        lazyeval_0.2.1    assertthat_0.2.1 
+#> [13] tibble_1.3.4      Matrix_1.2-8      bindrcpp_0.2      gridExtra_2.3    
+#> [17] viridis_0.5.1     ggrepel_0.7.0     glue_1.2.0        pkgconfig_2.0.3 
 
 ```
