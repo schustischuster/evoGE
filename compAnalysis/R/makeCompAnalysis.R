@@ -230,7 +230,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             rowMeans(x[,64:65]), rowMeans(x[,66:67]), rowMeans(x[,68:69]), rowMeans(x[,70:71]), 
             rowMeans(x[,72:74]), x[,75], rowMeans(x[,76:77]), rowMeans(x[,78:79]), 
             rowMeans(x[,80:81]), rowMeans(x[,82:83]), rowMeans(x[,84:85]), rowMeans(x[,86:87]), 
-            rowMeans(x[,88:90]), rowMeans(x[,91:92]), rowMeans(x[,93:94]), x[,95], x[,96], x[,97],  
+            rowMeans(x[,88:90]), rowMeans(x[,91:92]), rowMeans(x[,93:94]), x[,95:97],  
             rowMeans(x[,98:99]), rowMeans(x[,100:101]), rowMeans(x[,102:103])))
 
         tetra_organs <- rep(c("br", "cb", "ht", "kd", "lv", "ts"), each=8)
