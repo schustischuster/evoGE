@@ -150,7 +150,7 @@ getRandGeneCor(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
               bootstrap_repl)
 
 ```
-To generate the data table for _Arabidopsis thaliana_ used in this study, execute the following function call. It will generate 100 bootstrap replicates of 10.000 randomized protein-coding gene pairs:
+To generate the data table for _Arabidopsis thaliana_ used in this study, execute the following function call. It will generate 100 bootstrap replicates of 10.000 randomized protein-coding gene pairs. This code may run for several hours on smaller systems. For shorter running time, decrease the number of bootstrap replicates.  
 
 ```R
 getRandGeneCor(species = "ATH", cor_method = "Pearson", experiment = "single-species", bootstrap_repl = 100)
