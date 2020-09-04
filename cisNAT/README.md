@@ -84,14 +84,6 @@ getPcPc(species = "ATH", experiment = "single-species")
 
 lapply(species_list, getPcPc, experiment = "comparative")
 
-getPcPc("ATH", "comparative")
-getPcPc("AL", "comparative")
-getPcPc("CR", "comparative")
-getPcPc("ES", "comparative")
-getPcPc("TH", "comparative")
-getPcPc("MT", "comparative")
-getPcPc("BD", "comparative")
-
 ```
 
 ### Retrieve non-coding-coding gene overlapp
