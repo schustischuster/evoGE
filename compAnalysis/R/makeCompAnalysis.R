@@ -218,10 +218,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         colnames(ID_repl) <- "gene_id"
         x <- cbind(ID_repl, x)
 
-        # Remove biological replicates that show log2 TPM Pearson's r < 0.85
-        x <- x %>% select (-c(Human_brain__.1., Human_brain__.2..1, Human_heart__.1., 
-            Human_kidney__.2., Opossum_kidney__.3.))
-
         # Merge replicates
         # Need to do this manually because different number of replicates across organs and species
         x <- data.frame(cbind("gene_id"=x[,1], rowMeans(x[,2:5]), rowMeans(x[,6:8]), 
@@ -234,7 +230,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             rowMeans(x[,64:65]), rowMeans(x[,66:67]), rowMeans(x[,68:69]), rowMeans(x[,70:71]), 
             rowMeans(x[,72:74]), x[,75], rowMeans(x[,76:77]), rowMeans(x[,78:79]), 
             rowMeans(x[,80:81]), rowMeans(x[,82:83]), rowMeans(x[,84:85]), rowMeans(x[,86:87]), 
-            rowMeans(x[,88:90]), rowMeans(x[,91:92]), rowMeans(x[,93:94]), x[,95:97], 
+            rowMeans(x[,88:90]), rowMeans(x[,91:92]), rowMeans(x[,93:94]), x[,95], x[,96], x[,97],  
             rowMeans(x[,98:99]), rowMeans(x[,100:101]), rowMeans(x[,102:103])))
 
         tetra_organs <- rep(c("br", "cb", "ht", "kd", "lv", "ts"), each=8)
@@ -244,13 +240,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         colnames(x)[2:ncol(x)] <- tetra_colnames
 
-        # Simplify colnames
-        # Br_spec <- substring(names(x)[-1], 1, 3)
-        # Br_org <- substring(names(x)[-1], 5)
-        # colnames(x)[-1] <- paste0(Br_org, "_", Br_spec)
-
-        # set column names
-        # colnames(x)[2:ncol(x)] <- col_names
     }
 
 
