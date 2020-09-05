@@ -870,6 +870,67 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       makeGEDivPlot(data = compDivRatesBr, coefficient = coefficient, expr_estimation = expr_estimation, 
         p_value = poly_p_valueBr)
 
+
+
+
+#---- Make gene expression divergence rates plot for Brawand data (original and re-analyzed) ---
+
+
+   makeGEDivPlotBr <- function(data) {
+
+      fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), coefficient, expr_estimation, sep="_"))
+
+      if (deparse(substitute(data)) == "Brawand_div_rates") {
+        y_max <- 0.91
+
+      } else if (deparse(substitute(data)) == "Brawand11_div_rates") {
+        y_max <- 0.97
+      }
+
+      p <- ggplot(data=data, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
+      geom_line(size = 3) +  
+      scale_x_continuous(limits = c(6,160), expand = c(0.02,0), breaks = c(7,9,16,29,90,159)) + 
+      scale_y_continuous(limits = c(0.445, y_max), expand = c(0.02, 0)) + 
+      annotate("text", x=15.5, y=0.459, label= "Primates", size=8) + 
+      annotate("text", x=90, y=0.459, label= "Mouse", size=8) + 
+      annotate("text", x=151, y=0.459, label= "Opossum", size=8) + 
+      geom_segment(x=7, xend=7, y=0.435, yend=0.445, color="black", size=0.7) + 
+      geom_segment(x=9, xend=9, y=0.435, yend=0.445, color="black", size=0.7) + 
+      geom_segment(x=16, xend=16, y=0.435, yend=0.445, color="black", size=0.7) + 
+      geom_segment(x=29, xend=29, y=0.435, yend=0.445, color="black", size=0.7) + 
+      geom_segment(x=90, xend=90, y=0.435, yend=0.445, color="black", size=0.7) + 
+      geom_segment(x=159, xend=159, y=0.435, yend=0.445, color="black", size=0.7) + 
+      guides(color = guide_legend(ncol = 3))
+
+      q <- p + theme_bw() + xlab("Divergence time from HSA (Myr)") + ylab("Pearson's r w/ HSA") + 
+      theme(text=element_text(size=16), 
+        axis.ticks.length=unit(0.35, "cm"), 
+        axis.ticks = element_line(colour = "black", size = 0.7),  
+        plot.margin = unit(c(0.55, 1.1, 0.5, 0.4),"cm"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
+        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
+        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
+        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
+        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
+        panel.grid.major = element_line(color="#d5d5d5"),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.minor.y = element_blank(), 
+        legend.position = c(0.757, 0.888), 
+        legend.title = element_blank(), 
+        legend.text = element_text(size=21.5), 
+        legend.spacing.x = unit(0.5, 'cm'), 
+        legend.key.size = unit(0.95, "cm"), 
+        legend.background=element_blank()) 
+
+      ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+        width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
+  }
+
+  makeGEDivPlotBr(data = Brawand_div_rates)
+  makeGEDivPlotBr(data = Brawand11_div_rates)
+
+
 }
 
 
