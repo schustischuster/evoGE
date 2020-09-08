@@ -1,4 +1,4 @@
-## Make angiosperm phylogeny and orthologous gene plots
+## Make angiosperm phylogeny
 
 This code allows to generate the angiosperm phylogeny. 
 
