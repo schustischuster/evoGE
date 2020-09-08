@@ -1,6 +1,6 @@
 ## Make angiosperm phylogeny and orthologous gene plots
 
-This code allows to generate the angiosperm phylogeny and coding and non-coding orthologous gene plots. 
+This code allows to generate the angiosperm phylogeny. 
 
 
 ## Contents
