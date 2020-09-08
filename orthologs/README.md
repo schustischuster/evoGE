@@ -41,8 +41,7 @@ Download the entire subdirectory containing the `data` and `R` folders to the wo
 in_dir <- file.path("orthologs", "data")
 out_dir <- file.path("orthologs")
 
-source(file.path("compAnalysis", "R", "makeCompAnalysis.R"))
-source(file.path("compAnalysis", "R", "getATDiv.R"))
+source(file.path("orthologs", "R", "plotPhyloCore.R"))
 
 ```
 ---
