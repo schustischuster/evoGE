@@ -1,6 +1,6 @@
-## Make angiosperm phylogeny
+## Make angiosperm phylogeny and ortholog gene plots
 
-This code allows to generate the angiosperm phylogeny. 
+This code allows to generate the angiosperm phylogeny and coding/non-coding orthologous gene plots. 
 
 
 ## Contents
@@ -47,7 +47,7 @@ source(file.path("orthologs", "R", "plotPhyloCore.R"))
 ---
 ## Data analysis and vizualization
 
-The following function will: 
+The following function will generate the angiosperm phylogeny and orthologous gene plots:: 
 
 ```R
 plotPhyloCore(div_times = c("Median", "Estimated"))
@@ -57,7 +57,7 @@ plotPhyloCore(div_times = c("Median", "Estimated"))
 
 | Arguments  |  |
 | :---  | :---  |
-| dataset  | Indicates which data set to use. Can be either `"Brawand"` (mammalian) or `"DevSeq"` (angiosperm) data. |
+| div_times  | Indicates which pairwise divergence time to use. Must be either `"Median"` (median time derived from all studies) or `"Estimated"` (TimeTree TTOL etsimation). For more details, see [Hedges et al., MBE (2015)] (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4379413/) |
 
 </br>
 
