@@ -20,7 +20,7 @@ Install and load the following R packages before running the reproducible script
 
 ```R
 # Create list of required packages
-lib_List <- c("dplyr", "gplots", "ggplot2", "factoextra", "dendextend", "ggbeeswarm", "mblm", "lsmeans", "rcompanion")
+lib_List <- c("dplyr", "ggplot2", "ape")
 
 loadLibrary <- function(x) { 
     if (!require(x, character.only = T)) {
