@@ -47,7 +47,7 @@ source(file.path("orthologs", "R", "plotPhyloCore.R"))
 ---
 ## Data analysis and vizualization
 
-The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots: 
+The following function will: 
 
 ```R
 plotPhyloCore(div_times = c("Median", "Estimated"))
