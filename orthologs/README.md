@@ -58,10 +58,6 @@ plotPhyloCore(div_times = c("Median", "Estimated"))
 | Arguments  |  |
 | :---  | :---  |
 | dataset  | Indicates which data set to use. Can be either `"Brawand"` (mammalian) or `"DevSeq"` (angiosperm) data. |
-| expr_estimation  | The expression estimation measure; Must be one of `"TPM"` or `"counts"` (VST). |
-| coefficient  | A character string that defines which correlation coefficient will be used; Can be either `"pearson"` or `"spearman"`. |
-| devseq_spec  | Use one of the two string options: `"Brassicaceae"` for Brassicaceae-specific analysis of the DevSeq data, or `"all"` to perform analysis on all DevSeq angiosperm species (7). |
-| data_norm  | This argument indicates how the input data was normalized. For `"intra-organ"`, expression data will be loaded that was normalized between comparative organs across species, whereas for `"inter-organ"` data was normalized between organs AND species. |
 
 </br>
 
