@@ -68,7 +68,8 @@ plotPhyloCore(div_times = c("Median", "Estimated"))
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
+plotPhyloCore(div_times = "Median")
+plotPhyloCore(div_times = "Estimated")
 
 ```
 
