@@ -34,7 +34,7 @@ invisible(lapply(lib_List, loadLibrary))
 
 ```
 
-### Data
+### Data input
 Download the entire subdirectory containing the `data` and `R` folders to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
 
 ```R
@@ -57,7 +57,7 @@ plotPhyloCore(div_times = c("Median", "Estimated"))
 
 | Arguments  |  |
 | :---  | :---  |
-| div_times  | Indicates which pairwise divergence time to use. Must be either `"Median"` (median time derived from all studies) or `"Estimated"` (TTOL estimation). For more details, see [Hedges et al., MBE (2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4379413/) |
+| div_times  | Indicates which pairwise divergence time to use. Must be either `"Median"` (median time derived from all studies) or `"Estimated"` (TTOL estimation). For more details, see [Hedges et al., MBE (2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4379413/). |
 
 </br>
 
