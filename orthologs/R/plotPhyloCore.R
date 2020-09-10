@@ -41,8 +41,8 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
      
      # Make marker species phylogeny plot
 	 png(file = file.path(out_dir, "output", "plots", treename), 
-		width = 2800, height = 3700, res = 800)
-	 par(mar = c(1, 1, 0, 1))
+		width = 3250, height = 3700, res = 800)
+	 par(mar = c(0.25, 0.25, 0, 0.25), bg=NA)
 
 	 plot(vert_tree, type = "phylogram", use.edge.length = TRUE, show.node.label = FALSE, 
 	 	edge.width = 1.5, edge.lty = 1, font = 3, root.edge = FALSE, label.offset = 2, 
@@ -53,4 +53,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
 	 dev.off()
 
 }
+
+plotPhyloCore("Estimated")
+plotPhyloCore("Median")
 
