@@ -20,7 +20,7 @@ Install and load the following R packages before running the reproducible script
 
 ```R
 # Create list of required packages
-lib_List <- c("dplyr", "ggplot2", "ape")
+lib_List <- c("dplyr", "ggplot2", "ape", "scales", "gtable")
 
 loadLibrary <- function(x) { 
     if (!require(x, character.only = T)) {
