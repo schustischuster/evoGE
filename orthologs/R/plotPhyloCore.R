@@ -102,13 +102,23 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
 
      fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), div_times, sep="_"))
 
+     if(is.element("Median", div_times)) {
+
+        species_time <- c(6, 9, 27, 51, 108, 152)
+
+     } else if (is.element("Estimated", div_times)) {
+
+        species_time <- c(7, 9, 26, 46, 106, 160)
+     }
+
      p <- ggplot(data, aes(x = div_time, y = expressed)) + 
-     geom_line(aes(x = div_time), size=0.85) + expand_limits(y=0) + 
+     geom_line(aes(x = div_time), size = 1.0) + expand_limits(y=0) + 
+     scale_x_continuous(breaks = species_time) + 
      scale_y_continuous(expand = c(0, 0.15), breaks= pretty_breaks(), 
-		 	labels = function(l) { 
-		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
-		 	}) + 
-     geom_text(aes(y = expressed * 1.145, label = ""))
+            labels = function(l) { 
+                ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
+            }) + 
+     geom_text(aes(y = expressed * 1.1305, label = ""))
 
      q <- p + facet_wrap( ~ class, scales='free_y', ncol = 2) + 
      theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of orthologs AT vs X") + 
@@ -119,15 +129,16 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
         plot.margin = unit(c(15, 0, 0, 2), "points"),
         axis.ticks.length = unit(0.15, "cm"),
         axis.ticks = element_line(colour = "gray15", size = 0.4), 
-        panel.grid.major = element_line(size = 0.5), 
-        panel.grid.minor = element_line(size = 0.3),  
+        panel.grid.major = element_line(size = 0.5, colour = "grey95"), 
+        panel.grid.minor = element_blank(), 
+        panel.grid.minor.y = element_line(size = 0.3, colour = "grey95"), 
         axis.title.x = element_text(colour = "black", size=12, 
-        	margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
+            margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
         axis.title.y = element_text(colour = "black", size=12, 
-        	margin = margin(t = 0, r = 8, b = 0, l = 0.125)), 
-        axis.text.x = element_text(colour = "black", size=10.5, 
-        	margin = margin(t = 2, r = 0, b = 3.5, l = 0), vjust = 0.5), 
-        axis.text.y = element_text(colour = "black", size=10.5, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
+            margin = margin(t = 0, r = 1, b = 0, l = 0.125)), 
+        axis.text.x = element_text(colour = "black", size=11.25, 
+            margin = margin(t = 2, r = 0, b = 12.5, l = 0), vjust = 0.5), 
+        axis.text.y = element_text(colour = "black", size=11.25, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
         legend.position = "bottom",
         legend.title = element_text(colour = "black", size=12, face ="bold"),
         legend.text = element_text(size=6.1), 
@@ -140,31 +151,33 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
 
      pg <- ggplot(data, aes(x = div_time, y = expressed)) + 
      geom_line(aes(x = div_time), size=0.55) + expand_limits(y=0) + 
+     scale_x_continuous(breaks = species_time) + 
      scale_y_continuous(expand = c(0, 0.15), breaks= pretty_breaks(), 
-		 	labels = function(l) { 
-		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
-		 	}) + 
-     geom_text(aes(y = expressed * 1.145, label = ""))
+            labels = function(l) { 
+                ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
+            }) + 
+     geom_text(aes(y = expressed * 1.1305, label = ""))
 
      qg <- pg + facet_grid( ~ class, scales='free') + 
      theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of orthologs AT vs X") + 
      scale_color_manual(values = "gray35") + 
      theme(
-        strip.text.x = element_text(margin = margin(0.2, 0, 0.2, 0, "cm"), size = 12), 
-        strip.text.y = element_text(margin = margin(0, 0.2, 0, 0.2, "cm"), size = 12),
+        strip.text.x = element_text(margin = margin(0.2125, 0, 0.2125, 0, "cm"), size = 12), 
+        strip.text.y = element_text(margin = margin(0, 0.2125, 0, 0.2125, "cm"), size = 12),
         strip.background = element_rect(colour="grey70", size=1), 
         plot.margin = unit(c(15, 0, 0, 2), "points"),
         axis.ticks.length = unit(0.15, "cm"),
-        panel.grid.major = element_line(size = 0.5), 
-        panel.grid.minor = element_line(size = 0.3),  
+        panel.grid.major = element_line(size = 0.5, colour = "grey95"), 
+        panel.grid.minor = element_blank(), 
+        panel.grid.minor.y = element_line(size = 0.3, colour = "grey95"), 
         axis.ticks = element_line(colour = "gray15", size = 0.4), 
         axis.title.x = element_text(colour = "black", size=12, 
-        	margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
+            margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
         axis.title.y = element_text(colour = "black", size=12, 
-        	margin = margin(t = 0, r = 8, b = 0, l = 0.125)), 
-        axis.text.x = element_text(colour = "black", size=10.5, 
-        	margin = margin(t = 2, r = 0, b = 3.5, l = 0), vjust = 0.5), 
-        axis.text.y = element_text(colour = "black", size=10.5, margin = margin(t = 0, r = 0.75, b = 0, l = 0)),  
+            margin = margin(t = 0, r = 1, b = 0, l = 0.125)), 
+        axis.text.x = element_text(colour = "black", size=11.25, 
+            margin = margin(t = 2, r = 0, b = 12.5, l = 0), vjust = 0.5), 
+        axis.text.y = element_text(colour = "black", size=11.25, margin = margin(t = 0, r = 0.75, b = 0, l = 0)),  
         legend.position = "bottom",
         legend.title = element_text(colour = "black", size=12, face ="bold"),
         legend.text = element_text(size=6.1), 
@@ -195,8 +208,8 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
      png("NUL")
 
      ggsave(file = file.path(out_dir, "output", "plots", fname), plot = gt1, 
-     	scale = 1, width = 6.2, height = 2.5, units = c("in"), 
-     	dpi = 800, limitsize = FALSE)
+        scale = 1, width = 6.2, height = 2.5, units = c("in"), 
+        dpi = 800, limitsize = FALSE)
      }
 
 
