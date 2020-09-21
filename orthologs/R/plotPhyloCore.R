@@ -159,7 +159,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       )
 
       y_labels <- waiver()
-      title_y_rmg <- 0
+      title_y_rmg <- 0.4
 
     }
 
@@ -168,14 +168,14 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
         scale_x_continuous(breaks = species_time) + 
         scale_y_continuous(expand = c(0.05, 0.15), breaks= pretty_breaks(), labels = y_labels) + 
         geom_text(aes(y = expressed * 1.077, label = "")) + 
-        geom_segment(x = AL, xend = AL, y = -1000, yend = 0, color = "gray15", size = 0.5) + 
-        geom_segment(x = CR, xend = CR, y = -1000, yend = 0, color = "gray15", size = 0.5) + 
-        geom_segment(x = ES, xend = ES, y = -1000, yend = 0, color = "gray15", size = 0.5) + 
-        geom_segment(x = TH, xend = TH, y = -1000, yend = 0, color = "gray15", size = 0.5) + 
-        geom_segment(x = MT, xend = MT, y = -1000, yend = 0, color = "gray15", size = 0.5) + 
+        geom_segment(x = AL, xend = AL, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
+        geom_segment(x = CR, xend = CR, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
+        geom_segment(x = ES, xend = ES, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
+        geom_segment(x = TH, xend = TH, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
+        geom_segment(x = MT, xend = MT, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
         geom_hline(yintercept = 0, colour = "grey95", size = 0.5) + 
         geom_point(data = dat_circle, mapping = aes(x = x, y = y), shape = 21, colour = "black", 
-          fill = "red", size = 3, stroke = 1) + 
+          fill = "red", size = 3.25, stroke = 0.75) + 
         geom_text(data = dat_text, mapping = aes(x = x, y = y, label=label), color = "red", size = 4)
 
     q <- p + facet_wrap( ~ class, scales='free_y', ncol = 2) + 
@@ -188,7 +188,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
           strip.background = element_blank(),
           plot.margin = unit(c(15, 0, 0, 2), "points"),
           axis.ticks.length = unit(0.15, "cm"),
-          axis.ticks = element_line(colour = "gray15", size = 0.5), 
+          axis.ticks = element_line(colour = "gray15", size = 0.45), 
           panel.grid.major = element_line(size = 0.5, colour = "grey95"), 
           panel.grid.minor = element_blank(), 
           panel.grid.minor.y = element_line(size = 0.3, colour = "grey95"), 
