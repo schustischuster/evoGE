@@ -42,7 +42,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
   # Make marker species phylogeny plot
   png(file = file.path(out_dir, "output", "plots", treename), width = 3250, height = 3700, 
     res = 800)
-  par(mar = c(0.25, 0.25, 0, 0.25), bg=NA)
+  par(mar = c(0.5, 0.25, 0, 0.25), bg=NA)
 
   plot(vert_tree, type = "phylogram", use.edge.length = TRUE, show.node.label = FALSE, 
     edge.width = 1.55, edge.lty = 1, font = 3, root.edge = FALSE, label.offset = 2, 
@@ -196,9 +196,9 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
             margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
           axis.title.y = element_text(colour = "black", size=12, 
             margin = margin(t = 0, r = title_y_rmg, b = 0, l = 0.125)), 
-          axis.text.x = element_text(colour = "black", size=11.25, 
+          axis.text.x = element_text(colour = "black", size=11.5, 
             margin = margin(t = 2, r = 0, b = 12.5, l = 0), vjust = 0.5), 
-          axis.text.y = element_text(colour = "black", size=11.25, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
+          axis.text.y = element_text(colour = "black", size=11.5, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
           panel.border = element_rect(colour = "grey70", fill=NA, size=1))
 
 
@@ -227,9 +227,9 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
             margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
           axis.title.y = element_text(colour = "black", size=12, 
             margin = margin(t = 0, r = title_y_rmg, b = 0, l = 0.125)), 
-          axis.text.x = element_text(colour = "black", size=11.25, 
+          axis.text.x = element_text(colour = "black", size=11.5, 
             margin = margin(t = 2, r = 0, b = 12.5, l = 0), vjust = 0.5), 
-          axis.text.y = element_text(colour = "black", size=11.25, margin = margin(t = 0, r = 0.75, b = 0, l = 0)),  
+          axis.text.y = element_text(colour = "black", size=11.5, margin = margin(t = 0, r = 0.75, b = 0, l = 0)),  
           panel.border = element_rect(colour = "grey70", fill=NA, size=1))
 
 
