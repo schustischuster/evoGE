@@ -721,7 +721,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     model_lmp_io_Br = lm(correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ, data = compDivRatesBr_io)
     div_trend_Br <- lstrends(model_lmp_io_Br, "comp_organ", var="div_times") # get slopes for regressions
     div_trend_Br_df <- summary(div_trend_Br)
-    trend_Br_stat_io <- wilcox.test(div_trend_Br_df[1:8,2], div_trend_Br_df[9:14,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
+    trend_Br_stat_io <- wilcox.test(div_trend_Br_df[1:6,2], div_trend_Br_df[7:12,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
     poly_p_value_Br_io <- format(round(trend_Br_stat_io$p.value, 2))
     poly_p_value_Br_io <- paste("p =", poly_p_value_Br_io)
 
