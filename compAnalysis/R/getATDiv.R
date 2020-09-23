@@ -688,6 +688,45 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     poly_p_valueBr <- paste("p =", round(poly_p_valueBr, 2))
 
 
+
+    # Compare angiosperm and mammalian divergence rates based on individual organ regressions
+    model_lmp11_io = lm(correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ, data = compDivRates11)
+    div_trend11 <- lstrends(model_lmp11_io, "comp_organ", var="div_times") # get slopes for regressions
+    div_trend11_df <- summary(div_trend11)
+    trend11_stat_io <- wilcox.test(div_trend11_df[1:8,2], div_trend11_df[9:14,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
+    poly_p_value11_io <- format(round(trend11_stat_io$p.value, 4))
+    poly_p_value11_io <- paste("p =", poly_p_value11_io)
+
+    # Compare angiosperm and mammalian divergence rates based on individual organ regressions
+    model_lmp_io = lm(correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ, data = compDivRates)
+    div_trend <- lstrends(model_lmp_io, "comp_organ", var="div_times") # get slopes for regressions
+    div_trend_df <- summary(div_trend)
+    trend_stat_io <- wilcox.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
+    poly_p_value_io <- format(round(trend_stat_io$p.value, 4))
+    poly_p_value_io <- paste("p =", poly_p_value_io)
+
+    # Compare organ regressions of original and re-analyzed Brawand data
+    # Prepare data
+    organ_names_Br <- rep(c("Brain","Cerebellum","Heart","Kidney","Liver","Testis"), each=6)
+    organ_names_Br11 <- rep(c("Brain.11","Cerebellum.11","Heart.11","Kidney.11","Liver.11","Testis.11"), each=6)
+    organ_names_Br <- as.data.frame(organ_names_Br[-36])
+    organ_names_Br11 <- as.data.frame(organ_names_Br11[-36])
+    names(organ_names_Br) <- "comp_organ"
+    names(organ_names_Br11) <- "comp_organ"
+    organ_names <- rbind(organ_names_Br, organ_names_Br11)
+    compDivRatesBr_io <- compDivRatesBr
+    compDivRatesBr_io[,2] <- organ_names
+    compDivRatesBr_io$comp_organ <- factor(compDivRatesBr_io$comp_organ)
+    # Make model and compare organ regressions
+    model_lmp_io_Br = lm(correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ, data = compDivRatesBr_io)
+    div_trend_Br <- lstrends(model_lmp_io_Br, "comp_organ", var="div_times") # get slopes for regressions
+    div_trend_Br_df <- summary(div_trend_Br)
+    trend_Br_stat_io <- wilcox.test(div_trend_Br_df[1:8,2], div_trend_Br_df[9:14,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
+    poly_p_value_Br_io <- format(round(trend_Br_stat_io$p.value, 2))
+    poly_p_value_Br_io <- paste("p =", poly_p_value_Br_io)
+
+
+
     ### ggplot2 implementations of all tested models
 
     # (1) Polynomial regression with two polynomial terms
@@ -930,6 +969,79 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
   makeGEDivPlotBr(data = Brawand_div_rates)
   makeGEDivPlotBr(data = Brawand11_div_rates)
 
+
+
+
+#-- Make gene expression divergence rates plot for Brawand and DevSeq with organ regressions ---
+
+
+   # Make GE divergence plot
+   makeOrgRegPlot <- function(data, coefficient, expr_estimation, p_value) {
+
+      if (deparse(substitute(data)) == "compDivRates") {
+
+        fname <- sprintf('%s.jpg', paste("organ_regressions", coefficient, expr_estimation, sep="_"))
+        ds_col <- rep(c("#8591c7"), 48)
+        bw_col <- rep(c("red"), 35)
+        y_max <- 0.9075
+        legend_x_pos <- 0.7835
+        p_x_pos <- 147
+        p_y_pos <- 0.8844
+
+      } else if (deparse(substitute(data)) == "compDivRates11") {
+
+        fname <- sprintf('%s.jpg', paste("organ_regressions11", coefficient, expr_estimation, sep="_"))
+        ds_col <- rep(c("#8591c7"), 48)
+        bw_col <- rep(c("red"), 35)
+        y_max <- 0.935
+        legend_x_pos <- 0.7835
+        p_x_pos <- 147
+        p_y_pos <- 0.91
+      }
+
+      fill_col <- c(as.character(ds_col), as.character(bw_col))
+
+      p <- ggplot(data = data, aes(x = div_times, y = correlation, group = comp_organ, colour = comp_organ, shape = dataset, linetype = dataset)) + 
+      geom_smooth(method = "lm", formula = y ~ poly(x, 2, raw=TRUE), se = FALSE, 
+        size = 3, alpha=0.14) + 
+      geom_point(size = 5.75) + 
+      scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
+      scale_y_continuous(limits = c(0.56, y_max), expand = c(0.02, 0)) + 
+      scale_size(range = c(0.5, 12)) + 
+      geom_text(label = p_value, x = p_x_pos, y = p_y_pos, color = "black", size=7.5) + 
+      guides(color = guide_legend(keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
+
+      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Pearson's r") + 
+      theme(text=element_text(size=16), 
+        axis.ticks.length=unit(0.35, "cm"), 
+        axis.ticks = element_line(colour = "black", size = 0.7),  
+        plot.margin = unit(c(0.55, 1.1, 0.5, 0.4),"cm"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
+        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
+        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
+        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
+        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
+        panel.grid.major = element_line(color="#d5d5d5"),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.minor.y = element_blank(), 
+        legend.position = "right", 
+        legend.title = element_blank(), 
+        legend.text = element_text(size=22), 
+        legend.spacing.x = unit(0.5, 'cm'), 
+        legend.key.size = unit(0.95, "cm"), 
+        legend.background=element_blank()) 
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+            width = 15, height = 8.325, dpi = 300, units = c("in"), limitsize = FALSE) 
+  }
+
+  makeOrgRegPlot(data = compDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
+    p_value = poly_p_value11_io)
+
+  makeOrgRegPlot(data = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
+    p_value = poly_p_value_io)
+  
 
 }
 
