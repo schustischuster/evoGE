@@ -690,23 +690,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Compare angiosperm and mammalian divergence rates based on individual organ regressions
-    model_lmp11_io = lm(correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ, data = compDivRates11)
-    div_trend11 <- lstrends(model_lmp11_io, "comp_organ", var="div_times") # get slopes for regressions
-    div_trend11_df <- summary(div_trend11)
-    trend11_stat_io <- wilcox.test(div_trend11_df[1:8,2], div_trend11_df[9:14,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
-    poly_p_value11_io <- format(round(trend11_stat_io$p.value, 4))
-    poly_p_value11_io <- paste("p =", poly_p_value11_io)
-
-    # Compare angiosperm and mammalian divergence rates based on individual organ regressions
-    model_lmp_io = lm(correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ, data = compDivRates)
-    div_trend <- lstrends(model_lmp_io, "comp_organ", var="div_times") # get slopes for regressions
-    div_trend_df <- summary(div_trend)
-    trend_stat_io <- wilcox.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
-    poly_p_value_io <- format(round(trend_stat_io$p.value, 4))
-    poly_p_value_io <- paste("p =", poly_p_value_io)
-
-    # Compare organ regressions of original and re-analyzed Brawand data
-    # Prepare data
+    # Prepare data for original and re-analyzed Brawand data
     organ_names_Br <- rep(c("Brain","Cerebellum","Heart","Kidney","Liver","Testis"), each=6)
     organ_names_Br11 <- rep(c("Brain.11","Cerebellum.11","Heart.11","Kidney.11","Liver.11","Testis.11"), each=6)
     organ_names_Br <- as.data.frame(organ_names_Br[-36])
@@ -717,13 +701,36 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     compDivRatesBr_io <- compDivRatesBr
     compDivRatesBr_io[,2] <- organ_names
     compDivRatesBr_io$comp_organ <- factor(compDivRatesBr_io$comp_organ)
-    # Make model and compare organ regressions
-    model_lmp_io_Br = lm(correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ, data = compDivRatesBr_io)
-    div_trend_Br <- lstrends(model_lmp_io_Br, "comp_organ", var="div_times") # get slopes for regressions
-    div_trend_Br_df <- summary(div_trend_Br)
-    trend_Br_stat_io <- wilcox.test(div_trend_Br_df[1:6,2], div_trend_Br_df[7:12,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
-    poly_p_value_Br_io <- format(round(trend_Br_stat_io$p.value, 2))
-    poly_p_value_Br_io <- paste("p =", poly_p_value_Br_io)
+
+
+    # Retrieve slope value from individual organ regressions and compute p value
+    getTrendsP <- function(corrdata) {
+
+        model_lmp = lm(correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ, data = corrdata)
+
+        div_trend <- lstrends(model_lmp, "comp_organ", var = "div_times") # get slopes for regressions
+        div_trend_df <- summary(div_trend)
+
+        if (deparse(substitute(corrdata)) == "compDivRates" | deparse(substitute(corrdata)) == "compDivRates11") {
+
+            trend_stat <- wilcox.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
+            poly_p_value <- format(round(trend_stat$p.value, 4))
+
+        } else if (deparse(substitute(corrdata)) == "compDivRatesBr_io") {
+
+            trend_stat <- wilcox.test(div_trend_df[1:6,2], div_trend_df[7:12,2], paired = FALSE) # ‘Wilcoxon rank sum’ test = equivalent to ‘Mann-Whitney’ test
+            poly_p_value <- format(round(trend_stat$p.value, 2))
+        }
+
+        poly_p_value <- paste("p =", poly_p_value)
+
+        return(poly_p_value)
+    }
+
+
+    poly_p_value_io <- getTrendsP(corrdata = compDivRates)
+    poly_p_value11_io <- getTrendsP(corrdata = compDivRates11)
+    poly_p_valueBr_io <- getTrendsP(corrdata = compDivRatesBr_io)
 
 
 
@@ -901,13 +908,13 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       }
 
       makeGEDivPlot(data = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = poly_p_value)
+        p_value = poly_p_value_io)
 
       makeGEDivPlot(data = compDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = poly_p_value11)
+        p_value = poly_p_value11_io)
 
       makeGEDivPlot(data = compDivRatesBr, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = poly_p_valueBr)
+        p_value = poly_p_valueBr_io)
 
 
 
