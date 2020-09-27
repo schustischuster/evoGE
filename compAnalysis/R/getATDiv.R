@@ -704,23 +704,13 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Retrieve slope value from individual organ regressions and compute p value
-    getTrendsP <- function(corrdata, 
-        reg_model = c("lm_reg", "poly2_reg", "log_reg", "sqrt_reg"), 
-        test_stat = c("Welch_test", "Wilcox_test")) {
+    getTrendsP <- function(corrdata, reg_model = c("lm_reg", "poly2_reg", "log_reg", "sqrt_reg")) {
 
         if ((missing(reg_model)) || (!is.element(reg_model, c("lm_reg", "poly2_reg", "log_reg", "sqrt_reg")))) 
 
             stop(
                 "Regression model either missing or not one of: 
                 'lm_reg', 'poly2_reg', 'log_reg', 'sqrt_reg'",
-                call. = TRUE
-                )
-
-        if ((missing(test_stat)) || (!is.element(test_stat, c("Welch_test", "Wilcox_test")))) 
-
-            stop(
-                "Statistical test either missing or not one of: 
-                'Welch_test', 'Wilcox_test'",
                 call. = TRUE
                 )
 
@@ -741,9 +731,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             model_var <- correlation ~ sqrt(div_times) * comp_organ #linear regression with sqrt-x-transform
         }
 
-        # Statistical test can be either Welch's t-test or Wilcoxon rank sum test (Mann-Whitney U)
-        ifelse (test_stat == "Welch_test", use_test <- t.test, use_test <- wilcox.test)
-
         model_lmp = lm(model_var, data = corrdata)
 
         div_trend <- lstrends(model_lmp, "comp_organ", var = "div_times") # get slopes for regressions
@@ -751,55 +738,46 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
         if (deparse(substitute(corrdata)) == "compDivRates" | deparse(substitute(corrdata)) == "compDivRates11") {
 
-            trend_stat <- use_test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE)
+            trend_stat_welch <- t.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE)
+            trend_stat_wilcox <- wilcox.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE)
 
         } else if (deparse(substitute(corrdata)) == "compDivRatesBr_io") {
 
-            trend_stat <- use_test(div_trend_df[1:6,2], div_trend_df[7:12,2], paired = FALSE)
+            trend_stat_welch <- t.test(div_trend_df[1:6,2], div_trend_df[7:12,2], paired = FALSE)
+            trend_stat_wilcox <- wilcox.test(div_trend_df[1:6,2], div_trend_df[7:12,2], paired = FALSE)
         }
 
-        poly_p_value <- trend_stat$p.value
+        welch_p_value <- as.data.frame(trend_stat_welch$p.value)
+        wilcox_p_value <- as.data.frame(trend_stat_wilcox$p.value)
 
-        poly_p_value <- as.data.frame(poly_p_value)
-        names(poly_p_value) <- reg_model
+        colnames(welch_p_value) <- reg_model
+        rownames(welch_p_value) <- "Welch_test"
 
-        return(poly_p_value)
+        colnames(wilcox_p_value) <- reg_model
+        rownames(wilcox_p_value) <- "Wilcox_test"
+
+        slopes <- as.data.frame(div_trend_df[,2])
+        colnames(slopes) <- reg_model
+        rownames(slopes) <- div_trend_df[,1]
+
+        trends_p_value <- rbind(slopes, welch_p_value, wilcox_p_value)
+
+        return(trends_p_value)
     }
 
 
     # Create list of models
     model_list <- list("lm_reg", "poly2_reg", "log_reg", "sqrt_reg")
 
+    # Slopes and p-values for DevSeq angiosperm vs. re-analyzed Brawand mammalian data
+    p_values_compDivRates_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRates)))
 
-    # Make df containing p-values for angiosperm-mammals slope comparison 
-    # For DevSeq angiosperm vs. re-analyzed Brawand mammalian data
-    p_values_compDivRates_Welch_io <- as.data.frame(do.call(cbind, lapply(
-        model_list, getTrendsP, corrdata = compDivRates, test_stat = "Welch_test")))
-    p_values_compDivRates_Wilcox_io <- as.data.frame(do.call(cbind, lapply(
-        model_list, getTrendsP, corrdata = compDivRates, test_stat = "Wilcox_test")))
-    p_values_compDivRates_io <- rbind(p_values_compDivRates_Welch_io, p_values_compDivRates_Wilcox_io)
-    rownames(p_values_compDivRates_io) <- c("p_Welch_DS_Br", "p_Wilcox_DS_Br")
-
-    # For DevSeq angiosperm vs. original 2011 Brawand mammalian data
-    p_values_compDivRates11_Welch_io <- as.data.frame(do.call(cbind, lapply(
-        model_list, getTrendsP, corrdata = compDivRates11, test_stat = "Welch_test")))
-    p_values_compDivRates11_Wilcox_io <- as.data.frame(do.call(cbind, lapply(
-        model_list, getTrendsP, corrdata = compDivRates11, test_stat = "Wilcox_test")))
-    p_values_compDivRates11_io <- rbind(p_values_compDivRates11_Welch_io, p_values_compDivRates11_Wilcox_io)
-    rownames(p_values_compDivRates11_io) <- c("p_Welch_DS_Br11", "p_Wilcox_DS_Br11")
-
-    # For Brawand 2011 vs. re-analyzed Brawand data
-    p_values_compDivRatesBr_Welch_io <- as.data.frame(do.call(cbind, lapply(
-        model_list, getTrendsP, corrdata = compDivRatesBr_io, test_stat = "Welch_test")))
-    p_values_compDivRatesBr_Wilcox_io <- as.data.frame(do.call(cbind, lapply(
-        model_list, getTrendsP, corrdata = compDivRatesBr_io, test_stat = "Wilcox_test")))
-    p_values_compDivRatesBr_io <- rbind(p_values_compDivRatesBr_Welch_io, p_values_compDivRatesBr_Wilcox_io)
-    rownames(p_values_compDivRatesBr_io) <- c("p_Welch_Br_Br11", "p_Wilcox_Br_Br11")
-
-
-    # Combine all regression p-value tables
-    p_values_compDivRates <- rbind(p_values_compDivRates_io, p_values_compDivRates11_io, p_values_compDivRatesBr_io)
-
+    # Slopes and p-values for DevSeq angiosperm vs. original 2011 Brawand mammalian data
+    p_values_compDivRates11_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRates11)))
+    
+    # Slopes and p-values for Brawand 2011 vs. re-analyzed Brawand data
+    p_values_compDivRatesBr_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRatesBr_io)))
+    
 
     # Get text string of p-values (rank-sum test) for divergence plots with log models
     p_value_io <- getTrendsP(corrdata=compDivRates, reg_model="log_reg", test_stat="Wilcox_test")
