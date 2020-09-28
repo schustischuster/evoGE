@@ -780,14 +780,61 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     
 
     # Get text string of p-values (rank-sum test) for divergence plots with log models
-    p_value_io <- getTrendsP(corrdata=compDivRates, reg_model="log_reg", test_stat="Wilcox_test")
-    p_value_io <- paste("p =", round(p_value_io, 4))
+    p_value_io <- paste("p =", round(p_values_compDivRates_io["Wilcox_test", "log_reg"], 4))
+    p_value11_io <- paste("p =", round(p_values_compDivRates11_io["Wilcox_test", "log_reg"], 4))
+    p_valueBr_io <- paste("p =", round(p_values_compDivRatesBr_io["Wilcox_test", "log_reg"], 2))
 
-    p_value11_io <- getTrendsP(corrdata=compDivRates11, reg_model="log_reg", test_stat="Wilcox_test")
-    p_value11_io <- paste("p =", round(p_value11_io, 4))
 
-    p_valueBr_io <- getTrendsP(corrdata=compDivRatesBr_io, reg_model="log_reg", test_stat="Wilcox_test")
-    p_valueBr_io <- paste("p =", round(p_valueBr_io, 2))
+
+    ### Compare fit of all the linear models for DevSeq and Brawand data
+    compModel <- function(corrdata, experiment = c("DevSeq", "Brawand", "Brawand11")) {
+
+        if ((missing(experiment)) || (!is.element(experiment, c("DevSeq", "Brawand", "Brawand11")))) 
+
+            stop(
+                "Experiment either missing or not one of: 
+                'DevSeq', 'Brawand', 'Brawand11'",
+                call. = TRUE
+                )
+
+        model.1 <- lm(correlation ~ div_times, data = corrdata) #linear regression
+        model.2 <- lm(correlation ~ div_times + I(div_times^2), data = corrdata) #polynomial regression w/quadratic term
+        model.3 <- lm(correlation ~ log(div_times), data = corrdata) #linear regression with log-x-transform
+        model.4 <- lm(correlation ~ sqrt(div_times), data = corrdata) #linear regression with sqrt-x-transform
+
+        model_comp <- compareLM(model.1, model.2, model.3, model.4)
+
+        if (experiment == "DevSeq") {
+
+            rownames_crit <- c("lm_DevSeq", "poly_DevSeq", "log_DevSeq", "sqrt_DevSeq")
+
+        } else if (experiment == "Brawand") {
+
+            rownames_crit <- c("lm_Brawand", "poly_Brawand", "log_Brawand", "sqrt_Brawand")
+
+        } else if (experiment == "Brawand11") {
+            
+            rownames_crit <- c("lm_Brawand11", "poly_Brawand11", "log_Brawand11", "sqrt_Brawand11")
+        }
+
+        model_comp_df <- as.data.frame(model_comp$Fit.criteria)
+        rownames(model_comp_df) <- rownames_crit
+
+        return(model_comp_df)
+    }
+
+
+    # Create list of models
+    DevSeq_models <- compModel(corrdata = compDivRates[1:48,], experiment = "DevSeq")
+    Brawand_models <- compModel(corrdata = compDivRates[49:nrow(compDivRates),], experiment = "Brawand")
+    Brawand11_models <- compModel(corrdata = compDivRates11[49:nrow(compDivRates11),], experiment = "Brawand11")
+
+    model_comp <- rbind(DevSeq_models, Brawand_models, Brawand11_models)
+    # From the rcompanion reference (http://rcompanion.org/rcompanion/e_05.html): 
+    # AICc is an adjustment to AIC that is more appropriate for data sets with relatively fewer observations
+    # BIC is similar to AIC, but penalizes more for additional terms in the model
+    # Smaller is better for AIC, AICc, and BIC
+    # @author: I would recommend AICc for routine use
 
 
 
