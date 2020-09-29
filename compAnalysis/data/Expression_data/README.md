@@ -1,6 +1,6 @@
-This folder contains files with the expression data for the angiosperm (DevSeq data set) and mammalian (Brawand) 1-1 ortholog genes. 
+This folder contains files with the expression data for the angiosperm (DevSeq data set) and mammalian [(Brawand)](https://pubmed.ncbi.nlm.nih.gov/22012392/) 1-1 ortholog genes. 
 
-Detailed description:
+### Detailed description
 
-Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv contains the TPM expression values normalized by DESeq2. Expression data of the 1-1 ortholog genes was normalized between organs and species. Data was re-analyzed from the original raw sequencing data published in Brawand et al.(2011) (https://pubmed.ncbi.nlm.nih.gov/22012392/).
+Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv contains the TPM expression values normalized by DESeq2. Expression data of the 1-1 ortholog genes was normalized between organs and species. Data was re-analyzed from the original raw sequencing data published in Brawand et al.(2011).
 
