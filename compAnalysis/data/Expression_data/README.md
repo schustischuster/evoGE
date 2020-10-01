@@ -2,14 +2,16 @@ This folder contains files with the expression data for the angiosperm (DevSeq d
 
 ### Detailed description
 
-`comp_Brass_AT_inter_tpm_mat_deseq_sample_names.csv` contains the TPM expression values normalized by DESeq2. Expression data of the 1-1 ortholog genes was normalized between organs and species.
+| File name        | Data set           | Normalization  |   Metric  |
+| ------------- |:-------------:| -----:| -----:|
+| comp_Brass_AT_inter_tpm_mat_deseq_sample_names.csv      | DevSeq angiosperm | DESeq2 inter-species inter-organ | TPM  | 
+| Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv      | Brawand mammalian (re-analyzed) | DESeq2 inter-species inter-organ | TPM  | 
+| Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold.csv      | Brawand mammalian (re-analyzed) | DESeq2 inter-species intra-organ | TPM  | 
+| Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv      | Brawand mammalian (re-analyzed) | DESeq2 inter-species inter-organ | VST Counts  | 
+| Brawand_intra_count_mat_vsd_sample_names_0_5_threshold.csv      | Brawand mammalian (re-analyzed) | DESeq2 inter-species intra-organ | VST Counts  | 
 
-`Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv` contains the TPM expression values normalized by DESeq2. Expression data of the 1-1 ortholog genes was normalized between organs and species. Data was re-analyzed from the original raw sequencing data published in Brawand et al.(2011).
 
-`Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold.csv` Same as above, but the data was normalized within organs between species (intra-organ normalization).
 
-`Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv` contains the count data normalized by DESeq2 using the variance stabilizing transformation (VST). Expression data of the 1-1 ortholog genes was normalized between organs and species. Data was re-analyzed from the original raw sequencing data published in Brawand et al.(2011).
-
-`Brawand_intra_count_mat_vsd_sample_names_0_5_threshold.csv` Same as above, but the data was normalized within organs between species (intra-organ normalization).
+`inter-species inter-organ` indicates that samples were normalized between organs and species, whereas `inter-species intra-organ` indicates that samples were not normalized between organs.
 
 `Brawand_Supplementary_Data1` - this folder contains the processed RNA-Seq data published by Brawand et al.(2011). Expression values are RPKM and the files are tab-separated. Check the README.txt file within the folder for more details.
