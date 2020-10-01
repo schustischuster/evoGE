@@ -12,10 +12,10 @@ This folder contains files with the expression data for the angiosperm (DevSeq d
 | <sub> Core_inter_tpm_mat_deseq_sample_names.csv </sub>              |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
 | <sub> Core_intra_count_mat_vsd_sample_names.csv </sub>              |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
 | <sub> Core_intra_tpm_mat_deseq_sample_names.csv </sub>              |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
-|<sub>Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>AT<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
-|<sub>Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
-|<sub>Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>AT<sub>|<sub>DESeq inter-organ</sub>|<sub>VST counts</sub>| 
-|<sub>Brawand_intra_count_mat_vsd_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
+|<sub>Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>hsa<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
+|<sub>Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>hsa<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
+|<sub>Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>hsa<sub>|<sub>DESeq inter-organ</sub>|<sub>VST counts</sub>| 
+|<sub>Brawand_intra_count_mat_vsd_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>hsa<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
 
 <br/>
 
