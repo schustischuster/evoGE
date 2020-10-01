@@ -4,7 +4,7 @@ This folder contains files with the expression data for the angiosperm (DevSeq d
 
 | File name        | Data set           | Normalization  |   Metric  |
 | ------------- |:-------------:| -----:| -----:|
-| comp_Brass_AT_inter_tpm_mat_deseq_sample_names.csv      | DevSeq angiosperm | DESeq2 inter-organ | TPM  | 
+| <sub> comp_Brass_AT_inter_tpm_mat_deseq_sample_names.csv </sub>      | <sub> DevSeq angiosperm </sub> | <sub> DESeq2 inter-organ </sub> | <sub> TPM </sub>  | 
 | Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv      | Brawand mammalian (re-analyzed) | DESeq2 inter-organ | TPM  | 
 | Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold.csv      | Brawand mammalian (re-analyzed) | DESeq2 intra-organ | TPM  | 
 | Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv      | Brawand mammalian (re-analyzed) | DESeq2 inter-organ | VST counts  | 
