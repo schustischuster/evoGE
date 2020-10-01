@@ -292,14 +292,14 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     x_df <- x
 
-    # Remove pollen samples for hclust heatmap if "intra-organ" normalization is selected
-    if ((dataset_id == "DevSeq") && (data_norm == "intra-organ") && (devseq_spec == "all")) {
+    # Remove pollen samples for hclust heatmap
+    if ((dataset_id == "DevSeq") && (devseq_spec == "all")) {
         x_df <- x_df %>% select (-c(Pollen.1_AT, Pollen.2_AT, Pollen.3_AT, Pollen.1_AL, Pollen.2_AL, 
             Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES, 
             Pollen.1_TH, Pollen.2_TH, Pollen.3_TH, Pollen.1_MT, Pollen.2_MT, Pollen.3_MT, Pollen.1_BD, 
             Pollen.2_BD, Pollen.3_BD))
 
-    } else if ((dataset_id == "DevSeq") && (data_norm == "intra-organ") && (devseq_spec == "Brassicaceae")) {
+    } else if ((dataset_id == "DevSeq") && (devseq_spec == "Brassicaceae")) {
         x_df <- x_df %>% select (-c(Pollen.1_AT, Pollen.2_AT, Pollen.3_AT, Pollen.1_AL, Pollen.2_AL, 
             Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES))
     }
