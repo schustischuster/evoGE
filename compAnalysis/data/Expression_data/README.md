@@ -4,13 +4,20 @@ This folder contains files with the expression data for the angiosperm (DevSeq d
 
 | <sub> File name  </sub>                                                | <sub> Data set </sub>                       | <sub> Normalization </sub>    | <sub> Metric </sub> |
 | :--------------------------------------------------------------------- | :------------------------------------------ | :---------------------------- | :-------------- |
-| <sub> comp_Brass_AT_inter_tpm_mat_deseq_sample_names.csv </sub>        | <sub> DevSeq Brassicaceae </sub>            | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>| 
+| <sub> comp_Brass_inter_count_mat_vsd_sample_names.csv </sub>           | <sub> DevSeq Brassicaceae </sub>            | <sub> DESeq inter-organ </sub>| <sub> VST counts </sub>| 
+| <sub> comp_Brass_inter_tpm_mat_deseq_sample_names.csv </sub>           | <sub> DevSeq Brassicaceae </sub>            | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>| 
+| <sub> comp_Brass_intra_count_mat_vsd_sample_names.csv </sub>           | <sub> DevSeq Brassicaceae </sub>            | <sub> DESeq intra-organ </sub>| <sub> VST counts </sub>| 
+| <sub> comp_Brass_intra_tpm_mat_deseq_sample_names.csv </sub>           | <sub> DevSeq Brassicaceae </sub>            | <sub> DESeq intra-organ </sub>| <sub> TPM </sub>| 
+| <sub> comp_Core_inter_count_mat_vsd_sample_names.csv  </sub>           | <sub> DevSeq Angiosperm </sub>              | <sub> DESeq inter-organ </sub>| <sub> VST counts </sub>| 
+| <sub> comp_Core_inter_tpm_mat_deseq_sample_names.csv </sub>            | <sub> DevSeq Angiosperm </sub>              | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>| 
+| <sub> comp_Core_intra_count_mat_vsd_sample_names.csv </sub>            | <sub> DevSeq Angiosperm </sub>              | <sub> DESeq intra-organ </sub>| <sub> VST counts </sub>| 
+| <sub> comp_Core_intra_tpm_mat_deseq_sample_names.csv </sub>            | <sub> DevSeq Angiosperm </sub>              | <sub> DESeq intra-organ </sub>| <sub> TPM </sub>| 
 | <sub> Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv </sub>| <sub> Brawand mammalian (re-analyzed) </sub>| <sub> DESeq inter-organ </sub>| <sub> TPM </sub>| 
 | <sub> Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold.csv </sub>| <sub> Brawand mammalian (re-analyzed) </sub>| <sub> DESeq intra-organ </sub>| <sub> TPM </sub>| 
 | <sub> Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv </sub>| <sub> Brawand mammalian (re-analyzed) </sub>| <sub> DESeq inter-organ </sub>| <sub> VST counts </sub>| 
 | <sub> Brawand_intra_count_mat_vsd_sample_names_0_5_threshold.csv </sub>| <sub> Brawand mammalian (re-analyzed) </sub>| <sub> DESeq intra-organ </sub>| <sub> VST counts </sub>| 
 
-<br/><br/>
+<br/>
 
 `inter-organ` indicates that samples were normalized between organs and species, whereas `intra-organ` indicates that samples were not normalized between organs.
 
