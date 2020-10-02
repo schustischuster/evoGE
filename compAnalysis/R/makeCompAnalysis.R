@@ -1,4 +1,4 @@
-# Prepare Brawand and DevSeq comparative orthologous gene expression data
+# Prepare Brawand and DevSeq comparative ortholog gene expression data
 # Thresholds: 0.5 TPM (since there are no ERCC spike-ins in Brawand data)
 # Data input: Brawand and DevSeq TPM expression tables of all samples
 
@@ -80,35 +80,35 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "comp_Brass_intra_tpm_mat_deseq_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_intra_tpm_mat_deseq_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "comp_Brass_inter_tpm_mat_deseq_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_tpm_mat_deseq_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "comp_Core_intra_tpm_mat_deseq_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_core_intra_tpm_mat_deseq_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "comp_Core_inter_tpm_mat_deseq_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "comp_Brass_intra_count_mat_vsd_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_intra_count_mat_vsd_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "comp_Brass_inter_count_mat_vsd_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_count_mat_vsd_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "comp_Core_intra_count_mat_vsd_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_core_intra_count_mat_vsd_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "comp_Core_inter_count_mat_vsd_sample_names.csv")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_core_inter_count_mat_vsd_sample_names.csv")
     }
 
 
@@ -148,13 +148,13 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         col_names <- paste0(col_names,replicate_tag_samples)
         spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=3, times=9)
         col_names <- paste0(col_names, spec_names)
-        col_names <- c("gene_id", col_names)
+        col_names <- c("gene_id", col_names) 
     }
 
 
 	# Read expression data
 	if (is.element("DevSeq", dataset)) {
-		x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+		x <- read.table(genesExpr, sep=";", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
 
 	} else if (is.element("Brawand", dataset)) {
 		x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
@@ -172,12 +172,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # return_objects <- makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ") # read in Brawand expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
-    # remove additional A.lyrata stamens samples from DevSeq data and update column names
+    # Update column names
     if (dataset_id == "DevSeq") {
 
     	# set column names
     	colnames(x) <- col_names
-    
+
     } else if (dataset_id == "Brawand") {
 
         # Generate a sequence to replace missing gene_id column
@@ -292,7 +292,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     x_df <- x
 
-    # Remove pollen samples for hclust heatmap
+    # Remove pollen samples for hclust heatmap if "intra-organ" normalization is selected
     if ((dataset_id == "DevSeq") && (devseq_spec == "all")) {
         x_df <- x_df %>% select (-c(Pollen.1_AT, Pollen.2_AT, Pollen.3_AT, Pollen.1_AL, Pollen.2_AL, 
             Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES, 
@@ -385,7 +385,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         dend_order = rotate(as.dendrogram(df_clust.res),c(25:31,32:35,36:37,46:47,44:45,38:43,23:24,17:22,2,1,3,4,8:10,5:7,11,15:16,12:14)) 
 
-    } else dend_order = TRUE 
+    } else dend_order = TRUE  
 
 
 #---------------------------- Make corrplot for DevSeq and Brawand -----------------------------
