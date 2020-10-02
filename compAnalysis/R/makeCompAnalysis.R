@@ -154,7 +154,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 	# Read expression data
 	if (is.element("DevSeq", dataset)) {
-		x <- read.table(genesExpr, sep=";", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
+		x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 	} else if (is.element("Brawand", dataset)) {
 		x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
@@ -292,7 +292,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     x_df <- x
 
-    # Remove pollen samples for hclust heatmap if "intra-organ" normalization is selected
+    # Remove pollen samples for hclust heatmap
     if ((dataset_id == "DevSeq") && (devseq_spec == "all")) {
         x_df <- x_df %>% select (-c(Pollen.1_AT, Pollen.2_AT, Pollen.3_AT, Pollen.1_AL, Pollen.2_AL, 
             Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES, 
