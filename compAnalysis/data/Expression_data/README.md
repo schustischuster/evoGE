@@ -1,4 +1,4 @@
-This folder contains files with the expression data for the angiosperm (DevSeq data set) and mammalian [(Brawand 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) 1-1 ortholog genes. The columns are semicolon-separated and contain headers.
+This folder contains files with the expression data for the angiosperm (DevSeq) and mammalian [(Brawand 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) 1-1 ortholog genes. The columns are semicolon-separated and contain headers.
 
 ### Sample description
 
