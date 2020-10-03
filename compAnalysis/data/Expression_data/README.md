@@ -1,4 +1,4 @@
-This folder contains files with the expression data for the angiosperm (DevSeq) and mammalian [(Brawand 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) 1-1 ortholog genes. The columns are semicolon-separated and contain headers.
+This folder contains files with the expression data for the angiosperm (DevSeq) and mammalian [(Brawand 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) 1-1 ortholog genes. The columns of the files are semicolon-separated and contain headers.
 
 ### Sample description
 
@@ -27,7 +27,7 @@ This folder contains files with the expression data for the angiosperm (DevSeq) 
 
 <br/>
 
-`inter-organ` indicates that samples were normalized between organs and species, whereas `intra-organ` indicates that only the comparative organs samples were normalized between species.
+`inter-organ` indicates that data was normalized between organs and species, whereas `intra-organ` indicates that data was normalized within organs between species.
 
 Query species: `AT` = *Arabidopsis thaliana*; `AL` = *Arabidopsis lyrata*; `hsa` = *Homo sapiens* 
 
