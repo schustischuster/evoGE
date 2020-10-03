@@ -522,19 +522,19 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         calculateAvgExpr <- function(df) {
 
-        # Split data frame by sample replicates into a list
-        # then get rowMeans for each subset and bind averaged data to gene_id column
+            # Split data frame by sample replicates into a list
+            # then get rowMeans for each subset and bind averaged data to gene_id column
 
-        averaged_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
-            rep(seq_along(df), 
-            each = 3, 
-            length.out=ncol(df)-1)
-            ), rowMeans)
-          )
+            averaged_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
+                rep(seq_along(df), 
+                each = 3, 
+                length.out=ncol(df)-1)
+                ), rowMeans)
+              )
 
-          averaged_replicates <- cbind(df[1], averaged_replicates)
+              averaged_replicates <- cbind(df[1], averaged_replicates)
         
-          return(averaged_replicates)
+            return(averaged_replicates)
         }
 
 
@@ -551,26 +551,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         x_avg <- calculateAvgExpr(x_repl)
 
 
-        if (data_norm == "inter-organ") {
+        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", "Flower", 
+            "Stamen", "Carpel", "Pollen"), each=7)
+        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), times=9)
+        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
 
-            DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-                "Flower", "Stamen", "Carpel"), each=7)
-            DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
-                "_MT", "_BD"), times=8)
-            repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
-
-            colnames(x_avg)[2:ncol(x_avg)] <- repl_names
-    
-        } else if (data_norm == "intra-organ") {
-
-            DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-                "Flower", "Stamen", "Carpel", "Pollen"), each=7)
-            DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", 
-                "_MT", "_BD"), times=9)
-            repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
-
-            colnames(x_avg)[2:ncol(x_avg)] <- repl_names
-        }
+        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
 
 
 
@@ -578,11 +564,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         #------ Get replicate correlations and generate DevSeq inter-organ distance plot -------
 
 
-        if (data_norm == "intra-organ") {
-
-            x_avg <- x_avg %>% select(-c(Pollen_AT, Pollen_AL, Pollen_CR, Pollen_ES, Pollen_TH, 
-                Pollen_MT, Pollen_BD))
-        }
+        x_avg <- x_avg %>% select(-c(Pollen_AT, Pollen_AL, Pollen_CR, Pollen_ES, Pollen_TH, 
+                 Pollen_MT, Pollen_BD))
+        
 
         # Reorder data frame columns
         x_avg <- x_avg[,c(1, #gene_id column
