@@ -27,8 +27,8 @@ This folder contains files with the expression data for the angiosperm (DevSeq) 
 
 <br/>
 
-`inter-organ` indicates that samples were normalized between organs and species, whereas `intra-organ` indicates that samples were not normalized between organs.
+`inter-organ` indicates that samples were normalized between organs and species, whereas `intra-organ` indicates that only the comparative organs samples were normalized between species.
 
 Query species: `AT` = *Arabidopsis thaliana*; `AL` = *Arabidopsis lyrata*; `hsa` = *Homo sapiens* 
 
-`Brawand_Supplementary_Data1` - this folder contains the processed RNA-Seq data published by Brawand et al.(2011). Expression values are RPKM and the files are tab-separated. Check the README.txt file within the folder for more details.
+`Brawand_Supplementary_Data1` - this folder contains the processed RNA-Seq data published by Brawand et al.(2011). Expression values are RPKM and the file is tab-separated. Check the README.txt file within the folder for more details.
