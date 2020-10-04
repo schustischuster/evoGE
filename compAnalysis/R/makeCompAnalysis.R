@@ -693,7 +693,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
    # Use pearson correlation, intra-organ normalization and TPM
    # Use previously merged replicates of DevSeq data including pollen sampless
 
-   if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (data_norm == "intra-organ")) {
+   if ((dataset_id == "DevSeq") && (devseq_spec == "all")) {
 
       getOrganCor <- function(df, organ, coefficient, expr_estimation) {
 
@@ -813,7 +813,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
                 "Leaf  "="#008544")) + 
         geom_line(size = 3) +  
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
-        scale_y_continuous(limits = c(0.445, 0.91), expand = c(0.02, 0)) + 
+        scale_y_continuous(limits = c(0.4675, 0.91), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#8591c7", "#f23d29", "#de6daf", "#52428c", "#95b73a", "#fad819", 
             "#f2a72f", "#008544"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
@@ -824,17 +824,17 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         annotate("text", x=147.44, y=0.8318, label= "Pollen", size=7.56) + 
         geom_segment(x=135.55, xend=137.25, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
         geom_segment(x=138.3, xend=139.975, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
-        geom_segment(x=156, xend=159.775, y= 0.455, yend= 0.455, color="white", size=8) + 
-        annotate("text", x=19.5, y=0.459, label= "Brassicaceae", size=8) + 
-        annotate("text", x=46, y=0.459, label= "TH", size=8) + 
-        annotate("text", x=106, y=0.459, label= "MT", size=8) + 
-        annotate("text", x=158.6, y=0.459, label= "BD", size=8) + 
-        geom_segment(x=7, xend=7, y=0.435, yend=0.445, color="black", size=0.7) + 
-        geom_segment(x=9, xend=9, y=0.435, yend=0.445, color="black", size=0.7) + 
-        geom_segment(x=25, xend=25, y=0.435, yend=0.445, color="black", size=0.7) + 
-        geom_segment(x=46, xend=46, y=0.435, yend=0.445, color="black", size=0.7) + 
-        geom_segment(x=106, xend=106, y=0.435, yend=0.445, color="black", size=0.7) + 
-        geom_segment(x=160, xend=160, y=0.435, yend=0.445, color="black", size=0.7) + 
+        geom_segment(x=156, xend=159.775, y=0.4675, yend=0.49, color="white", size=8) + 
+        annotate("text", x=19.5, y=0.4815, label= "Brassicaceae", size=8) + 
+        annotate("text", x=46, y=0.4815, label= "TH", size=8) + 
+        annotate("text", x=106, y=0.4815, label= "MT", size=8) + 
+        annotate("text", x=158.6, y=0.4815, label= "BD", size=8) + 
+        geom_segment(x=7, xend=7, y=0.435, yend=0.468, color="black", size=0.7) + 
+        geom_segment(x=9, xend=9, y=0.435, yend=0.468, color="black", size=0.7) + 
+        geom_segment(x=25, xend=25, y=0.435, yend=0.468, color="black", size=0.7) + 
+        geom_segment(x=46, xend=46, y=0.435, yend=0.468, color="black", size=0.7) + 
+        geom_segment(x=106, xend=106, y=0.435, yend=0.468, color="black", size=0.7) + 
+        geom_segment(x=160, xend=160, y=0.435, yend=0.468, color="black", size=0.7) + 
         guides(color = guide_legend(ncol = 3))
 
         q <- p + theme_bw() + xlab("Divergence time from A.thaliana (Myr)") + ylab("Pearson's r w/ A.thaliana") + 
@@ -864,10 +864,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
       makeGEDivPlot(data1 = DevSeq_div_rates_wo_pollen, data2 = DevSeq_div_rates_pollen, 
         coefficient = coefficient)
-
-
-
-
 
 
    }
