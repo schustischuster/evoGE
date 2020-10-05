@@ -1174,7 +1174,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         } else if((spec == "all") && (data_norm == "inter-organ")) {
             legend_col <- 1
             legend_pos <- c(0.154, 0.8728)
-            x_lim <- c(-125, 55)
+            x_lim <- c(-125, 55.5)
             y_title_mrg <- margin(t = 0, r = 8.5, b = 0, l = 6.5)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.9),"cm")
         } else if((spec == "Brassicaceae") && (data_norm == "intra-organ")) {
@@ -1325,8 +1325,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     if (is.element("Brassicaceae", devseq_spec)) {
         plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
-            set="pc2_3", spec="Brassicaceae") 
-        # Change data input to PC2/3 once Brassicaceae data is available!
+            set="pc2_3", spec="Brassicaceae")
 
     } else if (is.element("all", devseq_spec)) { 
         plotPCA(data=DevSeq_pca_2_3_w_stamen, pc_var1=DevSeq_pc2_var_w_stamen, pc_var2=DevSeq_pc3_var_w_stamen, 
@@ -1334,15 +1333,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     }
 
   }
-
-
-
-
-
-
-
-
-
 
 }
 
