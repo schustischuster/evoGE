@@ -213,7 +213,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
 
-#--------------------- Calculate correlation and prepare data for corrplot ---------------------
+#--------------------- Prepare data and define color palette for corrplot ---------------------
 
 
     # Create "plots" folder in /out_dir/output/plots
@@ -275,8 +275,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         exp_col <- c(AT="gray1", AL="cornsilk3", CR="#fff7e8", ES="wheat4", TH="#b30000", 
             MT="lightgoldenrod2", BD="#9f3c9b") # last two letters of sample name
 
-        species_col <- c(Roo="#52428c", Hyp="#8591c7", Lea="#008544", veg="#95b73a", 
-            inf="#fad819", Flo="#de6daf", Sta="#f23d29", Mat="#a63126", Car="#f2a72f")
+        species_col <- c(Roo="#6a54a9", Hyp="#4bacda", Lea="#2f8e59", veg="#96ba37", 
+            inf="#fad819", Flo="#e075af", Sta="#e42612", Mat="#a63126", Car="#f2a72f")
 
     } else if (dataset_id == "Brawand") {
 
@@ -304,88 +304,98 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES))
     }
 
-    # Log2 transform data if expr_estimation=TPM is chosen
-    # Compute correlation and build distance matrix
-    # get_dist is an wrapper implemented in the factoextra package around
-    # as.dist(1-cor(t(scale(x_cor)))) if scale = TRUE; or
-    # as.dist(1-cor(t(x_cor))) if scale = FALSE
-    if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
-        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
-        x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
-        scale_data <- TRUE 
-        # correlation matrix does not need to be transposed for get_dist method (since ncol=nrow)
-
-    } else if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
-        x_df[,2:ncol(x_df)] <- log2(x_df[,2:ncol(x_df)] + 1)
-        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
-        x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
-        scale_data <- TRUE
-
-    } else if (is.element("spearman", coefficient)) {
-        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "spearman")
-        x_dist <- get_dist(x_cor, stand = FALSE, method = "spearman")
-        scale_data <- FALSE 
-    }   
 
 
 
-    df_clust.res <- hclust(x_dist, method = "average") # agglomerate clustering
+#------------------------ Prepare DevSeq and Brawand data for corrplot -------------------------
 
-    # Get dendrogram w/ species colors
-    col_dend <- dendrapply(as.dendrogram(df_clust.res), function(y){
-        
-        if (is.leaf(y)){
-            dend_col <- species_col[substr(attr(y, "label"), 1, 3)]
-            attr(y, "edgePar") <- list(col = dend_col) # color branch
+
+    if (((dataset_id == "DevSeq") && (devseq_spec == "all")) || dataset_id == "Brawand") {
+
+        # Log2 transform data if expr_estimation=TPM is chosen
+        # Compute correlation and build distance matrix
+        # get_dist is an wrapper implemented in the factoextra package around
+        # as.dist(1-cor(t(scale(x_cor)))) if scale = TRUE; or
+        # as.dist(1-cor(t(x_cor))) if scale = FALSE
+        if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
+            x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
+            x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
+            scale_data <- TRUE 
+            # correlation matrix does not need to be transposed for get_dist method (since ncol=nrow)
+
+        } else if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
+            x_df[,2:ncol(x_df)] <- log2(x_df[,2:ncol(x_df)] + 1)
+            x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
+            x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
+            scale_data <- TRUE
+
+        } else if (is.element("spearman", coefficient)) {
+            x_cor <- cor(x_df[, 2:ncol(x_df)], method = "spearman")
+            x_dist <- get_dist(x_cor, stand = FALSE, method = "spearman")
+            scale_data <- FALSE 
         }   
-        return(y)
-    })
 
-    col_labels <- get_leaves_branches_col(col_dend) # get branch colors
-    col_cols <- col_labels[order(order.dendrogram(col_dend))] # order color vector
 
-    # Get dendrogram w/ experiment colors
-    row_dend <- dendrapply(as.dendrogram(df_clust.res), function(z){
+
+        df_clust.res <- hclust(x_dist, method = "average") # agglomerate clustering
+
+        # Get dendrogram w/ species colors
+        col_dend <- dendrapply(as.dendrogram(df_clust.res), function(y){
         
-        if (is.leaf(z)){
-            name_string <- attr(z, "label")
-            dend_col <- exp_col[substr(name_string, (nchar(name_string))-1, nchar(name_string))]
-            attr(z, "edgePar") <- list(col = dend_col) # color branch
-        }  
-        return(z)
-    })
+            if (is.leaf(y)){
+                dend_col <- species_col[substr(attr(y, "label"), 1, 3)]
+                attr(y, "edgePar") <- list(col = dend_col) # color branch
+            }   
+            return(y)
+        })
 
-    row_labels <- get_leaves_branches_col(row_dend) # get branch colors
-    row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
+        col_labels <- get_leaves_branches_col(col_dend) # get branch colors
+        col_cols <- col_labels[order(order.dendrogram(col_dend))] # order color vector
+
+        # Get dendrogram w/ experiment colors
+        row_dend <- dendrapply(as.dendrogram(df_clust.res), function(z){
+        
+            if (is.leaf(z)){
+                name_string <- attr(z, "label")
+                dend_col <- exp_col[substr(name_string, (nchar(name_string))-1, nchar(name_string))]
+                attr(z, "edgePar") <- list(col = dend_col) # color branch
+            }  
+            return(z)
+        })
+
+        row_labels <- get_leaves_branches_col(row_dend) # get branch colors
+        row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
 
     
-    # Rotate leaves of dendrogram so that clusters appear in evolutionary order
-    if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation) && 
-        (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
+        # Rotate leaves of dendrogram so that clusters appear in evolutionary order
+        if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation) && 
+            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
-        dend_order=rotate(as.dendrogram(df_clust.res),c(145:168,121:144,100:120,1:99))
+            dend_order=rotate(as.dendrogram(df_clust.res),c(145:168,121:144,100:120,1:99))
 
-    } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
-        (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
+        } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
+            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
-        dend_order=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:144,100:102,112:120,103:111,1:3,13:15,10:12,4:6,7:9,37:39,34:36,31:33,28:30,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+            dend_order=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:144,100:102,112:120,103:111,1:3,13:15,10:12,4:6,7:9,37:39,34:36,31:33,28:30,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
 
-    } else if (is.element("spearman", coefficient) && is.element("TPM", expr_estimation) && 
-        (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
+        } else if (is.element("spearman", coefficient) && is.element("TPM", expr_estimation) && 
+            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
-        dend_order = TRUE
+            dend_order = TRUE
 
-    } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
-        (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
+        } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
+            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
-        dend_order = rotate(as.dendrogram(df_clust.res),c(1:12,133:144,145:168,13:36,46:48,43:45,40:42,37:39,49:54,58:60,55:57,61:72,109:132,73:108)) 
+            dend_order = rotate(as.dendrogram(df_clust.res),c(1:12,133:144,145:168,13:36,46:48,43:45,40:42,37:39,49:54,58:60,55:57,61:72,109:132,73:108)) 
 
-    } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
-        (dataset_id == "Brawand") && is.element("inter-organ", data_norm)) {
+        } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
+            (dataset_id == "Brawand") && is.element("inter-organ", data_norm)) {
 
-        dend_order = rotate(as.dendrogram(df_clust.res),c(25:31,32:35,36:37,46:47,44:45,38:43,23:24,17:22,2,1,3,4,8:10,5:7,11,15:16,12:14)) 
+            dend_order = rotate(as.dendrogram(df_clust.res),c(25:31,32:35,36:37,46:47,44:45,38:43,23:24,17:22,2,1,3,4,8:10,5:7,11,15:16,12:14)) 
 
-    } else dend_order = TRUE  
+        } else dend_order = TRUE
+
+    }  
 
 
 #---------------------------- Make corrplot for DevSeq and Brawand -----------------------------
@@ -693,7 +703,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
    # Use pearson correlation, intra-organ normalization and TPM
    # Use previously merged replicates of DevSeq data including pollen sampless
 
-   if ((dataset_id == "DevSeq") && (devseq_spec == "all")) {
+   if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (expr_estimation == "TPM")) {
 
       getOrganCor <- function(df, organ, coefficient, expr_estimation) {
 
@@ -808,14 +818,14 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
         geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
             linetype = 0, show.legend = FALSE) + 
-        scale_fill_manual(values = c("Hypocotyl  "="#8591c7", "Stamen  "="#f23d29", "Flower  "="#de6daf", 
-                "Root  "="#52428c", "Apex veg  "="#95b73a", "Apex inf  "="#fad819", "Carpel  "="#f2a72f", 
-                "Leaf  "="#008544")) + 
+        scale_fill_manual(values = c("Hypocotyl  "="#4bacda", "Stamen  "="#ee3925", "Flower  "="#e075af", 
+                "Root  "="#6a54a9", "Apex veg  "="#96ba37", "Apex inf  "="#fad819", "Carpel  "="#f2a72f", 
+                "Leaf  "="#2f8e59")) + 
         geom_line(size = 3) +  
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.4675, 0.91), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#8591c7", "#f23d29", "#de6daf", "#52428c", "#95b73a", "#fad819", 
-            "#f2a72f", "#008544"), 
+        scale_color_manual(values = c("#4bacda", "#ee3925", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
+            "#f2a72f", "#2f8e59"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
             breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ")) + 
@@ -1209,9 +1219,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
         scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
-        scale_color_manual(values=c('#5850a3','#8591c7', '#008544', '#95b73a','#fad819', '#f2a72f', '#f23d29', '#de6daf'), 
+        # colors = dark moderate violet, soft blue, dark green, moderate green, vivid yellow, orange, vivid red, soft pink
+        scale_color_manual(values=c('#6a54a9','#4bacda', '#2f8e59', '#96ba37','#fad819', '#f2a72f', '#ee3925', '#e075af'), 
             guide = col_guide) + 
-        scale_fill_manual(values=c('#5850a3','#8591c7', '#008544', '#95b73a','#fad819', '#f2a72f', '#f23d29', '#de6daf'), 
+        scale_fill_manual(values=c('#6a54a9','#4bacda', '#2f8e59', '#96ba37','#fad819', '#f2a72f', '#ee3925', '#e075af'), 
             guide = col_guide) + 
         labs(x = x_lab, y = y_lab) + 
         theme(panel.grid.major = element_blank(), 
@@ -1294,9 +1305,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
         scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
-        scale_color_manual(values=c('#5850a3','#8591c7', '#008544', '#95b73a','#fad819', '#f2a72f', '#f23d29', '#de6daf'), 
+        # colors = dark moderate violet, soft blue, dark green, moderate green, vivid yellow, orange, vivid red, soft pink
+        scale_color_manual(values=c('#6a54a9','#4bacda', '#2f8e59', '#96ba37','#fad819', '#f2a72f', '#ee3925', '#e075af'), 
             guide = col_guide) + 
-        scale_fill_manual(values=c('#5850a3','#8591c7', '#008544', '#95b73a','#fad819', '#f2a72f', '#f23d29', '#de6daf'), 
+        scale_fill_manual(values=c('#6a54a9','#4bacda', '#2f8e59', '#96ba37','#fad819', '#f2a72f', '#ee3925', '#e075af'), 
             guide = col_guide) + 
         labs(x = x_lab, y = y_lab) + 
         theme(panel.grid.major = element_blank(), 
@@ -1337,50 +1349,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 }
 
 
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="all", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ")
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 
 
-
-
-
-
-#---------- Check clustering results of correlation plot with other implementations #-----------
-
-# if (!require(corrplot)) install.packages('corrplot')
-# library(corrplot)
-
-# Make corrplots with corrplot function
-# See SO https://stackoverflow.com/questions/45896231/r-corrplot-with-clustering-default-dissimilarity-measure-for-correlation-matrix
-   # png(height = 5000, width = 5000, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_TPM_hclust_avg_corrplot.png"))
-   # par(lwd = 15) # dendrogram line width
-   # corrplot(x,
-        # method = "color", 
-        # order = "hclust", 
-        # hclust.method = "average", 
-        # col=pal(100), 
-        # addrect = NULL, 
-        # rect.lwd = 0,
-        # number.cex = 4.25
-        # )
-  # dev.off()
-
-
-# Make corrplots with base R heatmap function
-# This gives exact same reults as using heatmap.2 function
-   # png(height = 5000, width = 5000, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_TPM_pearson_dist_baseR_heatmap.png"))
-   # par(lwd = 15) # dendrogram line width
-   # heatmap(x,
-        # col = pal(200),
-        # margins = c(20, 20),
-        # key.title = NULL,
-        # distfun = function(c) get_dist(x, method = "pearson"), 
-        # hclustfun = function(x) hclust(x, method = "average")
-        # )
-   # dev.off()
 
 
