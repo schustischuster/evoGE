@@ -64,51 +64,51 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 	# Set expression input file
     if ((is.element("Brawand", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold")
+        genesExpr = file.path(in_dir, "Expression_data", "Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold.csv")
 
     } else if ((is.element("Brawand", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold")
+        genesExpr = file.path(in_dir, "Expression_data", "Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv")
 
     } else if ((is.element("Brawand", dataset)) && (is.element("counts", expr_estimation))
         && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "Brawand_intra_count_mat_vsd_sample_names_0_5_threshold")
+        genesExpr = file.path(in_dir, "Expression_data", "Brawand_intra_count_mat_vsd_sample_names_0_5_threshold.csv")
 
     } else if ((is.element("Brawand", dataset)) && (is.element("counts", expr_estimation))
         && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "Brawand_inter_count_mat_vsd_sample_names_0_5_threshold")
+        genesExpr = file.path(in_dir, "Expression_data", "Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_intra_tpm_mat_deseq_sample_names")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_intra_tpm_mat_deseq_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_tpm_mat_deseq_sample_names")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_tpm_mat_deseq_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "AT_core_intra_tpm_mat_deseq_sample_names")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_core_intra_tpm_mat_deseq_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("Brassicaceae", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_intra_count_mat_vsd_sample_names")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_intra_count_mat_vsd_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("Brassicaceae", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_count_mat_vsd_sample_names")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_count_mat_vsd_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("intra-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "AT_core_intra_count_mat_vsd_sample_names")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_core_intra_count_mat_vsd_sample_names.csv")
 
     } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
         && (is.element("all", devseq_spec)) && (is.element("inter-organ", data_norm))) {
-        genesExpr = file.path(in_dir, "Expression_data", "AT_core_inter_count_mat_vsd_sample_names")
+        genesExpr = file.path(in_dir, "Expression_data", "AT_core_inter_count_mat_vsd_sample_names.csv")
     }
 
 
@@ -575,7 +575,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
         x_avg <- x_avg %>% select(-c(Pollen_AT, Pollen_AL, Pollen_CR, Pollen_ES, Pollen_TH, 
-                Pollen_MT, Pollen_BD))
+                 Pollen_MT, Pollen_BD))
 
 
         # Reorder data frame columns
@@ -835,10 +835,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         geom_segment(x=135.55, xend=137.25, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
         geom_segment(x=138.3, xend=139.975, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
         geom_segment(x=156, xend=159.775, y=0.4675, yend=0.49, color="white", size=8) + 
-        annotate("text", x=19.5, y=0.4675, label= "Brassicaceae", size=8) + 
-        annotate("text", x=46, y=0.4675, label= "TH", size=8) + 
-        annotate("text", x=106, y=0.4675, label= "MT", size=8) + 
-        annotate("text", x=158.6, y=0.4675, label= "BD", size=8) + 
+        annotate("text", x=19.5, y=0.4815, label= "Brassicaceae", size=8) + 
+        annotate("text", x=46, y=0.4815, label= "TH", size=8) + 
+        annotate("text", x=106, y=0.4815, label= "MT", size=8) + 
+        annotate("text", x=158.6, y=0.4815, label= "BD", size=8) + 
         geom_segment(x=7, xend=7, y=0.435, yend=0.468, color="black", size=0.7) + 
         geom_segment(x=9, xend=9, y=0.435, yend=0.468, color="black", size=0.7) + 
         geom_segment(x=25, xend=25, y=0.435, yend=0.468, color="black", size=0.7) + 
@@ -1349,9 +1349,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 }
 
 
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="all", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaceae", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ")
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 
