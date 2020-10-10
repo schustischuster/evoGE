@@ -1,5 +1,5 @@
 # Prepare Brawand and DevSeq comparative ortholog gene expression data
-# Thresholds: 0.5 TPM (since there are no ERCC spike-ins in Brawand data)
+# Thresholds: DevSeq 0.05 ERCC; Brawand 0.5 TPM (no ERCC spike-ins available)
 # Data input: Brawand and DevSeq TPM expression tables of all samples
 
 
@@ -406,7 +406,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
-        par(lwd = 16) # dendrogram line width
+        par(lwd = 18.8) # dendrogram line width
         getRowOrder = heatmap.2(x_cor,
             revC = F,
             ColSideColors = col_cols, 
@@ -434,10 +434,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             col = pal(800),
             cexRow = 2,
             cexCol = 2,
-            margins = c(35, 35),
+            margins = c(15, 15),
             key.par = list(cex = 2.75),
-            lwid = c(0.3,2.5,17.5), # column width
-            lhei = c(0.3,2.5,17.5), # column height
+            lwid = c(0.285,2.3,27.5), # column width
+            lhei = c(0.285,2.3,27.5), # column height
             offsetRow = 1,
             offsetCol = 1,
             key.xlab = NA,
@@ -655,7 +655,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
             cor_colors <- rep(c("#808080","#b1971e","#419730","#2e9d76","#3889af","#7d67c7","#b72f2d"), each=28)
 
-            p <- ggplot(data, aes(x=factor(Species, levels = Species), y=Correlation, fill=Species)) + 
+            p <- ggplot(data, aes(x=factor(Species, levels=unique(Species)), y=Correlation, fill=Species)) + 
             stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
             geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
                 outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
@@ -665,7 +665,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             annotate("rect", xmin=0.35, xmax=7.65, ymin=y_min, ymax=y_max, fill="white", alpha=0, 
                 color="gray15", size=1.35)
 
-            q <- p + scale_fill_manual(values=c("#f0dd91","#cacaca","#ebb4b1","#b3daad","#ace1ce","#ccc3f0","#b2d7e7")) + 
+            q <- p + scale_fill_manual(values=c("#cacaca","#f0dd91","#b3daad","#ace1ce","#b2d7e7","#ccc3f0","#ebb4b1")) + 
             theme_minimal() + 
             xlab("") + 
             ylab(coef_lab) + 
@@ -851,7 +851,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         theme(text=element_text(size=16), 
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7),  
-            plot.margin = unit(c(0.55, 1.1, 0.5, 0.4),"cm"), 
+            plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
             axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
             axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
@@ -1201,7 +1201,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             legend_spacing <- 0
             order_guide <- 0
             x_lim <- NULL
-            y_title_mrg <- margin(t = 0, r = 0, b = 0, l = 14.5)
+            y_title_mrg <- margin(t = 0, r = -2.5, b = 0, l = 17.0)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         }
 
