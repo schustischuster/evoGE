@@ -275,8 +275,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         exp_col <- c(AT="gray1", AL="cornsilk3", CR="#fff7e8", ES="wheat4", TH="#b30000", 
             MT="lightgoldenrod2", BD="#9f3c9b") # last two letters of sample name
 
-        species_col <- c(Roo="#6a54a9", Hyp="#4bacda", Lea="#2f8e59", veg="#96ba37", 
-            inf="#fad819", Flo="#e075af", Sta="#e42612", Mat="#a63126", Car="#f2a72f")
+        species_col <- c(Roo="#6a54a9", Hyp="#53b0db", Lea="#2c8654", veg="#96ba37", 
+            inf="#fad819", Flo="#e075af", Sta="#ed311c", Mat="#a63126", Car="#f2a72f")
 
     } else if (dataset_id == "Brawand") {
 
@@ -818,22 +818,22 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
         geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
             linetype = 0, show.legend = FALSE) + 
-        scale_fill_manual(values = c("Hypocotyl  "="#4bacda", "Stamen  "="#ee3925", "Flower  "="#e075af", 
+        scale_fill_manual(values = c("Hypocotyl  "="#53b0db", "Stamen  "="#ee412e", "Flower  "="#e075af", 
                 "Root  "="#6a54a9", "Apex veg  "="#96ba37", "Apex inf  "="#fad819", "Carpel  "="#f2a72f", 
-                "Leaf  "="#2f8e59")) + 
-        geom_line(size = 3) +  
+                "Leaf  "="#2c8654")) + 
+        geom_line(size = 3.25) +  
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.4675, 0.91), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#4bacda", "#ee3925", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
-            "#f2a72f", "#2f8e59"), 
+        scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
+            "#f2a72f", "#2c8654"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
             breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ")) + 
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
             lwd = 3) + # pollen
-        annotate("text", x=147.44, y=0.8318, label= "Pollen", size=7.56) + 
-        geom_segment(x=135.55, xend=137.25, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
-        geom_segment(x=138.3, xend=139.975, y=0.8318, yend=0.8318, color="#a63126", size=2.63) + 
+        annotate("text", x=147.44, y=0.83575, label= "Pollen", size=7.56) + 
+        geom_segment(x=135.55, xend=137.25, y=0.83575, yend=0.83575, color="#a63126", size=3.25) + 
+        geom_segment(x=138.3, xend=139.975, y=0.83575, yend=0.83575, color="#a63126", size=3.25) + 
         geom_segment(x=156, xend=159.775, y=0.4675, yend=0.49, color="white", size=8) + 
         annotate("text", x=19.5, y=0.4815, label= "Brassicaceae", size=8) + 
         annotate("text", x=46, y=0.4815, label= "TH", size=8) + 
@@ -1220,9 +1220,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
         # colors = dark moderate violet, soft blue, dark green, moderate green, vivid yellow, orange, vivid red, soft pink
-        scale_color_manual(values=c('#6a54a9','#4bacda', '#2f8e59', '#96ba37','#fad819', '#f2a72f', '#ee3925', '#e075af'), 
+        scale_color_manual(values=c('#6a54a9','#53b0db', '#2c8654', '#96ba37','#fad819', '#f2a72f', '#ee412e', '#e075af'), 
             guide = col_guide) + 
-        scale_fill_manual(values=c('#6a54a9','#4bacda', '#2f8e59', '#96ba37','#fad819', '#f2a72f', '#ee3925', '#e075af'), 
+        scale_fill_manual(values=c('#6a54a9','#53b0db', '#2c8654', '#96ba37','#fad819', '#f2a72f', '#ee412e', '#e075af'), 
             guide = col_guide) + 
         labs(x = x_lab, y = y_lab) + 
         theme(panel.grid.major = element_blank(), 
@@ -1306,9 +1306,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         scale_size_manual(values=spec_shape_size) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
         # colors = dark moderate violet, soft blue, dark green, moderate green, vivid yellow, orange, vivid red, soft pink
-        scale_color_manual(values=c('#6a54a9','#4bacda', '#2f8e59', '#96ba37','#fad819', '#f2a72f', '#ee3925', '#e075af'), 
+        scale_color_manual(values=c('#6a54a9','#53b0db', '#2c8654', '#96ba37','#fad819', '#f2a72f', '#ee412e', '#e075af'), 
             guide = col_guide) + 
-        scale_fill_manual(values=c('#6a54a9','#4bacda', '#2f8e59', '#96ba37','#fad819', '#f2a72f', '#ee3925', '#e075af'), 
+        scale_fill_manual(values=c('#6a54a9','#53b0db', '#2c8654', '#96ba37','#fad819', '#f2a72f', '#ee412e', '#e075af'), 
             guide = col_guide) + 
         labs(x = x_lab, y = y_lab) + 
         theme(panel.grid.major = element_blank(), 
