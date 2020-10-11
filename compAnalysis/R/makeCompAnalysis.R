@@ -821,7 +821,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         scale_fill_manual(values = c("Hypocotyl  "="#53b0db", "Stamen  "="#ee412e", "Flower  "="#e075af", 
                 "Root  "="#6a54a9", "Apex veg  "="#96ba37", "Apex inf  "="#fad819", "Carpel  "="#f2a72f", 
                 "Leaf  "="#2c8654")) + 
-        geom_line(size = 3.25) +  
+        geom_line(size = 3.1) +  
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.4675, 0.91), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
@@ -830,11 +830,11 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ")) + 
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
-            lwd = 3) + # pollen
-        annotate("text", x=147.44, y=0.83575, label= "Pollen", size=7.56) + 
+            lwd = 3.1) + # pollen
+        annotate("text", x=147.47, y=0.83575, label= "Pollen", size=7.56) + 
         geom_segment(x=135.55, xend=137.25, y=0.83575, yend=0.83575, color="#a63126", size=3.25) + 
         geom_segment(x=138.3, xend=139.975, y=0.83575, yend=0.83575, color="#a63126", size=3.25) + 
-        geom_segment(x=156, xend=159.775, y=0.4675, yend=0.49, color="white", size=8) + 
+        geom_segment(x=157.5, xend=157.5, y=0.461, yend=0.488, color="white", size=12.5) + 
         annotate("text", x=19.5, y=0.4815, label= "Brassicaceae", size=8) + 
         annotate("text", x=46, y=0.4815, label= "TH", size=8) + 
         annotate("text", x=106, y=0.4815, label= "MT", size=8) + 
@@ -1201,7 +1201,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             legend_spacing <- 0
             order_guide <- 0
             x_lim <- NULL
-            y_title_mrg <- margin(t = 0, r = -2.5, b = 0, l = 17.0)
+            y_title_mrg <- margin(t = 0, r = -3, b = 0, l = 17.5)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         }
 
