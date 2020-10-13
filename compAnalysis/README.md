@@ -79,7 +79,7 @@ makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 ```
-The following function will compare the gene expression divergence times between Angiosperms (DevSeq data set) and Mammals (Brawand data set): 
+The following function will compare the gene expression divergence rates between Angiosperms (DevSeq data set) and Mammals (Brawand data set): 
 
 ```R
 getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))
