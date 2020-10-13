@@ -272,8 +272,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
     if (dataset_id == "DevSeq") {
 
-        exp_col <- c(AT="gray1", AL="cornsilk3", CR="#fff7e8", ES="wheat4", TH="#b30000", 
-            MT="lightgoldenrod2", BD="#9f3c9b") # last two letters of sample name
+        exp_col <- c(AT="gray1", AL="cornsilk3", CR="#fff7e8", ES="#95928c", TH="#bd0000", 
+            MT="lightgoldenrod2", BD="#a63ea2") # last two letters of sample name
 
         species_col <- c(Roo="#6a54a9", Hyp="#53b0db", Lea="#2c8654", veg="#96ba37", 
             inf="#fad819", Flo="#e075af", Sta="#ed311c", Mat="#a63126", Car="#f2a72f")
@@ -852,10 +852,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7),  
             plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
-            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
-            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
+            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
+            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
             legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
             panel.grid.major = element_line(color="#d5d5d5"),
@@ -1229,10 +1229,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             panel.grid.minor = element_blank(), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
             panel.background = element_blank(), 
-            axis.title.y = element_text(size=24, margin = y_title_mrg), 
-            axis.title.x = element_text(size=24, margin = margin(t = 14.75, r = 0, b = 2.5, l = 0)), 
-            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5)), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5)), 
+            axis.title.y = element_text(size=24, margin = y_title_mrg, colour="black"), 
+            axis.title.x = element_text(size=24, margin = margin(t = 14.75, r = 0, b = 2.5, l = 0), colour="black"), 
+            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5), colour="black"), 
+            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5), colour="black"), 
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7), 
             legend.key = element_rect(colour = "transparent", fill = "white"), 
@@ -1315,10 +1315,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             panel.grid.minor = element_blank(), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.5), 
             panel.background = element_blank(), 
-            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 6, b = 0, l = 8)), 
-            axis.title.x = element_text(size=20.5, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
-            axis.text.x = element_text(size=18, angle=0, margin = margin(t = 5)), 
-            axis.text.y = element_text(size=18, angle=0, margin = margin(r = 5)), 
+            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 6, b = 0, l = 8), colour="black"), 
+            axis.title.x = element_text(size=20.5, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
+            axis.text.x = element_text(size=18, angle=0, margin = margin(t = 5), colour="black"), 
+            axis.text.y = element_text(size=18, angle=0, margin = margin(r = 5), colour="black"), 
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7), 
             legend.key = element_rect(colour = "transparent", fill = "white"), 
