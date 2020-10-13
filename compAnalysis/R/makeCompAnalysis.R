@@ -665,7 +665,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             annotate("rect", xmin=0.35, xmax=7.65, ymin=y_min, ymax=y_max, fill="white", alpha=0, 
                 color="gray15", size=1.35)
 
-            q <- p + scale_fill_manual(values=c("#cacaca","#f0dd91","#b3daad","#ace1ce","#b2d7e7","#ccc3f0","#ebb4b1")) + 
+            q <- p + scale_fill_manual(values=c("#f0dd91","#cacaca","#ebb4b1","#b3daad","#ace1ce","#ccc3f0","#b2d7e7")) + 
             theme_minimal() + 
             xlab("") + 
             ylab(coef_lab) + 
