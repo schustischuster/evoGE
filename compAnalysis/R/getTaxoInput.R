@@ -1,6 +1,7 @@
 # Create data tables that have an input format which is compatible with TreeExp2
 # Data tables contain sample replicates with expression values in FPKM (original Brawand 2011 data)
 # or TPM expression metric (DevSeq and re-analyzed Brawand data)
+# First column contains gene IDs or ortholog numbers
 
 
 
@@ -16,11 +17,11 @@ getTaxoInput <- function() {
 
 
     # Read DevSeq table
-	x_DS_tbj <- read.table(DS_table, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
-    
-    
-	# Read Brawand table and set colnames
-	x_Br_tbj <- read.table(Br_table, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+    x_DS_tbj <- read.table(DS_table, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+
+
+    # Read Brawand table and set colnames
+    x_Br_tbj <- read.table(Br_table, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
     # Remove later in case expression table has gene_id column
     ID_repl_Br <- as.data.frame(seq(1:nrow(x_Br_tbj)))
