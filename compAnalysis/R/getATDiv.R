@@ -36,13 +36,13 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     # Set file path for input files
     if (is.element("TPM", expr_estimation)) {
         
-        genesExprDS = file.path(in_dir, "Expression_data", "inter_organ_tpm_mat_deseq_sample_names_all.csv")
-        genesExprBr = file.path(in_dir, "Expression_data", "TPM_Brawand_norm_inter_organ.csv")
+        genesExprDS = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+        genesExprBr = file.path(in_dir, "Expression_data", "Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv")
 
     } else if (is.element("counts", expr_estimation)) {
         
-        genesExprDS = file.path(in_dir, "Expression_data", "inter_organ_count_mat_vsd_sample_names_all.csv")
-        genesExprBr = file.path(in_dir, "Expression_data", "count_Brawand_norm_inter_organ.csv")
+        genesExprDS = file.path(in_dir, "Expression_data", "AT_core_inter_count_mat_vsd_sample_names.csv")
+        genesExprBr = file.path(in_dir, "Expression_data", "Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv")
 
     }
 
@@ -51,25 +51,21 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     
     # Set colnames
-    col_namesDS <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-        "Flower", "Stamen", "Carpel"), each=21)
-    replicate_tag_samples_DS <- rep(c(".1",".2",".3"), times=8)
-    col_namesDS <- paste0(col_namesDS, replicate_tag_samples_DS)
+    col_namesDS <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", "Flower", "Stamen", 
+        "Carpel", "Pollen"), each=21)
+    replicate_tag_samples <- rep(c(".1",".2",".3"), times=9)
+    col_namesDS <- paste0(col_namesDS,replicate_tag_samples)
     spec_namesDS <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), each=3)
-    spec_namesDS <- rep(spec_namesDS, times=8)
+    spec_namesDS <- rep(spec_namesDS, times=9)
     col_namesDS <- paste0(col_namesDS, spec_namesDS)
+    col_namesDS <- c("gene_id", col_namesDS)
 
 
     # Read DevSeq table
-	x_DS <- read.table(genesExprDS, sep=";", dec=".", skip = 1, header=FALSE, stringsAsFactors=FALSE)
+	x_DS <- read.table(genesExprDS, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
     
-    # Remove later on once expression table has gene_id column
-    ID_repl <- as.data.frame(seq(1:nrow(x_DS)))
-    colnames(ID_repl) <- "gene_id"
-    x_DS <- cbind(ID_repl, x_DS)
-
     # set column names
-    colnames(x_DS)[2:ncol(x_DS)] <- col_namesDS
+    colnames(x_DS) <- col_namesDS
 
 
 	# Read Brawand table and set colnames
@@ -79,8 +75,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     ID_repl <- as.data.frame(seq(1:nrow(x_Br)))
     colnames(ID_repl) <- "gene_id"
     x_Br <- cbind(ID_repl, x_Br)
-
-	# colnames(x_Br)[1] <- "gene_id"
 
 
     # Read original Brawand expression table from Nature 2011
@@ -126,6 +120,113 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         x_Br[,2:ncol(x_Br)] <- log2(x_Br[,2:ncol(x_Br)] + 1)
         x_DS[,2:ncol(x_DS)] <- log2(x_DS[,2:ncol(x_DS)] + 1)
         x_Br2011[,2:ncol(x_Br2011)] <- log2(x_Br2011[,2:ncol(x_Br2011)] + 1)
+
+    }
+
+
+
+
+#----------------- Read taxa objects for DevSeq and Brawand with replicates  -------------------
+
+
+    if (is.element("TPM", expr_estimation)) {
+
+   
+        # Construc taxa object
+        x_Br_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
+            "output", "data", 'x_Br_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
+
+        x_Br2011_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
+            "output", "data", 'x_Br2011_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
+
+        x_DS_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
+            "output", "data", 'x_DS_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
+
+
+
+        Brawand_organ_list <- list("brain", "cerebellum", "heart", "kidney", "liver", "testis")
+
+        Brawand2011_organ_list <- list("br", "cb", "ht", "kd", "lv", "ts")
+
+        DevSeq_organ_list <- list("Root", "Hypocotyl", "Leaf", "vegApex", "infApex", "Flower", 
+            "Stamen", "Carpel", "Pollen")
+
+
+
+        # Function to apply extended OU model with dynamic expression optimum ("variable-µ method")
+        getExtOU <- function(organ, taxa_obj) {
+
+            sou_v_out <- expdist(taxa_obj, taxa = "all",
+                subtaxa = organ,
+                method = "sou_v")
+
+            sou_v_pi <- sou_v_out$pi
+            sou_v_distance <- as.data.frame(sou_v_out$distance)
+            sou_v_distance_div <- as.data.frame(sou_v_distance[,1])
+            sou_v_distance_div <- rbind(sou_v_distance_div, sou_v_pi)
+
+            spec_id <- c(sub("\\_.*", "", rownames(sou_v_distance)), "pi")
+            organ_id <- unique(sub(".*_", "", rownames(sou_v_distance)))
+
+            if (organ_id == "ts") {
+
+                ppy_testis <- "NA"
+                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], ppy_testis, 
+                    sou_v_distance_div[4:7,]), stringsAsFactors = FALSE)
+                spec_id <- c("hsa", "ppa", "ggo", "ppy", "mml", "mmu", "mdo", "pi")
+            
+            } 
+
+            if (organ_id == "testis") {
+
+                Orangutan_testis <- "NA"
+                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], Orangutan_testis, 
+                    sou_v_distance_div[4:7,]), stringsAsFactors = FALSE)
+                spec_id <- c("Human", "Bonobo", "Gorilla", "Orangutan", "Macaque", "Mouse", 
+                    "Opossum", "pi")
+            }
+
+            rownames(sou_v_distance_div) <- spec_id
+            colnames(sou_v_distance_div) <- organ_id
+
+            return(sou_v_distance_div)
+        }
+
+
+        Br_sou_v <- as.data.frame(do.call(cbind, lapply(Brawand_organ_list, getExtOU,
+            taxa_obj = x_Br_taxa_objects)))
+
+        rows_to_remove_Br <- "Human"
+        Br_sou_v <- Br_sou_v[!(row.names(Br_sou_v) %in% rows_to_remove_Br), ]
+        Br_sou_v$testis <- suppressWarnings(as.numeric(Br_sou_v$testis))
+
+
+        Br2011_sou_v <- as.data.frame(do.call(cbind, lapply(Brawand2011_organ_list, getExtOU,
+            taxa_obj = x_Br2011_taxa_objects)))
+        rows_to_remove_Br2011 <- "hsa"
+        Br2011_sou_v <- Br2011_sou_v[!(row.names(Br2011_sou_v) %in% rows_to_remove_Br2011), ]
+        Br2011_sou_v$ts <- suppressWarnings(as.numeric(Br2011_sou_v$ts))
+
+
+        DS_sou_v <- as.data.frame(do.call(cbind, lapply(DevSeq_organ_list, getExtOU,
+            taxa_obj = x_DS_taxa_objects)))
+        rows_to_remove_DS <- "ATH"
+        DS_sou_v <- DS_sou_v[!(row.names(DS_sou_v) %in% rows_to_remove_DS), ]
+
+
+
+        # Reshape data for ggplot2
+        Brawand_sou_v_div <- as.data.frame(c(Br_sou_v[1:6, 1], Br_sou_v[1:6, 2], Br_sou_v[1:6, 3], 
+            Br_sou_v[1:6, 4], Br_sou_v[1:6, 5], Br_sou_v[1:6, 6]))
+        colnames(Brawand_sou_v_div) <- "correlation"
+
+        Brawand2011_sou_v_div <- as.data.frame(c(Br2011_sou_v[1:6, 1], Br2011_sou_v[1:6, 2], 
+            Br2011_sou_v[1:6, 3], Br2011_sou_v[1:6, 4], Br2011_sou_v[1:6, 5], Br2011_sou_v[1:6, 6]))
+        colnames(Brawand2011_sou_v_div) <- "correlation"
+
+        DevSeq_sou_v_div <- as.data.frame(c(DS_sou_v[1:6, 1], DS_sou_v[1:6, 2], DS_sou_v[1:6, 3], 
+            DS_sou_v[1:6, 4], DS_sou_v[1:6, 5], DS_sou_v[1:6, 6], DS_sou_v[1:6, 7], DS_sou_v[1:6, 8]))
+        colnames(DevSeq_sou_v_div) <- "correlation"
 
     }
 
@@ -196,11 +297,22 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     DevSeq_div_rates$div_times <- as.numeric(DevSeq_div_rates$div_times)
     DevSeq_div_rates$correlation <- as.numeric(DevSeq_div_rates$correlation)
       
-    # Remove Brachypodium mesocotyl data point
-    # DevSeq_div_rates <- DevSeq_div_rates[-12,]
-
     DevSeq_div_rates$comp_organ <- factor(DevSeq_div_rates$comp_organ, 
         levels = unique(DevSeq_div_rates$comp_organ))
+
+
+    if (is.element("TPM", expr_estimation)) {
+
+        DevSeq_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, DevSeq_sou_v_div, dataset), 
+            stringsAsFactors=FALSE)
+
+        DevSeq_sou_v_div_rates$div_times <- as.numeric(DevSeq_sou_v_div_rates$div_times)
+        DevSeq_sou_v_div_rates$correlation <- as.numeric(DevSeq_sou_v_div_rates$correlation)
+
+        DevSeq_sou_v_div_rates$comp_organ <- factor(DevSeq_sou_v_div_rates$comp_organ, 
+            levels = unique(DevSeq_sou_v_div_rates$comp_organ))
+
+    }
 
 
 
@@ -340,7 +452,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     Brawand_div_rates$div_times <- as.numeric(Brawand_div_rates$div_times)
     Brawand_div_rates$correlation <- as.numeric(Brawand_div_rates$correlation)
 
-    # Remove Orangutan testis (missing data) and Opossum kidney (replicate corr < 0.85) data
+    # Remove Orangutan testis (missing data)
     Brawand_div_rates <- Brawand_div_rates[c(-33),]
 
     Brawand_div_rates$comp_organ <- factor(Brawand_div_rates$comp_organ, 
@@ -349,6 +461,26 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     # Combine DevSeq and Brawand GE divergence data
     compDivRates <- rbind(DevSeq_div_rates, Brawand_div_rates)
+
+
+    if (is.element("TPM", expr_estimation)) {
+
+        Brawand_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, 
+        Brawand_sou_v_div, dataset), stringsAsFactors=FALSE)
+
+        Brawand_sou_v_div_rates$div_times <- as.numeric(Brawand_sou_v_div_rates$div_times)
+        Brawand_sou_v_div_rates$correlation <- as.numeric(Brawand_sou_v_div_rates$correlation)
+
+        # Remove Orangutan testis (missing data)
+        Brawand_sou_v_div_rates <- Brawand_sou_v_div_rates[c(-33),]
+
+        Brawand_sou_v_div_rates$comp_organ <- factor(Brawand_sou_v_div_rates$comp_organ, 
+            levels = unique(Brawand_sou_v_div_rates$comp_organ))
+
+        # Combine DevSeq and Brawand GE divergence data
+        compSouVDivRates <- rbind(DevSeq_sou_v_div_rates, Brawand_sou_v_div_rates)
+
+    }
 
 
 
@@ -528,12 +660,39 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     compDivRates11 <- rbind(DevSeq_div_rates, Brawand11_div_rates)
 
 
+    if (is.element("TPM", expr_estimation)) {
+
+        Brawand11_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, 
+        Brawand2011_sou_v_div, dataset), stringsAsFactors=FALSE)
+
+        Brawand11_sou_v_div_rates$div_times <- as.numeric(Brawand11_sou_v_div_rates$div_times)
+        Brawand11_sou_v_div_rates$correlation <- as.numeric(Brawand11_sou_v_div_rates$correlation)
+
+        # Remove Orangutan testis (missing data) and Opossum kidney (replicate corr < 0.85) data
+        Brawand11_sou_v_div_rates <- Brawand11_sou_v_div_rates[c(-33),]
+
+        Brawand11_sou_v_div_rates$comp_organ <- factor(Brawand11_sou_v_div_rates$comp_organ, 
+            levels = unique(Brawand11_sou_v_div_rates$comp_organ))
+
+
+        # Combine DevSeq and Brawand 2011 GE divergence data
+        compSouVDivRates11 <- rbind(DevSeq_sou_v_div_rates, Brawand11_sou_v_div_rates)
+
+    }
+
+
     # Generate data set with both Brawand data (re-analyzed = "Mammals_DevSeq"; original = "Mammals_Brawand")
     Brawand_div_rates_comp <- Brawand_div_rates
     Brawand11_div_rates_comp <- Brawand11_div_rates
     Brawand_div_rates_comp$dataset[Brawand_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_DevSeq'
     Brawand11_div_rates_comp$dataset[Brawand11_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_Brawand'
     compDivRatesBr <- rbind(Brawand_div_rates_comp, Brawand11_div_rates_comp)
+
+    Brawand_sou_v_div_rates_comp <- Brawand_sou_v_div_rates
+    Brawand11_sou_v_div_rates_comp <- Brawand11_sou_v_div_rates
+    Brawand_sou_v_div_rates_comp$dataset <- 'Mammals_DevSeq'
+    Brawand11_sou_v_div_rates_comp$dataset <- 'Mammals_Brawand '
+    compDivRatesBr <- rbind(Brawand_sou_v_div_rates_comp, Brawand11_sou_v_div_rates_comp)
 
 
 
@@ -990,11 +1149,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         theme(text=element_text(size=16), 
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7),  
-            plot.margin = unit(c(0.55, 1.1, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
-            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
-            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
+            plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
+            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
+            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
             legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
             panel.grid.major = element_line(color="#d5d5d5"),
@@ -1056,11 +1215,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       theme(text=element_text(size=16), 
         axis.ticks.length=unit(0.35, "cm"), 
         axis.ticks = element_line(colour = "black", size = 0.7),  
-        plot.margin = unit(c(0.55, 1.1, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
-        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
-        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
-        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
+        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
+        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
+        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
         legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
         panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
         panel.grid.major = element_line(color="#d5d5d5"),
@@ -1126,11 +1285,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       theme(text=element_text(size=16), 
         axis.ticks.length=unit(0.35, "cm"), 
         axis.ticks = element_line(colour = "black", size = 0.7),  
-        plot.margin = unit(c(0.55, 1.1, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9)), 
-        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0)), 
-        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5)), 
-        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5)), 
+        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
+        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
+        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
         legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
         panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
         panel.grid.major = element_line(color="#d5d5d5"),
