@@ -692,7 +692,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     Brawand11_sou_v_div_rates_comp <- Brawand11_sou_v_div_rates
     Brawand_sou_v_div_rates_comp$dataset <- 'Mammals_DevSeq'
     Brawand11_sou_v_div_rates_comp$dataset <- 'Mammals_Brawand '
-    compDivRatesBr <- rbind(Brawand_sou_v_div_rates_comp, Brawand11_sou_v_div_rates_comp)
+    compSouVDivRatesBr <- rbind(Brawand_sou_v_div_rates_comp, Brawand11_sou_v_div_rates_comp)
 
 
 
