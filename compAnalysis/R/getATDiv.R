@@ -139,6 +139,9 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         x_Br2011_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
             "output", "data", 'x_Br2011_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
 
+        x_Br2011_all_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
+            "output", "data", 'x_Br2011_all_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
+
         x_DS_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
             "output", "data", 'x_DS_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
 
@@ -154,7 +157,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
         # Function to apply extended OU model with dynamic expression optimum ("variable-µ method")
-        getExtOU <- function(organ, taxa_obj) {
+        getExtOU <- function(organ, taxa_obj, samples) {
 
             sou_v_out <- expdist(taxa_obj, taxa = "all",
                 subtaxa = organ,
@@ -168,7 +171,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             spec_id <- c(sub("\\_.*", "", rownames(sou_v_distance)), "pi")
             organ_id <- unique(sub(".*_", "", rownames(sou_v_distance)))
 
-            if (organ_id == "ts") {
+            if ((organ_id == "ts") && (samples == "sel")) {
 
                 ppy_testis <- "NA"
                 sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], ppy_testis, 
@@ -176,6 +179,15 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                 spec_id <- c("hsa", "ppa", "ggo", "ppy", "mml", "mmu", "mdo", "pi")
             
             } 
+
+            if ((organ_id == "ts") && (samples == "all")) {
+
+                ppy_testis <- "NA"
+                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], ppy_testis, 
+                    sou_v_distance_div[4:9,]), stringsAsFactors = FALSE)
+                spec_id <- c("hsa", "ppa", "ggo", "ppy", "mml", "mmu", "mdo", "oan", "gga", "pi")
+
+            }
 
             if (organ_id == "testis") {
 
@@ -202,10 +214,17 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
         Br2011_sou_v <- as.data.frame(do.call(cbind, lapply(Brawand2011_organ_list, getExtOU,
-            taxa_obj = x_Br2011_taxa_objects)))
+            taxa_obj = x_Br2011_taxa_objects, samples = "sel")))
         rows_to_remove_Br2011 <- "hsa"
         Br2011_sou_v <- Br2011_sou_v[!(row.names(Br2011_sou_v) %in% rows_to_remove_Br2011), ]
         Br2011_sou_v$ts <- suppressWarnings(as.numeric(Br2011_sou_v$ts))
+
+
+        Br2011_all_sou_v <- as.data.frame(do.call(cbind, lapply(Brawand2011_organ_list, getExtOU,
+            taxa_obj = x_Br2011_all_taxa_objects, samples = "all")))
+        rows_to_remove_Br2011_all <- "hsa"
+        Br2011_all_sou_v <- Br2011_all_sou_v[!(row.names(Br2011_all_sou_v) %in% rows_to_remove_Br2011_all), ]
+        Br2011_all_sou_v$ts <- suppressWarnings(as.numeric(Br2011_all_sou_v$ts))
 
 
         DS_sou_v <- as.data.frame(do.call(cbind, lapply(DevSeq_organ_list, getExtOU,
@@ -223,6 +242,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         Brawand2011_sou_v_div <- as.data.frame(c(Br2011_sou_v[1:6, 1], Br2011_sou_v[1:6, 2], 
             Br2011_sou_v[1:6, 3], Br2011_sou_v[1:6, 4], Br2011_sou_v[1:6, 5], Br2011_sou_v[1:6, 6]))
         colnames(Brawand2011_sou_v_div) <- "correlation"
+
+        Brawand2011_all_sou_v_div <- as.data.frame(c(Br2011_all_sou_v[1:8, 1], Br2011_all_sou_v[1:8, 2], 
+            Br2011_all_sou_v[1:8, 3], Br2011_all_sou_v[1:8, 4], Br2011_all_sou_v[1:8, 5], Br2011_all_sou_v[1:8, 6]))
+        colnames(Brawand2011_all_sou_v_div) <- "correlation"
 
         DevSeq_sou_v_div <- as.data.frame(c(DS_sou_v[1:6, 1], DS_sou_v[1:6, 2], DS_sou_v[1:6, 3], 
             DS_sou_v[1:6, 4], DS_sou_v[1:6, 5], DS_sou_v[1:6, 6], DS_sou_v[1:6, 7], DS_sou_v[1:6, 8]))
@@ -668,7 +691,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         Brawand11_sou_v_div_rates$div_times <- as.numeric(Brawand11_sou_v_div_rates$div_times)
         Brawand11_sou_v_div_rates$correlation <- as.numeric(Brawand11_sou_v_div_rates$correlation)
 
-        # Remove Orangutan testis (missing data) and Opossum kidney (replicate corr < 0.85) data
+        # Remove ppy testis sample (has NA value)
         Brawand11_sou_v_div_rates <- Brawand11_sou_v_div_rates[c(-33),]
 
         Brawand11_sou_v_div_rates$comp_organ <- factor(Brawand11_sou_v_div_rates$comp_organ, 
@@ -677,6 +700,24 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
         # Combine DevSeq and Brawand 2011 GE divergence data
         compSouVDivRates11 <- rbind(DevSeq_sou_v_div_rates, Brawand11_sou_v_div_rates)
+
+
+        div_times_Br_all <- rep(c(6.7, 9.1, 15.8, 29.4, 90, 159, 177, 312), times=6)
+        comp_organ_all <- rep(colnames(Brawand11_organ_cor), each=8)
+        comp_spec_all <- rep(rownames(Br2011_all_sou_v[1:8,]), times=6)
+        dataset_all <- rep("Mammals", 48)
+
+        Brawand11_all_sou_v_div_rates <- data.frame(cbind(comp_spec_all, comp_organ_all, div_times_Br_all, 
+            Brawand2011_all_sou_v_div, dataset_all), stringsAsFactors=FALSE)
+
+        Brawand11_all_sou_v_div_rates$div_times_Br_all <- as.numeric(Brawand11_all_sou_v_div_rates$div_times)
+        Brawand11_all_sou_v_div_rates$correlation <- as.numeric(Brawand11_all_sou_v_div_rates$correlation)
+
+        # Remove ppy testis sample (has NA value)
+        Brawand11_all_sou_v_div_rates <- Brawand11_all_sou_v_div_rates[c(-43),]
+
+        Brawand11_all_sou_v_div_rates$comp_organ_all <- factor(Brawand11_all_sou_v_div_rates$comp_organ, 
+            levels = unique(Brawand11_all_sou_v_div_rates$comp_organ))
 
     }
 
@@ -693,6 +734,164 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     Brawand_sou_v_div_rates_comp$dataset <- 'Mammals_DevSeq'
     Brawand11_sou_v_div_rates_comp$dataset <- 'Mammals_Brawand '
     compSouVDivRatesBr <- rbind(Brawand_sou_v_div_rates_comp, Brawand11_sou_v_div_rates_comp)
+
+
+
+
+#---------------------------- Test the logarithmic regression model ----------------------------
+
+
+    getModelFormula <- function(model) {
+
+        formula <- as.formula(paste0("y ~ ", round(coefficients(model)[1], 2), "", 
+            paste(sprintf(" %+.2f*%s ", 
+                coefficients(model)[-1], 
+                names(coefficients(model)[-1])), 
+            collapse="")
+            )
+        )
+
+        return(formula)
+    }
+
+
+    DevSeq_log_pea_lm <- lm(correlation ~ log(div_times), data = compDivRates[1:48,])
+    Br_log_pea_lm <- lm(correlation ~ log(div_times), data = compDivRates11[49:nrow(compDivRates),])
+
+    DevSeq_log_pea_lm_form <- getModelFormula(model = DevSeq_log_pea_lm)
+    # y ~ 1.05 - 0.08 * log(div_times)
+    Br_log_pea_lm_form <- getModelFormula(model = Br_log_pea_lm)
+    # y ~ 0.99 - 0.04 * log(div_times)
+
+
+    # log regression model for DevSeq pearson
+    DevSeq_log_pea_lm_form_eq <- function(x) {
+        pea_cor <- 1.04705 - 0.07686 * log(x)
+        return(pea_cor)
+    }
+    # At 8.2e+05 Myr (8.2e+11 years), the DevSeq log regression model would reach a pearson cor of 0
+    # This is 500 times longer than ATH-red algea divergence time
+
+    # log regression model for DevSeq pearson
+    Br_log_pea_lm_form_eq <- function(x) {
+        pea_cor <-  0.99001 - 0.04469 * log(x)
+        return(pea_cor)
+    }
+    # At 4.1e+09 Myr (4.1e+15 years), the Brawand log regression model would reach a pearson cor of 0
+
+
+    # A log model will go to infinite -> check if pearson cor would reach 0 at emergence of plants
+    # divergence times are estimated taxon pair times from TimeTree
+    # http://www.timetree.org/ 
+    # Angiosperms (Basal angiosperm, Amborella; 181)
+    # Spermatophyta (seed plants: angiosperms, gymnosperms; 313)
+    # Euphyllophyta (ferns and seed plants; 402), 
+    # Tracheophyta (vascular plants; 431)
+    # Bryophyta (non-vascular land plants: liverworts, hornworts and mosses; 471)
+    # Charophyta (green algae, e.g. Coleochaetophyceae - one of the closest relatives to land plants; 778)
+    # Chlorophyta (green algae: Chlorophyta and Charophyta/Streptophyta, e.g. volvox sp.; 1150)
+    # Viridiplantae (green plants: 1150)
+    # Rhodophyta (red algea; 1660)
+    div_times_for_DevSeq <- c(7.1, 9.4, 25.6, 46, 106, 160, 181, 313, 402, 431, 471, 778, 1150, 1660)
+    div_times_list_for_DevSeq <- list(div_times_for_DevSeq)
+    species_for_DevSeq <- data.frame(Taxon=c("A.lyrata", "C.rubella", "E.salsugineum", "T.hassleriana", 
+        "M.truncatula", "B.distachyon", "Angiosperms", "Spermatophyta", "Euphyllophyta", "Tracheophyta", 
+        "Bryophyta", "Charophyta", "Chlorophyta", "Rhodophyta"))
+
+
+    estimated_cor_for_DevSeq <- t(as.data.frame(do.call(cbind, lapply(div_times_for_DevSeq, 
+        DevSeq_log_pea_lm_form_eq))))
+    colnames(estimated_cor_for_DevSeq) <- "Estimated_cor"
+    div_times_for_DevSeq <- data.frame(Divergence_time_Myr=div_times_for_DevSeq)
+    DevSeq_log_pea_est <- cbind(div_times_for_DevSeq, species_for_DevSeq, estimated_cor_for_DevSeq)
+
+
+    # Check Brawand sOU model based on GE data for HS to MDO
+    # Compare model predictions with complete Brawand data
+    Br_log_sOU_lm <- lm(correlation ~ log(div_times), data = Brawand11_sou_v_div_rates)
+    Br_log_sOU_lm_form <- getModelFormula(model = Br_log_sOU_lm)
+    # y ~ -0.15 + 0.14 * log(div_times)
+
+    Br_all_log_sOU_lm <- lm(correlation ~ log(div_times_Br_all), data = Brawand11_all_sou_v_div_rates)
+    Br_all_log_sOU_lm_form <- getModelFormula(model = Br_all_log_sOU_lm)
+    # y ~ -0.2 + 0.16 * log(div_times_Br_all)
+
+
+    # log regression model for DevSeq pearson
+    Br_log_sOU_lm_form_eq <- function(x) {
+        sOU <- -0.1456 + 0.1429 * log(x)
+        return(sOU)
+    }
+    # At 8.2e+05 Myr (8.2e+11 years), the DevSeq log regression model would reach a pearson cor of 0
+    # This is 500 times longer than ATH-red algea divergence time
+
+    # log regression model for DevSeq pearson
+    Br_all_log_sOU_lm_form_eq <- function(x) {
+        sOU <-  -0.2014 + 0.1594 * log(x)
+        return(sOU)
+    }
+
+
+    # Generate data based on log regression model that was built with Brawand11
+    # sOU model with variable-µ distance and expression data from 7-150Myr
+    # Use this model to predict transcriptome diostance at 350 Myr, and compare this
+    # with real data from Brawand chicken ortholog genes
+
+    x_Br_grid <- seq(6.7, 350, length = 250)  ## prediction grid
+    x_Br_grid_list <- list(x_Br_grid)
+    # Compute data points based on model
+    regr_values <- as.numeric(as.data.frame(do.call(cbind, lapply(x_Br_grid, Br_log_sOU_lm_form_eq))))
+    div_time <- data.frame(div_time = x_Br_grid)
+    regr_values <- data.frame(sOU_value = regr_values)
+    Br_regr_pred <- cbind(div_time, regr_values)
+
+    gga_ge_div <- rbind(Brawand11_all_sou_v_div_rates[8,], Brawand11_all_sou_v_div_rates[16,], 
+        Brawand11_all_sou_v_div_rates[24,], Brawand11_all_sou_v_div_rates[32,], Brawand11_all_sou_v_div_rates[40,], 
+        Brawand11_all_sou_v_div_rates[47,])
+
+    Br_log_sOU_lm_form_txt <- paste(format(Br_log_sOU_lm_form))
+
+
+
+    # Make plot with predictive log regression
+    plotDivPredict <- function(data, data2, regr_form) {
+
+      fname <- sprintf('%s.jpg', paste("Br_prediction", sep="_"))
+
+      p <- ggplot(data=data, aes(x=div_time, y=sOU_value)) + 
+      geom_line(size = 3) + 
+      geom_point(data=data2, aes(x=div_times_Br_all, y=correlation), size=5, colour="red") + 
+      scale_x_continuous(limits = c(6.7,350), expand = c(0.02,0)) + 
+      scale_y_continuous(limits = c(0, 1.3), expand = c(0.02, 0)) + 
+      geom_text(label = regr_form, x = 95, y = 1.2, color = "black", size=8.5) + 
+      guides(color = guide_legend(ncol = 3))
+
+      q <- p + theme_bw() + xlab("Divergence time from HSA (Myr)") + ylab("Transcriptome distance") + 
+      theme(text=element_text(size=16), 
+        axis.ticks.length=unit(0.35, "cm"), 
+        axis.ticks = element_line(colour = "black", size = 0.7),  
+        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
+        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
+        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
+        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
+        panel.grid.major = element_line(color="#d5d5d5"),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.minor.y = element_blank(), 
+        legend.position = c(0.757, 0.888), 
+        legend.title = element_blank(), 
+        legend.text = element_text(size=21.5), 
+        legend.spacing.x = unit(0.5, 'cm'), 
+        legend.key.size = unit(0.95, "cm"), 
+        legend.background=element_blank()) 
+
+      ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+        width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
+    }
+
+    plotDivPredict(data = Br_regr_pred, data2 = gga_ge_div, regr_form = Br_log_sOU_lm_form_txt)
 
 
 
