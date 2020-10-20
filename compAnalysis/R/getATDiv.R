@@ -710,14 +710,14 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         Brawand11_all_sou_v_div_rates <- data.frame(cbind(comp_spec_all, comp_organ_all, div_times_Br_all, 
             Brawand2011_all_sou_v_div, dataset_all), stringsAsFactors=FALSE)
 
-        Brawand11_all_sou_v_div_rates$div_times_Br_all <- as.numeric(Brawand11_all_sou_v_div_rates$div_times)
+        Brawand11_all_sou_v_div_rates$div_times_Br_all <- as.numeric(Brawand11_all_sou_v_div_rates$div_times_Br_all)
         Brawand11_all_sou_v_div_rates$correlation <- as.numeric(Brawand11_all_sou_v_div_rates$correlation)
 
         # Remove ppy testis sample (has NA value)
         Brawand11_all_sou_v_div_rates <- Brawand11_all_sou_v_div_rates[c(-43),]
 
-        Brawand11_all_sou_v_div_rates$comp_organ_all <- factor(Brawand11_all_sou_v_div_rates$comp_organ, 
-            levels = unique(Brawand11_all_sou_v_div_rates$comp_organ))
+        Brawand11_all_sou_v_div_rates$comp_organ_all <- factor(Brawand11_all_sou_v_div_rates$comp_organ_all, 
+            levels = unique(Brawand11_all_sou_v_div_rates$comp_organ_all))
 
     }
 
