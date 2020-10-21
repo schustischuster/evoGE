@@ -79,6 +79,14 @@ makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 ```
+
+To format the ortholog gene expression tables for correct parsing in treeExp2, execute the following command. The results will be saved in ./compAnalysis/output/data.
+
+```R
+getTaxoInput()
+
+```
+
 The following function will compare the gene expression divergence rates between Angiosperms (DevSeq data set) and Mammals (Brawand data set): 
 
 ```R
