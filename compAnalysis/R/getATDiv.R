@@ -263,7 +263,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getDSOrganCor <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(cor(df, method=coefficient))
         df_cor <- df_cor[4:nrow(df_cor), 1:3]
 
         # Reshape cor data frame to one column
@@ -347,7 +347,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrBrainCor <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(cor(df, method=coefficient))
         df_cor <- df_cor[5:nrow(df_cor), 1:4]
 
         # Reshape cor data frame to one column
@@ -373,7 +373,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrCerebCor <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -399,7 +399,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrHtKdLvCor <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -431,7 +431,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrTestisCor <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -463,7 +463,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     div_times <- rep(c(6.7, 9.1, 15.8, 29.4, 90, 159), times=6)
     comp_organ <- rep(colnames(Brawand_organ_cor), each=6)
     comp_spec <- rep(rownames(Brawand_organ_cor), times=6)
-    dataset <- rep("Mammals", 36)
+    dataset <- rep("Mammals(re-analyzed)", 36)
 
     Brawand_GE_div <- rbind(brain_div, cereb_div, heart_div, kidney_div, liver_div, testis_div)
     rownames(Brawand_GE_div) <- NULL
@@ -515,7 +515,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrBrainCor11 <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[5:nrow(df_cor), 1:4]
 
         # Reshape cor data frame to one column
@@ -542,7 +542,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrCerebCor11 <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -569,7 +569,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrHtKdCor11 <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[4:nrow(df_cor), 1:3]
 
         # Reshape cor data frame to one column
@@ -598,7 +598,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrLvCor11 <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -625,7 +625,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrTestisCor11 <- function(df, organ, coefficient) {
 
-        df_cor <- cor(df, method=coefficient)
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -725,14 +725,14 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     # Generate data set with both Brawand data (re-analyzed = "Mammals_DevSeq"; original = "Mammals_Brawand")
     Brawand_div_rates_comp <- Brawand_div_rates
     Brawand11_div_rates_comp <- Brawand11_div_rates
-    Brawand_div_rates_comp$dataset[Brawand_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_DevSeq'
-    Brawand11_div_rates_comp$dataset[Brawand11_div_rates_comp$dataset == 'Mammals'] <- 'Mammals_Brawand'
+    Brawand_div_rates_comp$dataset[Brawand_div_rates_comp$dataset == 'Mammals'] <- 'Mammals(re-analyzed)'
+    Brawand11_div_rates_comp$dataset[Brawand11_div_rates_comp$dataset == 'Mammals'] <- 'Mammals '
     compDivRatesBr <- rbind(Brawand_div_rates_comp, Brawand11_div_rates_comp)
 
     Brawand_sou_v_div_rates_comp <- Brawand_sou_v_div_rates
     Brawand11_sou_v_div_rates_comp <- Brawand11_sou_v_div_rates
-    Brawand_sou_v_div_rates_comp$dataset <- 'Mammals_DevSeq'
-    Brawand11_sou_v_div_rates_comp$dataset <- 'Mammals_Brawand '
+    Brawand_sou_v_div_rates_comp$dataset <- 'Mammals(re-analyzed)'
+    Brawand11_sou_v_div_rates_comp$dataset <- 'Mammals '
     compSouVDivRatesBr <- rbind(Brawand_sou_v_div_rates_comp, Brawand11_sou_v_div_rates_comp)
 
 
@@ -817,15 +817,13 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     # y ~ -0.2 + 0.16 * log(div_times_Br_all)
 
 
-    # log regression model for DevSeq pearson
+    # log regression model for DevSeq sOU_v
     Br_log_sOU_lm_form_eq <- function(x) {
         sOU <- -0.1456 + 0.1429 * log(x)
         return(sOU)
     }
-    # At 8.2e+05 Myr (8.2e+11 years), the DevSeq log regression model would reach a pearson cor of 0
-    # This is 500 times longer than ATH-red algea divergence time
 
-    # log regression model for DevSeq pearson
+    # log regression model for DevSeq sOU_v
     Br_all_log_sOU_lm_form_eq <- function(x) {
         sOU <-  -0.2014 + 0.1594 * log(x)
         return(sOU)
@@ -845,25 +843,40 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     regr_values <- data.frame(sOU_value = regr_values)
     Br_regr_pred <- cbind(div_time, regr_values)
 
+    oan_ge_div <- rbind(Brawand11_all_sou_v_div_rates[7,], Brawand11_all_sou_v_div_rates[15,], 
+        Brawand11_all_sou_v_div_rates[23,], Brawand11_all_sou_v_div_rates[31,], Brawand11_all_sou_v_div_rates[39,], 
+        Brawand11_all_sou_v_div_rates[46,])
+
     gga_ge_div <- rbind(Brawand11_all_sou_v_div_rates[8,], Brawand11_all_sou_v_div_rates[16,], 
         Brawand11_all_sou_v_div_rates[24,], Brawand11_all_sou_v_div_rates[32,], Brawand11_all_sou_v_div_rates[40,], 
         Brawand11_all_sou_v_div_rates[47,])
 
     Br_log_sOU_lm_form_txt <- paste(format(Br_log_sOU_lm_form))
 
+    Br_log_sOU_lm_form_txt <- Br_log_sOU_lm_form_txt %<>% 
+                                   gsub("~", "=", .) %>% 
+                                   gsub("log", "ln", .) %>% 
+                                   gsub("div_times", "x", .)
+
 
 
     # Make plot with predictive log regression
-    plotDivPredict <- function(data, data2, regr_form) {
+    plotDivPredict <- function(data, data2, data3, regr_form) {
 
       fname <- sprintf('%s.jpg', paste("Br_prediction", sep="_"))
 
       p <- ggplot(data=data, aes(x=div_time, y=sOU_value)) + 
       geom_line(size = 3) + 
       geom_point(data=data2, aes(x=div_times_Br_all, y=correlation), size=5, colour="red") + 
-      scale_x_continuous(limits = c(6.7,350), expand = c(0.02,0)) + 
-      scale_y_continuous(limits = c(0, 1.3), expand = c(0.02, 0)) + 
-      geom_text(label = regr_form, x = 95, y = 1.2, color = "black", size=8.5) + 
+      geom_point(data=data3, aes(x=div_times_Br_all, y=correlation), size=5, colour="red") + 
+      scale_x_continuous(limits = c(2.55, 350), expand = c(0.02,0)) + 
+      scale_y_continuous(limits = c(0, 1.31), expand = c(0.02, 0)) + 
+      geom_text(label = regr_form, x = 72, y = 1.235, color = "black", size=8.5) + 
+      geom_rect(xmin = 0, xmax = 159, ymin = 0, ymax = 1.14, color="blue3", fill=NA, size=0.7) + 
+      annotate("text", x = 177, y = 0.1377, label= "Platypus", size=8, angle = 90) + 
+      annotate("text", x = 312, y = 0.1110, label= "Mouse", size=8, angle = 90) + 
+      geom_segment(x = 177, xend = 177, y = -0.05, yend = 0.0025, color="black", size=0.7) + 
+      geom_segment(x = 312, xend = 312, y = -0.05, yend = 0.0025, color="black", size=0.7) + 
       guides(color = guide_legend(ncol = 3))
 
       q <- p + theme_bw() + xlab("Divergence time from HSA (Myr)") + ylab("Transcriptome distance") + 
@@ -891,7 +904,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
     }
 
-    plotDivPredict(data = Br_regr_pred, data2 = gga_ge_div, regr_form = Br_log_sOU_lm_form_txt)
+    plotDivPredict(data = Br_regr_pred, data2 = gga_ge_div, data3 = oan_ge_div, regr_form = Br_log_sOU_lm_form_txt)
 
 
 
@@ -1056,9 +1069,9 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     names(organ_names_Br) <- "comp_organ"
     names(organ_names_Br11) <- "comp_organ"
     organ_names <- rbind(organ_names_Br, organ_names_Br11)
-    compDivRatesBr_io <- compDivRatesBr
-    compDivRatesBr_io[,2] <- organ_names
-    compDivRatesBr_io$comp_organ <- factor(compDivRatesBr_io$comp_organ)
+    compSouVDivRatesBr_io <- compSouVDivRatesBr
+    compSouVDivRatesBr_io[,2] <- organ_names
+    compSouVDivRatesBr_io$comp_organ <- factor(compSouVDivRatesBr_io$comp_organ)
 
 
     # Retrieve slope value from individual organ regressions and compute p value
@@ -1094,12 +1107,13 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         div_trend <- lstrends(model_lmp, "comp_organ", var = "div_times") # get slopes for regressions
         div_trend_df <- summary(div_trend)
 
-        if (deparse(substitute(corrdata)) == "compDivRates" | deparse(substitute(corrdata)) == "compDivRates11") {
+        if (deparse(substitute(corrdata)) == "compDivRates" | deparse(substitute(corrdata)) == "compDivRates11"
+            | deparse(substitute(corrdata)) == "compSouVDivRates" | deparse(substitute(corrdata)) == "compSouVDivRates11") {
 
             trend_stat_welch <- t.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE)
             trend_stat_wilcox <- wilcox.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE)
 
-        } else if (deparse(substitute(corrdata)) == "compDivRatesBr_io") {
+        } else if (deparse(substitute(corrdata)) == "compSouVDivRatesBr_io") {
 
             trend_stat_welch <- t.test(div_trend_df[1:6,2], div_trend_df[7:12,2], paired = FALSE)
             trend_stat_wilcox <- wilcox.test(div_trend_df[1:6,2], div_trend_df[7:12,2], paired = FALSE)
@@ -1133,14 +1147,22 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     # Slopes and p-values for DevSeq angiosperm vs. original 2011 Brawand mammalian data
     p_values_compDivRates11_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRates11)))
     
+    # Slopes and p-values for DevSeq angiosperm vs. re-analyzed Brawand mammalian data
+    p_values_compSouVDivRates_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compSouVDivRates)))
+
+    # Slopes and p-values for DevSeq angiosperm vs. original 2011 Brawand mammalian data
+    p_values_compSouVDivRates11_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compSouVDivRates11)))
+    
     # Slopes and p-values for Brawand 2011 vs. re-analyzed Brawand data
-    p_values_compDivRatesBr_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRatesBr_io)))
+    p_values_compSouVDivRatesBr_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compSouVDivRatesBr_io)))
     
 
     # Get text string of p-values (rank-sum test) for divergence plots with log models
     p_value_io <- paste("p =", round(p_values_compDivRates_io["Wilcox_test", "log_reg"], 4))
     p_value11_io <- paste("p =", round(p_values_compDivRates11_io["Wilcox_test", "log_reg"], 4))
-    p_valueBr_io <- paste("p =", round(p_values_compDivRatesBr_io["Wilcox_test", "log_reg"], 2))
+    p_value_SouVio <- paste("p =", round(p_values_compSouVDivRates_io["Wilcox_test", "log_reg"], 4))
+    p_value11_SouVio <- paste("p =", round(p_values_compSouVDivRates11_io["Wilcox_test", "log_reg"], 3))
+    p_valueBr_SouVio <- paste("p =", round(p_values_compSouVDivRatesBr_io["Wilcox_test", "log_reg"], 2))
 
 
 
@@ -1278,65 +1300,118 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       
 
       # Make GE divergence plot
-      makeGEDivPlot <- function(data, coefficient, expr_estimation, p_value) {
+      makeGEDivPlot <- function(data, coefficient, expr_estimation, p_value, usage) {
 
-        if (deparse(substitute(data)) == "compDivRates") {
+        if ((deparse(substitute(data)) == "compSouVDivRates11") || 
+            (deparse(substitute(data)) == "compDivRates11")) {
 
-            fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, sep="_"))
             ds_col <- rep(c("#8591c7"), 48)
             bw_col <- rep(c("red"), 35)
-            y_max <- 0.9075
-            legend_x_pos <- 0.7835
-            p_x_pos <- 147
-            p_y_pos <- 0.85
             col_scale <- c("#8591c7", "red")
             fill_scale <- c("#8591c7", "red")
             col_breaks <- c("Angiosperms ", "Mammals")
             fill_breaks <- c("Angiosperms ", "Mammals")
             shape_scale <- c(16, 15)
 
+        } else if (deparse(substitute(data)) == "compSouVDivRates") {
+
+            ds_col <- rep(c("#8591c7"), 48)
+            bw_col <- rep(c("red"), 35)
+            col_scale <- c("#8591c7", "red3")
+            fill_scale <- c("#8591c7", "red3")
+            col_breaks <- c("Angiosperms ", "Mammals(re-analyzed)")
+            fill_breaks <- c("Angiosperms ", "Mammals(re-analyzed)")
+            shape_scale <- c(16, 17)
+
+        } else if (deparse(substitute(data)) == "compSouVDivRatesBr") {
+
+            ds_col <- rep(c("red"), 35)
+            bw_col <- rep(c("red"), 35)
+            col_scale <- c("red", "red3")
+            fill_scale <- c("red3", "red")
+            col_breaks <- c("Mammals ", "Mammals(re-analyzed)")
+            fill_breaks <- c("Mammals ", "Mammals(re-analyzed)")
+            shape_scale <- c(15, 17)
+        }
+
+        if (usage == "main") {
+
+            plot_wdt <- 12.535
+            plot_hdt <- 8
+
+        } else {
+
+            plot_wdt <- 9.5 # condenced plot width for suppl
+            plot_hdt <- 6.75 # condenced plot width for suppl
+        }
+
+        if ((deparse(substitute(data)) == "compSouVDivRates11") && (usage == "main")) {
+
+            fname <- sprintf('%s.jpg', paste("compSouVDivRates11", coefficient, expr_estimation, sep="_"))
+            y_min <- 0
+            y_max <- 1.45
+            legend_x_pos <- 0.241
+            legend_y_pos <- 0.914
+            p_x_pos <- 15
+            p_y_pos <- 1.2
+            ylabel <- "Expression distance"
+
+        } else if ((deparse(substitute(data)) == "compSouVDivRates11") && (usage == "suppl")) {
+
+            fname <- sprintf('%s.jpg', paste("compSouVDivRates11_s", coefficient, expr_estimation, "Brawand2011", sep="_"))
+            y_min <- 0
+            y_max <- 1.45
+            legend_x_pos <- 0.317
+            legend_y_pos <- 0.9
+            p_x_pos <- 18.5
+            p_y_pos <- 1.134
+            ylabel <- "Expression distance"
+
+        } else if (deparse(substitute(data)) == "compSouVDivRates") {
+
+            fname <- sprintf('%s.jpg', paste("compSouVDivRates", coefficient, expr_estimation, "Brawand2011", sep="_"))
+            y_min <- 0.11
+            y_max <- 1.45
+            legend_x_pos <- 0.435
+            legend_y_pos <- 0.9
+            p_x_pos <- 18.5
+            p_y_pos <- 1.158
+            ylabel <- "Expression distance"
+
+        } else if (deparse(substitute(data)) == "compSouVDivRatesBr") {
+
+            fname <- sprintf('%s.jpg', paste("Brawand_vs_Brawand_2011", coefficient, expr_estimation, "Brawand2011", sep="_"))
+            y_min <- 0
+            y_max <- 1.325
+            legend_x_pos <- 0.405
+            legend_y_pos <- 0.9
+            p_x_pos <- 18.5
+            p_y_pos <- 1.0358
+            ylabel <- "Expression distance"
+
         } else if (deparse(substitute(data)) == "compDivRates11") {
 
             fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, "Brawand2011", sep="_"))
-            ds_col <- rep(c("#8591c7"), 48)
-            bw_col <- rep(c("red"), 35)
-            y_max <- 0.935
-            legend_x_pos <- 0.7835
-            p_x_pos <- 147
-            p_y_pos <- 0.873
-            col_scale <- c("#8591c7", "red")
-            fill_scale <- c("#8591c7", "red")
-            col_breaks <- c("Angiosperms ", "Mammals")
-            fill_breaks <- c("Angiosperms ", "Mammals")
-            shape_scale <- c(16, 17)
-
-        } else if (deparse(substitute(data)) == "compDivRatesBr") {
-
-            fname <- sprintf('%s.jpg', paste("Brawand_vs_Brawand_2011", coefficient, expr_estimation, sep="_"))
-            ds_col <- rep(c("#8591c7"), 35)
-            bw_col <- rep(c("red"), 35)
-            y_max <- 0.935
-            legend_x_pos <- 0.6805
-            p_x_pos <- 151.35
-            p_y_pos <- 0.873
-            col_scale <- c("red3", "red")
-            fill_scale <- c("red", "red3")
-            col_breaks <- c("Mammals_Brawand ", "Mammals_DevSeq")
-            fill_breaks <- c("Mammals_Brawand ", "Mammals_DevSeq")
-            shape_scale <- c(17, 15)
+            y_min <- 0.26
+            y_max <- 0.72
+            legend_x_pos <- 0.317
+            legend_y_pos <- 0.9
+            p_x_pos <- 18.5
+            p_y_pos <- 0.62
+            ylabel <- "Pearson distance"
         }
 
         fill_col <- c(as.character(ds_col), as.character(bw_col))
 
         p <- ggplot(data = data, aes(x = div_times, y = correlation, group = dataset, colour = dataset, 
             shape = dataset)) + 
-        geom_smooth(method = "lm", formula = y ~ poly(x, 2, raw=TRUE), se = TRUE,
+        geom_smooth(method = "lm", formula = y ~ log(x), se = TRUE,
             size = 3, aes(fill=fill_col), alpha=0.14) + 
         geom_point(size = 5) + 
         # geom_abline(intercept = coef(devseq_kts)[1], slope = coef(devseq_kts)[2]) + 
         # geom_abline(intercept = coef(brawand_kts)[1], slope = coef(brawand_kts)[2]) + 
         scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-        scale_y_continuous(limits = c(0.565, y_max), expand = c(0.02, 0)) + 
+        scale_y_continuous(limits = c(y_min, y_max), expand = c(0.02, 0)) + 
         scale_color_manual(values = col_scale, breaks = col_breaks) + 
         scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
         scale_shape_manual(values = shape_scale) + 
@@ -1344,12 +1419,12 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         geom_text(label = p_value, x = p_x_pos, y = p_y_pos, color = "black", size=7.5) + 
         guides(color = guide_legend(ncol = 2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
-        q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Pearson's r") + 
+        q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab(ylabel) + 
         theme(text=element_text(size=16), 
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7),  
             plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
             axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
@@ -1358,7 +1433,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
-            legend.position = c(legend_x_pos, 0.914), 
+            legend.position = c(legend_x_pos, legend_y_pos), 
             legend.title = element_blank(), 
             legend.text = element_text(size=22), 
             legend.spacing.x = unit(0.5, 'cm'), 
@@ -1366,17 +1441,23 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             legend.background=element_blank()) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
+            width = plot_wdt, height = plot_hdt, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
-      makeGEDivPlot(data = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = poly_p_value_io)
+      makeGEDivPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
+        p_value = p_value11_SouVio, usage = "main")
+
+      makeGEDivPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
+        p_value = p_value11_SouVio, usage = "suppl")
+
+      makeGEDivPlot(data = compSouVDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
+        p_value = p_value_SouVio, usage = "suppl")
+
+      makeGEDivPlot(data = compSouVDivRatesBr, coefficient = coefficient, expr_estimation = expr_estimation, 
+        p_value = p_valueBr_SouVio, usage = "suppl")
 
       makeGEDivPlot(data = compDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = poly_p_value11_io)
-
-      makeGEDivPlot(data = compDivRatesBr, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = poly_p_valueBr_io)
+        p_value = p_value11_io, usage = "suppl")
 
 
 
