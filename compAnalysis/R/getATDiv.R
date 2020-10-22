@@ -263,7 +263,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getDSOrganCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(cor(df, method=coefficient))
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[4:nrow(df_cor), 1:3]
 
         # Reshape cor data frame to one column
@@ -347,7 +347,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrBrainCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(cor(df, method=coefficient))
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[5:nrow(df_cor), 1:4]
 
         # Reshape cor data frame to one column
@@ -373,7 +373,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrCerebCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(cor(df, method=coefficient))
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -399,7 +399,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrHtKdLvCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(cor(df, method=coefficient))
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -431,7 +431,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrTestisCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(cor(df, method=coefficient))
+        df_cor <- sqrt(1 - cor(df, method=coefficient))
         df_cor <- df_cor[3:nrow(df_cor), 1:2]
 
         # Reshape cor data frame to one column
@@ -1300,7 +1300,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       
 
       # Make GE divergence plot
-      makeGEDivPlot <- function(data, coefficient, expr_estimation, p_value, usage) {
+      makeGEDivPlot <- function(data, coefficient, expr_estimation, p_value, pos) {
 
         if ((deparse(substitute(data)) == "compSouVDivRates11") || 
             (deparse(substitute(data)) == "compDivRates11")) {
@@ -1334,7 +1334,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             shape_scale <- c(15, 17)
         }
 
-        if (usage == "main") {
+        if (pos == "main") {
 
             plot_wdt <- 12.535
             plot_hdt <- 8
@@ -1345,7 +1345,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             plot_hdt <- 6.75 # condenced plot width for suppl
         }
 
-        if ((deparse(substitute(data)) == "compSouVDivRates11") && (usage == "main")) {
+        if ((deparse(substitute(data)) == "compSouVDivRates11") && (pos == "main")) {
 
             fname <- sprintf('%s.jpg', paste("compSouVDivRates11", coefficient, expr_estimation, sep="_"))
             y_min <- 0
@@ -1356,7 +1356,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             p_y_pos <- 1.2
             ylabel <- "Expression distance"
 
-        } else if ((deparse(substitute(data)) == "compSouVDivRates11") && (usage == "suppl")) {
+        } else if ((deparse(substitute(data)) == "compSouVDivRates11") && (pos == "ext")) {
 
             fname <- sprintf('%s.jpg', paste("compSouVDivRates11_s", coefficient, expr_estimation, "Brawand2011", sep="_"))
             y_min <- 0
@@ -1445,19 +1445,19 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       }
 
       makeGEDivPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_value11_SouVio, usage = "main")
+        p_value = p_value11_SouVio, pos = "main")
 
       makeGEDivPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_value11_SouVio, usage = "suppl")
+        p_value = p_value11_SouVio, pos = "ext")
 
       makeGEDivPlot(data = compSouVDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_value_SouVio, usage = "suppl")
+        p_value = p_value_SouVio, pos = "ext")
 
       makeGEDivPlot(data = compSouVDivRatesBr, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_valueBr_SouVio, usage = "suppl")
+        p_value = p_valueBr_SouVio, pos = "ext")
 
       makeGEDivPlot(data = compDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_value11_io, usage = "suppl")
+        p_value = p_value11_io, pos = "ext")
 
 
 
