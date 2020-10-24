@@ -909,154 +909,23 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
 
-#-------------------- Regression models and analysis of covariance (ANCOVA) --------------------
+#------ Compare slopes of regression models and perform analysis of covariance (ANCOVA) ------
 
 
-    # Kendall–Theil Sen Siegel nonparametric linear regression model
-    devseq_kts <- mblm::mblm(correlation ~ div_times, data = DevSeq_div_rates)
-    brawand_kts <- mblm::mblm(correlation ~ div_times, data = Brawand_div_rates)
-    
-    # Kendall–Theil Sen Siegel model as ggplot2 geom_smooth function input
-    kts_model <- function(..., weights = NULL) {mblm::mblm(...)}
+    # Generate df that contains angiosperm, mammalian (Brawand 2011) and re-analyzed mammalian (Brawand-DevSeq) data
+    compDivRates_sOU_all <- rbind(DevSeq_sou_v_div_rates, Brawand11_sou_v_div_rates, Brawand_sou_v_div_rates)
 
-
-    # Analysis of covariance (ANCOVA) of linear regression model
-    # Are the regression lines different from each other in either slope or intercept?
-    # Model1 - two regression lines have different slopes
-    model_lm <- lm(correlation ~ div_times * dataset, data = compDivRates) # model that assumes an interaction between the slopes of the regression lines of the two data sets and the grouping variable
+    model_sOU_lm <- lm(correlation ~ div_times * dataset, data = compDivRates_sOU_all) # model that assumes an interaction between the slopes of the regression lines of the two data sets and the grouping variable
     # this is same as
-    model_lm = lm (correlation ~ div_times + dataset + div_times:dataset, data = compDivRates)
-    anova(model_lm)
-       ### Analysis of Variance Table
+    model_sOU_lm = lm (correlation ~ div_times + dataset + div_times:dataset, data = compDivRates_sOU_all)
+    model_sOU_lst_test <- lstrends(model_sOU_lm, "dataset", var="div_times") # get slopes
+    sOU_pairs_test <- pairs(model_sOU_lst_test) # perform tukey test on all estimates
 
-       ### Response: correlation
-                         ### Df  Sum Sq Mean Sq  F value    Pr(>F)    
-       ### div_times          1 0.39347 0.39347 195.5662 < 2.2e-16 ***
-       ### dataset            1 0.00155 0.00155   0.7717    0.3823    
-       ### div_times:dataset  1 0.04917 0.04917  24.4382 4.222e-06 ***
-       ### Residuals         79 0.15894 0.00201                       
+    sOU_pairs_test_df <- as.data.frame(summary(sOU_pairs_test))
 
-       ### ---
-       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-       ### => Interaction (div_times:dataset) is significant (4.222e-06), 
-       ###    so the slope across groups is different
-
-    # Model1.null - different offset, but same slope
-    model_lm.null <- lm(correlation ~ div_times + dataset, data = compDivRates) # model that assumes the slopes of the regression lines of the two data sets are the same, but the lines have different offset
-    anova(model_lm.null)
-       ### Analysis of Variance Table
-
-       ### Response: correlation
-                 ### Df  Sum Sq Mean Sq  F value Pr(>F)    
-       ### div_times  1 0.39347 0.39347 151.2526 <2e-16 ***
-       ### dataset    1 0.00155 0.00155   0.5969 0.4421    
-       ### Residuals 80 0.20811 0.00260    
-       ### ---
-       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-       ### => The category variable (dataset) is not significant (0.4421), 
-       ###    so the intercepts among groups are not different
-
-    anova(model_lm.null, model_lm)
-
-       ### Analysis of Variance Table
-
-       ### Model 1: correlation ~ div_times + dataset
-       ### Model 2: correlation ~ div_times + dataset + div_times:dataset
-         ### Res.Df     RSS Df Sum of Sq      F    Pr(>F)    
-       ### 1     80 0.20811                                  
-       ### 2     79 0.15894  1  0.049168 24.438 4.222e-06 ***
-
-       ### => Pr(>F) significant different 2.641e-05 
-       ### => Complex model (y ~ x * grouping variable) fits data better than simpler model (y ~ x + grouping variable)
-       ### => Two regression lines are significant different from beeing parallel
-
-    # Compare slopes using lstrends function of lsmeans library
-    m.lst <- lstrends(model_lm, "dataset", var="div_times")
-    pairs(m.lst) 
-
-       ### contrast                  estimate           SE df t.ratio p.value
-       ### Angiosperms - Mammals -0.000878518 0.0001777117 79  -4.944  <.0001
-
-
-    # Analysis of covariance (ANCOVA) of polynomial regression analysis
-    # https://rcompanion.org/handbook/I_10.html
-    model_lmp.null = lm(correlation ~ poly(div_times, 2, raw = TRUE) + dataset, data = compDivRates) # no interaction
-    anova(model_lmp.null)
-
-       ### Analysis of Variance Table
-
-       ### Response: correlation
-                                      ### Df  Sum Sq  Mean Sq F value Pr(>F)    
-       ### poly(div_times, 2, raw = TRUE)  2 0.42691 0.213453 97.2625 <2e-16 ***
-       ### dataset                         1 0.00285 0.002852  1.2997 0.2577    
-       ### Residuals                      79 0.17337 0.002195                   
-       ### ---
-       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-    model_lmp = lm(correlation ~ poly(div_times, 2, raw = TRUE) * dataset, data = compDivRates) # includes interaction
-    anova(model_lmp)
-
-       ### Analysis of Variance Table
-
-       ### Response: correlation
-                                              ### Df  Sum Sq  Mean Sq  F value    Pr(>F)    
-       ### poly(div_times, 2, raw = TRUE)          2 0.42691 0.213453 139.7100 < 2.2e-16 ***
-       ### dataset                                 1 0.00285 0.002852   1.8669    0.1758    
-       ### poly(div_times, 2, raw = TRUE):dataset  2 0.05573 0.027866  18.2387  3.28e-07 ***
-       ### Residuals                              77 0.11764 0.001528                       
-       ### ---
-       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-    anova_poly <- anova(model_lmp.null, model_lmp)
-    poly_p_value <- anova_poly[2,6]
-    poly_p_value <- paste("p =", round(poly_p_value, 8))
-    anova_poly
-
-       ### Analysis of Variance Table
-
-       ### Model 1: correlation ~ poly(div_times, 2, raw = TRUE) + dataset
-       ### Model 2: correlation ~ poly(div_times, 2, raw = TRUE) * dataset
-       ### Res.Df     RSS Df Sum of Sq      F   Pr(>F)    
-       ### 1     79 0.17337                                 
-       ### 2     77 0.11764  2  0.055731 18.239 3.28e-07 ***
-       ### ---
-       ### Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-    # Compare slopes using lstrends function of lsmeans library
-    m.lst <- lstrends(model_lmp, "dataset", var="div_times")
-    pairs(m.lst) 
-
-       ### contrast                   estimate           SE df t.ratio p.value
-       ### Angiosperms  - Mammals -0.001245728 0.0002486821 77  -5.009  <.0001
-
-
-    # Regression analysis of DevSeq and Brawand11 (expression data from 2011 paper) data
-    model_lmp.null11 = lm(correlation ~ poly(div_times, 2, raw = TRUE) + dataset, data = compDivRates11) # no interaction
-    anova(model_lmp.null11)
-    model_lmp11 = lm(correlation ~ poly(div_times, 2, raw = TRUE) * dataset, data = compDivRates11) # includes interaction
-    anova(model_lmp11)
-    anova_poly11 <- anova(model_lmp.null11, model_lmp11)
-    anova_poly11
-    m.lst <- lstrends(model_lmp11, "dataset", var="div_times")
-    pairs(m.lst) 
-    poly_p_value11 <- anova_poly11[2,6]
-    poly_p_value11 <- format(round(poly_p_value11, 5), scientific = TRUE)
-    poly_p_value11 <- paste("p =", poly_p_value11)
-
-
-    # Regression analysis of original and re-analyzed Brawand data
-    model_lmp.nullBr = lm(correlation ~ poly(div_times, 2, raw = TRUE) + dataset, data = compDivRatesBr) # no interaction
-    anova(model_lmp.nullBr)
-    model_lmpBr = lm(correlation ~ poly(div_times, 2, raw = TRUE) * dataset, data = compDivRatesBr) # includes interaction
-    anova(model_lmpBr)
-    anova_polyBr <- anova(model_lmp.nullBr, model_lmpBr)
-    anova_polyBr
-    m.lst <- lstrends(model_lmpBr, "dataset", var="div_times")
-    pairs(m.lst) 
-    poly_p_valueBr <- anova_polyBr[2,6]
-    poly_p_valueBr <- paste("p =", round(poly_p_valueBr, 2))
+    sOU_tukey_p_value <- paste("p =", formatC(sOU_pairs_test_df$p.value[1], format = "e",  digits = 1))
+    sOU11_tukey_p_value <- paste("p =", formatC(sOU_pairs_test_df$p.value[2], format = "e",  digits = 1))
+    sOUBr_tukey_p_value <- paste("p =", round(sOU_pairs_test_df$p.value[3], 2))
 
 
 
@@ -1143,18 +1012,12 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     # Slopes and p-values for DevSeq angiosperm vs. re-analyzed Brawand mammalian data
     p_values_compDivRates_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRates)))
-
     # Slopes and p-values for DevSeq angiosperm vs. original 2011 Brawand mammalian data
     p_values_compDivRates11_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRates11)))
-    
     # Slopes and p-values for DevSeq angiosperm vs. re-analyzed Brawand mammalian data
     p_values_compSouVDivRates_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compSouVDivRates)))
-
     # Slopes and p-values for DevSeq angiosperm vs. original 2011 Brawand mammalian data
     p_values_compSouVDivRates11_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compSouVDivRates11)))
-    
-    # Slopes and p-values for Brawand 2011 vs. re-analyzed Brawand data
-    p_values_compSouVDivRatesBr_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compSouVDivRatesBr_io)))
     
 
     # Get text string of p-values (rank-sum test) for divergence plots with log models
@@ -1162,7 +1025,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     p_value11_io <- paste("p =", round(p_values_compDivRates11_io["Wilcox_test", "log_reg"], 4))
     p_value_SouVio <- paste("p =", round(p_values_compSouVDivRates_io["Wilcox_test", "log_reg"], 4))
     p_value11_SouVio <- paste("p =", round(p_values_compSouVDivRates11_io["Wilcox_test", "log_reg"], 3))
-    p_valueBr_SouVio <- paste("p =", round(p_values_compSouVDivRatesBr_io["Wilcox_test", "log_reg"], 2))
 
 
 
@@ -1205,93 +1067,14 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Create list of models
-    DevSeq_models <- compModel(corrdata = compDivRates[1:48,], experiment = "DevSeq")
-    Brawand_models <- compModel(corrdata = compDivRates[49:nrow(compDivRates),], experiment = "Brawand")
-    Brawand11_models <- compModel(corrdata = compDivRates11[49:nrow(compDivRates11),], experiment = "Brawand11")
+    DevSeq_models <- compModel(corrdata = DevSeq_sou_v_div_rates, experiment = "DevSeq")
+    Brawand_models <- compModel(corrdata = Brawand_sou_v_div_rates, experiment = "Brawand")
+    Brawand11_models <- compModel(corrdata = Brawand11_sou_v_div_rates, experiment = "Brawand11")
 
     model_comp <- rbind(DevSeq_models, Brawand_models, Brawand11_models)
-    # From the rcompanion reference (http://rcompanion.org/rcompanion/e_05.html): 
     # AICc is an adjustment to AIC that is more appropriate for data sets with relatively fewer observations
     # BIC is similar to AIC, but penalizes more for additional terms in the model
     # Smaller is better for AIC, AICc, and BIC
-    # @author: I would recommend AICc for routine use
-
-
-
-    ### ggplot2 implementations of all tested models
-
-    # (1) Polynomial regression with two polynomial terms
-    geom_smooth(method = "lm", formula = y ~ poly(x, 2, raw=TRUE))
-    # OR
-    geom_smooth(method = "lm", formula = y ~ x + I(x^2))
-
-    # (2) Linear regression
-    geom_smooth(method = "lm", formula = y ~ x)
-
-    # (3) Kendall–Theil Sen Siegel nonparametric model for robust regression
-    kts_model <- function(..., weights = NULL) {mblm::mblm(...)}
-    # call in ggplot2
-    geom_smooth(method = kts_model)
-
-    # (4) Linear regression with log-transformed independent variable
-    geom_smooth(method = "lm", formula = y ~ log(x))
-
-    # (5) Linear regression with sqrt-transformed independent variable
-    geom_smooth(method = "lm", formula = y ~ sqrt(x))
-
-    # (6) LOESS regression
-    geom_smooth(method = "loess")
-
-
-    ### Compare fit of all the linear models for DevSeq data
-    model.1 = lm(correlation ~ div_times, data = compDivRates[1:48,]) # lm
-    model.2 = lm(correlation ~ div_times + I(div_times^2), data = compDivRates[1:48,]) # polyg2
-    model.3 = lm(correlation ~ div_times + I(div_times^3), data = compDivRates[1:48,]) # polyg3
-    model.4 = lm(correlation ~ log(div_times), data = compDivRates[1:48,]) # lm with log transf
-    model.5 = lm(correlation ~ sqrt(div_times), data = compDivRates[1:48,]) # lm with sqrt transf
-
-    compareLM(model.1, model.2, model.3, model.4, model.5)
-
-    ### $Models
-       ### Formula                                   
-       ### 1 "correlation ~ div_times"                 
-       ### 2 "correlation ~ div_times + I(div_times^2)"
-       ### 3 "correlation ~ div_times + I(div_times^3)"
-       ### 4 "correlation ~ log(div_times)"            
-       ### 5 "correlation ~ sqrt(div_times)"           
-
-       ### $Fit.criteria
-       ### Rank Df.res    AIC   AICc    BIC R.squared Adj.R.sq   p.value Shapiro.W Shapiro.p
-       ### 1    2     46 -149.3 -148.8 -143.7    0.7776   0.7728 1.273e-16    0.8534 2.688e-05
-       ### 2    3     45 -166.8 -165.8 -159.3    0.8517   0.8451 2.238e-19    0.9351 1.059e-02
-       ### 3    3     45 -163.5 -162.5 -156.0    0.8412   0.8342 1.042e-18    0.9223 3.575e-03
-       ### 4    2     46 -163.5 -163.0 -157.9    0.8346   0.8310 1.348e-19    0.9680 2.122e-01
-       ### 5    2     46 -164.4 -163.8 -158.8    0.8376   0.8340 8.932e-20    0.9029 7.819e-04
-
-    ### Compare fit of all the linear models for Brawand data
-    model.1 = lm(correlation ~ div_times, data = compDivRates[49:83,]) # lm
-    model.2 = lm(correlation ~ div_times + I(div_times^2), data = compDivRates[49:83,]) # polyg2
-    model.3 = lm(correlation ~ div_times + I(div_times^3), data = compDivRates[49:83,]) # polyg3
-    model.4 = lm(correlation ~ log(div_times), data = compDivRates[49:83,]) # lm with log transf
-    model.5 = lm(correlation ~ sqrt(div_times), data = compDivRates[49:83,]) # lm with sqrt transf
-
-    compareLM(model.1, model.2, model.3, model.4, model.5)
-
-    ### $Models
-       ### Formula                                   
-       ### 1 "correlation ~ div_times"                 
-       ### 2 "correlation ~ div_times + I(div_times^2)"
-       ### 3 "correlation ~ div_times + I(div_times^3)"
-       ### 4 "correlation ~ log(div_times)"            
-       ### 5 "correlation ~ sqrt(div_times)"           
-
-       ### $Fit.criteria
-       ### Rank Df.res    AIC   AICc    BIC R.squared Adj.R.sq   p.value Shapiro.W Shapiro.p
-       ### 1    2     33 -125.1 -124.3 -120.5    0.5435   0.5297 4.387e-07    0.8020 2.238e-05
-       ### 2    3     32 -126.5 -125.2 -120.3    0.5855   0.5596 7.580e-07    0.8241 6.276e-05
-       ### 3    3     32 -125.8 -124.4 -119.5    0.5769   0.5504 1.056e-06    0.8204 5.270e-05
-       ### 4    2     33 -129.8 -129.0 -125.1    0.6006   0.5885 4.623e-08    0.8114 3.446e-05
-       ### 5    2     33 -128.7 -127.9 -124.0    0.5877   0.5752 7.914e-08    0.7885 1.225e-05
 
 
 
