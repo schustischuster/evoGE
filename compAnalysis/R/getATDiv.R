@@ -833,7 +833,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     # Generate data based on log regression model that was built with Brawand11
     # sOU model with variable-µ distance and expression data from 7-150Myr
     # Use this model to predict transcriptome diostance at 350 Myr, and compare this
-    # with real data from Brawand chicken ortholog genes
+    # with real data from Brawand chicken (gga) ortholog genes
 
     x_Br_grid <- seq(6.7, 350, length = 250)  ## prediction grid
     x_Br_grid_list <- list(x_Br_grid)
@@ -842,10 +842,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     div_time <- data.frame(div_time = x_Br_grid)
     regr_values <- data.frame(sOU_value = regr_values)
     Br_regr_pred <- cbind(div_time, regr_values)
-
-    oan_ge_div <- rbind(Brawand11_all_sou_v_div_rates[7,], Brawand11_all_sou_v_div_rates[15,], 
-        Brawand11_all_sou_v_div_rates[23,], Brawand11_all_sou_v_div_rates[31,], Brawand11_all_sou_v_div_rates[39,], 
-        Brawand11_all_sou_v_div_rates[46,])
 
     gga_ge_div <- rbind(Brawand11_all_sou_v_div_rates[8,], Brawand11_all_sou_v_div_rates[16,], 
         Brawand11_all_sou_v_div_rates[24,], Brawand11_all_sou_v_div_rates[32,], Brawand11_all_sou_v_div_rates[40,], 
@@ -861,21 +857,19 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Make plot with predictive log regression
-    plotDivPredict <- function(data, data2, data3, regr_form) {
+    plotDivPredict <- function(data, data2, regr_form) {
 
       fname <- sprintf('%s.jpg', paste("Br_prediction", sep="_"))
 
       p <- ggplot(data=data, aes(x=div_time, y=sOU_value)) + 
       geom_line(size = 3) + 
       geom_point(data=data2, aes(x=div_times_Br_all, y=correlation), size=5, colour="red") + 
-      geom_point(data=data3, aes(x=div_times_Br_all, y=correlation), size=5, colour="red") + 
-      scale_x_continuous(limits = c(2.55, 350), expand = c(0.02,0)) + 
+      scale_x_continuous(limits = c(2.0, 350), expand = c(0.02,0)) + 
       scale_y_continuous(limits = c(0, 1.31), expand = c(0.02, 0)) + 
-      geom_text(label = regr_form, x = 72, y = 1.235, color = "black", size=8.5) + 
-      geom_rect(xmin = 0, xmax = 159, ymin = 0, ymax = 1.14, color="blue3", fill=NA, size=0.7) + 
-      annotate("text", x = 177, y = 0.1377, label= "Platypus", size=8, angle = 90) + 
-      annotate("text", x = 312, y = 0.1110, label= "Mouse", size=8, angle = 90) + 
-      geom_segment(x = 177, xend = 177, y = -0.05, yend = 0.0025, color="black", size=0.7) + 
+      geom_text(label = regr_form, x = 101, y = 1.193, color = "black", size=7.4) + 
+      geom_rect(xmin = 12, xmax = 26, ymin = 1.1845, ymax = 1.2, color="black", fill="black", size=0.7) + 
+      geom_rect(xmin = 0, xmax = 159, ymin = 0, ymax = 1.09, color="blue3", fill=NA, size=0.7) + 
+      annotate("text", x = 312, y = 0.137, label= "Mouse", size=8, angle = 90) + 
       geom_segment(x = 312, xend = 312, y = -0.05, yend = 0.0025, color="black", size=0.7) + 
       guides(color = guide_legend(ncol = 3))
 
@@ -884,7 +878,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         axis.ticks.length=unit(0.35, "cm"), 
         axis.ticks = element_line(colour = "black", size = 0.7),  
         plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
         axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
         axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
         axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
@@ -901,10 +895,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         legend.background=element_blank()) 
 
       ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-        width = 12.535, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
+        width = 9.5, height = 6.75, dpi = 300, units = c("in"), limitsize = FALSE) 
     }
 
-    plotDivPredict(data = Br_regr_pred, data2 = gga_ge_div, data3 = oan_ge_div, regr_form = Br_log_sOU_lm_form_txt)
+    plotDivPredict(data = Br_regr_pred, data2 = gga_ge_div, regr_form = Br_log_sOU_lm_form_txt)
 
 
 
@@ -1130,57 +1124,52 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
         if ((deparse(substitute(data)) == "compSouVDivRates11") && (pos == "main")) {
 
-            fname <- sprintf('%s.jpg', paste("compSouVDivRates11", coefficient, expr_estimation, sep="_"))
+            fname <- sprintf('%s.jpg', paste("compSouVDivRates11", coefficient, "dist", expr_estimation, sep="_"))
             y_min <- 0
             y_max <- 1.45
+            y_title_r <- 15
             legend_x_pos <- 0.241
             legend_y_pos <- 0.914
-            p_x_pos <- 15
-            p_y_pos <- 1.2
             ylabel <- "Expression distance"
 
         } else if ((deparse(substitute(data)) == "compSouVDivRates11") && (pos == "ext")) {
 
-            fname <- sprintf('%s.jpg', paste("compSouVDivRates11_s", coefficient, expr_estimation, "Brawand2011", sep="_"))
+            fname <- sprintf('%s.jpg', paste("compSouVDivRates11_s", coefficient, "dist", expr_estimation, "Brawand2011", sep="_"))
             y_min <- 0
             y_max <- 1.45
+            y_title_r <- 15
             legend_x_pos <- 0.317
             legend_y_pos <- 0.9
-            p_x_pos <- 18.5
-            p_y_pos <- 1.134
             ylabel <- "Expression distance"
 
         } else if (deparse(substitute(data)) == "compSouVDivRates") {
 
-            fname <- sprintf('%s.jpg', paste("compSouVDivRates", coefficient, expr_estimation, "Brawand2011", sep="_"))
+            fname <- sprintf('%s.jpg', paste("compSouVDivRates", coefficient, "dist", expr_estimation, "Brawand2011", sep="_"))
             y_min <- 0.11
             y_max <- 1.45
+            y_title_r <- 15
             legend_x_pos <- 0.435
             legend_y_pos <- 0.9
-            p_x_pos <- 18.5
-            p_y_pos <- 1.158
             ylabel <- "Expression distance"
 
         } else if (deparse(substitute(data)) == "compSouVDivRatesBr") {
 
-            fname <- sprintf('%s.jpg', paste("Brawand_vs_Brawand_2011", coefficient, expr_estimation, "Brawand2011", sep="_"))
+            fname <- sprintf('%s.jpg', paste("Brawand_vs_Brawand_2011", coefficient, "dist", expr_estimation, "Brawand2011", sep="_"))
             y_min <- 0
             y_max <- 1.325
+            y_title_r <- 15
             legend_x_pos <- 0.405
             legend_y_pos <- 0.9
-            p_x_pos <- 18.5
-            p_y_pos <- 1.0358
             ylabel <- "Expression distance"
 
         } else if (deparse(substitute(data)) == "compDivRates11") {
 
-            fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, expr_estimation, "Brawand2011", sep="_"))
+            fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, "dist", expr_estimation, "Brawand2011", sep="_"))
             y_min <- 0.26
             y_max <- 0.72
+            y_title_r <- 17.25
             legend_x_pos <- 0.317
             legend_y_pos <- 0.9
-            p_x_pos <- 18.5
-            p_y_pos <- 0.62
             ylabel <- "Pearson distance"
         }
 
@@ -1199,7 +1188,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
         scale_shape_manual(values = shape_scale) + 
         scale_size(range = c(0.5, 12)) + 
-        geom_text(label = p_value, x = p_x_pos, y = p_y_pos, color = "black", size=7.5) + 
         guides(color = guide_legend(ncol = 2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
         q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab(ylabel) + 
@@ -1207,7 +1195,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7),  
             plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = y_title_r, b = 0, l = 11), colour="black"), 
             axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
@@ -1228,19 +1216,19 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       }
 
       makeGEDivPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_value11_SouVio, pos = "main")
+        pos = "main")
 
       makeGEDivPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_value11_SouVio, pos = "ext")
+        pos = "ext")
 
       makeGEDivPlot(data = compSouVDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_value_SouVio, pos = "ext")
+        pos = "ext")
 
       makeGEDivPlot(data = compSouVDivRatesBr, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_valueBr_SouVio, pos = "ext")
+        pos = "ext")
 
       makeGEDivPlot(data = compDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        p_value = p_value11_io, pos = "ext")
+        pos = "ext")
 
 
 
@@ -1253,28 +1241,36 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), coefficient, expr_estimation, sep="_"))
 
       if (deparse(substitute(data)) == "Brawand_div_rates") {
-        y_max <- 0.91
+        y_min <- 0.34
+        y_max <- 0.692
+        yseg_min <- 0.24
+        yseg_max <- 0.3418
+        y_text <- 0.3525
 
       } else if (deparse(substitute(data)) == "Brawand11_div_rates") {
-        y_max <- 0.97
+        y_min <- 0.20
+        y_max <- 0.71
+        yseg_min <- 0.15
+        yseg_max <- 0.2027
+        y_text <- 0.218
       }
 
       p <- ggplot(data=data, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
       geom_line(size = 3) +  
       scale_x_continuous(limits = c(6,160), expand = c(0.02,0), breaks = c(7,9,16,29,90,159)) + 
-      scale_y_continuous(limits = c(0.445, y_max), expand = c(0.02, 0)) + 
-      annotate("text", x=15.5, y=0.459, label= "Primates", size=8) + 
-      annotate("text", x=90, y=0.459, label= "Mouse", size=8) + 
-      annotate("text", x=151, y=0.459, label= "Opossum", size=8) + 
-      geom_segment(x=7, xend=7, y=0.435, yend=0.445, color="black", size=0.7) + 
-      geom_segment(x=9, xend=9, y=0.435, yend=0.445, color="black", size=0.7) + 
-      geom_segment(x=16, xend=16, y=0.435, yend=0.445, color="black", size=0.7) + 
-      geom_segment(x=29, xend=29, y=0.435, yend=0.445, color="black", size=0.7) + 
-      geom_segment(x=90, xend=90, y=0.435, yend=0.445, color="black", size=0.7) + 
-      geom_segment(x=159, xend=159, y=0.435, yend=0.445, color="black", size=0.7) + 
+      scale_y_continuous(limits = c(y_min, y_max), expand = c(0.02, 0)) + 
+      annotate("text", x=15.5, y=y_text, label= "Primates", size=8) + 
+      annotate("text", x=90, y=y_text, label= "Mouse", size=8) + 
+      annotate("text", x=151, y=y_text, label= "Opossum", size=8) + 
+      geom_segment(x=7, xend=7, y=yseg_min, yend=yseg_max, color="black", size=0.7) + 
+      geom_segment(x=9, xend=9, y=yseg_min, yend=yseg_max, color="black", size=0.7) + 
+      geom_segment(x=16, xend=16, y=yseg_min, yend=yseg_max, color="black", size=0.7) + 
+      geom_segment(x=29, xend=29, y=yseg_min, yend=yseg_max, color="black", size=0.7) + 
+      geom_segment(x=90, xend=90, y=yseg_min, yend=yseg_max, color="black", size=0.7) + 
+      geom_segment(x=159, xend=159, y=yseg_min, yend=yseg_max, color="black", size=0.7) + 
       guides(color = guide_legend(ncol = 3))
 
-      q <- p + theme_bw() + xlab("Divergence time from HSA (Myr)") + ylab("Pearson's r w/ HSA") + 
+      q <- p + theme_bw() + xlab("Divergence time from HSA (Myr)") + ylab("Pearson distance") + 
       theme(text=element_text(size=16), 
         axis.ticks.length=unit(0.35, "cm"), 
         axis.ticks = element_line(colour = "black", size = 0.7),  
@@ -1288,7 +1284,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         panel.grid.major = element_line(color="#d5d5d5"),
         panel.grid.minor.x = element_blank(), 
         panel.grid.minor.y = element_blank(), 
-        legend.position = c(0.757, 0.888), 
+        legend.position = c(0.244, 0.889), 
         legend.title = element_blank(), 
         legend.text = element_text(size=21.5), 
         legend.spacing.x = unit(0.5, 'cm'), 
@@ -1311,45 +1307,36 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
    # Make GE divergence plot
    makeOrgRegPlot <- function(data, coefficient, expr_estimation, p_value) {
 
-      if (deparse(substitute(data)) == "compDivRates") {
+      fname <- sprintf('%s.jpg', paste("organ_regressions_sOUv", coefficient, "dist", expr_estimation, sep="_"))
 
-        fname <- sprintf('%s.jpg', paste("organ_regressions", coefficient, expr_estimation, sep="_"))
-        ds_col <- rep(c("#8591c7"), 48)
-        bw_col <- rep(c("red"), 35)
-        y_max <- 0.9075
-        legend_x_pos <- 0.7835
-        p_x_pos <- 147
-        p_y_pos <- 0.8844
-
-      } else if (deparse(substitute(data)) == "compDivRates11") {
-
-        fname <- sprintf('%s.jpg', paste("organ_regressions11", coefficient, expr_estimation, sep="_"))
-        ds_col <- rep(c("#8591c7"), 48)
-        bw_col <- rep(c("red"), 35)
-        y_max <- 0.935
-        legend_x_pos <- 0.7835
-        p_x_pos <- 147
-        p_y_pos <- 0.91
-      }
+      ds_col <- rep(c("#8591c7"), 48)
+      bw_col <- rep(c("red"), 35)
+      col_scale <- c("#8591c7", "red")
+      fill_scale <- c("#8591c7", "red")
+      col_breaks <- c("Angiosperms ", "Mammals")
+      fill_breaks <- c("Angiosperms ", "Mammals")
+      shape_scale <- c(16, 15)
 
       fill_col <- c(as.character(ds_col), as.character(bw_col))
 
-      p <- ggplot(data = data, aes(x = div_times, y = correlation, group = comp_organ, colour = comp_organ, shape = dataset, linetype = dataset)) + 
-      geom_smooth(method = "lm", formula = y ~ poly(x, 2, raw=TRUE), se = FALSE, 
-        size = 3, alpha=0.14) + 
-      geom_point(size = 5.75) + 
+      p <- ggplot(data = data, aes(x = div_times, y = correlation, group = comp_organ, colour = dataset, shape = dataset, linetype = dataset)) + 
+      geom_point(size = 5) + 
+      geom_smooth(method = "lm", formula = y ~ log(x), se = FALSE, 
+        size = 2.75, aes(fill=fill_col)) + 
       scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(0.56, y_max), expand = c(0.02, 0)) + 
+      scale_y_continuous(limits = c(0, 1.45), expand = c(0.02, 0)) + 
+      scale_color_manual(values = col_scale, breaks = col_breaks) + 
+      scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
+      scale_shape_manual(values = shape_scale) + 
       scale_size(range = c(0.5, 12)) + 
-      geom_text(label = p_value, x = p_x_pos, y = p_y_pos, color = "black", size=7.5) + 
-      guides(color = guide_legend(keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
+      guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
-      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Pearson's r") + 
+      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Expression distance") + 
       theme(text=element_text(size=16), 
         axis.ticks.length=unit(0.35, "cm"), 
         axis.ticks = element_line(colour = "black", size = 0.7),  
         plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
         axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
         axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
         axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
@@ -1358,7 +1345,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         panel.grid.major = element_line(color="#d5d5d5"),
         panel.grid.minor.x = element_blank(), 
         panel.grid.minor.y = element_blank(), 
-        legend.position = "right", 
+        legend.position = c(0.317, 0.9), 
         legend.title = element_blank(), 
         legend.text = element_text(size=22), 
         legend.spacing.x = unit(0.5, 'cm'), 
@@ -1366,15 +1353,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         legend.background=element_blank()) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 15, height = 8.325, dpi = 300, units = c("in"), limitsize = FALSE) 
+            width = 9.5, height = 6.75, dpi = 300, units = c("in"), limitsize = FALSE) 
   }
 
-  makeOrgRegPlot(data = compDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-    p_value = poly_p_value11_io)
-
-  makeOrgRegPlot(data = compDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
-    p_value = poly_p_value_io)
-  
+  makeOrgRegPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation)
 
 }
 
