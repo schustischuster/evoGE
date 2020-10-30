@@ -80,6 +80,7 @@ makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearso
 
 ```
 
+If pearson expression correlation is chosen, it will compute both the metric pearson distance and the expression distance that is based on the stationary Ohrenstein-Ulenbeck model with variable µ-distance. 
 To format the ortholog gene expression tables for correct parsing in treeExp2, execute the following command. The results will be saved in ./compAnalysis/output/data.
 
 ```R
