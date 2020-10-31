@@ -80,8 +80,6 @@ makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearso
 
 ```
 
-If `pearson` expression correlation is chosen, both metric pearson distance and an expression distance under the stationary Ornstein-Uhlenbeck (OU) model with variable optimal expression level [(Yang et al., 2019)](https://pubmed.ncbi.nlm.nih.gov/31609424/) will be estimated. An online tutorial for the variable-µ expression distance including case studies can be found [here](https://jingwyang.github.io/TreeExp-Tutorial/). 
-
 To format the ortholog gene expression tables for correct parsing in treeExp2, execute the following command. The results will be saved in ./compAnalysis/output/data.
 
 ```R
@@ -89,7 +87,7 @@ getTaxoInput()
 
 ```
 
-The following function will compare the gene expression divergence rates between Angiosperms (DevSeq data set) and Mammals (Brawand data set): 
+The following function will compare the gene expression divergence rates between Angiosperms (DevSeq data set) and Mammals (Brawand data set). If `pearson` expression correlation is chosen, both metric pearson distance and an expression distance under the stationary Ornstein-Uhlenbeck (OU) model with variable optimal expression level [(Yang et al., 2019)](https://pubmed.ncbi.nlm.nih.gov/31609424/) will be estimated. An online tutorial for the variable-µ expression distance including case studies can be found [here](https://jingwyang.github.io/TreeExp-Tutorial/). 
 
 ```R
 getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))
