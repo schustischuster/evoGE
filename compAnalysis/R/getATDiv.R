@@ -830,6 +830,23 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     }
 
 
+# Predict fit of log model and confidence intervals
+    predictBr.log.sOU <- function(x) {
+
+        log_lm <- predict(Br_log_sOU_lm, data.frame(div_times = x), se.fit = TRUE, 
+            interval = "confidence", level = 0.95)
+
+        log_fit <- log_lm$fit
+        log_fit <- as.data.frame(log_fit)
+        x_data <- data.frame(div_time = x)
+        model_fit <- cbind(x_data, log_fit)
+        names(model_fit)[names(model_fit) == "fit"] <- "sOU_value"
+
+        return(model_fit)
+    }
+
+
+
     # Generate data based on log regression model that was built with Brawand11
     # sOU model with variable-µ distance and expression data from 7-150Myr
     # Use this model to predict transcriptome diostance at 350 Myr, and compare this
@@ -837,11 +854,9 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     x_Br_grid <- seq(6.7, 350, length = 250)  ## prediction grid
     x_Br_grid_list <- list(x_Br_grid)
+
     # Compute data points based on model
-    regr_values <- as.numeric(as.data.frame(do.call(cbind, lapply(x_Br_grid, Br_log_sOU_lm_form_eq))))
-    div_time <- data.frame(div_time = x_Br_grid)
-    regr_values <- data.frame(sOU_value = regr_values)
-    Br_regr_pred <- cbind(div_time, regr_values)
+    Br_regr_pred <- as.data.frame(do.call(rbind, lapply(x_Br_grid, predictBr.log.sOU)))
 
     gga_ge_div <- rbind(Brawand11_all_sou_v_div_rates[8,], Brawand11_all_sou_v_div_rates[16,], 
         Brawand11_all_sou_v_div_rates[24,], Brawand11_all_sou_v_div_rates[32,], Brawand11_all_sou_v_div_rates[40,], 
@@ -864,6 +879,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       p <- ggplot(data=data, aes(x=div_time, y=sOU_value)) + 
       geom_line(size = 3) + 
       geom_point(data=data2, aes(x=div_times_Br_all, y=correlation), size=5, colour="red") + 
+      geom_ribbon(data=data, aes(ymin = lwr, ymax = upr), alpha=0.14) + 
       scale_x_continuous(limits = c(2.0, 350), expand = c(0.02,0)) + 
       scale_y_continuous(limits = c(0, 1.31), expand = c(0.02, 0)) + 
       geom_text(label = regr_form, x = 101, y = 1.193, color = "black", size=7.4) + 
@@ -873,7 +889,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       geom_segment(x = 312, xend = 312, y = -0.05, yend = 0.0025, color="black", size=0.7) + 
       guides(color = guide_legend(ncol = 3))
 
-      q <- p + theme_bw() + xlab("Divergence time from HSA (Myr)") + ylab("Transcriptome distance") + 
+      q <- p + theme_bw() + xlab("Divergence time from HSA (Myr)") + ylab("Expression distance") + 
       theme(text=element_text(size=16), 
         axis.ticks.length=unit(0.35, "cm"), 
         axis.ticks = element_line(colour = "black", size = 0.7),  
