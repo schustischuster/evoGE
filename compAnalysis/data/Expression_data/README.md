@@ -12,10 +12,6 @@ This folder contains files with the expression data for the angiosperm (DevSeq) 
 | <sub> AT_core_inter_tpm_mat_deseq_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
 | <sub> AT_core_intra_count_mat_vsd_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
 | <sub> AT_core_intra_tpm_mat_deseq_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
-| <sub> AL_brass_inter_count_mat_vsd_sample_names.csv </sub>          |<sub> DevSeq Brassicaceae </sub>          |<sub>AL<sub>|<sub>DESeq inter-organ</sub>|<sub>VST counts</sub>| 
-| <sub> AL_brass_inter_tpm_mat_deseq_sample_names.csv </sub>          |<sub> DevSeq Brassicaceae </sub>          |<sub>AL<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
-| <sub> AL_brass_intra_count_mat_vsd_sample_names.csv </sub>          |<sub> DevSeq Brassicaceae </sub>          |<sub>AL<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
-| <sub> AL_brass_intra_tpm_mat_deseq_sample_names.csv </sub>          |<sub> DevSeq Brassicaceae </sub>          |<sub>AL<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
 | <sub> AL_core_inter_count_mat_vsd_sample_names.csv  </sub>          |<sub> DevSeq Angiosperm </sub>            |<sub>AL<sub>|<sub>DESeq inter-organ</sub>|<sub>VST counts</sub>| 
 | <sub> AL_core_inter_tpm_mat_deseq_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AL<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
 | <sub> AL_core_intra_count_mat_vsd_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AL<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
