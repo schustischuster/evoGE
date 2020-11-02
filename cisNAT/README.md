@@ -44,12 +44,12 @@ invisible(lapply(lib_List, loadLibrary))
 ```
   
 ### Data input
-Download the entire subdirectory containing the `data` and `R` folders to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
+Download and extract the entire directory to the working directory on your computer. Then, set the path for input and output files and source the R scripts: 
 
 ```R
-in_dir <- file.path("cisNAT", "data")
-out_dir <- file.path("cisNAT")
-path_to_R_files <- file.path("cisNAT", "R")
+in_dir <- file.path("evoGE", "cisNAT", "data")
+out_dir <- file.path("evoGE", "cisNAT")
+path_to_R_files <- file.path("evoGE", "cisNAT", "R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
