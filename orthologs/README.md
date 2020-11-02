@@ -35,13 +35,13 @@ invisible(lapply(lib_List, loadLibrary))
 ```
 
 ### Data input
-Download the entire subdirectory containing the `data` and `R` folders to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
+Download and extract the entire directory to the working directory on your computer. Then, set the path for input and output files and source the R scripts: 
 
 ```R
-in_dir <- file.path("orthologs", "data")
-out_dir <- file.path("orthologs")
+in_dir <- file.path("evoGE", "orthologs", "data")
+out_dir <- file.path("evoGE", "orthologs")
 
-source(file.path("orthologs", "R", "plotPhyloCore.R"))
+source(file.path("evoGE", "orthologs", "R", "plotPhyloCore.R"))
 
 ```
 ---
