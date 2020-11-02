@@ -36,14 +36,14 @@ invisible(lapply(lib_List, loadLibrary))
 ```
 
 ### Data input
-Download the entire subdirectory containing the `data` and `R` folders to the working directory on your computer, e.g. by using [GitZip](http://kinolien.github.io/gitzip/), and extract the file. Then, set the path for input and output files and source the R scripts: 
+Download and extract the entire directory to the working directory on your computer. Then, set the path for input and output files and source the R scripts: 
 
 ```R
-in_dir <- file.path("compAnalysis", "data")
-out_dir <- file.path("compAnalysis")
+in_dir <- file.path("evoGE", "compAnalysis", "data")
+out_dir <- file.path("evoGE", "compAnalysis")
 
-source(file.path("compAnalysis", "R", "makeCompAnalysis.R"))
-source(file.path("compAnalysis", "R", "getATDiv.R"))
+source(file.path("evoGE", "compAnalysis", "R", "makeCompAnalysis.R"))
+source(file.path("evoGE", "compAnalysis", "R", "getATDiv.R"))
 
 ```
 ---
