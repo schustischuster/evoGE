@@ -1038,213 +1038,387 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
 
-    ### Compare fit of all the linear models for DevSeq and Brawand data
-    compModel <- function(corrdata, experiment = c("DevSeq", "Brawand", "Brawand11")) {
 
-        if ((missing(experiment)) || (!is.element(experiment, c("DevSeq", "Brawand", "Brawand11")))) 
+#---- Apply LOESS regression to sOU and pearson dist expression data and compare slopes -----
 
-            stop(
-                "Experiment either missing or not one of: 
-                'DevSeq', 'Brawand', 'Brawand11'",
-                call. = TRUE
-                )
+  if(expr_estimation == "TPM") {
 
-        model.1 <- lm(correlation ~ div_times, data = corrdata) #linear regression
-        model.2 <- lm(correlation ~ div_times + I(div_times^2), data = corrdata) #polynomial regression w/quadratic term
-        model.3 <- lm(correlation ~ log(div_times), data = corrdata) #linear regression with log-x-transform
-        model.4 <- lm(correlation ~ sqrt(div_times), data = corrdata) #linear regression with sqrt-x-transform
 
-        model_comp <- compareLM(model.1, model.2, model.3, model.4)
+    getLOESS.Coord <- function(organ_data) {
 
-        if (experiment == "DevSeq") {
+      comp_organ <- unique(organ_data$comp_organ)
 
-            rownames_crit <- c("lm_DevSeq", "poly_DevSeq", "log_DevSeq", "sqrt_DevSeq")
+      if (comp_organ == "Root") {
 
-        } else if (experiment == "Brawand") {
+        poly_deg <- 1
 
-            rownames_crit <- c("lm_Brawand", "poly_Brawand", "log_Brawand", "sqrt_Brawand")
+      } else { poly_deg <- 2 } # Use quadratic polynomes for all organs except root
 
-        } else if (experiment == "Brawand11") {
-            
-            rownames_crit <- c("lm_Brawand11", "poly_Brawand11", "log_Brawand11", "sqrt_Brawand11")
-        }
+        temp <- loess.smooth(organ_data$div_times, organ_data$correlation, span = 1, 
+          degree = poly_deg, family="gaussian", evaluation = 200)
 
-        model_comp_df <- as.data.frame(model_comp$Fit.criteria)
-        rownames(model_comp_df) <- rownames_crit
+      # Obtain coordinates of the smooth curve
+      div_times <- as.numeric(unlist(temp$x))
+      correlation <- as.numeric(unlist(temp$y))
+      comp_organ <- rep(comp_organ, 200)
 
-        return(model_comp_df)
+      experiment <- unique(organ_data$dataset)
+      experiment <- rep(experiment, 200)
+
+      loess_out <- data.frame(comp_organ = comp_organ, div_times = div_times, correlation = correlation, 
+        dataset = experiment)
+
+      return(loess_out)
     }
 
 
-    # Create list of models
-    DevSeq_models <- compModel(corrdata = DevSeq_sou_v_div_rates, experiment = "DevSeq")
-    Brawand_models <- compModel(corrdata = Brawand_sou_v_div_rates, experiment = "Brawand")
-    Brawand11_models <- compModel(corrdata = Brawand11_sou_v_div_rates, experiment = "Brawand11")
+    # Set up lists containing sOU expression distances
+    devseqSouV_organ_lst <- list(compSouVDivRates11[1:6,], compSouVDivRates11[7:12,], compSouVDivRates11[13:18,], 
+      compSouVDivRates11[19:24,], compSouVDivRates11[25:30,], compSouVDivRates11[31:36,], compSouVDivRates11[37:42,], 
+      compSouVDivRates11[43:48,])
 
-    model_comp <- rbind(DevSeq_models, Brawand_models, Brawand11_models)
-    # AICc is an adjustment to AIC that is more appropriate for data sets with relatively fewer observations
-    # BIC is similar to AIC, but penalizes more for additional terms in the model
-    # Smaller is better for AIC, AICc, and BIC
+    devseqSouV_organ_lst_sel <- list(compSouVDivRates11[1:6,], compSouVDivRates11[7:11,], compSouVDivRates11[13:18,], 
+      compSouVDivRates11[19:24,], compSouVDivRates11[25:30,], compSouVDivRates11[31:36,], compSouVDivRates11[37:42,], 
+      compSouVDivRates11[43:48,])
+
+    brawandSouV11_organ_lst <- list(compSouVDivRates11[49:54,], compSouVDivRates11[55:60,], compSouVDivRates11[61:66,], 
+      compSouVDivRates11[67:72,],compSouVDivRates11[73:78,], compSouVDivRates11[79:83,])
+
+    brawandSouV_organ_lst <- list(compSouVDivRates[49:54,], compSouVDivRates[55:60,], compSouVDivRates[61:66,], 
+      compSouVDivRates[67:72,], compSouVDivRates[73:78,], compSouVDivRates[79:83,])
+
+
+    # Set up lists containing metric pearson expression distances
+    devseq_organ_lst <- list(compDivRates11[1:6,], compDivRates11[7:12,], compDivRates11[13:18,], 
+      compDivRates11[19:24,], compDivRates11[25:30,], compDivRates11[31:36,], compDivRates11[37:42,], 
+      compDivRates11[43:48,])
+
+    devseq_organ_lst_sel <- list(compDivRates11[1:6,], compDivRates11[7:11,], compDivRates11[13:18,], 
+      compDivRates11[19:24,], compDivRates11[25:30,], compDivRates11[31:36,], compDivRates11[37:42,], 
+      compDivRates11[43:48,])
+
+    brawand11_organ_lst <- list(compDivRates11[49:54,], compDivRates11[55:60,], compDivRates11[61:66,], 
+      compDivRates11[67:72,],compDivRates11[73:78,], compDivRates11[79:83,])
+
+    brawand_organ_lst <- list(compDivRates[49:54,], compDivRates[55:60,], compDivRates[61:66,], 
+      compDivRates[67:72,], compDivRates[73:78,], compDivRates[79:83,])
+
+
+    # Get LOESS coordinates for DevSeq and Brawand data
+    DevSeqSouV_loess_coord <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Coord)))
+    Brawand11SouV_loess_coord <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Coord)))
+    loessSouV_coor11_AT <- rbind(DevSeqSouV_loess_coord, Brawand11SouV_loess_coord)
+
+
+    # Format loess df for ggplot2
+    formatLOESS.DF <- function(df) {
+
+      df$div_times <- as.numeric(df$div_times)
+      df$correlation <- as.numeric(df$correlation)
+      df$dataset <- as.factor(df$dataset)
+
+      return(df)
+    }
+
+    loessSouV_coor11_AT <- formatLOESS.DF(loessSouV_coor11_AT)
 
 
 
+    getLOESS.Slopes <- function(organ_data, data_set) {
 
-#--------- Make gene expression divergence rates plot of mammalian and angiosperm data ---------
-      
+      comp_organ <- unique(organ_data$comp_organ)
 
-      # Make GE divergence plot
-      makeGEDivPlot <- function(data, coefficient, expr_estimation, p_value, pos) {
+      if ((data_set == "selected") && (comp_organ == "Root")) {
 
-        if ((deparse(substitute(data)) == "compSouVDivRates11") || 
-            (deparse(substitute(data)) == "compDivRates11")) {
+        poly_deg <- 1
+        alpha <- 1
 
-            ds_col <- rep(c("#8591c7"), 48)
-            bw_col <- rep(c("red"), 35)
-            col_scale <- c("#8591c7", "red")
-            fill_scale <- c("#8591c7", "red")
-            col_breaks <- c("Angiosperms ", "Mammals")
-            fill_breaks <- c("Angiosperms ", "Mammals")
-            shape_scale <- c(16, 15)
+      } else if ((data_set == "selected") && (comp_organ == "Hypocotyl")) {
 
-        } else if (deparse(substitute(data)) == "compSouVDivRates") {
+        poly_deg <- 1
+        alpha <- 1
 
-            ds_col <- rep(c("#8591c7"), 48)
-            bw_col <- rep(c("red"), 35)
-            col_scale <- c("#8591c7", "red3")
-            fill_scale <- c("#8591c7", "red3")
-            col_breaks <- c("Angiosperms ", "Mammals(re-analyzed)")
-            fill_breaks <- c("Angiosperms ", "Mammals(re-analyzed)")
-            shape_scale <- c(16, 17)
+      } else if ((data_set == "complete") && (comp_organ == "Root")) {
 
-        } else if (deparse(substitute(data)) == "compSouVDivRatesBr") {
+        poly_deg <- 1
+        alpha <- 1
 
-            ds_col <- rep(c("red"), 35)
-            bw_col <- rep(c("red"), 35)
-            col_scale <- c("red", "red3")
-            fill_scale <- c("red3", "red")
-            col_breaks <- c("Mammals ", "Mammals(re-analyzed)")
-            fill_breaks <- c("Mammals ", "Mammals(re-analyzed)")
-            shape_scale <- c(15, 17)
-        }
+      } else {
 
-        if (pos == "main") {
+        poly_deg <- 2
+        alpha <- 1
+
+      } # Use quadratic poynomes for all organs except root
+
+      temp <- loess.smooth(organ_data$div_times, organ_data$correlation, span = alpha, 
+        degree = poly_deg, family="gaussian", evaluation = 200)
+
+      # Get slope values
+      slopes = diff(temp$y)/diff(temp$x)
+      slopes_avg <- mean(slopes)
+      slopes_avg <- as.numeric(as.data.frame(slopes_avg))
+
+      return(slopes_avg)
+    }
+
+
+    # Get LOESS slopes for DevSeq and Brawand data
+    # For sOU expression distances
+    DevSeqSouV_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Slopes, data_set="complete")))
+    DevSeqSouV_sel_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst_sel, getLOESS.Slopes, data_set="selected"))) ## hypocotyl slope is 0.00779 instead 0.00758 if BD is left out
+    Brawand11SouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Slopes, data_set="complete")))
+    sOU_loess_DevSeq_AT_Br11_wilcox <- wilcox.test(as.numeric(unlist(DevSeqSouV_AT_loess_slopes)), as.numeric(unlist(Brawand11SouV_loess_slopes)))$p.value
+
+    BrawandSouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV_organ_lst, getLOESS.Slopes, data_set="complete")))
+    sOU_loess_Br_Br11_wilcox <- wilcox.test(as.numeric(unlist(Brawand11SouV_loess_slopes)), as.numeric(unlist(BrawandSouV_loess_slopes)))$p.value
+
+    # For metric pearson expression distances
+    DevSeq_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseq_organ_lst, getLOESS.Slopes, data_set="complete")))
+    Brawand11_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawand11_organ_lst, getLOESS.Slopes, data_set="complete")))
+
+    Brawand_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawand_organ_lst, getLOESS.Slopes, data_set="complete")))
+
+
+    # Write slope values to csv file
+    DevSeq_slopes <- cbind(DevSeqSouV_AT_loess_slopes, DevSeqSouV_AT_loess_slopes, DevSeq_AT_loess_slopes, DevSeq_AT_loess_slopes)
+    colnames(DevSeq_slopes) <- c("DS_AT_Br11_sOU_loess", "DS_AT_Br_sOU_loess", "DS_AT_Br11_pea_loess", "DS_AT_Br_pea_loess")
+    ds_organs <- data.frame(sample = c("Root", "Hypocotyl", "Leaf", "Apex_veg", "Apex_inf", "Flower", "Stamen", "Carpel"))
+    DevSeq_slopes <- cbind(ds_organs, DevSeq_slopes)
+
+    Brawand_slopes <- cbind(Brawand11SouV_loess_slopes, BrawandSouV_loess_slopes, Brawand11_loess_slopes, Brawand_loess_slopes)
+    colnames(Brawand_slopes) <- c("DS_AT_Br11_sOU_loess", "DS_AT_Br_sOU_loess", "DS_AT_Br11_pea_loess", "DS_AT_Br_pea_loess")
+    br_organs <- data.frame(sample = c("Brain", "Cerebellum", "Heart", "Kidney", "Liver", "Testis"))
+    Brawand_slopes <- cbind(br_organs, Brawand_slopes)
+
+    DS_AT_Br_loess_slopes <- rbind(DevSeq_slopes, Brawand_slopes)
+
+
+    # Get Welch test and Wilcox test p values
+    getLoessStats <- function(x) {
+
+      Welch_test <- t.test(x[1:8], x[9:14])$p.value
+      Wilcox_test <- wilcox.test(x[1:8], x[9:14])$p.value
+
+      stats_out <- rbind(Welch_test, Wilcox_test)
+      return(stats_out)
+    }
+
+
+    DS_AT_Br_loess_lst <- list(DS_AT_Br_loess_slopes[,2], DS_AT_Br_loess_slopes[,3], 
+      DS_AT_Br_loess_slopes[,4], DS_AT_Br_loess_slopes[,5])
+
+    DS_AT_Br_loess_stats <- as.data.frame(do.call(cbind, lapply(DS_AT_Br_loess_lst, getLoessStats)))
+    statsTests <- c("Welch_test", "Wilcox_test")
+    DS_AT_Br_loess_stats <- cbind(statsTests, DS_AT_Br_loess_stats)
+    colnames(DS_AT_Br_loess_stats) <- colnames(DS_AT_Br_loess_slopes)
+    rownames(DS_AT_Br_loess_stats) <- NULL
+    DS_AT_Br_loess_slopes <- rbind(DS_AT_Br_loess_slopes, DS_AT_Br_loess_stats)
+
+
+    # Get table with slope values and test statistics for log regression
+    DS_AT_Br_log_slopes <- cbind(p_values_compSouVDivRates11_io$log_reg, p_values_compSouVDivRates_io$log_reg, 
+      p_values_compDivRates11_io$log_reg, p_values_compDivRates_io$log_reg)
+    DS_AT_Br_log_slopes <- as.data.frame(DS_AT_Br_log_slopes)
+    DS_AT_Br_log_slopes <- cbind(DS_AT_Br_loess_slopes$sample, DS_AT_Br_log_slopes)
+    colnames(DS_AT_Br_log_slopes) <- c("sample", "DS_AT_Br11_sOU_log", "DS_AT_Br_sOU_log", "DS_AT_Br11_pea_log", "DS_AT_Br_pea_log")
+
+
+    # Show message
+    message("Writing data tables...")
+
+    write.table(DS_AT_Br_loess_slopes, 
+      file=file.path(out_dir, "output", "data", "DS_AT_Br_loess_slopes.txt"), sep="\t", 
+      col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+
+    write.table(DS_AT_Br_log_slopes, 
+      file=file.path(out_dir, "output", "data", "DS_AT_Br_log_slopes.txt"), sep="\t", 
+      col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+
+
+    # Create p-value containing test strings for plots
+    sOU_loess_DevSeq_AT_Br11_slope_p <- paste("P =", formatC(sOU_loess_DevSeq_AT_Br11_wilcox, format="e", digits=0))
+
+
+
+   # Make sOU GE divergence plot showing individual organ regressions for SI
+   makeOrgRegPlot <- function(data1, data2, coefficient, expr_estimation, p_value, pos) {
+
+      fname <- sprintf('%s.jpg', paste("compSouVDivRates11_loess", expr_estimation, pos, sep="_"))
+
+      ymin <- 0.05
+      ymax <- 1.45
+
+      if (pos == "main") {
 
             plot_wdt <- 12.535
             plot_hdt <- 8
+            legend_x_pos <- 0.241
+            legend_y_pos <- 0.914
+            linewd <- 3
+            point_size <- 5.75
+            txt_x_pos <- 16.25
+            txt_y_pos <- 1.216
 
-        } else {
+      } else {
 
             plot_wdt <- 9.5 # condenced plot width for suppl
             plot_hdt <- 6.75 # condenced plot width for suppl
-        }
-
-        if ((deparse(substitute(data)) == "compSouVDivRates11") && (pos == "main")) {
-
-            fname <- sprintf('%s.jpg', paste("compSouVDivRates11", coefficient, "dist", expr_estimation, sep="_"))
-            y_min <- 0
-            y_max <- 1.45
-            y_title_r <- 15
-            legend_x_pos <- 0.241
-            legend_y_pos <- 0.914
-            ylabel <- "Expression distance"
-
-        } else if ((deparse(substitute(data)) == "compSouVDivRates11") && (pos == "ext")) {
-
-            fname <- sprintf('%s.jpg', paste("compSouVDivRates11_s", coefficient, "dist", expr_estimation, "Brawand2011", sep="_"))
-            y_min <- 0
-            y_max <- 1.45
-            y_title_r <- 15
             legend_x_pos <- 0.317
             legend_y_pos <- 0.9
-            ylabel <- "Expression distance"
+            linewd <- 2.5
+            point_size <- 5
+            txt_x_pos <- 16.25
+            txt_y_pos <- 1.216
+      }
 
-        } else if (deparse(substitute(data)) == "compSouVDivRates") {
+      ds_col <- rep(c("#798dc4"), 48)
+      bw_col <- rep(c("red"), 35)
+      col_scale <- c("#798dc4", "red")
+      fill_scale <- c("#798dc4", "red")
+      col_breaks <- c("Angiosperms ", "Mammals")
+      fill_breaks <- c("Angiosperms ", "Mammals")
+      shape_scale <- c(16, 17)
 
-            fname <- sprintf('%s.jpg', paste("compSouVDivRates", coefficient, "dist", expr_estimation, "Brawand2011", sep="_"))
-            y_min <- 0.11
-            y_max <- 1.45
-            y_title_r <- 15
-            legend_x_pos <- 0.435
-            legend_y_pos <- 0.9
-            ylabel <- "Expression distance"
+      fill_col <- c(as.character(ds_col), as.character(bw_col))
 
-        } else if (deparse(substitute(data)) == "compSouVDivRatesBr") {
+      p <- ggplot() 
+      p <- p + geom_line(size = linewd, data = data1, aes(x = div_times, y = correlation, group = comp_organ, 
+        colour = dataset, linetype = dataset))
+      p <- p + geom_point(size = point_size, data = data2, aes(x = div_times, y = correlation, group = comp_organ, 
+        colour = dataset, shape = dataset))
+      p <- p + scale_x_continuous(limits = c(0,161), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
+      scale_y_continuous(limits = c(0.055, 1.447), expand = c(0.02, 0), breaks = c(0.2,0.4,0.6,0.8,1,1.2,1.4)) + 
+      scale_color_manual(values = col_scale, breaks = col_breaks) + 
+      scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
+      scale_shape_manual(values = shape_scale) + 
+      scale_size(range = c(0.5, 12)) + 
+      annotate("text", x = txt_x_pos, y = txt_y_pos, label = p_value, size = 8) + 
+      guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
-            fname <- sprintf('%s.jpg', paste("Brawand_vs_Brawand_2011", coefficient, "dist", expr_estimation, "Brawand2011", sep="_"))
-            y_min <- 0
-            y_max <- 1.325
-            y_title_r <- 15
-            legend_x_pos <- 0.405
-            legend_y_pos <- 0.9
-            ylabel <- "Expression distance"
-
-        } else if (deparse(substitute(data)) == "compDivRates11") {
-
-            fname <- sprintf('%s.jpg', paste("comp_divergence_rates", coefficient, "dist", expr_estimation, "Brawand2011", sep="_"))
-            y_min <- 0.26
-            y_max <- 0.72
-            y_title_r <- 17.25
-            legend_x_pos <- 0.317
-            legend_y_pos <- 0.9
-            ylabel <- "Pearson distance"
-        }
-
-        fill_col <- c(as.character(ds_col), as.character(bw_col))
-
-        p <- ggplot(data = data, aes(x = div_times, y = correlation, group = dataset, colour = dataset, 
-            shape = dataset)) + 
-        geom_smooth(method = "lm", formula = y ~ log(x), se = TRUE,
-            size = 3, aes(fill=fill_col), alpha=0.14) + 
-        geom_point(size = 5) + 
-        # geom_abline(intercept = coef(devseq_kts)[1], slope = coef(devseq_kts)[2]) + 
-        # geom_abline(intercept = coef(brawand_kts)[1], slope = coef(brawand_kts)[2]) + 
-        scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-        scale_y_continuous(limits = c(y_min, y_max), expand = c(0.02, 0)) + 
-        scale_color_manual(values = col_scale, breaks = col_breaks) + 
-        scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
-        scale_shape_manual(values = shape_scale) + 
-        scale_size(range = c(0.5, 12)) + 
-        guides(color = guide_legend(ncol = 2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
-
-        q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab(ylabel) + 
-        theme(text=element_text(size=16), 
-            axis.ticks.length=unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.7),  
-            plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = y_title_r, b = 0, l = 11), colour="black"), 
-            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
-            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
-            legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
-            panel.grid.major = element_line(color="#d5d5d5"),
-            panel.grid.minor.x = element_blank(), 
-            panel.grid.minor.y = element_blank(), 
-            legend.position = c(legend_x_pos, legend_y_pos), 
-            legend.title = element_blank(), 
-            legend.text = element_text(size=22), 
-            legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(0.95, "cm"), 
-            legend.background=element_blank()) 
+      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Expression distance") + 
+      theme(text=element_text(size=16), 
+        axis.ticks.length=unit(0.35, "cm"), 
+        axis.ticks = element_line(colour = "black", size = 0.7),  
+        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
+        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
+        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
+        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
+        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
+        panel.grid.major = element_line(color="#d5d5d5"),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.minor.y = element_blank(), 
+        legend.position = c(legend_x_pos, legend_y_pos), 
+        legend.title = element_blank(), 
+        legend.text = element_text(size=22), 
+        legend.spacing.x = unit(0.5, 'cm'), 
+        legend.key.size = unit(0.95, "cm"), 
+        legend.background=element_blank()) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
             width = plot_wdt, height = plot_hdt, dpi = 300, units = c("in"), limitsize = FALSE) 
+  }
+
+  makeOrgRegPlot(data1 = loessSouV_coor11_AT, data2 = compSouVDivRates11, coefficient = coefficient, 
+    expr_estimation = expr_estimation, pos = "ext", p_value = "")
+
+  makeOrgRegPlot(data1 = loessSouV_coor11_AT, data2 = compSouVDivRates11, coefficient = coefficient, 
+    expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AT_Br11_slope_p)
+
+
+
+
+   # Make sOU plot of LOESS regression from Brawand11 and Brawand_re-analyzed data for SI
+   makeGlobalBrRegPlot <- function(data, coefficient, expr_estimation, p_value) {
+
+      if (deparse(substitute(data)) == "compSouVDivRatesBr") {
+
+        fname <- sprintf('%s.jpg', paste("Brawand_vs_Brawand_2011_sOU_loess", expr_estimation, sep="_"))
+
+        ymin <- 0.05
+        ymax <- 1.45
+
+        ds_col <- rep(c("red3"), 35)
+        bw_col <- rep(c("red"), 35)
+        col_scale <- c("red", "red3")
+        fill_scale <- c("red", "red3")
+        col_breaks <- c("Mammals ", "Mammals(re-analyzed)")
+        fill_breaks <- c("Mammals ", "Mammals(re-analyzed)")
+        shape_scale <- c(17, 15)
+        linetype_a <- rep("dashed",35)
+        linetype_b <- rep("solid",35)
+        leg_pos_x <- 0.4051
+        leg_pos_y <- 0.9
+
+      } else if (deparse(substitute(data)) == "compSouVDivRates11") {
+
+        fname <- sprintf('%s.jpg', paste("compSouVDivRates11_loess_avg", expr_estimation, sep="_"))
+
+        ymin <- 0.05
+        ymax <- 1.45
+
+        ds_col <- rep(c("#798dc4"), 48)
+        bw_col <- rep(c("red"), 35)
+        col_scale <- c("#798dc4", "red")
+        fill_scale <- c("#798dc4", "red")
+        col_breaks <- c("Angiosperms ", "Mammals")
+        fill_breaks <- c("Angiosperms ", "Mammals")
+        shape_scale <- c(16, 17)
+        linetype_a <- rep("dashed",48)
+        linetype_b <- rep("solid",35)
+        leg_pos_x <- 0.317
+        leg_pos_y <- 0.9
       }
 
-      makeGEDivPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        pos = "main")
+      fill_col <- c(as.character(ds_col), as.character(bw_col))
 
-      makeGEDivPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        pos = "ext")
+      p <- ggplot() 
+      p <- p + geom_smooth(size = 2.5, data = data, span=1, alpha = 0.17, aes(x = div_times, y = correlation, 
+        group = dataset, colour = dataset, linetype = c(linetype_a, linetype_b), fill = fill_col))
+      p <- p + geom_point(size = 5, data = data, aes(x = div_times, y = correlation, group = dataset, 
+        colour = dataset, shape = dataset))
+      p <- p + scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
+      scale_y_continuous(limits = c(ymin, ymax), expand = c(0.02, 0)) + 
+      scale_color_manual(values = col_scale, breaks = col_breaks) + 
+      scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
+      scale_shape_manual(values = shape_scale) + 
+      scale_size(range = c(0.5, 12)) + 
+      guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"), 
+        linetype="none")
 
-      makeGEDivPlot(data = compSouVDivRates, coefficient = coefficient, expr_estimation = expr_estimation, 
-        pos = "ext")
+      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Expression distance") + 
+      theme(text=element_text(size=16), 
+        axis.ticks.length=unit(0.35, "cm"), 
+        axis.ticks = element_line(colour = "black", size = 0.7),  
+        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
+        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
+        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
+        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
+        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
+        panel.grid.major = element_line(color="#d5d5d5"),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.minor.y = element_blank(), 
+        legend.position = c(leg_pos_x, leg_pos_y), 
+        legend.title = element_blank(), 
+        legend.text = element_text(size=22), 
+        legend.spacing.x = unit(0.5, 'cm'), 
+        legend.key.size = unit(0.95, "cm"), 
+        legend.background=element_blank()) 
 
-      makeGEDivPlot(data = compSouVDivRatesBr, coefficient = coefficient, expr_estimation = expr_estimation, 
-        pos = "ext")
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+            width = 9.5, height = 6.75, dpi = 300, units = c("in"), limitsize = FALSE) 
+      
+    }
 
-      makeGEDivPlot(data = compDivRates11, coefficient = coefficient, expr_estimation = expr_estimation, 
-        pos = "ext")
+    makeGlobalBrRegPlot(data = compSouVDivRates11, coefficient = coefficient, 
+      expr_estimation = expr_estimation)
+    makeGlobalBrRegPlot(data = compSouVDivRatesBr, coefficient = coefficient, 
+      expr_estimation = expr_estimation)
+
+  }
 
 
 
@@ -1313,66 +1487,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
   makeGEDivPlotBr(data = Brawand_div_rates)
   makeGEDivPlotBr(data = Brawand11_div_rates)
-
-
-
-
-#-- Make gene expression divergence rates plot for Brawand and DevSeq with organ regressions ---
-
-
-   # Make GE divergence plot
-   makeOrgRegPlot <- function(data, coefficient, expr_estimation, p_value) {
-
-      fname <- sprintf('%s.jpg', paste("organ_regressions_sOUv", coefficient, "dist", expr_estimation, sep="_"))
-
-      ds_col <- rep(c("#8591c7"), 48)
-      bw_col <- rep(c("red"), 35)
-      col_scale <- c("#8591c7", "red")
-      fill_scale <- c("#8591c7", "red")
-      col_breaks <- c("Angiosperms ", "Mammals")
-      fill_breaks <- c("Angiosperms ", "Mammals")
-      shape_scale <- c(16, 15)
-
-      fill_col <- c(as.character(ds_col), as.character(bw_col))
-
-      p <- ggplot(data = data, aes(x = div_times, y = correlation, group = comp_organ, colour = dataset, shape = dataset, linetype = dataset)) + 
-      geom_point(size = 5) + 
-      geom_smooth(method = "lm", formula = y ~ log(x), se = FALSE, 
-        size = 2.75, aes(fill=fill_col)) + 
-      scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(0, 1.45), expand = c(0.02, 0)) + 
-      scale_color_manual(values = col_scale, breaks = col_breaks) + 
-      scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
-      scale_shape_manual(values = shape_scale) + 
-      scale_size(range = c(0.5, 12)) + 
-      guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
-
-      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Expression distance") + 
-      theme(text=element_text(size=16), 
-        axis.ticks.length=unit(0.35, "cm"), 
-        axis.ticks = element_line(colour = "black", size = 0.7),  
-        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
-        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
-        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
-        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
-        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
-        panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
-        panel.grid.major = element_line(color="#d5d5d5"),
-        panel.grid.minor.x = element_blank(), 
-        panel.grid.minor.y = element_blank(), 
-        legend.position = c(0.317, 0.9), 
-        legend.title = element_blank(), 
-        legend.text = element_text(size=22), 
-        legend.spacing.x = unit(0.5, 'cm'), 
-        legend.key.size = unit(0.95, "cm"), 
-        legend.background=element_blank()) 
-
-        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 9.5, height = 6.75, dpi = 300, units = c("in"), limitsize = FALSE) 
-  }
-
-  makeOrgRegPlot(data = compSouVDivRates11, coefficient = coefficient, expr_estimation = expr_estimation)
 
 }
 
