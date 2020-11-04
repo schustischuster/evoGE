@@ -82,7 +82,6 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
 
     # Stop function here to allow specific analysis of a single data set
-    # For DevSeq
     # return_list <- list("expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names, "data_norm" = data_norm)
     # return(return_list)
     # }
@@ -230,11 +229,12 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
         if (pos == "main") {
 
-            fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, pos, sep="_"))
+            fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, expr_estimation, pos, sep="_"))
             plot_wdt <- 12.535
             plot_hdt <- 8
             legend_x_pos <- 0.723
             legend_y_pos <- 0.88
+            legend_key_s <- 0.95
             linewd <- 3.1
             brass_label <- "Brassicaceae"
             text_x1_pos <- 19.5
@@ -247,26 +247,29 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             leg_ln_s2_x <- 138.3
             leg_ln_s2_xend <- 139.975
             leg_ln_s_y <- 0.83575
+            leg_box_bd <- 1.0
 
         } else {
 
-            fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, pos, sep="_"))
+            fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, expr_estimation, pos, sep="_"))
             plot_wdt <- 9.5 # condenced plot width for suppl
             plot_hdt <- 6.75 # condenced plot width for suppl
             legend_x_pos <- 0.6425
-            legend_y_pos <- 0.865
+            legend_y_pos <- 0.8615
+            legend_key_s <- 0.9
             linewd <- 2.85
             brass_label <- "Brassiceae"
             text_x1_pos <- 22
             text_x4_pos <- 157
             text_y_pos <- 0.4845
-            x_poll_pos <- 146.1
+            x_poll_pos <- 145.5
             y_poll_pos <- 0.8223
-            leg_ln_s1_x <- 129.55
-            leg_ln_s1_xend <- 131.9
-            leg_ln_s2_x <- 133.35
-            leg_ln_s2_xend <- 135.7
+            leg_ln_s1_x <- 129.3
+            leg_ln_s1_xend <- 131.475
+            leg_ln_s2_x <- 132.95
+            leg_ln_s2_xend <- 135.15
             leg_ln_s_y <- 0.822
+            leg_box_bd <- 0
         }
 
         
@@ -308,11 +311,11 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             axis.ticks.length=unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.7),  
             plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 17, b = 0, l = 9), colour="black"), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
             axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
-            legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
+            legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=leg_box_bd), 
             panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
@@ -321,7 +324,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             legend.title = element_blank(), 
             legend.text = element_text(size=21.5), 
             legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(0.95, "cm"), 
+            legend.key.size = unit(legend_key_s, "cm"), 
             legend.background=element_blank()) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
@@ -337,8 +340,8 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 }
 
 
-makeCompAnylsis(expr_estimation="TPM", coefficient="pearson", data_norm="inter-organ")
-makeCompAnylsis(expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
+makeCompAnylsisAL(expr_estimation="TPM", coefficient="pearson", data_norm="inter-organ")
+makeCompAnylsisAL(expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 
 
