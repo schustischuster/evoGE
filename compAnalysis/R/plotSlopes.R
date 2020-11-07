@@ -8,7 +8,7 @@
 #-------------------------------------- Read data tables ---------------------------------------
 
 
-plotSlope <- function() {
+plotSlopes <- function() {
 
     # Show startup message
     message("Reading data...")
@@ -262,7 +262,7 @@ plotSlope <- function() {
 }
 
 
-plotSlope()
+plotSlopes()
 
 
 
