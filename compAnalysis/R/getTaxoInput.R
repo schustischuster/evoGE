@@ -8,6 +8,7 @@
 getTaxoInput <- function() {
 
     DS_table = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+    DS_AL_table = file.path(in_dir, "Expression_data", "AL_core_inter_tpm_mat_deseq_sample_names.csv")
     Br_table = file.path(in_dir, "Expression_data", "Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv")
     Br2011_table = file.path(in_dir, "Expression_data", "Brawand_Supplementary_Data1", "NormalizedRPKM_ConstitutiveAlignedExons_Amniote1to1Orthologues.txt")
 
@@ -18,6 +19,7 @@ getTaxoInput <- function() {
 
     # Read DevSeq table
     x_DS_tbj <- read.table(DS_table, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+    x_DS_AL_tbj <- read.table(DS_AL_table, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
     # Read Brawand table and set colnames
@@ -55,6 +57,7 @@ getTaxoInput <- function() {
 
     x_Br_tbj[is.na(x_Br_tbj)] <- 0 # replaces NAs by 0
     x_DS_tbj[is.na(x_DS_tbj)] <- 0 # replaces NAs by 0
+    x_DS_AL_tbj[is.na(x_DS_AL_tbj)] <- 0 # replaces NAs by 0
     x_Br2011_tbj[is.na(x_Br2011_tbj)] <- 0 # replaces NAs by 0
 
 
@@ -124,18 +127,27 @@ getTaxoInput <- function() {
 
 
     # Generate taxa object for DevSeq angiosperm gene expression data
-    col_namesDS <- rep(c("Root", "Hypocotyl", "Leaf", "vegApex", "infApex", "Flower", "Stamen", 
+    org_namesDS <- rep(c("Root", "Hypocotyl", "Leaf", "vegApex", "infApex", "Flower", "Stamen", 
         "Carpel", "Pollen"), each=21)
     replicate_tag_samples <- rep(c("r1","r2","r3"), times=9)
-    col_namesDS <- paste(col_namesDS, replicate_tag_samples, sep="_")
+    org_namesDS <- paste(org_namesDS, replicate_tag_samples, sep="_")
     spec_namesDS <- rep(c("ATH", "ALY", "CRU", "ESA", "THA", "MTR", "BDY"), each=3)
+    spec_namesDS_AL <- rep(c("ALY", "ATH", "CRU", "ESA", "THA", "MTR", "BDY"), each=3)
     spec_namesDS <- rep(spec_namesDS, times=9)
-    col_namesDS <- paste(spec_namesDS, col_namesDS, sep="_")
+    spec_namesDS_AL <- rep(spec_namesDS_AL, times=9)
+    col_namesDS <- paste(spec_namesDS, org_namesDS, sep="_")
+    col_namesDS_AL <- paste(spec_namesDS_AL, org_namesDS, sep="_")
     col_namesDS <- c("Gene", col_namesDS)
+    col_namesDS_AL <- c("Gene", col_namesDS_AL)
     colnames(x_DS_tbj) <- col_namesDS
+    colnames(x_DS_AL_tbj) <- col_namesDS_AL
 
     write.table(x_DS_tbj, 
     	file=file.path(out_dir, "output", "data", "x_DS_taxobj_input.txt"), sep="\t", 
+        col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+
+    write.table(x_DS_AL_tbj, 
+        file=file.path(out_dir, "output", "data", "x_DS_AL_taxobj_input.txt"), sep="\t", 
         col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
 
 }
