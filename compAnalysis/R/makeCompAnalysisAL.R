@@ -741,7 +741,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
         axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
         axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
-        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
+        legend.box.background = element_rect(colour = "#d5d5d5", fill= "white" , size=1.0), 
         panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
         panel.grid.major = element_line(color="#d5d5d5"),
         panel.grid.minor.x = element_blank(), 
