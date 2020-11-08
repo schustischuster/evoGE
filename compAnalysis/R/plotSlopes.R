@@ -216,6 +216,19 @@ plotSlopes <- function() {
         levels = unique(DSBr_reg_slopes$Species))
 
 
+    # Change names for facet strip
+    DSBr_reg_slopes[,3] <- DSBr_reg_slopes[,3] %<>% 
+        gsub("sOU_loess", "sOU-v LOESS", .) %>% 
+        gsub("Pearson_loess", "Pearson LOESS", .) %>% 
+        gsub("sOU_log", "sOU-v LM", .) %>% 
+        gsub("Pearson_log", "Pearson LM", .)
+
+
+    # Reorder factors for correct facet order
+    DSBr_reg_slopes$Regression <- factor(DSBr_reg_slopes$Regression, levels=c(
+        "sOU-v LOESS", "sOU-v LM", "Pearson LOESS", "Pearson LM"))
+
+
 
 
     makeSlopePlot <- function(data) {
@@ -225,36 +238,52 @@ plotSlopes <- function() {
 
         p <- ggplot(data=data, aes(x=ID, y=Slope)) + 
         stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
-        geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
-                outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") +  
-        scale_y_continuous(expand = c(0.05, 0)) + 
-        guides(color = guide_legend(ncol = 3))
+        geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = NA) + 
+        geom_point(aes(shape = sample, color = Species, size = sample, stroke=2.5)) + 
+        scale_shape_manual(values = c(0, 8, 2, 5, 3, 4, 6, 1, 15, 16, 17, 18, 19, 10)) + 
+        scale_size_manual(values = c(4.75, 4.75, 4.75, 4.75, 5.25, 5.25, 4.75, 5.25, 5.5, 5.5, 5.5, 8.8, 5.5, 5.5)) + 
+        scale_color_manual(values=c('#5fb5dd','#798dc4', 'red', 'red3'), 
+            guide = "none") + 
+        scale_fill_manual(values=c('#5fb5dd','#798dc4', 'red', 'red3'), 
+            guide = "legend") + 
+        scale_y_continuous(expand = c(0.2, 0)) + 
+        scale_x_discrete(labels=c("AT_sOU_loess" = "Angiosperms.AT", "AT_Pearson_loess" = "Angiosperms.AT", 
+            "AT_sOU_log" = "Angiosperms.AT", "AT_Pearson_log" = "Angiosperms.AT", "AL_sOU_loess" = "Angiosperms.AL", 
+            "AL_Pearson_loess" = "Angiosperms.AL", "AL_sOU_log" = "Angiosperms.AL", "AL_Pearson_log" = "Angiosperms.AL", 
+            "Br11_sOU_loess" = "Mammals.11", "Br11_sOU_log" = "Mammals.11", "Br11_Pearson_loess" = "Mammals.11", 
+            "Br11_Pearson_log" = "Mammals.11", "Br_sOU_loess" = "Mammals.re-an.", "Br_sOU_log" = "Mammals.re-an.", 
+            "Br_Pearson_loess" = "Mammals.re-an.", "Br_Pearson_log" = "Mammals.re-an.")) + 
+        guides(shape = guide_legend(override.aes = list(stroke=1.5)))
 
-        q <- p + theme_bw() + xlab("Divergence time from A.lyrata (Myr)") + ylab("Pearson's r w/ A.lyrata") + 
-        theme(text=element_text(size=16), 
-            axis.ticks.length=unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.7),  
+        q <- p + theme_classic() + xlab("Data set") + ylab("Slope value") + 
+        theme(text=element_text(size = 16), 
+            strip.text = element_text(size = 24), 
+            strip.text.x = element_text(margin = margin(0.4,0,0.4,0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 1.5), 
+            axis.ticks.length = unit(0.35, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 0.9), 
+            axis.line = element_line(colour = 'black', size = 0.9), 
             plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
             axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
             axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
-            axis.text.x = element_text(size=21.25, angle=90, margin = margin(t = 5.5), colour="black"), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
-            legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=0.3), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
+            axis.text.x = element_text(size=22.5, angle=90, margin = margin(t = 5.5), colour="black", 
+                hjust = 0.95, vjust = 0.37), 
+            axis.text.y = element_text(size=21.5, angle=0, margin = margin(r = 5.5), colour="black"), 
+            panel.spacing = unit(0.5, "cm"), 
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
-            legend.position = c(0.6425, 0.8615), 
+            legend.position = "right", 
             legend.title = element_blank(), 
-            legend.text = element_text(size=21.5), 
+            legend.text = element_text(size = 22.5), 
             legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(0.9, "cm"), 
+            legend.key.size = unit(1.2, "cm"), 
             legend.background=element_blank()) 
 
         q <- q + facet_wrap(~ Regression, scales = "free", nrow = 1)
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 30, height = 17, dpi = 300, units = c("in"), limitsize = FALSE) 
+            width = 28.5, height = 12.8, dpi = 300, units = c("in"), limitsize = FALSE) 
     }
 
     makeSlopePlot(data = DSBr_reg_slopes)
