@@ -233,7 +233,7 @@ plotSlopes <- function() {
     scale_layer <- rbind(DSBr_reg_slopes[1,], DSBr_reg_slopes[9,], DSBr_reg_slopes[17,], 
         DSBr_reg_slopes[25,])
     max_values <- DSBr_reg_slopes %>% group_by(Regression) %>% summarize(max.Slope = max(Slope))
-    max_values$max.Slope <- (max_values$max.Slope) * 1.171
+    max_values$max.Slope <- (max_values$max.Slope) * 1.148
     scale_layer$Slope <- c(max_values$max.Slope[1], max_values$max.Slope[3]-0.00004, max_values$max.Slope[2], 
         max_values$max.Slope[4]-0.00002)
     scale_layer$Slope <- as.numeric(scale_layer$Slope)
@@ -247,8 +247,8 @@ plotSlopes <- function() {
             
 
         p <- ggplot(data=data, aes(x=ID, y=Slope)) + 
-        stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
-        geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = NA) + 
+        stat_boxplot(geom ='errorbar', width = 0, size=1.0, color="black") + 
+        geom_boxplot(width = 0.75, size=1.0, fatten = 3.7, color="black", outlier.shape = NA, alpha = 0) + 
         geom_point(aes(shape = sample, color = Species, size = sample, stroke = 3.0)) + 
         scale_shape_manual(values = c(0, 8, 2, 5, 3, 4, 6, 1, 15, 16, 17, 18, 19, 10)) + 
         scale_size_manual(values = c(4.75, 4.75, 4.75, 4.75, 5.25, 5.25, 4.75, 5.25, 5.5, 5.5, 5.5, 8.8, 5.5, 5.5)) + 
@@ -256,7 +256,7 @@ plotSlopes <- function() {
             guide = "none") + 
         scale_fill_manual(values=c('#5fb5dd','#798dc4', 'red', 'red3'), 
             guide = "legend") + 
-        scale_y_continuous(expand = c(0.07, 0)) + 
+        scale_y_continuous(expand = c(0.07, 0), labels = comma) + 
         scale_x_discrete(labels=c("AT_sOU_loess" = "Angiosperms.AT", "AT_Pearson_loess" = "Angiosperms.AT", 
             "AT_sOU_log" = "Angiosperms.AT", "AT_Pearson_log" = "Angiosperms.AT", "AL_sOU_loess" = "Angiosperms.AL", 
             "AL_Pearson_loess" = "Angiosperms.AL", "AL_sOU_log" = "Angiosperms.AL", "AL_Pearson_log" = "Angiosperms.AL", 
@@ -267,18 +267,20 @@ plotSlopes <- function() {
 
         q <- p + theme_classic() + xlab("Data set") + ylab("Slope value") + 
         theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 23.85), 
-            strip.text.x = element_text(margin = margin(0.39,0,0.39,0, "cm")), 
-            strip.background = element_rect(colour = 'black', fill = NA, size = 1.5), 
+            strip.text = element_text(size = 23.75), 
+            strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.2), 
             axis.ticks.length = unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.9), 
-            axis.line = element_line(colour = 'black', size = 0.9), 
+            axis.ticks = element_line(colour = "black", size = 0.95), 
+            axis.line = element_line(colour = 'black', size = 0.95), 
             plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
-            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
-            axis.text.x = element_text(size=22.85, angle=60, margin = margin(t = -88, b = 100), colour="black", 
-                hjust = 0.94, vjust = 0.3), 
-            axis.text.y = element_text(size=21.5, angle=0, margin = margin(r = 5.5), colour="black"), 
+            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
+                face = "bold"), 
+            axis.title.x = element_text(size=25, margin = margin(t = 4.75, r = 0, b = 12, l = 0), colour="black", 
+                face = "bold"), 
+            axis.text.x = element_text(size=23, angle=50, margin = margin(t = -70, b = 85), colour="black", 
+                hjust = 1, vjust = 0.45), 
+            axis.text.y = element_text(size=22, angle=0, margin = margin(r = 5.5), colour="black"), 
             panel.spacing = unit(0.5, "cm"), 
             panel.grid.major = element_line(color="#d5d5d5"),
             panel.grid.minor.x = element_blank(), 
@@ -308,33 +310,23 @@ plotSlopes <- function() {
 
     df_blank <- data.frame()
 
-    AT_Br11_sOU_loess <- paste("P =", formatC(DS_AT_Br_loess[16,2], format = "e", digits = 0))
-    AT_Br_sOU_loess <- paste("P =", formatC(DS_AT_Br_loess[16,3], format = "e", digits = 0))
-    AT_Br11_pea_loess <- paste("P =", formatC(DS_AT_Br_loess[16,4], format = "e", digits = 0))
-    AT_Br_pea_loess <- paste("P =", formatC(DS_AT_Br_loess[16,5], format = "e", digits = 0))
+    AT_Br11_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,2], format = "e", digits = 0)))
+    AT_Br_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,3], format = "e", digits = 0)))
+    AT_Br11_pea_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,4], format = "e", digits = 0)))
 
-    AT_Br11_sOU_log <- paste("P =", round(DS_AT_Br_log[16,2], 3))
-    AT_Br_sOU_log <- paste("P =", formatC(DS_AT_Br_log[16,3], format = "e", digits = 0))
-    AT_Br11_pea_log <- paste("P =", formatC(DS_AT_Br_log[16,4], format = "e", digits = 0))
-    AT_Br_pea_log <- paste("P =", formatC(DS_AT_Br_log[16,5], format = "e", digits = 0))
-
-    AL_Br11_sOU_loess <- paste("P =", formatC(DS_AL_Br_loess[16,2], format = "e", digits = 0))
-    AL_Br_sOU_loess <- paste("P =", formatC(DS_AL_Br_loess[16,3], format = "e", digits = 0))
-    AL_Br11_pea_loess <- paste("P =", formatC(DS_AL_Br_loess[16,4], format = "e", digits = 0))
-    AL_Br_pea_loess <- paste("P =", formatC(DS_AL_Br_loess[16,5], format = "e", digits = 0))
-
-    AL_Br11_sOU_log <- paste("P =", round(DS_AL_Br_log[16,2], 3))
-    AL_Br_sOU_log <- paste("P =", formatC(DS_AL_Br_log[16,3], format = "e", digits = 0))
-    AL_Br11_pea_log <- paste("P =", formatC(DS_AL_Br_log[16,4], format = "e", digits = 0))
-    AL_Br_pea_log <- paste("P =", formatC(DS_AL_Br_log[16,5], format = "e", digits = 0))
+    AT_Br11_sOU_log <- c(paste("italic('P =')~", round(DS_AT_Br_log[16,2], 3)))
+    AT_Br_sOU_log <- c(paste("italic('P =')~", formatC(DS_AT_Br_log[16,3], format = "e", digits = 0)))
+    AT_Br11_pea_log <- c(paste("italic('P =')~", formatC(DS_AT_Br_log[16,4], format = "e", digits = 0)))
 
 
     dat_text <- data.frame(
         label = c(AT_Br11_sOU_loess, AT_Br_sOU_loess, AT_Br11_sOU_log, AT_Br_sOU_log, 
-            AT_Br11_pea_loess, AT_Br11_pea_log), # other p-values from above have same value
+            AT_Br11_pea_loess, AT_Br11_pea_log), # other p-values have same value
         x = c(0.451, 0.569, 1.645, 1.76, 2.985, 4.21),
         y = c(8.845, 9.47, 8.845, 9.47, 9.225, 9.225)
     )
+
+    options(scipen = -1) # This sets scientific notation below 1e-2
 
     p <- ggplot(df_blank) + geom_point() + xlim(0, 5) + ylim(0, 10) + theme_void() + 
     theme(
@@ -348,8 +340,8 @@ plotSlopes <- function() {
 
     q <- p + geom_text(
         data = dat_text,
-        mapping = aes(x = x, y = y, label = label), 
-        size = 8
+        mapping = aes(x = x, y = y, label = format(label, scientific=TRUE)), 
+        size = 8.25, parse = TRUE
     )
 
     png("NUL")
