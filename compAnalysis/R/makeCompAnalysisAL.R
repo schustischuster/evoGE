@@ -321,16 +321,20 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             leg_ln_s2_xend <- 139.975
             leg_ln_s_y <- 0.83575
             leg_box_bd <- 1.0
+            pan_boarder <- 1.75
+            axis_txt_size <- 21.25
+            axis_ticks_s <- 0.7
+            title_face <- "plain"
 
         } else {
 
             fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, expr_estimation, pos, sep="_"))
             plot_wdt <- 9.5 # condenced plot width for suppl
             plot_hdt <- 6.75 # condenced plot width for suppl
-            legend_x_pos <- 0.6425
-            legend_y_pos <- 0.8615
+            legend_x_pos <- 0.638
+            legend_y_pos <- 0.862
             legend_key_s <- 0.9
-            linewd <- 2.85
+            linewd <- 2.7
             brass_label <- "Brassiceae"
             text_x1_pos <- 22
             text_x4_pos <- 157
@@ -343,6 +347,10 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             leg_ln_s2_xend <- 135.15
             leg_ln_s_y <- 0.822
             leg_box_bd <- 0
+            pan_boarder <- 1.8
+            axis_txt_size <- 21.75
+            axis_ticks_s <- 0.95
+            title_face <- "bold"
         }
 
         
@@ -354,7 +362,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
                 "Root  "="#6a54a9", "Apex veg  "="#96ba37", "Apex inf  "="#fad819", "Carpel  "="#f2a72f", 
                 "Leaf  "="#2c8654")) + 
         geom_line(size = linewd) +  
-        scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
+        scale_x_continuous(limits = c(5.5,161.5), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.4675, 0.91), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
             "#f2a72f", "#2c8654"), 
@@ -371,26 +379,28 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         annotate("text", x=46, y=text_y_pos, label= "TH", size=8) + 
         annotate("text", x=106, y=text_y_pos, label= "MT", size=8) + 
         annotate("text", x=text_x4_pos, y=text_y_pos, label= "BD", size=8) + 
-        geom_segment(x=7, xend=7, y=0.435, yend=0.468, color="black", size=0.7) + 
-        geom_segment(x=9, xend=9, y=0.435, yend=0.468, color="black", size=0.7) + 
-        geom_segment(x=25, xend=25, y=0.435, yend=0.468, color="black", size=0.7) + 
-        geom_segment(x=46, xend=46, y=0.435, yend=0.468, color="black", size=0.7) + 
-        geom_segment(x=106, xend=106, y=0.435, yend=0.468, color="black", size=0.7) + 
-        geom_segment(x=160, xend=160, y=0.435, yend=0.468, color="black", size=0.7) + 
+        geom_segment(x=7, xend=7, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
+        geom_segment(x=9, xend=9, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
+        geom_segment(x=25, xend=25, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
+        geom_segment(x=46, xend=46, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
+        geom_segment(x=106, xend=106, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
+        geom_segment(x=160, xend=160, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
         guides(color = guide_legend(ncol = 3))
 
         q <- p + theme_bw() + xlab("Divergence time from A.lyrata (Myr)") + ylab("Pearson's r w/ A.lyrata") + 
         theme(text=element_text(size=16), 
             axis.ticks.length=unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.7),  
+            axis.ticks = element_line(colour = "black", size = axis_ticks_s),  
             plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
-            axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
-            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
+            axis.title.y = element_text(size=24.5, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
+                face = title_face), 
+            axis.title.x = element_text(size=24.5, margin = margin(t = 15.75, r = 0, b = 1, l = 0), colour="black", 
+                face = title_face), 
+            axis.text.x = element_text(size=axis_txt_size, angle=0, margin = margin(t = 5.5), colour="black"), 
+            axis.text.y = element_text(size=axis_txt_size, angle=0, margin = margin(r = 5.5), colour="black"), 
             legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=leg_box_bd), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
-            panel.grid.major = element_line(color="#d5d5d5"),
+            panel.border = element_rect(colour = "black", fill=NA, size=pan_boarder), 
+            panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
             legend.position = c(legend_x_pos, legend_y_pos), 
@@ -695,6 +705,10 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             point_size <- 5.75
             txt_x_pos <- 16.25
             txt_y_pos <- 1.283
+            pan_boarder <- 1.75
+            axis_txt_size <- 21.25
+            axis_ticks_s <- 0.7
+            title_face <- "plain"
 
       } else {
 
@@ -706,6 +720,10 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             point_size <- 5
             txt_x_pos <- 16.25
             txt_y_pos <- 1.283
+            pan_boarder <- 1.8
+            axis_txt_size <- 21.75
+            axis_ticks_s <- 0.95
+            title_face <- "bold"
       }
 
       ds_col <- rep(c("#798dc4"), 48)
@@ -723,7 +741,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         colour = dataset, linetype = dataset))
       p <- p + geom_point(size = point_size, data = data2, aes(x = div_times, y = correlation, group = comp_organ, 
         colour = dataset, shape = dataset))
-      p <- p + scale_x_continuous(limits = c(0,161), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
+      p <- p + scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
       scale_y_continuous(limits = c(0.055, 1.5275), expand = c(0.02, 0), breaks = c(0.2,0.4,0.6,0.8,1,1.2,1.4)) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
@@ -735,15 +753,17 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Expression distance") + 
       theme(text=element_text(size=16), 
         axis.ticks.length=unit(0.35, "cm"), 
-        axis.ticks = element_line(colour = "black", size = 0.7),  
+        axis.ticks = element_line(colour = "black", size = axis_ticks_s),  
         plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
-        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
-        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
-        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
+        axis.title.y = element_text(size=24.5, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
+            face = title_face), 
+        axis.title.x = element_text(size=24.5, margin = margin(t = 15.75, r = 0, b = 1, l = 0), colour="black", 
+            face = title_face), 
+        axis.text.x = element_text(size=axis_txt_size, angle=0, margin = margin(t = 5.5), colour="black"), 
+        axis.text.y = element_text(size=axis_txt_size, angle=0, margin = margin(r = 5.5), colour="black"), 
         legend.box.background = element_rect(colour = "#d5d5d5", fill= "white" , size=1.0), 
-        panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
-        panel.grid.major = element_line(color="#d5d5d5"),
+        panel.border = element_rect(colour = "black", fill=NA, size=pan_boarder), 
+        panel.grid.major = element_blank(),
         panel.grid.minor.x = element_blank(), 
         panel.grid.minor.y = element_blank(), 
         legend.position = c(legend_x_pos, legend_y_pos), 
