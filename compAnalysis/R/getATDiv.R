@@ -1490,6 +1490,21 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
   makeGEDivPlotBr(data = Brawand_div_rates)
   makeGEDivPlotBr(data = Brawand11_div_rates)
 
+
+  # Write gene expression divergence rate to file
+  # For both metric Pearson distance and sOU-v expression distance
+
+  # Show message
+  message("Writing data tables...")
+
+  div_rates_list <- list(compDivRates = compDivRates, compDivRates11 = compDivRates11, 
+    compSouVDivRates = compSouVDivRates, compSouVDivRates11 = compSouVDivRates11)
+
+  for(i in names(div_rates_list)){
+    write.table(div_rates_list[[i]], file=file.path(out_dir, "output", "data", paste0(i,".txt")), 
+        sep="\t", col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+  }
+
 }
 
 
