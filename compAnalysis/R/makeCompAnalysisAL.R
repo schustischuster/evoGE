@@ -1017,7 +1017,6 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       # Get LOESS slopes for DevSeq and Brawand data
       # For sOU expression distances
       DevSeqSouV_AL_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Slopes, data_set="complete")))
-      DevSeqSouV_sel_AL_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst_sel, getLOESS.Slopes, data_set="selected"))) ## hypocotyl slope is 0.00779 instead 0.00758 if BD is left out
       Brawand11SouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Slopes, data_set="complete")))
       sOU_loess_DevSeq_AL_Br11_wilcox <- wilcox.test(as.numeric(unlist(DevSeqSouV_AL_loess_slopes)), as.numeric(unlist(Brawand11SouV_loess_slopes)))$p.value
 
