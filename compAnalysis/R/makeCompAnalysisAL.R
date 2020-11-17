@@ -41,7 +41,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
     }
 
 
-	# Define simplified DevSeq column names
+	  # Define simplified DevSeq column names
     col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
         "Flower", "Stamen", "Carpel", "Pollen"), each=21)
     replicate_tag_samples <- rep(c(".1",".2",".3"), times=9)
@@ -52,12 +52,25 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
     col_names <- c("gene_id", col_names)
 
 
-	# Read expression data
-	x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+	  # Read expression data
+	  x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+
+
+    # Read Brawand11 metric Pearson distance data and merge with AL pea dist data
+    div_rates_list <- c("compDivRates", "compDivRates11", "compSouVDivRates", "compSouVDivRates11")
+
+    for(i in 1:length(div_rates_list)){
+
+      path_to_br11_div_rates <- file.path(out_dir, "output", "data", paste0(div_rates_list[i],".txt"))
+
+      assign(div_rates_list[i], read.table(path_to_br11_div_rates, header=TRUE, sep="\t", dec=".", 
+        stringsAsFactors=FALSE))
+    }
 
 
     # Stop function here to allow specific analysis of a single data set
-    # return_list <- list("expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names)
+    # return_list <- list("expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names, 
+    # "compDivRates" = compDivRates, "compDivRates11" = compDivRates11, "compSouVDivRates" = compSouVDivRates, "compSouVDivRates11" = compSouVDivRates11)
     # return(return_list)
     # }
     # return_objects <- makeCompAnylsisAL(expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
@@ -494,6 +507,12 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       DevSeq_AL_div_rates$comp_organ <- factor(DevSeq_AL_div_rates$comp_organ, 
         levels = unique(DevSeq_AL_div_rates$comp_organ))
 
+      Brawand11_div_rates <- compDivRates11[compDivRates11$dataset == "Mammals", ]
+      compDivRates11_AL <- rbind(DevSeq_AL_div_rates, Brawand11_div_rates)
+      compDivRates11_AL$dataset <- factor(compDivRates11_AL$dataset)
+      compDivRates11_AL$comp_organ <- factor(compDivRates11_AL$comp_organ, 
+        levels = unique(compDivRates11_AL$comp_organ))
+
 
       # Reshape DevSeq AL sOU expression data
       DevSeq_AL_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, DevSeq_AL_sou_v_div, dataset), 
@@ -566,6 +585,358 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
 
 
+#---- Apply non-linear regression to sOU and pearson dist expression data and compare slopes -----
+
+# Non-linear regression using negative exponential law fit: pairwise expression differences
+# between species saturate with evolutionary time in a power law relationship
+# Fits assumption of OU model underlying stabilizing GE selection as a decelarated process
+
+
+      nl_model <- function(a, b, c, x){
+
+        y = a + b * (1 - exp(c * x))
+        return(y)
+      }
+      # a + b defines maximum y value
+      # a defines intercept
+
+
+      x_DS_grid <- seq(7.1, 160, length = 200)  ## prediction grid
+      x_Br_grid <- seq(6.7, 159, length = 200)  ## prediction grid
+
+      # Compute data points for DevSeq_AL_pearson_dist based on model
+      # First try to manually find rough parameters, then use nls to fine tune
+      m <- nls(correlation ~ a + b * (1-(exp(div_times * c))), start = list(
+        a = 0.3, b = 0.2, c = -0.01), data = compDivRates11_AL[1:6,])
+      # m # get the optimized parameters
+
+      # Get fit for data from compDivRates11_AL
+      DS_AL_pea_dist_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.31827, b = 0.26902, c = -0.02476))) # compDivRates11_AL[1:6, ]
+      DS_AL_pea_dist_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.32286, b = 0.33262, c = -0.02213))) # compDivRates11_AL[7:12, ]
+      DS_AL_pea_dist_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.3093, b = 0.3560, c = -0.0104))) # compDivRates11_AL[13:18, ]
+      DS_AL_pea_dist_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.30109, b = 0.28924, c = -0.02435))) # compDivRates11_AL[19:24, ]
+      DS_AL_pea_dist_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.29882, b = 0.28198, c = -0.02512))) # compDivRates11_AL[25:30, ]
+      DS_AL_pea_dist_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.30565, b = 0.28551, c = -0.03033))) # compDivRates11_AL[31:36, ]
+      DS_AL_pea_dist_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.34405, b = 0.30761, c = -0.02173))) # compDivRates11_AL[37:42, ]
+      DS_AL_pea_dist_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.30025, b = 0.29019, c = -0.02278))) # compDivRates11_AL[43:48, ]
+
+      DS_AL_pea_dist_nl_list <- list(DS_AL_pea_dist_root_nl=DS_AL_pea_dist_root_nl,
+        DS_AL_pea_dist_hypo_nl=DS_AL_pea_dist_hypo_nl, DS_AL_pea_dist_leaf_nl=DS_AL_pea_dist_leaf_nl, 
+        DS_AL_pea_dist_apex_veg_nl=DS_AL_pea_dist_apex_veg_nl, DS_AL_pea_dist_apex_inf_nl=DS_AL_pea_dist_apex_inf_nl, 
+        DS_AL_pea_dist_flower_nl=DS_AL_pea_dist_flower_nl, DS_AL_pea_dist_stamen_nl=DS_AL_pea_dist_stamen_nl, 
+        DS_AL_pea_dist_carpel_nl=DS_AL_pea_dist_carpel_nl)
+
+
+      # Get fit for data from DevSeq_AL_sou_v_div_rates
+      DS_AL_sOU_v_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.16213, b = 0.89855, c = -0.01732))) # DevSeq_AL_sou_v_div_rates[1:6, ]
+      DS_AL_sOU_v_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.14172, b = 1.44391, c = -0.01365))) # DevSeq_AL_sou_v_div_rates[7:12, ]
+      DS_AL_sOU_v_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.19, b = 9.1, c = -0.0007))) # DevSeq_AL_sou_v_div_rates[13:18,]
+      DS_AL_sOU_v_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.12898, b = 0.94550, c = -0.01769))) # DevSeq_AL_sou_v_div_rates[19:24, ]
+      DS_AL_sOU_v_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.15105, b = 0.91667, c = -0.01609))) # DevSeq_AL_sou_v_div_rates[25:30, ]
+      DS_AL_sOU_v_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.1662, b = 0.9562, c = -0.0174))) # DevSeq_AL_sou_v_div_rates[31:36, ]
+      DS_AL_sOU_v_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.229840, b = 1.571409, c = -0.008808))) # DevSeq_AL_sou_v_div_rates[37:42, ]
+      DS_AL_sOU_v_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.15955, b = 1.00717, c = -0.01271))) # DevSeq_AL_sou_v_div_rates[43:48, ]
+
+      DS_AL_sOU_v_nl_list <- list(DS_AL_sOU_v_root_nl=DS_AL_sOU_v_root_nl,
+        DS_AL_sOU_v_hypo_nl=DS_AL_sOU_v_hypo_nl, DS_AL_sOU_v_leaf_nl=DS_AL_sOU_v_leaf_nl, 
+        DS_AL_sOU_v_apex_veg_nl=DS_AL_sOU_v_apex_veg_nl, DS_AL_sOU_v_apex_inf_nl=DS_AL_sOU_v_apex_inf_nl, 
+        DS_AL_sOU_v_flower_nl=DS_AL_sOU_v_flower_nl, DS_AL_sOU_v_stamen_nl=DS_AL_sOU_v_stamen_nl, 
+        DS_AL_sOU_v_carpel_nl=DS_AL_sOU_v_carpel_nl)
+
+
+      # Get fit for data from compDivRates11 (AT)
+      DS_AT_pea_dist_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.30507, b = 0.30235, c = -0.02116))) # compDivRates11[1:6, ]
+      DS_AT_pea_dist_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.31345, b = 0.34023, c = -0.01777))) # compDivRates11[7:12, ]
+      DS_AT_pea_dist_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.29961, b = 0.33251, c = -0.01109))) # compDivRates11[13:18, ]
+      DS_AT_pea_dist_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.29180, b = 0.28853, c = -0.02132))) # compDivRates11[19:24, ]
+      DS_AT_pea_dist_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.28499, b = 0.28122, c = -0.02315))) # compDivRates11[25:30, ]
+      DS_AT_pea_dist_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.29492, b = 0.27549, c = -0.03015))) # compDivRates11[31:36, ]
+      DS_AT_pea_dist_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.30777, b = 0.33599, c = -0.02589))) # compDivRates11[37:42, ]
+      DS_AT_pea_dist_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
+        nl_model, a = 0.29157, b = 0.29653, c = -0.01898))) # compDivRates11[43:48, ]
+
+      DS_AT_pea_dist_nl_list <- list(DS_AT_pea_dist_root_nl=DS_AT_pea_dist_root_nl,
+        DS_AT_pea_dist_hypo_nl=DS_AT_pea_dist_hypo_nl, DS_AT_pea_dist_leaf_nl=DS_AT_pea_dist_leaf_nl, 
+        DS_AT_pea_dist_apex_veg_nl=DS_AT_pea_dist_apex_veg_nl, DS_AT_pea_dist_apex_inf_nl=DS_AT_pea_dist_apex_inf_nl, 
+        DS_AT_pea_dist_flower_nl=DS_AT_pea_dist_flower_nl, DS_AT_pea_dist_stamen_nl=DS_AT_pea_dist_stamen_nl, 
+        DS_AT_pea_dist_carpel_nl=DS_AT_pea_dist_carpel_nl)
+
+
+      # Get fit for data from compSouVDivRates11 (AT)
+      DS_AT_sOU_v_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.10742, b = 1.04002, c = -0.01693))) # compSouVDivRates11[1:6, ]
+      DS_AT_sOU_v_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.176241, b = 1.781406, c = -0.006777))) # compSouVDivRates11[7:12, ]
+      DS_AT_sOU_v_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.18, b = 8.3, c = -0.0007))) # compSouVDivRates11[13:18, ]
+      DS_AT_sOU_v_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.13154, b = 0.89175, c = -0.01502))) # compSouVDivRates11[19:25, ]
+      DS_AT_sOU_v_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.10423, b = 0.83973, c = -0.01781))) # compSouVDivRates11[26:30, ]
+      DS_AT_sOU_v_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.14498, b = 0.83208, c = -0.01927))) # compSouVDivRates11[31:36, ]
+      DS_AT_sOU_v_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.05955, b = 1.29020, c = -0.02148))) # compSouVDivRates11[37:42, ]
+      DS_AT_sOU_v_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
+        a = 0.1669, b = 1.1686, c = -0.0078))) # compSouVDivRates11[43:48, ]
+
+      DS_AT_sOU_v_nl_list <- list(DS_AT_sOU_v_root_nl=DS_AT_sOU_v_root_nl,
+        DS_AT_sOU_v_hypo_nl=DS_AT_sOU_v_hypo_nl, DS_AT_sOU_v_leaf_nl=DS_AT_sOU_v_leaf_nl, 
+        DS_AT_sOU_v_apex_veg_nl=DS_AT_sOU_v_apex_veg_nl, DS_AT_sOU_v_apex_inf_nl=DS_AT_sOU_v_apex_inf_nl, 
+        DS_AT_sOU_v_flower_nl=DS_AT_sOU_v_flower_nl, DS_AT_sOU_v_stamen_nl=DS_AT_sOU_v_stamen_nl, 
+        DS_AT_sOU_v_carpel_nl=DS_AT_sOU_v_carpel_nl)
+
+
+      # Get fit for data from Brawand11_sou_v_div_rates
+      Br11_sOU_v_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.088024, b = 1.228775, c = -0.002073))) # Brawand11_sou_v_div_rates[1:6, ]
+      Br11_sOU_v_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.105259, b = 0.559726, c = -0.008246))) # Brawand11_sou_v_div_rates[7:12, ]
+      Br11_sOU_v_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.142598, b = 0.582876, c = -0.006562))) # Brawand11_sou_v_div_rates[13:18, ]
+      Br11_sOU_v_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.08081, b = 0.54196, c = -0.01581))) # Brawand11_sou_v_div_rates[19:24, ]
+      Br11_sOU_v_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.162913, b = 0.556777, c = -0.007157))) # Brawand11_sou_v_div_rates[25:30, ]
+      Br11_sOU_v_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.24232, b = 1.07307, c = -0.01123))) # Brawand11_sou_v_div_rates[31:35, ]
+
+      Br11_sOU_v_nl_list <- list(Br11_sOU_v_brain_nl=Br11_sOU_v_brain_nl,
+        Br11_sOU_v_cereb_nl=Br11_sOU_v_cereb_nl, Br11_sOU_v_heart_nl=Br11_sOU_v_heart_nl, 
+        Br11_sOU_v_kidney_nl=Br11_sOU_v_kidney_nl, Br11_sOU_v_liver_nl=Br11_sOU_v_liver_nl, 
+        Br11_sOU_v_testis_nl=Br11_sOU_v_testis_nl)
+
+
+      # Get fit for data from Brawand11_div_rates
+      Br11_pea_dist_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.288191, b = 0.945977, c = -0.001159))) # Brawand11_div_rates[1:6, ]
+      Br11_pea_dist_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.27303, b = 0.22076, c = -0.01226))) # Brawand11_div_rates[7:12, ]
+      Br11_pea_dist_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.32462, b = 0.18004, c = -0.01044))) # Brawand11_div_rates[13:18, ]
+      Br11_pea_dist_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.26899, b = 0.22670, c = -0.02594))) # Brawand11_div_rates[13:18, ]
+      Br11_pea_dist_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.31945, b = 0.17743, c = -0.01323))) # Brawand11_div_rates[25:30, ]
+      Br11_pea_dist_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.3679, b = 0.2501, c = -0.0213))) # Brawand11_div_rates[31:35, ]
+
+      Br11_pea_dist_nl_list <- list(Br11_pea_dist_brain_nl=Br11_pea_dist_brain_nl,
+        Br11_pea_dist_cereb_nl=Br11_pea_dist_cereb_nl, Br11_pea_dist_heart_nl=Br11_pea_dist_heart_nl, 
+        Br11_pea_dist_kidney_nl=Br11_pea_dist_kidney_nl, Br11_pea_dist_liver_nl=Br11_pea_dist_liver_nl, 
+        Br11_pea_dist_testis_nl=Br11_pea_dist_testis_nl)
+
+
+      # Get fit for data from compDivRates (re-analyzed Brawand data)
+      Br_pea_dist_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.4056, b = 0.1150, c = -0.0158))) # compDivRates[49:54, ]
+      Br_pea_dist_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.36897, b = 0.14064, c = -0.02841))) # compDivRates[55:60, ]
+      Br_pea_dist_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.39415, b = 0.11490, c = -0.01995))) # compDivRates[61:66, ]
+      Br_pea_dist_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.34853, b = 0.18393, c = -0.05122))) # compDivRates[67:72, ]
+      Br_pea_dist_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.38445, b = 0.11896, c = -0.02365))) # compDivRates[73:78, ]
+      Br_pea_dist_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.45122, b = 0.16376, c = -0.02449))) # compDivRates[79:83, ]
+
+      Br_pea_dist_nl_list <- list(Br_pea_dist_brain_nl=Br_pea_dist_brain_nl,
+        Br_pea_dist_cereb_nl=Br_pea_dist_cereb_nl, Br_pea_dist_heart_nl=Br_pea_dist_heart_nl, 
+        Br_pea_dist_kidney_nl=Br_pea_dist_kidney_nl, Br_pea_dist_liver_nl=Br_pea_dist_liver_nl, 
+        Br_pea_dist_testis_nl=Br_pea_dist_testis_nl)
+
+
+      # Get fit for data from compSouVDivRates (re-analyzed Brawand data)
+      Br_sOU_v_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.283531, b = 0.455410, c = -0.008912))) # compSouVDivRates[49:54, ]
+      Br_sOU_v_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.314821, b = 0.540446, c = -0.008012))) # compSouVDivRates[55:60, ]
+      Br_sOU_v_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.323399, b = 0.441617, c = -0.009079))) # compSouVDivRates[61:66, ]
+      Br_sOU_v_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.22394, b = 0.52105, c = -0.03426))) # compSouVDivRates[67:72, ]
+      Br_sOU_v_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.316728, b = 0.426800, c = -0.009314))) # compSouVDivRates[73:78, ]
+      Br_sOU_v_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
+        a = 0.489517, b = 1.285899, c = -0.005308))) # compSouVDivRates[79:83, ]
+
+      Br_sOU_v_nl_list <- list(Br_sOU_v_brain_nl=Br_sOU_v_brain_nl,
+        Br_sOU_v_cereb_nl=Br_sOU_v_cereb_nl, Br_sOU_v_heart_nl=Br_sOU_v_heart_nl, 
+        Br_sOU_v_kidney_nl=Br_sOU_v_kidney_nl, Br_sOU_v_liver_nl=Br_sOU_v_liver_nl, 
+        Br_sOU_v_testis_nl=Br_sOU_v_testis_nl)
+
+
+
+      # Create df with regression coordinates, comp_organ, div_times, correlation, and dataset
+      formatNLM.table <- function(x) {
+
+        fname <- deparse(substitute(x))
+
+        dataset_id <- gsub( "_.*$", "", fname)
+
+        fname_r <- substr(fname,1,nchar(fname)-3)
+        organ <- sub('.*\\_', '', fname_r)
+
+        if (dataset_id == "DS") {
+
+          dataset <- "Angiosperms "
+          div_times <- data.frame(div_times = x_DS_grid)  ## times from prediction grid
+
+        } else {
+
+          dataset <- "Mammals"
+          div_times <- data.frame(div_times = x_Br_grid)  ## times from prediction grid
+        }
+
+        dataset <- rep(dataset, 200)
+        dataset <- data.frame(dataset = dataset)
+        organ <- rep(organ, 200)
+        comp_organ <- data.frame(comp_organ = organ)
+
+        nlm_table <- cbind(comp_organ, div_times, x, dataset)
+        colnames(nlm_table)[3] <- "correlation"
+
+        return(nlm_table)
+      }
+
+
+      # Create tables of nlm slope values for all organs with comp_organ, div_times and dataset
+      # columns for plotting non-linear regressions for individual organs
+      DS_AL_pea_dist_root_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_root_nl))
+      DS_AL_pea_dist_hypo_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_hypo_nl))
+      DS_AL_pea_dist_leaf_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_leaf_nl))
+      DS_AL_pea_dist_apex_veg_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_apex_veg_nl))
+      DS_AL_pea_dist_apex_inf_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_apex_inf_nl))
+      DS_AL_pea_dist_flower_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_flower_nl))
+      DS_AL_pea_dist_stamen_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_stamen_nl))
+      DS_AL_pea_dist_carpel_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_carpel_nl))
+
+      DS_AL_pea_dist_nlm_coord <- rbind(DS_AL_pea_dist_root_nl_df, DS_AL_pea_dist_hypo_nl_df, 
+        DS_AL_pea_dist_leaf_nl_df, DS_AL_pea_dist_apex_veg_nl_df, DS_AL_pea_dist_apex_inf_nl_df, 
+        DS_AL_pea_dist_flower_nl_df, DS_AL_pea_dist_stamen_nl_df, DS_AL_pea_dist_carpel_nl_df)
+
+
+      Br11_pea_dist_brain_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_brain_nl))
+      Br11_pea_dist_cereb_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_cereb_nl))
+      Br11_pea_dist_heart_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_heart_nl))
+      Br11_pea_dist_kidney_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_kidney_nl))
+      Br11_pea_dist_liver_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_liver_nl))
+      Br11_pea_dist_testis_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_testis_nl))
+
+      Br11_pea_dist_nlm_coord <- rbind(Br11_pea_dist_brain_nl_df, Br11_pea_dist_cereb_nl_df, Br11_pea_dist_heart_nl_df, 
+        Br11_pea_dist_kidney_nl_df, Br11_pea_dist_liver_nl_df, Br11_pea_dist_testis_nl_df)
+
+
+      # Get final table for organ regression plot
+      nlmPea_coor11_AL <- rbind(DS_AL_pea_dist_nlm_coord, Br11_pea_dist_nlm_coord)
+
+
+      # Compute slope
+      getDS.NL.Slope <- function(x){
+
+        x <- as.numeric(x[,1])
+        slopes = diff(x)/diff(x_Br_grid)
+        slopes_avg <- mean(slopes)
+        slopes_avg <- as.numeric(as.data.frame(slopes_avg))
+        
+        return(slopes_avg)
+
+      }
+
+      DevSeq_AL_pea_dist_nl_slopes <- as.data.frame(do.call(rbind, lapply(DS_AL_pea_dist_nl_list, getDS.NL.Slope)))
+      DevSeq_AL_sOU_v_nl_slopes <- as.data.frame(do.call(rbind, lapply(DS_AL_sOU_v_nl_list, getDS.NL.Slope)))
+      DevSeq_AT_pea_dist_nl_slopes <- as.data.frame(do.call(rbind, lapply(DS_AT_pea_dist_nl_list, getDS.NL.Slope)))
+      DevSeq_AT_sOU_v_nl_slopes <- as.data.frame(do.call(rbind, lapply(DS_AT_sOU_v_nl_list, getDS.NL.Slope)))
+      Br11_sOU_v_nl_slopes <- as.data.frame(do.call(rbind, lapply(Br11_sOU_v_nl_list, getDS.NL.Slope)))
+      Br11_pea_dist_nl_slopes <- as.data.frame(do.call(rbind, lapply(Br11_pea_dist_nl_list, getDS.NL.Slope)))
+      Br_pea_dist_nl_slopes <- as.data.frame(do.call(rbind, lapply(Br_pea_dist_nl_list, getDS.NL.Slope)))
+      Br_sOU_v_nl_slopes <- as.data.frame(do.call(rbind, lapply(Br_sOU_v_nl_list, getDS.NL.Slope)))
+
+
+      # Add organ id column
+      formatNL.Slope <- function(x, data_set, regr_mod) {
+
+        names(x) <- regr_mod
+
+        if ((regr_mod == "DS_AL_pea_nlm") || (regr_mod == "DS_AL_sOU_nlm") 
+          || (regr_mod == "DS_AT_pea_nlm") || (regr_mod == "DS_AT_sOU_nlm")) {
+
+          organ <- data.frame(sample = c("Root", "Hypocotyl", "Leaf", "Apex_veg", "Apex_inf", 
+            "Flower", "Stamen", "Carpel"))
+
+        } else {
+
+          organ <- data.frame(sample = c("Brain", "Cerebellum", "Heart", "Kidney", "Liver", 
+            "Testis"))
+        }
+
+        slopes_df <- cbind(organ, x)
+        rownames(slopes_df) <- NULL
+
+        return(slopes_df)
+
+      }
+
+
+      DevSeq_AL_pea_nlm_slopes <- formatNL.Slope(DevSeq_AL_pea_dist_nl_slopes, regr_mod = "DS_AL_pea_nlm")
+      DevSeq_AL_sOU_nlm_slopes <- formatNL.Slope(DevSeq_AL_sOU_v_nl_slopes, regr_mod = "DS_AL_sOU_nlm")
+      DevSeq_AL_nlm_slopes <- cbind(DevSeq_AL_sOU_nlm_slopes, DevSeq_AL_sOU_nlm_slopes[-1], 
+        DevSeq_AL_pea_nlm_slopes[-1], DevSeq_AL_pea_nlm_slopes[-1])
+      colnames(DevSeq_AL_nlm_slopes) <- c("sample", "DS_AL_Br11_sOU_nlm", "DS_AL_Br_sOU_nlm", 
+        "DS_AL_Br11_pea_nlm", "DS_AL_Br_pea_nlm")
+
+      DevSeq_AT_pea_nlm_slopes <- formatNL.Slope(DevSeq_AT_pea_dist_nl_slopes, regr_mod = "DS_AT_pea_nlm")
+      DevSeq_AT_sOU_nlm_slopes <- formatNL.Slope(DevSeq_AT_sOU_v_nl_slopes, regr_mod = "DS_AT_sOU_nlm")
+      DevSeq_AT_nlm_slopes <- cbind(DevSeq_AT_sOU_nlm_slopes, DevSeq_AT_sOU_nlm_slopes[-1], 
+        DevSeq_AT_pea_nlm_slopes[-1], DevSeq_AT_pea_nlm_slopes[-1])
+      colnames(DevSeq_AT_nlm_slopes) <- c("sample", "DS_AT_Br11_sOU_nlm", "DS_AT_Br_sOU_nlm", 
+        "DS_AT_Br11_pea_nlm", "DS_AT_Br_pea_nlm")
+
+      Br11_pea_nlm_slopes <- formatNL.Slope(Br11_pea_dist_nl_slopes, regr_mod = "Br11_pea_nlm")
+      Br11_sOU_nlm_slopes <- formatNL.Slope(Br11_sOU_v_nl_slopes, regr_mod = "Br11_sOU_nlm")
+
+      Br_pea_nlm_slopes <- formatNL.Slope(Br_pea_dist_nl_slopes, regr_mod = "Br_pea_nlm")
+      Br_sOU_nlm_slopes <- formatNL.Slope(Br_sOU_v_nl_slopes, regr_mod = "Br_sOU_nlm")
+      Br_nlm_slopes <- cbind(Br11_sOU_nlm_slopes, Br_sOU_nlm_slopes[-1], Br11_pea_nlm_slopes[-1], 
+        Br_pea_nlm_slopes[-1])
+
+      # Generate final data table for DevSeq and Brawand nlm slopes
+      Br_nlm_slopes_AL <- Br_nlm_slopes
+      colnames(Br_nlm_slopes_AL) <- c("sample", "DS_AL_Br11_sOU_nlm", "DS_AL_Br_sOU_nlm", 
+        "DS_AL_Br11_pea_nlm", "DS_AL_Br_pea_nlm")
+      Br_nlm_slopes_AT <- Br_nlm_slopes
+      colnames(Br_nlm_slopes_AT) <- c("sample", "DS_AT_Br11_sOU_nlm", "DS_AT_Br_sOU_nlm", 
+        "DS_AT_Br11_pea_nlm", "DS_AT_Br_pea_nlm")
+
+      DS_AL_Br_nlm_slopes <- rbind(DevSeq_AL_nlm_slopes, Br_nlm_slopes_AL)
+      DS_AT_Br_nlm_slopes <- rbind(DevSeq_AT_nlm_slopes, Br_nlm_slopes_AT)
+
+
+
 
 #---- Apply LOESS regression to sOU and pearson dist expression data and compare slopes -----
 
@@ -597,20 +968,12 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         compSouVDivRates11_AL[19:24,], compSouVDivRates11_AL[25:30,], compSouVDivRates11_AL[31:36,], compSouVDivRates11_AL[37:42,], 
         compSouVDivRates11_AL[43:48,])
 
-      devseqSouV_organ_lst_sel <- list(compSouVDivRates11_AL[1:6,], compSouVDivRates11_AL[7:11,], compSouVDivRates11_AL[13:18,], 
-        compSouVDivRates11_AL[19:24,], compSouVDivRates11_AL[25:30,], compSouVDivRates11_AL[31:36,], compSouVDivRates11_AL[37:42,], 
-        compSouVDivRates11_AL[43:48,])
-
       brawandSouV11_organ_lst <- list(compSouVDivRates11_AL[49:54,], compSouVDivRates11_AL[55:60,], compSouVDivRates11_AL[61:66,], 
         compSouVDivRates11_AL[67:72,],compSouVDivRates11_AL[73:78,], compSouVDivRates11_AL[79:83,])
 
 
       # Set up lists containing metric pearson expression distances
       devseq_organ_lst <- list(DevSeq_AL_div_rates[1:6,], DevSeq_AL_div_rates[7:12,], DevSeq_AL_div_rates[13:18,], 
-        DevSeq_AL_div_rates[19:24,], DevSeq_AL_div_rates[25:30,], DevSeq_AL_div_rates[31:36,], DevSeq_AL_div_rates[37:42,], 
-        DevSeq_AL_div_rates[43:48,])
-
-      devseq_organ_lst_sel <- list(DevSeq_AL_div_rates[1:6,], DevSeq_AL_div_rates[7:11,], DevSeq_AL_div_rates[13:18,], 
         DevSeq_AL_div_rates[19:24,], DevSeq_AL_div_rates[25:30,], DevSeq_AL_div_rates[31:36,], DevSeq_AL_div_rates[37:42,], 
         DevSeq_AL_div_rates[43:48,])
 
@@ -681,21 +1044,50 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         file=file.path(out_dir, "output", "data", "DevSeq_AL_log_slopes.txt"), sep="\t", 
         col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
 
+      write.table(DS_AL_Br_nlm_slopes, 
+        file=file.path(out_dir, "output", "data", "DS_AL_Br_nlm_slopes.txt"), sep="\t", 
+        col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+
+      write.table(DS_AT_Br_nlm_slopes, 
+        file=file.path(out_dir, "output", "data", "DS_AT_Br_nlm_slopes.txt"), sep="\t", 
+        col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+
 
       # Create p-value containing test strings for plots
-    sOU_loess_DevSeq_AL_Br11_slope_p <- paste("P =", formatC(sOU_loess_DevSeq_AL_Br11_wilcox, format="e", digits=0))
+      sOU_loess_DevSeq_AL_Br11_slope_p <- paste("P =", formatC(sOU_loess_DevSeq_AL_Br11_wilcox, format="e", digits=0))
+
+      # Change dataset ID for shorter legend
+      compDivRates11_AL$dataset <- gsub('Angiosperms', 'Angiosp', compDivRates11_AL$dataset)
+      nlmPea_coor11_AL$dataset <- gsub('Angiosperms', 'Angiosp', nlmPea_coor11_AL$dataset)
 
 
 
    # Make sOU GE divergence plot showing individual organ regressions for SI
-   makeOrgRegPlot <- function(data1, data2, coefficient, expr_estimation, p_value, pos) {
+   makeOrgRegPlot <- function(data1, data2, coefficient, expr_estimation, p_value, pos, dist = c("sOU_v", "pea")) {
 
-      fname <- sprintf('%s.jpg', paste("compSouVDivRates11_AL_loess", expr_estimation, pos, sep="_"))
+      if (dist == "sOU_v") {
 
-      ymin <- 0.05
-      ymax <- 1.45
+        fname <- sprintf('%s.jpg', paste("compSouVDivRates11_AL_loess", expr_estimation, pos, sep="_"))
+        y_min <- 0.055
+        y_max <- 1.5275
+        col_breaks <- c("Angiosperms ", "Mammals")
+        fill_breaks <- c("Angiosperms ", "Mammals")
+        y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4)
+        y_title <- "Expression distance"
 
-      if (pos == "main") {
+      } else if (dist == "pea") {
+
+        fname <- sprintf('%s.jpg', paste("compDivRates11_AL_nlm", expr_estimation, pos, sep="_"))
+        y_min <- 0.27
+        y_max <- 0.667
+        col_breaks <- c("Angiosp ", "Mammals")
+        fill_breaks <- c("Angiosp ", "Mammals")
+        y_breaks <- c(0.3,0.4,0.5,0.6)
+        y_title <- "Pearson distance"
+
+      }
+
+      if (pos == "main" && dist == "sOU_v") {
 
             plot_wdt <- 12.535
             plot_hdt <- 8
@@ -710,7 +1102,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             axis_ticks_s <- 0.7
             title_face <- "plain"
 
-      } else {
+      } else if (pos == "ext" && dist == "sOU_v") {
 
             plot_wdt <- 9.5 # condenced plot width for suppl
             plot_hdt <- 6.75 # condenced plot width for suppl
@@ -724,14 +1116,27 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             axis_txt_size <- 21.75
             axis_ticks_s <- 0.95
             title_face <- "bold"
+
+      } else if (pos == "ext" && dist == "pea") {
+
+            plot_wdt <- 9.5 # condenced plot width for suppl
+            plot_hdt <- 6.75 # condenced plot width for suppl
+            legend_x_pos <- 0.272
+            legend_y_pos <- 0.9
+            linewd <- 2.5
+            point_size <- 5
+            txt_x_pos <- 16.25
+            txt_y_pos <- 0.5
+            pan_boarder <- 1.8
+            axis_txt_size <- 21.75
+            axis_ticks_s <- 0.95
+            title_face <- "bold"
       }
 
       ds_col <- rep(c("#798dc4"), 48)
       bw_col <- rep(c("red"), 35)
       col_scale <- c("#798dc4", "red")
       fill_scale <- c("#798dc4", "red")
-      col_breaks <- c("Angiosperms ", "Mammals")
-      fill_breaks <- c("Angiosperms ", "Mammals")
       shape_scale <- c(16, 17)
 
       fill_col <- c(as.character(ds_col), as.character(bw_col))
@@ -742,7 +1147,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       p <- p + geom_point(size = point_size, data = data2, aes(x = div_times, y = correlation, group = comp_organ, 
         colour = dataset, shape = dataset))
       p <- p + scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(0.055, 1.5275), expand = c(0.02, 0), breaks = c(0.2,0.4,0.6,0.8,1,1.2,1.4)) + 
+      scale_y_continuous(limits = c(y_min, y_max), expand = c(0.02, 0), breaks = y_breaks) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
       scale_shape_manual(values = shape_scale) + 
@@ -750,7 +1155,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       annotate("text", x = txt_x_pos, y = txt_y_pos, label = p_value, size = 8) + 
       guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
-      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Expression distance") + 
+      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab(y_title) + 
       theme(text=element_text(size=16), 
         axis.ticks.length=unit(0.35, "cm"), 
         axis.ticks = element_line(colour = "black", size = axis_ticks_s),  
@@ -778,10 +1183,13 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
   }
 
   makeOrgRegPlot(data1 = loessSouV_coor11_AL, data2 = compSouVDivRates11_AL, coefficient = coefficient, 
-    expr_estimation = expr_estimation, pos = "ext", p_value = "")
+    expr_estimation = expr_estimation, pos = "ext", p_value = "", dist = "sOU_v")
 
   makeOrgRegPlot(data1 = loessSouV_coor11_AL, data2 = compSouVDivRates11_AL, coefficient = coefficient, 
-    expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AL_Br11_slope_p)
+    expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AL_Br11_slope_p, dist = "sOU_v")
+
+  makeOrgRegPlot(data1 = nlmPea_coor11_AL, data2 = compDivRates11_AL[c(49:78,1:48,79:nrow(compDivRates11_AL)),], 
+    coefficient = coefficient, expr_estimation = expr_estimation, pos = "ext", p_value = "", dist = "pea")
 
 
 
