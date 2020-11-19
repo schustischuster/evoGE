@@ -855,11 +855,55 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       nlmPea_coor11_AL <- rbind(DS_AL_pea_dist_nlm_coord, Br11_pea_dist_nlm_coord)
 
 
+      # Get mean value of slopes
+      DS_AL_sOU_v_nl_mean <- rowMeans(do.call(cbind, DS_AL_sOU_v_nl_list))
+      DS_AT_sOU_v_nl_mean <- rowMeans(do.call(cbind, DS_AT_sOU_v_nl_list))
+      Br11_sOU_v_nl_mean <- rowMeans(do.call(cbind, Br11_sOU_v_nl_list))
+      Br_sOU_v_nl_mean <- rowMeans(do.call(cbind, Br_sOU_v_nl_list))
+
+
+      # Get cumulative slope values
+      getCum.NL.Slope <- function(x){
+
+        fname <- deparse(substitute(x))
+
+        dataset_id <- gsub( "_.*$", "", fname)
+
+        if (dataset_id == "DS") {
+
+          x_grid <- x_DS_grid
+
+        } else x_grid <- x_Br_grid
+
+        x <- as.numeric(x)
+        slopes = diff(x)/diff(x_grid)
+        slopes_cumsum <- cumsum(as.data.frame(slopes)[,1])
+        slopes_cumsum <- as.numeric(as.data.frame(slopes_cumsum)[,1])
+
+        return(slopes_cumsum)
+      }
+
+      DS_AL_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(DS_AL_sOU_v_nl_mean)
+      DS_AT_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(DS_AT_sOU_v_nl_mean)
+      Br11_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(Br11_sOU_v_nl_mean)
+      Br_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(Br_sOU_v_nl_mean)
+
+
       # Compute slope
       getDS.NL.Slope <- function(x){
 
+        fname <- deparse(substitute(x))
+
+        dataset_id <- gsub( "_.*$", "", fname)
+
+        if (dataset_id == "DS") {
+
+          x_grid <- x_DS_grid
+
+        } else x_grid <- x_Br_grid
+
         x <- as.numeric(x[,1])
-        slopes = diff(x)/diff(x_Br_grid)
+        slopes = diff(x)/diff(x_grid)
         slopes_avg <- mean(slopes)
         slopes_avg <- as.numeric(as.data.frame(slopes_avg))
         
@@ -971,6 +1015,13 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       brawandSouV11_organ_lst <- list(compSouVDivRates11_AL[49:54,], compSouVDivRates11_AL[55:60,], compSouVDivRates11_AL[61:66,], 
         compSouVDivRates11_AL[67:72,],compSouVDivRates11_AL[73:78,], compSouVDivRates11_AL[79:83,])
 
+      devseq_AT_SouV_organ_lst <- list(compSouVDivRates11[1:6,], compSouVDivRates11[7:12,], compSouVDivRates11[13:18,], 
+        compSouVDivRates11[19:24,], compSouVDivRates11[25:30,], compSouVDivRates11[31:36,], compSouVDivRates11[37:42,], 
+        compSouVDivRates11[43:48,])
+
+      brawandSouV_organ_lst <- list(compSouVDivRates[49:54,], compSouVDivRates[55:60,], compSouVDivRates[61:66,], 
+        compSouVDivRates[67:72,],compSouVDivRates[73:78,], compSouVDivRates[79:83,])
+
 
       # Set up lists containing metric pearson expression distances
       devseq_organ_lst <- list(DevSeq_AL_div_rates[1:6,], DevSeq_AL_div_rates[7:12,], DevSeq_AL_div_rates[13:18,], 
@@ -998,7 +1049,59 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
 
 
-      getLOESS.Slopes <- function(organ_data, data_set) {
+      # Get cumulative slope values
+      getCum.LOESS.Slope <- function(x, span = span, degree = degree, family = family){
+
+        temp <- loess.smooth(x$div_times, x$correlation, span = span, 
+          degree = degree, family = family, evaluation = 200)
+
+        # Get slope values
+        slopes = diff(temp$y)/diff(temp$x)
+
+        slopes_cumsum <- cumsum(as.data.frame(slopes)[,1])
+        slopes_cumsum <- as.numeric(as.data.frame(slopes_cumsum)[,1])
+
+        return(slopes_cumsum)
+      }
+
+
+      # Get mean value of slopes
+      DevSeqSouV_AL_loess_mean <- do.call(cbind, lapply(devseqSouV_organ_lst, getCum.LOESS.Slope, 
+        span = 1, degree = 2, family = "gaussian"))
+      DevSeqSouV_AL_loess_mean <- rowMeans(DevSeqSouV_AL_loess_mean)
+
+      DevSeqSouV_AT_loess_mean <- do.call(cbind, lapply(devseq_AT_SouV_organ_lst, getCum.LOESS.Slope, 
+        span = 1, degree = 2, family = "gaussian"))
+      DevSeqSouV_AT_loess_mean <- rowMeans(DevSeqSouV_AT_loess_mean)
+
+      brawandSouV11_loess_mean <- do.call(cbind, lapply(brawandSouV11_organ_lst, getCum.LOESS.Slope, 
+        span = 1, degree = 2, family = "gaussian"))
+      brawandSouV11_loess_mean <- rowMeans(brawandSouV11_loess_mean)
+
+      brawandSouV_loess_mean <- do.call(cbind, lapply(brawandSouV_organ_lst, getCum.LOESS.Slope, 
+        span = 1, degree = 2, family = "gaussian"))
+      brawandSouV_loess_mean <- rowMeans(brawandSouV_loess_mean)
+
+
+      # Prepare data for ggplot2
+      div_times <- c(x_DS_grid[1:199], x_DS_grid[1:199], x_Br_grid[1:199], x_Br_grid[1:199])
+      div_times <- as.data.frame(div_times)
+      colnames(div_times) <- "div_times"
+      dataset <- data.frame(rep(c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an."), each=199))
+      colnames(dataset) <- "dataset"
+      correlation <- c(DevSeqSouV_AT_loess_mean, DevSeqSouV_AL_loess_mean, brawandSouV11_loess_mean, 
+        brawandSouV_loess_mean)
+      correlation <- as.data.frame(correlation)
+      colnames(correlation) <- "correlation"
+      sOU_v_loess_cum_slopes <- data.frame(div_times, correlation, dataset)
+
+      sOU_v_loess_cum_slopes$div_times <- as.numeric(sOU_v_loess_cum_slopes$div_times)
+      sOU_v_loess_cum_slopes$correlation <- as.numeric(sOU_v_loess_cum_slopes$correlation)
+      sOU_v_loess_cum_slopes$dataset <- factor(sOU_v_loess_cum_slopes$dataset)
+
+
+
+      getLOESS.Slopes <- function(organ_data) {
 
         comp_organ <- unique(organ_data$comp_organ)
 
@@ -1016,12 +1119,12 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
       # Get LOESS slopes for DevSeq and Brawand data
       # For sOU expression distances
-      DevSeqSouV_AL_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Slopes, data_set="complete")))
-      Brawand11SouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Slopes, data_set="complete")))
+      DevSeqSouV_AL_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Slopes)))
+      Brawand11SouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Slopes)))
       sOU_loess_DevSeq_AL_Br11_wilcox <- wilcox.test(as.numeric(unlist(DevSeqSouV_AL_loess_slopes)), as.numeric(unlist(Brawand11SouV_loess_slopes)))$p.value
 
       # For metric pearson expression distances
-      DevSeq_AL_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseq_organ_lst, getLOESS.Slopes, data_set="complete")))
+      DevSeq_AL_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseq_organ_lst, getLOESS.Slopes)))
 
 
       # Write slope values to csv file
@@ -1035,21 +1138,13 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       # Show message
       message("Writing data tables...")
 
-      write.table(DevSeq_AL_loess_slopes, 
-        file=file.path(out_dir, "output", "data", "DevSeq_AL_loess_slopes.txt"), sep="\t", 
-        col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+      slopes_regr_list <- list(DevSeq_AL_loess_slopes = DevSeq_AL_loess_slopes, 
+        DevSeq_AL_log_slopes = DevSeq_AL_log_slopes, DS_AL_Br_nlm_slopes = DS_AL_Br_nlm_slopes, 
+        DS_AT_Br_nlm_slopes = DS_AT_Br_nlm_slopes)
 
-      write.table(DevSeq_AL_log_slopes, 
-        file=file.path(out_dir, "output", "data", "DevSeq_AL_log_slopes.txt"), sep="\t", 
-        col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
-
-      write.table(DS_AL_Br_nlm_slopes, 
-        file=file.path(out_dir, "output", "data", "DS_AL_Br_nlm_slopes.txt"), sep="\t", 
-        col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
-
-      write.table(DS_AT_Br_nlm_slopes, 
-        file=file.path(out_dir, "output", "data", "DS_AT_Br_nlm_slopes.txt"), sep="\t", 
-        col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+      for(i in names(slopes_regr_list)){ 
+        write.table(slopes_regr_list[[i]], file = file.path(out_dir, "output", "data", paste0(i,".txt")), 
+          sep="\t", col.names=TRUE, row.names = FALSE, dec=".", quote = FALSE)
 
 
       # Create p-value containing test strings for plots
@@ -1190,6 +1285,59 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
   makeOrgRegPlot(data1 = nlmPea_coor11_AL, data2 = compDivRates11_AL[c(49:78,1:48,79:nrow(compDivRates11_AL)),], 
     coefficient = coefficient, expr_estimation = expr_estimation, pos = "ext", p_value = "", dist = "pea")
 
+
+
+   # Make sOU GE divergence plot showing cumulative mean slope values for SI
+   plotCumSlopes <- function(data, coefficient, expr_estimation) {
+
+
+      fname <- sprintf('%s.jpg', paste("compSouV_loess_cum_slopes", coefficient, expr_estimation, sep="_"))
+        
+      col_breaks <- c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an.")
+      y_breaks <- c(0,0.2,0.4,0.6,0.8,1,1.2,1.4)
+
+      col_scale <- c('#798dc4', '#2f2fc3','red', 'red3')
+      fill_scale <- c('#798dc4', '#2f2fc3','red', 'red3')
+
+
+      p <- ggplot() 
+      p <- p + geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
+        colour = dataset))
+      p <- p + scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
+      scale_y_continuous(limits = c(0, 1.225), expand = c(0.02, 0), breaks = y_breaks) + 
+      scale_color_manual(values = col_scale, breaks = col_breaks) + 
+      scale_shape_manual(values = shape_scale) + 
+      scale_size(range = c(0.5, 12)) + 
+      guides(color = guide_legend(ncol=1, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
+
+      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Cumulative mean slope value") + 
+      theme(text=element_text(size=16), 
+        axis.ticks.length=unit(0.35, "cm"), 
+        axis.ticks = element_line(colour = "black", size = 0.95),  
+        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+        axis.title.y = element_text(size=24.5, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
+            face = "bold"), 
+        axis.title.x = element_text(size=24.5, margin = margin(t = 15.75, r = 0, b = 1, l = 0), colour="black", 
+            face = "bold"), 
+        axis.text.x = element_text(size=21.75, angle=0, margin = margin(t = 5.5), colour="black"), 
+        axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
+        legend.box.background = element_rect(colour = NA, fill= "white" , size=1.0), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1.8), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.minor.y = element_blank(), 
+        legend.position = c(0.22, 0.815), 
+        legend.title = element_blank(), 
+        legend.text = element_text(size=22), 
+        legend.spacing.x = unit(0.5, 'cm'), 
+        legend.key.size = unit(0.95, "cm"), 
+        legend.background=element_blank()) 
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+            width = 9.5, height = 6.75, dpi = 300, units = c("in"), limitsize = FALSE) 
+  }
+
+  plotCumSlopes(data = sOU_v_loess_cum_slopes, coefficient = coefficient, expr_estimation = expr_estimation)
 
 
    }
