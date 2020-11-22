@@ -1065,22 +1065,45 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       }
 
 
+      # Get LOESS slope mean and CI
+      getLoessStats <- function(loess_data) {
+
+        nsamples <- ncol(loess_data)
+
+        loess_mean <- rowMeans(loess_data)
+
+        sd_out <- by(loess_data, 1:nrow(loess_data), function(row) sd <- sd(row))
+        sd_out <- sd_out[1:199]
+        sd_out <- as.data.frame(sd_out)
+        sd_out <- as.numeric(sd_out[,1])
+
+        error <- qnorm(0.975) * sd_out/sqrt(nsamples)
+
+        mean_li <- loess_mean - error
+        mean_ri <- loess_mean + error
+
+        loess_stat <- data.frame(correlation = loess_mean, li = mean_li, ri = mean_ri)
+
+        return(loess_stat)
+      }
+
+
       # Get mean value of slopes
       DevSeqSouV_AL_loess_mean <- do.call(cbind, lapply(devseqSouV_organ_lst, getCum.LOESS.Slope, 
         span = 1, degree = 2, family = "gaussian"))
-      DevSeqSouV_AL_loess_mean <- rowMeans(DevSeqSouV_AL_loess_mean)
+      DevSeqSouV_AL_loess_mean <- getLoessStats(DevSeqSouV_AL_loess_mean)
 
       DevSeqSouV_AT_loess_mean <- do.call(cbind, lapply(devseq_AT_SouV_organ_lst, getCum.LOESS.Slope, 
         span = 1, degree = 2, family = "gaussian"))
-      DevSeqSouV_AT_loess_mean <- rowMeans(DevSeqSouV_AT_loess_mean)
+      DevSeqSouV_AT_loess_mean <- getLoessStats(DevSeqSouV_AT_loess_mean)
 
       brawandSouV11_loess_mean <- do.call(cbind, lapply(brawandSouV11_organ_lst, getCum.LOESS.Slope, 
         span = 1, degree = 2, family = "gaussian"))
-      brawandSouV11_loess_mean <- rowMeans(brawandSouV11_loess_mean)
+      brawandSouV11_loess_mean <- getLoessStats(brawandSouV11_loess_mean)
 
       brawandSouV_loess_mean <- do.call(cbind, lapply(brawandSouV_organ_lst, getCum.LOESS.Slope, 
         span = 1, degree = 2, family = "gaussian"))
-      brawandSouV_loess_mean <- rowMeans(brawandSouV_loess_mean)
+      brawandSouV_loess_mean <- getLoessStats(brawandSouV_loess_mean)
 
 
       # Prepare data for ggplot2
@@ -1089,14 +1112,14 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       colnames(div_times) <- "div_times"
       dataset <- data.frame(rep(c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an."), each=199))
       colnames(dataset) <- "dataset"
-      correlation <- c(DevSeqSouV_AT_loess_mean, DevSeqSouV_AL_loess_mean, brawandSouV11_loess_mean, 
+      correlation <- rbind(DevSeqSouV_AT_loess_mean, DevSeqSouV_AL_loess_mean, brawandSouV11_loess_mean, 
         brawandSouV_loess_mean)
-      correlation <- as.data.frame(correlation)
-      colnames(correlation) <- "correlation"
       sOU_v_loess_cum_slopes <- data.frame(div_times, correlation, dataset)
 
       sOU_v_loess_cum_slopes$div_times <- as.numeric(sOU_v_loess_cum_slopes$div_times)
       sOU_v_loess_cum_slopes$correlation <- as.numeric(sOU_v_loess_cum_slopes$correlation)
+      sOU_v_loess_cum_slopes$li <- as.numeric(sOU_v_loess_cum_slopes$li)
+      sOU_v_loess_cum_slopes$ri <- as.numeric(sOU_v_loess_cum_slopes$ri)
       sOU_v_loess_cum_slopes$dataset <- factor(sOU_v_loess_cum_slopes$dataset)
 
 
@@ -1151,8 +1174,11 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       sOU_loess_DevSeq_AL_Br11_slope_p <- paste("P =", formatC(sOU_loess_DevSeq_AL_Br11_wilcox, format="e", digits=0))
 
       # Change dataset ID for shorter legend
-      compDivRates11_AL$dataset <- gsub('Angiosperms', 'Angiosp', compDivRates11_AL$dataset)
-      nlmPea_coor11_AL$dataset <- gsub('Angiosperms', 'Angiosp', nlmPea_coor11_AL$dataset)
+      compDivRates11_AL$dataset <- c(rep('Angiosperms.AL ', 48), rep('Mammals.11', 35))
+      nlmPea_coor11_AL$dataset <- c(rep('Angiosperms.AL ', 1600), rep('Mammals.11', 1200))
+
+      compSouVDivRates11_AL$dataset <- c(rep('Angiosperms.AL ', 48), rep('Mammals.11', 35))
+      loessSouV_coor11_AL$dataset <- c(rep('Angiosperms.AL ', 1600), rep('Mammals.11', 1200))
 
 
 
@@ -1164,8 +1190,8 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         fname <- sprintf('%s.jpg', paste("compSouVDivRates11_AL_loess", expr_estimation, pos, sep="_"))
         y_min <- 0.055
         y_max <- 1.5275
-        col_breaks <- c("Angiosperms ", "Mammals")
-        fill_breaks <- c("Angiosperms ", "Mammals")
+        col_breaks <- c("Angiosperms.AL ", "Mammals.11")
+        fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
         y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4)
         y_title <- "Expression distance"
 
@@ -1174,8 +1200,8 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         fname <- sprintf('%s.jpg', paste("compDivRates11_AL_nlm", expr_estimation, pos, sep="_"))
         y_min <- 0.27
         y_max <- 0.667
-        col_breaks <- c("Angiosp ", "Mammals")
-        fill_breaks <- c("Angiosp ", "Mammals")
+        col_breaks <- c("Angiosperms.AL ", "Mammals.11")
+        fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
         y_breaks <- c(0.3,0.4,0.5,0.6)
         y_title <- "Pearson distance"
 
@@ -1185,7 +1211,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
             plot_wdt <- 12.535
             plot_hdt <- 8
-            legend_x_pos <- 0.241
+            legend_x_pos <- 0.2825
             legend_y_pos <- 0.914
             linewd <- 3
             point_size <- 5.75
@@ -1200,10 +1226,10 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
             plot_wdt <- 9.5 # condenced plot width for suppl
             plot_hdt <- 6.75 # condenced plot width for suppl
-            legend_x_pos <- 0.317
-            legend_y_pos <- 0.9
+            legend_x_pos <- 0.368
+            legend_y_pos <- 0.926
             linewd <- 2.5
-            point_size <- 5
+            point_size <- 4.75
             txt_x_pos <- 16.25
             txt_y_pos <- 1.283
             pan_boarder <- 1.8
@@ -1215,10 +1241,10 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
             plot_wdt <- 9.5 # condenced plot width for suppl
             plot_hdt <- 6.75 # condenced plot width for suppl
-            legend_x_pos <- 0.272
-            legend_y_pos <- 0.9
+            legend_x_pos <- 0.35
+            legend_y_pos <- 0.926
             linewd <- 2.5
-            point_size <- 5
+            point_size <- 4.75
             txt_x_pos <- 16.25
             txt_y_pos <- 0.5
             pan_boarder <- 1.8
@@ -1239,15 +1265,15 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       p <- p + geom_line(size = linewd, data = data1, aes(x = div_times, y = correlation, group = comp_organ, 
         colour = dataset, linetype = dataset))
       p <- p + geom_point(size = point_size, data = data2, aes(x = div_times, y = correlation, group = comp_organ, 
-        colour = dataset, shape = dataset))
+        colour = dataset, shape = comp_organ, stroke = 2.7))
       p <- p + scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
       scale_y_continuous(limits = c(y_min, y_max), expand = c(0.02, 0), breaks = y_breaks) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
-      scale_shape_manual(values = shape_scale) + 
-      scale_size(range = c(0.5, 12)) + 
+      scale_shape_manual(values = c(0, 8, 2, 5, 3, 4, 6, 1, 15, 16, 17, 18, 19, 10)) + 
       annotate("text", x = txt_x_pos, y = txt_y_pos, label = p_value, size = 8) + 
-      guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
+      guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"), 
+        shape = FALSE)
 
       q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab(y_title) + 
       theme(text=element_text(size=16), 
@@ -1260,7 +1286,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             face = title_face), 
         axis.text.x = element_text(size=axis_txt_size, angle=0, margin = margin(t = 5.5), colour="black"), 
         axis.text.y = element_text(size=axis_txt_size, angle=0, margin = margin(r = 5.5), colour="black"), 
-        legend.box.background = element_rect(colour = "#d5d5d5", fill= "white" , size=1.0), 
+        legend.box.background = element_rect(colour = NA, fill= "white" , size=1.0), 
         panel.border = element_rect(colour = "black", fill=NA, size=pan_boarder), 
         panel.grid.major = element_blank(),
         panel.grid.minor.x = element_blank(), 
@@ -1296,17 +1322,20 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       col_breaks <- c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an.")
       y_breaks <- c(0,0.2,0.4,0.6,0.8,1,1.2,1.4)
 
-      col_scale <- c('#798dc4', '#2f2fc3','red', 'red3')
-      fill_scale <- c('#798dc4', '#2f2fc3','red', 'red3')
+      col_scale <- c('#798dc4', '#3838ba', 'red', 'red3')
+      fill_scale <- c('#798dc4', '#3838ba', 'red', 'red3')
 
 
-      p <- ggplot() 
-      p <- p + geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
-        colour = dataset))
-      p <- p + scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(0, 1.225), expand = c(0.02, 0), breaks = y_breaks) + 
+      p <- ggplot(data=data, aes(x = div_times, y = correlation, group = dataset)) + 
+      geom_ribbon(aes(ymin = data$li, ymax = data$ri, fill = dataset), alpha = 0.088, 
+            linetype = 0, show.legend = FALSE) + 
+      geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
+        colour = dataset)) + 
+      scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
+      scale_y_continuous(limits = c(0, 1.35), expand = c(0.02, 0), breaks = y_breaks) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_shape_manual(values = shape_scale) + 
+      scale_fill_manual(values = fill_scale) + 
       scale_size(range = c(0.5, 12)) + 
       guides(color = guide_legend(ncol=1, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
