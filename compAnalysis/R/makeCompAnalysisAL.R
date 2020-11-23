@@ -839,20 +839,29 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         DS_AL_pea_dist_leaf_nl_df, DS_AL_pea_dist_apex_veg_nl_df, DS_AL_pea_dist_apex_inf_nl_df, 
         DS_AL_pea_dist_flower_nl_df, DS_AL_pea_dist_stamen_nl_df, DS_AL_pea_dist_carpel_nl_df)
 
+      DS_AL_pea_dist_nlm_sp <- DS_AL_pea_dist_nlm_coord
+      DS_AL_pea_dist_nlm_sp$dataset <- rep(c("Angiosperms.AL "), nrow(DS_AL_pea_dist_nlm_sp))
 
-      Br11_pea_dist_brain_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_brain_nl))
-      Br11_pea_dist_cereb_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_cereb_nl))
-      Br11_pea_dist_heart_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_heart_nl))
-      Br11_pea_dist_kidney_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_kidney_nl))
-      Br11_pea_dist_liver_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_liver_nl))
-      Br11_pea_dist_testis_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_testis_nl))
 
-      Br11_pea_dist_nlm_coord <- rbind(Br11_pea_dist_brain_nl_df, Br11_pea_dist_cereb_nl_df, Br11_pea_dist_heart_nl_df, 
-        Br11_pea_dist_kidney_nl_df, Br11_pea_dist_liver_nl_df, Br11_pea_dist_testis_nl_df)
+      DS_AT_pea_dist_root_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_root_nl))
+      DS_AT_pea_dist_hypo_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_hypo_nl))
+      DS_AT_pea_dist_leaf_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_leaf_nl))
+      DS_AT_pea_dist_apex_veg_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_apex_veg_nl))
+      DS_AT_pea_dist_apex_inf_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_apex_inf_nl))
+      DS_AT_pea_dist_flower_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_flower_nl))
+      DS_AT_pea_dist_stamen_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_stamen_nl))
+      DS_AT_pea_dist_carpel_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_carpel_nl))
+
+      DS_AT_pea_dist_nlm_coord <- rbind(DS_AT_pea_dist_root_nl_df, DS_AT_pea_dist_hypo_nl_df, 
+        DS_AT_pea_dist_leaf_nl_df, DS_AT_pea_dist_apex_veg_nl_df, DS_AT_pea_dist_apex_inf_nl_df, 
+        DS_AT_pea_dist_flower_nl_df, DS_AT_pea_dist_stamen_nl_df, DS_AT_pea_dist_carpel_nl_df)
+
+      DS_AT_pea_dist_nlm_sp <- DS_AT_pea_dist_nlm_coord
+      DS_AT_pea_dist_nlm_sp$dataset <- rep(c("Angiosperms.AT "), nrow(DS_AT_pea_dist_nlm_sp))
 
 
       # Get final table for organ regression plot
-      nlmPea_coor11_AL <- rbind(DS_AL_pea_dist_nlm_coord, Br11_pea_dist_nlm_coord)
+      nlmPea_coor11_AT_AL <- rbind(DS_AT_pea_dist_nlm_sp, DS_AL_pea_dist_nlm_sp)
 
 
       # Get mean value of slopes
@@ -1053,7 +1062,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       getCum.LOESS.Slope <- function(x, span = span, degree = degree, family = family){
 
         temp <- loess.smooth(x$div_times, x$correlation, span = span, 
-          degree = degree, family = family, evaluation = 200)
+          degree = degree, family = family, evaluation = 160)
 
         # Get slope values
         slopes = diff(temp$y)/diff(temp$x)
@@ -1073,7 +1082,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         loess_mean <- rowMeans(loess_data)
 
         sd_out <- by(loess_data, 1:nrow(loess_data), function(row) sd <- sd(row))
-        sd_out <- sd_out[1:199]
+        sd_out <- sd_out[1:length(sd_out)]
         sd_out <- as.data.frame(sd_out)
         sd_out <- as.numeric(sd_out[,1])
 
@@ -1107,10 +1116,13 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
 
       # Prepare data for ggplot2
-      div_times <- c(x_DS_grid[1:199], x_DS_grid[1:199], x_Br_grid[1:199], x_Br_grid[1:199])
+      x_DS_grid_cum <- seq(7.1, 160, length = 159)  ## prediction grid
+      x_Br_grid_cum <- seq(6.7, 159, length = 159)  ## prediction grid
+
+      div_times <- c(x_DS_grid_cum, x_DS_grid_cum, x_Br_grid_cum, x_Br_grid_cum)
       div_times <- as.data.frame(div_times)
       colnames(div_times) <- "div_times"
-      dataset <- data.frame(rep(c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an."), each=199))
+      dataset <- data.frame(rep(c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an."), each=159))
       colnames(dataset) <- "dataset"
       correlation <- rbind(DevSeqSouV_AT_loess_mean, DevSeqSouV_AL_loess_mean, brawandSouV11_loess_mean, 
         brawandSouV_loess_mean)
@@ -1165,49 +1177,33 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         DevSeq_AL_log_slopes = DevSeq_AL_log_slopes, DS_AL_Br_nlm_slopes = DS_AL_Br_nlm_slopes, 
         DS_AT_Br_nlm_slopes = DS_AT_Br_nlm_slopes)
 
-      for(i in names(slopes_regr_list)){ 
+      for(i in names(slopes_regr_list)) { 
         write.table(slopes_regr_list[[i]], file = file.path(out_dir, "output", "data", paste0(i,".txt")), 
           sep="\t", col.names=TRUE, row.names = FALSE, dec=".", quote = FALSE)
+      }
 
 
       # Create p-value containing test strings for plots
       sOU_loess_DevSeq_AL_Br11_slope_p <- paste("P =", formatC(sOU_loess_DevSeq_AL_Br11_wilcox, format="e", digits=0))
 
       # Change dataset ID for shorter legend
-      compDivRates11_AL$dataset <- c(rep('Angiosperms.AL ', 48), rep('Mammals.11', 35))
-      nlmPea_coor11_AL$dataset <- c(rep('Angiosperms.AL ', 1600), rep('Mammals.11', 1200))
-
       compSouVDivRates11_AL$dataset <- c(rep('Angiosperms.AL ', 48), rep('Mammals.11', 35))
       loessSouV_coor11_AL$dataset <- c(rep('Angiosperms.AL ', 1600), rep('Mammals.11', 1200))
 
 
 
    # Make sOU GE divergence plot showing individual organ regressions for SI
-   makeOrgRegPlot <- function(data1, data2, coefficient, expr_estimation, p_value, pos, dist = c("sOU_v", "pea")) {
+   makeOrgRegPlot <- function(data1, data2, coefficient, expr_estimation, p_value, pos) {
 
-      if (dist == "sOU_v") {
+      fname <- sprintf('%s.jpg', paste("compSouVDivRates11_AL_loess", expr_estimation, pos, sep="_"))
+      y_min <- 0.055
+      y_max <- 1.54
+      col_breaks <- c("Angiosperms.AL ", "Mammals.11")
+      fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
+      y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4)
+      y_title <- "Expression distance"
 
-        fname <- sprintf('%s.jpg', paste("compSouVDivRates11_AL_loess", expr_estimation, pos, sep="_"))
-        y_min <- 0.055
-        y_max <- 1.5275
-        col_breaks <- c("Angiosperms.AL ", "Mammals.11")
-        fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
-        y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4)
-        y_title <- "Expression distance"
-
-      } else if (dist == "pea") {
-
-        fname <- sprintf('%s.jpg', paste("compDivRates11_AL_nlm", expr_estimation, pos, sep="_"))
-        y_min <- 0.27
-        y_max <- 0.667
-        col_breaks <- c("Angiosperms.AL ", "Mammals.11")
-        fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
-        y_breaks <- c(0.3,0.4,0.5,0.6)
-        y_title <- "Pearson distance"
-
-      }
-
-      if (pos == "main" && dist == "sOU_v") {
+      if (pos == "main") {
 
             plot_wdt <- 12.535
             plot_hdt <- 8
@@ -1222,7 +1218,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             axis_ticks_s <- 0.7
             title_face <- "plain"
 
-      } else if (pos == "ext" && dist == "sOU_v") {
+      } else if (pos == "ext") {
 
             plot_wdt <- 9.5 # condenced plot width for suppl
             plot_hdt <- 6.75 # condenced plot width for suppl
@@ -1232,21 +1228,6 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             point_size <- 4.75
             txt_x_pos <- 16.25
             txt_y_pos <- 1.283
-            pan_boarder <- 1.8
-            axis_txt_size <- 21.75
-            axis_ticks_s <- 0.95
-            title_face <- "bold"
-
-      } else if (pos == "ext" && dist == "pea") {
-
-            plot_wdt <- 9.5 # condenced plot width for suppl
-            plot_hdt <- 6.75 # condenced plot width for suppl
-            legend_x_pos <- 0.35
-            legend_y_pos <- 0.926
-            linewd <- 2.5
-            point_size <- 4.75
-            txt_x_pos <- 16.25
-            txt_y_pos <- 0.5
             pan_boarder <- 1.8
             axis_txt_size <- 21.75
             axis_ticks_s <- 0.95
@@ -1303,13 +1284,10 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
   }
 
   makeOrgRegPlot(data1 = loessSouV_coor11_AL, data2 = compSouVDivRates11_AL, coefficient = coefficient, 
-    expr_estimation = expr_estimation, pos = "ext", p_value = "", dist = "sOU_v")
+    expr_estimation = expr_estimation, pos = "ext", p_value = "")
 
   makeOrgRegPlot(data1 = loessSouV_coor11_AL, data2 = compSouVDivRates11_AL, coefficient = coefficient, 
-    expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AL_Br11_slope_p, dist = "sOU_v")
-
-  makeOrgRegPlot(data1 = nlmPea_coor11_AL, data2 = compDivRates11_AL[c(49:78,1:48,79:nrow(compDivRates11_AL)),], 
-    coefficient = coefficient, expr_estimation = expr_estimation, pos = "ext", p_value = "", dist = "pea")
+    expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AL_Br11_slope_p)
 
 
 
@@ -1332,7 +1310,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
         colour = dataset)) + 
       scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(0, 1.35), expand = c(0.02, 0), breaks = y_breaks) + 
+      scale_y_continuous(limits = c(-0.01, 1.0795), expand = c(0.02, 0), breaks = y_breaks) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_shape_manual(values = shape_scale) + 
       scale_fill_manual(values = fill_scale) + 
@@ -1369,7 +1347,57 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
   plotCumSlopes(data = sOU_v_loess_cum_slopes, coefficient = coefficient, expr_estimation = expr_estimation)
 
 
-   }
+
+  # Plot AT and AL nlm's for pea dist
+  plotAT.AL.pea.NLM <- function(data, data2) {
+
+    fname <- sprintf('%s.jpg', paste("AT_AL_pea_nlm_regression_slopes"))
+
+    p <- ggplot(data=data, aes(x=div_times, y=correlation)) + 
+    geom_line(size=1.0) + 
+    geom_point(aes(shape = dataset, color = dataset, stroke = 3.0)) + 
+    scale_color_manual(values=c('#5fb5dd','#798dc4'), guide = "none") + 
+    scale_fill_manual(values=c('#5fb5dd','#798dc4'), guide = "legend") + 
+    scale_y_continuous(expand = c(0.07, 0), labels = comma) + 
+    guides(shape = guide_legend(override.aes = list(stroke=1.5)))
+
+    q <- p + theme_classic() + xlab("Data set") + ylab("Slope value") + 
+    theme(text=element_text(size = 16), 
+      strip.text = element_text(size = 23.75), 
+      strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
+      strip.background = element_rect(colour = 'black', fill = NA, size = 2.2), 
+      axis.ticks.length = unit(0.35, "cm"), 
+      axis.ticks = element_line(colour = "black", size = 0.95), 
+      axis.line = element_line(colour = 'black', size = 0.95), 
+      plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+      axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
+        colour="black", face = "bold"), 
+      axis.title.x = element_text(size=24.6, margin = margin(t = 4.75, r = 0, b = 12, l = 0), 
+        colour="black", face = "bold"), 
+      axis.text.x = element_text(size=23, angle=50, margin = margin(t = -70, b = 85), 
+        colour="black", hjust = 1, vjust = 0.45), 
+      axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
+      panel.spacing = unit(0.5, "cm"), 
+      panel.grid.major = element_blank(),
+      panel.grid.minor.x = element_blank(), 
+      panel.grid.minor.y = element_blank(), 
+      legend.position = "right", 
+      legend.title = element_blank(), 
+      legend.text = element_text(size = 22.5), 
+      legend.spacing.x = unit(0.5, 'cm'), 
+      legend.key.size = unit(1.2, "cm"), 
+      legend.background=element_blank()) 
+
+    q <- q + facet_wrap(~ comp_organ, scales = "free", nrow = 2)
+
+    ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+      width = 28.5, height = 12.8, dpi = 300, units = c("in"), limitsize = FALSE) 
+  }
+
+  plotAT.AL.pea.NLM(data = nlmPea_coor11_AT_AL)
+
+
+  }
    
 }
 
