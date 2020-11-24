@@ -864,6 +864,23 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       nlmPea_coor11_AT_AL <- rbind(DS_AT_pea_dist_nlm_sp, DS_AL_pea_dist_nlm_sp)
 
 
+      # Make pea dist table for DevSeq-AT and DevSeq.AL organs
+      compDivRates11_AT_sp <- compDivRates11[1:48,]
+      compDivRates11_AL_sp <- compDivRates11_AL[1:48,]
+      pea_dist_organs <- c("root", "hypo", "leaf", "veg", "inf", "flower", "stamen", "carpel")
+      pea_dist_organs <- rep(pea_dist_organs, each=6)
+      pea_dist_organs <- as.data.frame(pea_dist_organs)
+      compDivRates11_AT_sp$comp_organ <- pea_dist_organs
+      compDivRates11_AL_sp$comp_organ <- pea_dist_organs
+      compDivRates11_AT_sp$dataset <- rep(c("Angiosperms.AT "), nrow(compDivRates11_AT_sp))
+      compDivRates11_AT_sp$comp_organ <- factor(unlist(compDivRates11_AT_sp$comp_organ))
+      compDivRates11_AL_sp$dataset <- rep(c("Angiosperms.AL "), nrow(compDivRates11_AL_sp))
+      compDivRates11_AL_sp$comp_organ <- factor(unlist(compDivRates11_AL_sp$comp_organ))
+      pea_dist_organs_AT_AL <- rbind(compDivRates11_AT_sp, compDivRates11_AL_sp)
+      pea_dist_organs_AT_AL$comp_spec <- factor(pea_dist_organs_AT_AL$comp_spec)
+      pea_dist_organs_AT_AL$dataset <- factor(pea_dist_organs_AT_AL$dataset)
+
+
       # Get mean value of slopes
       DS_AL_sOU_v_nl_mean <- rowMeans(do.call(cbind, DS_AL_sOU_v_nl_list))
       DS_AT_sOU_v_nl_mean <- rowMeans(do.call(cbind, DS_AT_sOU_v_nl_list))
