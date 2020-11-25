@@ -1214,7 +1214,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
       fname <- sprintf('%s.jpg', paste("compSouVDivRates11_AL_loess", expr_estimation, pos, sep="_"))
       y_min <- 0.055
-      y_max <- 1.54
+      y_max <- 1.55
       col_breaks <- c("Angiosperms.AL ", "Mammals.11")
       fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
       y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4)
@@ -1251,10 +1251,10 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             title_face <- "bold"
       }
 
-      ds_col <- rep(c("#798dc4"), 48)
+      ds_col <- rep(c("#728acb"), 48)
       bw_col <- rep(c("red"), 35)
-      col_scale <- c("#798dc4", "red")
-      fill_scale <- c("#798dc4", "red")
+      col_scale <- c("#728acb", "red")
+      fill_scale <- c("#728acb", "red")
       shape_scale <- c(16, 17)
 
       fill_col <- c(as.character(ds_col), as.character(bw_col))
@@ -1317,8 +1317,8 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       col_breaks <- c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an.")
       y_breaks <- c(0,0.2,0.4,0.6,0.8,1,1.2,1.4)
 
-      col_scale <- c('#798dc4', '#3838ba', 'red', 'red3')
-      fill_scale <- c('#798dc4', '#3838ba', 'red', 'red3')
+      col_scale <- c('#728acb', '#81bcef', 'red', 'red3')
+      fill_scale <- c('#728acb', '#81bcef', 'red', 'red3')
 
 
       p <- ggplot(data=data, aes(x = div_times, y = correlation, group = dataset)) + 
@@ -1326,10 +1326,11 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             linetype = 0, show.legend = FALSE) + 
       geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
         colour = dataset)) + 
+      geom_line(data = data[1:159,], aes(x = div_times, y = correlation), color = '#81bcef', size = 2.5) +
+      geom_line(data = data[160:318,], aes(x = div_times, y = correlation), color = '#728acb', size = 2.5) + 
       scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
       scale_y_continuous(limits = c(-0.01, 1.0795), expand = c(0.02, 0), breaks = y_breaks) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
-      scale_shape_manual(values = shape_scale) + 
       scale_fill_manual(values = fill_scale) + 
       scale_size(range = c(0.5, 12)) + 
       guides(color = guide_legend(ncol=1, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
@@ -1366,19 +1367,49 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
 
   # Plot AT and AL nlm's for pea dist
+  # Change organ names for facet strip
+  nlmPea_coor11_AT_AL_df <- nlmPea_coor11_AT_AL
+  nlmPea_coor11_AT_AL_df$comp_organ <- nlmPea_coor11_AT_AL_df$comp_organ %<>% 
+        gsub("root", "Root", .) %>% 
+        gsub("hypo", "Hypocotyl", .) %>% 
+        gsub("leaf", "Leaf", .) %>% 
+        gsub("veg", "Apex veg", .) %>% 
+        gsub("inf", "Apex inf", .) %>% 
+        gsub("flower", "Flower", .) %>% 
+        gsub("stamen", "Stamen", .) %>% 
+        gsub("carpel", "Carpel", .)
+  nlmPea_coor11_AT_AL_df$comp_organ <- factor(nlmPea_coor11_AT_AL_df$comp_organ, 
+    levels=c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
+
+  pea_dist_organs_AT_AL_df <- pea_dist_organs_AT_AL
+  pea_dist_organs_AT_AL_df$comp_organ <- pea_dist_organs_AT_AL_df$comp_organ %<>% 
+        gsub("root", "Root", .) %>% 
+        gsub("hypo", "Hypocotyl", .) %>% 
+        gsub("leaf", "Leaf", .) %>% 
+        gsub("veg", "Apex veg", .) %>% 
+        gsub("inf", "Apex inf", .) %>% 
+        gsub("flower", "Flower", .) %>% 
+        gsub("stamen", "Stamen", .) %>% 
+        gsub("carpel", "Carpel", .)
+  pea_dist_organs_AT_AL_df$comp_organ <- factor(pea_dist_organs_AT_AL_df$comp_organ, 
+    levels=c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
+
+
   plotAT.AL.pea.NLM <- function(data, data2) {
 
     fname <- sprintf('%s.jpg', paste("AT_AL_pea_nlm_regression_slopes"))
 
-    p <- ggplot(data=data, aes(x=div_times, y=correlation)) + 
-    geom_line(size=1.0) + 
-    geom_point(aes(shape = dataset, color = dataset, stroke = 3.0)) + 
-    scale_color_manual(values=c('#5fb5dd','#798dc4'), guide = "none") + 
-    scale_fill_manual(values=c('#5fb5dd','#798dc4'), guide = "legend") + 
-    scale_y_continuous(expand = c(0.07, 0), labels = comma) + 
-    guides(shape = guide_legend(override.aes = list(stroke=1.5)))
+    p <- ggplot(data=data, color = dataset, aes(x=div_times, y=correlation)) + 
+    geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
+        colour = dataset)) + 
+    geom_point(data=data2, aes(shape = dataset, color = dataset, stroke = 8.5)) + 
+    scale_color_manual(values=c('#728acb','#81bcef'), guide = "legend") + 
+    scale_fill_manual(values=c('#728acb','#81bcef'), guide = "legend") + 
+    scale_y_continuous(expand = c(0.15, 0), labels = comma) + 
+    scale_x_continuous(expand = c(0.1, 0), breaks=c(0, 50, 100, 150)) + 
+    guides(shape = guide_legend(override.aes = list(stroke = 8.5)))
 
-    q <- p + theme_classic() + xlab("Data set") + ylab("Slope value") + 
+    q <- p + theme_classic() + xlab("Divergence time") + ylab("Pearson distance") + 
     theme(text=element_text(size = 16), 
       strip.text = element_text(size = 23.75), 
       strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
@@ -1386,32 +1417,31 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       axis.ticks.length = unit(0.35, "cm"), 
       axis.ticks = element_line(colour = "black", size = 0.95), 
       axis.line = element_line(colour = 'black', size = 0.95), 
-      plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+      plot.margin = unit(c(1, 1, 0.5, 0.4),"cm"), 
       axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
         colour="black", face = "bold"), 
       axis.title.x = element_text(size=24.6, margin = margin(t = 4.75, r = 0, b = 12, l = 0), 
         colour="black", face = "bold"), 
-      axis.text.x = element_text(size=23, angle=50, margin = margin(t = -70, b = 85), 
-        colour="black", hjust = 1, vjust = 0.45), 
+      axis.text.x = element_text(size=23, margin = margin(t = 5.5, b = 8), colour="black"), 
       axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
-      panel.spacing = unit(0.5, "cm"), 
+      panel.spacing = unit(0.55, "cm"), 
       panel.grid.major = element_blank(),
       panel.grid.minor.x = element_blank(), 
       panel.grid.minor.y = element_blank(), 
-      legend.position = "right", 
+      legend.position = "bottom", 
       legend.title = element_blank(), 
       legend.text = element_text(size = 22.5), 
       legend.spacing.x = unit(0.5, 'cm'), 
       legend.key.size = unit(1.2, "cm"), 
       legend.background=element_blank()) 
 
-    q <- q + facet_wrap(~ comp_organ, scales = "free", nrow = 2)
+    q <- q + facet_wrap(~ comp_organ, nrow = 1)
 
     ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-      width = 28.5, height = 12.8, dpi = 300, units = c("in"), limitsize = FALSE) 
+      width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
   }
 
-  plotAT.AL.pea.NLM(data = nlmPea_coor11_AT_AL)
+  plotAT.AL.pea.NLM(data = nlmPea_coor11_AT_AL_df, data2 = pea_dist_organs_AT_AL_df)
 
 
   }
