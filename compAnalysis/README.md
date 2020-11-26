@@ -80,7 +80,7 @@ makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearso
 
 ```
 
-To format the ortholog gene expression tables for correct parsing in treeExp2, execute the following command. The results will be saved in ./compAnalysis/output/data.
+To format the ortholog gene expression tables for correct parsing in treeExp2, execute the following command. The results will be stored in ./compAnalysis/output/data.
 
 ```R
 getTaxoInput()
