@@ -347,18 +347,18 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             legend_x_pos <- 0.638
             legend_y_pos <- 0.862
             legend_key_s <- 0.9
-            linewd <- 2.7
+            linewd <- 2.6
             brass_label <- "Brassiceae"
             text_x1_pos <- 22
             text_x4_pos <- 157
             text_y_pos <- 0.4845
-            x_poll_pos <- 145.5
-            y_poll_pos <- 0.8223
-            leg_ln_s1_x <- 129.3
-            leg_ln_s1_xend <- 131.475
-            leg_ln_s2_x <- 132.95
-            leg_ln_s2_xend <- 135.15
-            leg_ln_s_y <- 0.822
+            x_poll_pos <- 145.8
+            y_poll_pos <- 0.8225
+            leg_ln_s1_x <- 129.45
+            leg_ln_s1_xend <- 131.7
+            leg_ln_s2_x <- 133.15
+            leg_ln_s2_xend <- 135.4
+            leg_ln_s_y <- 0.8225
             leg_box_bd <- 0
             pan_boarder <- 1.8
             axis_txt_size <- 21.75
@@ -1324,7 +1324,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       p <- ggplot(data=data, aes(x = div_times, y = correlation, group = dataset)) + 
       geom_ribbon(aes(ymin = data$li, ymax = data$ri, fill = dataset), alpha = 0.088, 
             linetype = 0, show.legend = FALSE) + 
-      geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
+      geom_line(size = 2.6, data = data, aes(x = div_times, y = correlation, group = dataset, 
         colour = dataset)) + 
       geom_line(data = data[1:159,], aes(x = div_times, y = correlation), color = '#81bcef', size = 2.5) +
       geom_line(data = data[160:318,], aes(x = div_times, y = correlation), color = '#728acb', size = 2.5) + 
@@ -1402,14 +1402,14 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
     p <- ggplot(data=data, color = dataset, aes(x=div_times, y=correlation)) + 
     geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
         colour = dataset)) + 
-    geom_point(data=data2, aes(shape = dataset, color = dataset, stroke = 8.5)) + 
+    geom_point(data=data2, aes(shape = dataset, color = dataset, stroke = 7.5)) + 
     scale_color_manual(values=c('#728acb','#81bcef'), guide = "legend") + 
     scale_fill_manual(values=c('#728acb','#81bcef'), guide = "legend") + 
     scale_y_continuous(expand = c(0.15, 0), labels = comma) + 
     scale_x_continuous(expand = c(0.1, 0), breaks=c(0, 50, 100, 150)) + 
-    guides(shape = guide_legend(override.aes = list(stroke = 8.5)))
+    guides(shape = guide_legend(override.aes = list(stroke = 7.5)))
 
-    q <- p + theme_classic() + xlab("Divergence time") + ylab("Pearson distance") + 
+    q <- p + theme_classic() + xlab("Divergence time (Myr)") + ylab("Pearson distance") + 
     theme(text=element_text(size = 16), 
       strip.text = element_text(size = 23.75), 
       strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
@@ -1417,18 +1417,19 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       axis.ticks.length = unit(0.35, "cm"), 
       axis.ticks = element_line(colour = "black", size = 0.95), 
       axis.line = element_line(colour = 'black', size = 0.95), 
-      plot.margin = unit(c(1, 1, 0.5, 0.4),"cm"), 
+      plot.margin = unit(c(1, 1, 2.5, 0.4),"cm"), 
       axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
         colour="black", face = "bold"), 
-      axis.title.x = element_text(size=24.6, margin = margin(t = 4.75, r = 0, b = 12, l = 0), 
+      axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
         colour="black", face = "bold"), 
-      axis.text.x = element_text(size=23, margin = margin(t = 5.5, b = 8), colour="black"), 
-      axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
+      axis.text.x = element_text(size=21.75, margin = margin(t = 5.5, b = 8), colour="black"), 
+      axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 7), colour="black"), 
       panel.spacing = unit(0.55, "cm"), 
       panel.grid.major = element_blank(),
       panel.grid.minor.x = element_blank(), 
       panel.grid.minor.y = element_blank(), 
-      legend.position = "bottom", 
+      legend.position = c(0.125, -0.225), 
+      legend.direction = "horizontal", 
       legend.title = element_blank(), 
       legend.text = element_text(size = 22.5), 
       legend.spacing.x = unit(0.5, 'cm'), 
