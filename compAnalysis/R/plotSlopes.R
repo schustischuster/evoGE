@@ -15,19 +15,18 @@ plotSlopes <- function() {
 
 
     DS_AT_Br_loess_slopes = file.path(out_dir, "output", "data", "DS_AT_Br_loess_slopes.txt")
-    DS_AT_Br_log_slopes = file.path(out_dir, "output", "data", "DS_AT_Br_log_slopes.txt")
     DS_AL_loess_slopes = file.path(out_dir, "output", "data", "DevSeq_AL_loess_slopes.txt")
-    DS_AL_log_slopes = file.path(out_dir, "output", "data", "DevSeq_AL_log_slopes.txt")
+    DS_AT_Br_nlm_slopes = file.path(out_dir, "output", "data", "DS_AT_Br_nlm_slopes.txt")
+    DS_AL_Br_nlm_slopes = file.path(out_dir, "output", "data", "DS_AL_Br_nlm_slopes.txt")
 
 
     # Read expression data
     DS_AT_Br_loess <- read.table(DS_AT_Br_loess_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
-    DS_AT_Br_log <- read.table(DS_AT_Br_log_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
     DS_AL_loess <- read.table(DS_AL_loess_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
-    DS_AL_log <- read.table(DS_AL_log_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
+    DS_AT_Br_nlm <- read.table(DS_AT_Br_nlm_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
+    DS_AL_Br_nlm <- read.table(DS_AL_Br_nlm_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
 
     DS_AT_Br_loess <- DS_AT_Br_loess[-c(15:16),]
-    DS_AT_Br_log <- DS_AT_Br_log[-c(15:16),]
 
 
 
@@ -51,13 +50,6 @@ plotSlopes <- function() {
     Br_loess <- DS_AT_Br_loess[9:nrow(DS_AT_Br_loess),]
     colnames(Br_loess) <- colnames(DS_AL_loess_dupl)
     DS_AL_Br_loess <- rbind(DS_AL_loess_dupl, Br_loess)
-
-    DS_AL_log_dupl <- data.frame(sample = DS_AL_log$sample, 
-        DS_AL_Br11_sOU_log = DS_AL_log$DS_AL_sOU_log, DS_AL_Br_sOU_log = DS_AL_log$DS_AL_sOU_log, 
-        DS_AL_Br11_pea_log = DS_AL_log$DS_AL_pea_log, DS_AL_Br_pea_log = DS_AL_log$DS_AL_pea_log)
-    Br_log <- DS_AT_Br_log[9:nrow(DS_AT_Br_log),]
-    colnames(Br_log) <- colnames(DS_AL_log_dupl)
-    DS_AL_Br_log <- rbind(DS_AL_log_dupl, Br_log)
 
 
     getStats <- function(df) {
@@ -83,12 +75,12 @@ plotSlopes <- function() {
 
     DS_AT_Br_loess <- as.data.frame(rbind(DS_AT_Br_loess, getStats(DS_AT_Br_loess)))
     rownames(DS_AT_Br_loess) <- NULL
-    DS_AT_Br_log <- as.data.frame(rbind(DS_AT_Br_log, getStats(DS_AT_Br_log)))
-    rownames(DS_AT_Br_log) <- NULL
     DS_AL_Br_loess <- as.data.frame(rbind(DS_AL_Br_loess, getStats(DS_AL_Br_loess)))
     rownames(DS_AL_Br_loess) <- NULL
-    DS_AL_Br_log <- as.data.frame(rbind(DS_AL_Br_log, getStats(DS_AL_Br_log)))
-    rownames(DS_AL_Br_log) <- NULL
+    DS_AT_Br_nlm <- as.data.frame(rbind(DS_AT_Br_nlm, getStats(DS_AT_Br_nlm)))
+    rownames(DS_AT_Br_nlm) <- NULL
+    DS_AL_Br_nlm <- as.data.frame(rbind(DS_AL_Br_nlm, getStats(DS_AL_Br_nlm)))
+    rownames(DS_AL_Br_nlm) <- NULL
 
 
     Angiosperms.AT <- as.data.frame(rep("Angiosperms.AT", 16))
@@ -133,16 +125,16 @@ plotSlopes <- function() {
 
     DS_AT_sOU_loess <- formatTableDS(DS_AT_Br_loess, dist = "sOU", spec = "AT")
     DS_AT_Pea_loess <- formatTableDS(DS_AT_Br_loess, dist = "Pearson", spec = "AT")
-    DS_AT_sOU_log <- formatTableDS(DS_AT_Br_log, dist = "sOU", spec = "AT")
-    DS_AT_Pea_log <- formatTableDS(DS_AT_Br_log, dist = "Pearson", spec = "AT")
-    DS_AT <- rbind(DS_AT_sOU_loess, DS_AT_Pea_loess, DS_AT_sOU_log, DS_AT_Pea_log)
+    DS_AT_sOU_nlm <- formatTableDS(DS_AT_Br_nlm, dist = "sOU", spec = "AT")
+    DS_AT_Pea_nlm <- formatTableDS(DS_AT_Br_nlm, dist = "Pearson", spec = "AT")
+    DS_AT <- rbind(DS_AT_sOU_loess, DS_AT_Pea_loess, DS_AT_sOU_nlm, DS_AT_Pea_nlm)
     DS_AT <- cbind(DS_AT, Angiosperms.AT)
 
     DS_AL_sOU_loess <- formatTableDS(DS_AL_Br_loess, dist = "sOU", spec = "AL")
     DS_AL_Pea_loess <- formatTableDS(DS_AL_Br_loess, dist = "Pearson", spec = "AL")
-    DS_AL_sOU_log <- formatTableDS(DS_AL_Br_log, dist = "sOU", spec = "AL")
-    DS_AL_Pea_log <- formatTableDS(DS_AL_Br_log, dist = "Pearson", spec = "AL")
-    DS_AL <- rbind(DS_AL_sOU_loess, DS_AL_Pea_loess, DS_AL_sOU_log, DS_AL_Pea_log)
+    DS_AL_sOU_nlm <- formatTableDS(DS_AL_Br_nlm, dist = "sOU", spec = "AL")
+    DS_AL_Pea_nlm <- formatTableDS(DS_AL_Br_nlm, dist = "Pearson", spec = "AL")
+    DS_AL <- rbind(DS_AL_sOU_loess, DS_AL_Pea_loess, DS_AL_sOU_nlm, DS_AL_Pea_nlm)
     DS_AL <- cbind(DS_AL, Angiosperms.AL)
 
 
@@ -186,18 +178,18 @@ plotSlopes <- function() {
 
     Br11_sOU_loess <- formatTableBr(DS_AT_Br_loess, dist = "sOU", study = "Br11")
     Br_sOU_loess <- formatTableBr(DS_AT_Br_loess, dist = "sOU", study = "Br")
-    Br11_sOU_log <- formatTableBr(DS_AT_Br_log, dist = "sOU", study = "Br11")
-    Br_sOU_log <- formatTableBr(DS_AT_Br_log, dist = "sOU", study = "Br")
+    Br11_sOU_nlm <- formatTableBr(DS_AT_Br_nlm, dist = "sOU", study = "Br11")
+    Br_sOU_nlm <- formatTableBr(DS_AT_Br_nlm, dist = "sOU", study = "Br")
 
     Br11_Pea_loess <- formatTableBr(DS_AT_Br_loess, dist = "Pearson", study = "Br11")
     Br_Pea_loess <- formatTableBr(DS_AT_Br_loess, dist = "Pearson", study = "Br")
-    Br11_Pea_log <- formatTableBr(DS_AT_Br_log, dist = "Pearson", study = "Br11")
-    Br_Pea_log <- formatTableBr(DS_AT_Br_log, dist = "Pearson", study = "Br")
+    Br11_Pea_nlm <- formatTableBr(DS_AT_Br_nlm, dist = "Pearson", study = "Br11")
+    Br_Pea_nlm <- formatTableBr(DS_AT_Br_nlm, dist = "Pearson", study = "Br")
 
-    Br_2011 <- rbind(Br11_sOU_loess, Br11_sOU_log, Br11_Pea_loess, Br11_Pea_log)
+    Br_2011 <- rbind(Br11_sOU_loess, Br11_sOU_nlm, Br11_Pea_loess, Br11_Pea_nlm)
     Br_2011 <- cbind(Br_2011, Mammals)
 
-    Br_RA <- rbind(Br_sOU_loess, Br_sOU_log, Br_Pea_loess, Br_Pea_log)
+    Br_RA <- rbind(Br_sOU_loess, Br_sOU_nlm, Br_Pea_loess, Br_Pea_nlm)
     Br_RA <- cbind(Br_RA, Mammals.RA)
 
 
@@ -220,13 +212,13 @@ plotSlopes <- function() {
     DSBr_reg_slopes[,3] <- DSBr_reg_slopes[,3] %<>% 
         gsub("sOU_loess", "sOU-v LOESS", .) %>% 
         gsub("Pearson_loess", "Pearson LOESS", .) %>% 
-        gsub("sOU_log", "sOU-v LM", .) %>% 
-        gsub("Pearson_log", "Pearson LM", .)
+        gsub("sOU_nlm", "sOU-v NE", .) %>% 
+        gsub("Pearson_nlm", "Pearson NE", .)
 
 
     # Reorder factors for correct facet order
     DSBr_reg_slopes$Regression <- factor(DSBr_reg_slopes$Regression, levels=c(
-        "sOU-v LOESS", "sOU-v LM", "Pearson LOESS", "Pearson LM"))
+        "sOU-v LOESS", "sOU-v NE", "Pearson LOESS", "Pearson NE"))
 
 
     # Generate dummy data to scale y_max in individual facets
@@ -248,38 +240,38 @@ plotSlopes <- function() {
 
         p <- ggplot(data=data, aes(x=ID, y=Slope)) + 
         stat_boxplot(geom ='errorbar', width = 0, size=1.0, color="black") + 
-        geom_boxplot(width = 0.75, size=1.0, fatten = 3.7, color="black", outlier.shape = NA, alpha = 0) + 
+        geom_boxplot(width = 0.75, size=1.05, fatten = 3.5, color="black", outlier.shape = NA, alpha = 0) + 
         geom_point(aes(shape = sample, color = Species, size = sample, stroke = 3.0)) + 
         scale_shape_manual(values = c(0, 8, 2, 5, 3, 4, 6, 1, 15, 16, 17, 18, 19, 10)) + 
         scale_size_manual(values = c(4.75, 4.75, 4.75, 4.75, 5.25, 5.25, 4.75, 5.25, 5.5, 5.5, 5.5, 8.8, 5.5, 5.5)) + 
-        scale_color_manual(values=c('#5fb5dd','#798dc4', 'red', 'red3'), 
+        scale_color_manual(values=c('#81bcef','#728acb', 'red', 'red3'), 
             guide = "none") + 
-        scale_fill_manual(values=c('#5fb5dd','#798dc4', 'red', 'red3'), 
+        scale_fill_manual(values=c('#81bcef','#728acb', 'red', 'red3'), 
             guide = "legend") + 
         scale_y_continuous(expand = c(0.07, 0), labels = comma) + 
         scale_x_discrete(labels=c("AT_sOU_loess" = "Angiosperms.AT", "AT_Pearson_loess" = "Angiosperms.AT", 
-            "AT_sOU_log" = "Angiosperms.AT", "AT_Pearson_log" = "Angiosperms.AT", "AL_sOU_loess" = "Angiosperms.AL", 
-            "AL_Pearson_loess" = "Angiosperms.AL", "AL_sOU_log" = "Angiosperms.AL", "AL_Pearson_log" = "Angiosperms.AL", 
-            "Br11_sOU_loess" = "Mammals.11", "Br11_sOU_log" = "Mammals.11", "Br11_Pearson_loess" = "Mammals.11", 
-            "Br11_Pearson_log" = "Mammals.11", "Br_sOU_loess" = "Mammals.re-an.", "Br_sOU_log" = "Mammals.re-an.", 
-            "Br_Pearson_loess" = "Mammals.re-an.", "Br_Pearson_log" = "Mammals.re-an.")) + 
+            "AT_sOU_nlm" = "Angiosperms.AT", "AT_Pearson_nlm" = "Angiosperms.AT", "AL_sOU_loess" = "Angiosperms.AL", 
+            "AL_Pearson_loess" = "Angiosperms.AL", "AL_sOU_nlm" = "Angiosperms.AL", "AL_Pearson_nlm" = "Angiosperms.AL", 
+            "Br11_sOU_loess" = "Mammals.11", "Br11_sOU_nlm" = "Mammals.11", "Br11_Pearson_loess" = "Mammals.11", 
+            "Br11_Pearson_nlm" = "Mammals.11", "Br_sOU_loess" = "Mammals.re-an.", "Br_sOU_nlm" = "Mammals.re-an.", 
+            "Br_Pearson_loess" = "Mammals.re-an.", "Br_Pearson_nlm" = "Mammals.re-an.")) + 
         guides(shape = guide_legend(override.aes = list(stroke=1.5)))
 
         q <- p + theme_classic() + xlab("Data set") + ylab("Slope value") + 
         theme(text=element_text(size = 16), 
             strip.text = element_text(size = 23.75), 
             strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
-            strip.background = element_rect(colour = 'black', fill = NA, size = 2.2), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.25), 
             axis.ticks.length = unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.95), 
-            axis.line = element_line(colour = 'black', size = 0.95), 
+            axis.ticks = element_line(colour = "black", size = 1), 
+            axis.line = element_line(colour = 'black', size = 1), 
             plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
             axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), colour="black", 
                 face = "bold"), 
-            axis.title.x = element_text(size=24.6, margin = margin(t = 4.75, r = 0, b = 12, l = 0), colour="black", 
+            axis.title.x = element_text(size=24.6, margin = margin(t = -18, r = 0, b = 35, l = 0), colour="black", 
                 face = "bold"), 
-            axis.text.x = element_text(size=23, angle=50, margin = margin(t = -70, b = 85), colour="black", 
-                hjust = 1, vjust = 0.45), 
+            axis.text.x = element_text(size=22.5, angle=45, margin = margin(t = -61, b = 100), colour="black", 
+                hjust = 0.99, vjust = 0.45), 
             axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
             panel.spacing = unit(0.5, "cm"), 
             panel.grid.major = element_blank(),
@@ -314,16 +306,19 @@ plotSlopes <- function() {
     AT_Br_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,3], format = "e", digits = 0)))
     AT_Br11_pea_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,4], format = "e", digits = 0)))
 
-    AT_Br11_sOU_log <- c(paste("italic('P =')~", round(DS_AT_Br_log[16,2], 3)))
-    AT_Br_sOU_log <- c(paste("italic('P =')~", formatC(DS_AT_Br_log[16,3], format = "e", digits = 0)))
-    AT_Br11_pea_log <- c(paste("italic('P =')~", formatC(DS_AT_Br_log[16,4], format = "e", digits = 0)))
+    AT_Br11_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,2], format = "e", digits = 0)))
+    AT_Br_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,3], format = "e", digits = 0)))
+    AT_Br11_pea_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,4], format = "e", digits = 0)))
+
+    AL_Br11_sOU_nlm <- c(paste("italic('P =')~", round(DS_AL_Br_nlm[16,2], 3)))
+    AL_Br_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AL_Br_nlm[16,3], format = "e", digits = 0)))
 
 
     dat_text <- data.frame(
-        label = c(AT_Br11_sOU_loess, AT_Br_sOU_loess, AT_Br11_sOU_log, AT_Br_sOU_log, 
-            AT_Br11_pea_loess, AT_Br11_pea_log), # other p-values have same value
-        x = c(0.451, 0.569, 1.645, 1.76, 2.985, 4.21),
-        y = c(8.845, 9.47, 8.845, 9.47, 9.225, 9.225)
+        label = c(AT_Br11_sOU_loess, AT_Br_sOU_loess, AT_Br11_sOU_nlm, AT_Br_sOU_nlm, 
+            AL_Br11_sOU_nlm, AL_Br_sOU_nlm, AT_Br11_pea_loess, AT_Br11_pea_nlm), # other p-values have same value
+        x = c(0.451, 0.569, 1.645, 1.76, 1.79, 1.875, 2.985, 4.21),
+        y = c(8.845, 9.47, 8.845, 9.47, 4.275, 4.9, 9.225, 9.225)
     )
 
     options(scipen = -1) # This sets scientific notation below 1e-2
