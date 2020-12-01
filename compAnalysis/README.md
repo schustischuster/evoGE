@@ -124,32 +124,34 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base
 
 #> other attached packages:
-#> [1] devtools_1.13.4   rcompanion_1.11.1 lsmeans_2.27-61   mblm_0.12         ggbeeswarm_0.6.0
-#> [6] dendextend_1.12.0 factoextra_1.0.5  ggplot2_2.2.1     gplots_3.0.1.1    dplyr_0.7.4
+#> [1] matrixStats_0.52.2 scales_0.5.0       rcompanion_1.11.1  lsmeans_2.27-61   
+#> [5] mblm_0.12          ggbeeswarm_0.6.0   dendextend_1.12.0  factoextra_1.0.5  
+#> [9] ggplot2_2.2.1      gplots_3.0.1.1     dplyr_0.7.4       
+
 
 #> loaded via a namespace (and not attached):
-#>  [1] nlme_3.1-131         bitops_1.0-6         pbkrtest_0.4-7       ordinal_2015.6-28   
-#>  [5] tools_3.3.3          R6_2.4.1             vegan_2.4-5          KernSmooth_2.23-15  
-#>  [9] vipor_0.4.5          nortest_1.0-4        lazyeval_0.2.1       mgcv_1.8-17         
-#> [13] colorspace_1.3-2     permute_0.9-4        ade4_1.7-10          nnet_7.3-12         
-#> [17] withr_2.1.2          gridExtra_2.3        quantreg_5.34        hermite_1.1.1       
-#> [21] SparseM_1.77         expm_0.999-2         sandwich_2.5-1       caTools_1.17.1      
-#> [25] scales_0.5.0         lmtest_0.9-35        mvtnorm_1.0-6        mc2d_0.1-18         
-#> [29] multcompView_0.1-7   digest_0.6.13        foreign_0.8-67       minqa_1.2.4         
-#> [33] WRS2_0.9-2           pkgconfig_2.0.3      lme4_1.1-15          manipulate_1.0.1    
-#> [37] rlang_0.1.6          bindr_0.1.1          zoo_1.8-1            gtools_3.5.0        
-#> [41] car_2.1-6            magrittr_1.5         modeltools_0.2-22    Matrix_1.2-8        
-#> [45] Rcpp_0.12.14         DescTools_0.99.23    munsell_0.5.0        viridis_0.5.1       
-#> [49] ucminf_1.1-4         multcomp_1.4-8       MASS_7.3-45          plyr_1.8.4          
-#> [53] grid_3.3.3           parallel_3.3.3       gdata_2.18.0         ggrepel_0.7.0       
-#> [57] lattice_0.20-34      splines_3.3.3        EMT_1.1              boot_1.3-18         
-#> [61] estimability_1.2     codetools_0.2-15     stats4_3.3.3         glue_1.2.0          
-#> [65] nloptr_1.0.4         miscTools_0.6-22     MatrixModels_0.4-1   gtable_0.3.0        
-#> [69] reshape_0.8.7        assertthat_0.2.1     coin_1.2-2           xtable_1.8-4        
-#> [73] e1071_1.6-8          coda_0.19-1          class_7.3-14         survival_2.40-1     
-#> [77] BSDA_1.2.0           viridisLite_0.3.0    tibble_1.3.4         beeswarm_0.2.3      
-#> [81] memoise_1.1.0        bindrcpp_0.2         cluster_2.0.5        maxLik_1.3-4        
-#> [85] TH.data_1.0-10       RVAideMemoire_0.9-69
+#>  [1] viridis_0.5.1        viridisLite_0.3.0    splines_3.3.3        BSDA_1.2.0 
+#>  [5] gtools_3.5.0         ucminf_1.1-4         assertthat_0.2.1     expm_0.999-2        
+#>  [9] stats4_3.3.3         coin_1.2-2           vipor_0.4.5          ggrepel_0.7.0       
+#> [13] lattice_0.20-34      quantreg_5.34        glue_1.2.0           minqa_1.2.4         
+#> [17] colorspace_1.3-2     sandwich_2.5-1       Matrix_1.2-8         plyr_1.8.4          
+#> [21] pkgconfig_2.0.3      SparseM_1.77         EMT_1.1              xtable_1.8-4        
+#> [25] mvtnorm_1.0-6        gdata_2.18.0         manipulate_1.0.1     lme4_1.1-15         
+#> [29] MatrixModels_0.4-1   tibble_1.3.4         mgcv_1.8-17          car_2.1-6           
+#> [33] TH.data_1.0-10       maxLik_1.3-4         nnet_7.3-12          lazyeval_0.2.1      
+#> [37] pbkrtest_0.4-7       survival_2.40-1      magrittr_1.5         ordinal_2015.6-28   
+#> [41] estimability_1.2     nlme_3.1-131         MASS_7.3-45          WRS2_0.9-2          
+#> [45] RVAideMemoire_0.9-69 foreign_0.8-67       class_7.3-14         beeswarm_0.2.3      
+#> [49] vegan_2.4-5          tools_3.3.3          multcomp_1.4-8       munsell_0.5.0       
+#> [53] cluster_2.0.5        bindrcpp_0.2         ade4_1.7-10          e1071_1.6-8         
+#> [57] multcompView_0.1-7   caTools_1.17.1       rlang_0.1.6          grid_3.3.3          
+#> [61] nloptr_1.0.4         miscTools_0.6-22     hermite_1.1.1        bitops_1.0-6        
+#>  [65] boot_1.3-18          DescTools_0.99.23    gtable_0.3.0         codetools_0.2-15    
+#> [69] reshape_0.8.7        R6_2.4.1             gridExtra_2.3        zoo_1.8-1           
+#> [73] mc2d_0.1-18          nortest_1.0-4        bindr_0.1.1          KernSmooth_2.23-15  
+#> [77] permute_0.9-4        modeltools_0.2-22    parallel_3.3.3       Rcpp_0.12.14        
+#> [81] lmtest_0.9-35        coda_0.19-1         
+
 
 
 ```
