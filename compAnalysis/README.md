@@ -128,7 +128,6 @@ sessionInfo()
 #> [5] mblm_0.12          ggbeeswarm_0.6.0   dendextend_1.12.0  factoextra_1.0.5  
 #> [9] ggplot2_2.2.1      gplots_3.0.1.1     dplyr_0.7.4       
 
-
 #> loaded via a namespace (and not attached):
 #>  [1] viridis_0.5.1        viridisLite_0.3.0    splines_3.3.3        BSDA_1.2.0 
 #>  [5] gtools_3.5.0         ucminf_1.1-4         assertthat_0.2.1     expm_0.999-2        
@@ -146,7 +145,7 @@ sessionInfo()
 #> [53] cluster_2.0.5        bindrcpp_0.2         ade4_1.7-10          e1071_1.6-8         
 #> [57] multcompView_0.1-7   caTools_1.17.1       rlang_0.1.6          grid_3.3.3          
 #> [61] nloptr_1.0.4         miscTools_0.6-22     hermite_1.1.1        bitops_1.0-6        
-#>  [65] boot_1.3-18          DescTools_0.99.23    gtable_0.3.0         codetools_0.2-15    
+#> [65] boot_1.3-18          DescTools_0.99.23    gtable_0.3.0         codetools_0.2-15    
 #> [69] reshape_0.8.7        R6_2.4.1             gridExtra_2.3        zoo_1.8-1           
 #> [73] mc2d_0.1-18          nortest_1.0-4        bindr_0.1.1          KernSmooth_2.23-15  
 #> [77] permute_0.9-4        modeltools_0.2-22    parallel_3.3.3       Rcpp_0.12.14        
