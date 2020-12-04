@@ -389,7 +389,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
-            dend_order = rotate(as.dendrogram(df_clust.res),c(1:12,133:144,145:168,13:36,46:48,43:45,40:42,37:39,49:54,58:60,55:57,61:72,109:132,73:108)) 
+            dend_order = rotate(as.dendrogram(df_clust.res),c(1:12,133:144,145:168,13:18,28:30,34:36,31:33,25:27,22:24,19:21,46:48,43:45,40:42,37:39,49:54,58:60,55:57,61:72,109:132,73:108)) 
 
         } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "Brawand") && is.element("inter-organ", data_norm)) {
@@ -407,9 +407,14 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
     if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec)) && is.element("inter-organ", data_norm)) {
 
+        # Set dendrogram line width
+        if (is.element("pearson", coefficient)) {
+            dendro_lwd <- 18.8
+        } else dendro_lwd <- 16.75
+
         # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
-        par(lwd = 18.8) # dendrogram line width
+        par(lwd = dendro_lwd) # dendrogram line width
         getRowOrder = heatmap.2(x_cor,
             revC = F,
             ColSideColors = col_cols, 
@@ -609,8 +614,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         df_names <- c("Species" , "Correlation")
 
-        species_DevSeq <- c("A.thaliana", "A.lyrata", "C.rubella", "E.salsugineum", 
-            "T.hassleriana", "M.truncatula", "B.distachyon")
+        species_DevSeq <- c("AT", "AL", "CR", "ES", "TH", "MT", "BD")
         species_names <- as.data.frame(rep(species_DevSeq, each=28))
         organ_cor <- as.data.frame(c(AT,AL,CR,ES,TH,MT,BD))
 
@@ -661,39 +665,40 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             p <- ggplot(data, aes(x=factor(Species, levels=unique(Species)), y=Correlation, fill=Species)) + 
             stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
             geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
-                outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
-            geom_beeswarm(data = data, priority = c("ascending"), colour=cor_colors, cex=2, size=3) +
-            geom_beeswarm(data = data_m, priority = c("ascending"), colour="red", cex=2, size=2.25, shape=8, stroke=2) + 
+                outlier.size = 1.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
+            geom_beeswarm(data = data, priority = c("ascending"), colour=cor_colors, cex=2, size=3.25) +
+            geom_beeswarm(data = data_m, priority = c("ascending"), colour="red", cex=2, size=2.5, shape=8, stroke=2) + 
             scale_y_continuous(limits = c(y_min, y_max), expand = c(0, 0)) + 
             annotate("rect", xmin=0.35, xmax=7.65, ymin=y_min, ymax=y_max, fill="white", alpha=0, 
                 color="gray15", size=1.35)
 
             q <- p + scale_fill_manual(values=c("#f0dd91","#cacaca","#ebb4b1","#b3daad","#ace1ce","#ccc3f0","#b2d7e7")) + 
             theme_minimal() + 
-            xlab("") + 
+            xlab("Species") + 
             ylab(coef_lab) + 
             theme(legend.position = "none", 
                 text=element_text(size=20), 
                 panel.grid.major.y = element_line(size = 0.75, color = c("gray85")),
                 panel.grid.minor.y = element_line(size = 0.75, color = c("gray85")), 
                 panel.grid.major.x = element_line(size = 0.75, color = c("gray85")), 
-                axis.ticks.length = unit(.3, "cm"),
-                axis.ticks = element_line(colour = "gray15", size = 0.75), 
-                axis.title.x = element_text(colour = "black", size=20.5, 
-                    margin = margin(t = 17.5, r = 0, b = 0, l = 0)), 
-                axis.title.y = element_text(colour = "black", size=20.5, 
-                    margin = margin(t = 0, r = 12.5, b = 0, l = 0.5)), 
-                axis.text.x = element_text(colour = "black", size=18, angle=90, 
-                    margin = margin(t = 7.0, r = 0, b = 0, l = 0), hjust=1.0, vjust=0.35),
-                axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),  
-                plot.margin = unit(c(35, 35, 0, 35), "points"))
+                panel.border = element_rect(colour = "black", fill=NA, size=1.7),
+                axis.ticks.length = unit(.35, "cm"),
+                axis.ticks = element_line(colour = "black", size = 0.725), 
+                axis.title.x = element_text(colour = "black", size=24, 
+                    margin = margin(t = 12, r = 0, b = 0, l = 0)), 
+                axis.title.y = element_text(colour = "black", size=24, 
+                    margin = margin(t = 0, r = 12, b = 0, l = 0.5)), 
+                axis.text.x = element_text(colour = "black", size=21, angle=0, 
+                    margin = margin(t = 5, r = 0, b = 0, l = 0)),
+                axis.text.y = element_text(colour = "black", size=21, 
+                    margin = margin(t = 0, r = 5, b = 0, l = 0)),  
+                plot.margin = unit(c(0.55, 0.55, 1.74, 0.4), "cm"))
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-                scale = 1, width = 9.1, height = 8.0, units = c("in"), 
-                dpi = 600, limitsize = FALSE)
+                width = 7, height = 8.0, units = c("in"), dpi = 300, limitsize = FALSE)
         }
 
-        plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm) 
+        plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm)
 
     }
 
