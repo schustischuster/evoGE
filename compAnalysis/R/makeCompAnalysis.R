@@ -648,12 +648,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
             coef_lab <- ifelse(coefficient == "pearson", "Pearson's r", "Spearman's rho")
 
-            y_max = 1.025
+            y_max = 1.035
 
             if((coefficient == "pearson") && (data_norm == "intra-organ")) {
                 y_min = 0.37
             } else if((coefficient == "pearson") && (data_norm == "inter-organ")) {
-                y_min = 0.378
+                y_min = 0.364
             } else if((coefficient == "spearman") && (data_norm == "intra-organ")) {
                 y_min = 0.3575
             } else if((coefficient == "spearman") && (data_norm == "inter-organ")) {
@@ -675,7 +675,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             q <- p + scale_fill_manual(values=c("#f0dd91","#cacaca","#ebb4b1","#b3daad","#ace1ce","#ccc3f0","#b2d7e7")) + 
             theme_minimal() + 
             xlab("Species") + 
-            ylab(coef_lab) + 
+            ylab("") + 
             theme(legend.position = "none", 
                 text=element_text(size=20), 
                 panel.grid.major.y = element_line(size = 0.75, color = c("gray85")),
@@ -687,12 +687,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
                 axis.title.x = element_text(colour = "black", size=24, 
                     margin = margin(t = 12, r = 0, b = 0, l = 0)), 
                 axis.title.y = element_text(colour = "black", size=24, 
-                    margin = margin(t = 0, r = 12, b = 0, l = 0.5)), 
+                    margin = margin(t = 0, r = 0, b = 0, l = -11.5)), 
                 axis.text.x = element_text(colour = "black", size=21, angle=0, 
                     margin = margin(t = 5, r = 0, b = 0, l = 0)),
                 axis.text.y = element_text(colour = "black", size=21, 
                     margin = margin(t = 0, r = 5, b = 0, l = 0)),  
-                plot.margin = unit(c(0.55, 0.55, 1.74, 0.4), "cm"))
+                plot.margin = unit(c(0.55, 0.1, 1.74, 0), "cm"))
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
                 width = 7, height = 8.0, units = c("in"), dpi = 300, limitsize = FALSE)
