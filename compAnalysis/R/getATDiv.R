@@ -234,7 +234,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         rows_to_remove_DS <- "ATH"
         DS_sou_v <- DS_sou_v[!(row.names(DS_sou_v) %in% rows_to_remove_DS), ]
         # Note: The computation for THA and BDY Pollen distance will produce NaN due to large
-        # number of genes having only "0" TPM values in this combination; We ignore this error
+        # number of genes having only "0" TPM values in this combination; We can ignore this warning
         # since we carry out downstream analyses only for ATH vs.X and ALY vs.X combinations
 
 
