@@ -141,6 +141,10 @@ getTaxoInput <- function() {
     col_namesDS_AL <- c("Gene", col_namesDS_AL)
     colnames(x_DS_tbj) <- col_namesDS
     colnames(x_DS_AL_tbj) <- col_namesDS_AL
+    
+    # Remove ERCC spike-ins from data
+    x_DS_tbj <- x_DS_tbj[!grepl("ERCC", x_DS_tbj$Gene),]
+    x_DS_AL_tbj <- x_DS_AL_tbj[!grepl("ERCC", x_DS_AL_tbj$Gene),]
 
     write.table(x_DS_tbj, 
     	file=file.path(out_dir, "output", "data", "x_DS_taxobj_input.txt"), sep="\t", 
