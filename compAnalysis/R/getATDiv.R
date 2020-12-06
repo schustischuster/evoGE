@@ -112,6 +112,8 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     x_Br[is.na(x_Br)] <- 0 # replaces NAs by 0
     x_DS[is.na(x_DS)] <- 0 # replaces NAs by 0
+    # Remove ERCC spike-ins from data
+    x_DS <- x_DS[!grepl("ERCC", x_DS$gene_id),]
     x_Br2011[is.na(x_Br2011)] <- 0 # replaces NAs by 0
 
 
@@ -231,6 +233,9 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             taxa_obj = x_DS_taxa_objects)))
         rows_to_remove_DS <- "ATH"
         DS_sou_v <- DS_sou_v[!(row.names(DS_sou_v) %in% rows_to_remove_DS), ]
+        # Note: The computation for THA and BDY Pollen distance will produce NaN due to large
+        # number of genes having only "0" TPM values in this combination; We ignore this error
+        # since we carry out downstream analyses only for ATH vs.X and ALY vs.X combinations
 
 
 
@@ -1238,7 +1243,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Create p-value containing test strings for plots
-    sOU_loess_DevSeq_AT_Br11_slope_p <- paste("P =", formatC(sOU_loess_DevSeq_AT_Br11_wilcox, format="e", digits=0))
+    p_dat_text <- data.frame(
+        label = c(paste("italic('P =')~", formatC(sOU_loess_DevSeq_AT_Br11_wilcox, format = "e", digits = 0))),
+        x = c(16.25),
+        y = c(1.3328)
+    )
 
 
 
@@ -1258,8 +1267,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             legend_y_pos <- 0.914
             linewd <- 3
             point_size <- 5.75
-            txt_x_pos <- 16.25
-            txt_y_pos <- 1.216
 
       } else {
 
@@ -1269,8 +1276,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             legend_y_pos <- 0.9
             linewd <- 2.5
             point_size <- 5
-            txt_x_pos <- 16.25
-            txt_y_pos <- 1.216
       }
 
       ds_col <- rep(c("#798dc4"), 48)
@@ -1289,12 +1294,13 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       p <- p + geom_point(size = point_size, data = data2, aes(x = div_times, y = correlation, group = comp_organ, 
         colour = dataset, shape = dataset))
       p <- p + scale_x_continuous(limits = c(0,161), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(0.055, 1.447), expand = c(0.02, 0), breaks = c(0.2,0.4,0.6,0.8,1,1.2,1.4)) + 
+      scale_y_continuous(limits = c(0.055, 1.588), expand = c(0.02, 0), breaks = c(0.2,0.4,0.6,0.8,1,1.2,1.4)) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
       scale_shape_manual(values = shape_scale) + 
       scale_size(range = c(0.5, 12)) + 
-      annotate("text", x = txt_x_pos, y = txt_y_pos, label = p_value, size = 8) + 
+      geom_text(data = p_dat_text, mapping = aes(x = x, y = y, label = format(label, scientific=TRUE)), 
+        size = 8, parse = TRUE) + 
       guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
 
       q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Expression distance") + 
@@ -1308,9 +1314,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
         legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
         panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
-        panel.grid.major = element_line(color="#d5d5d5"),
-        panel.grid.minor.x = element_blank(), 
-        panel.grid.minor.y = element_blank(), 
+        panel.grid = element_blank(), 
         legend.position = c(legend_x_pos, legend_y_pos), 
         legend.title = element_blank(), 
         legend.text = element_text(size=22), 
