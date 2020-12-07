@@ -95,6 +95,8 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
 
     x[is.na(x)] <- 0 # replaces NAs by 0
+    # Remove ERCC spike-ins from data
+    x <- x[!grepl("ERCC", x$gene_id),]
 
 
 
@@ -325,14 +327,14 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             brass_label <- "Brassicaceae"
             text_x1_pos <- 19.5
             text_x4_pos <- 158.6
-            text_y_pos <- 0.4815
+            text_y_pos <- 0.46225
             x_poll_pos <- 147.47
-            y_poll_pos <- 0.83575
+            y_poll_pos <- 0.82875
             leg_ln_s1_x <- 135.55
             leg_ln_s1_xend <- 137.25
             leg_ln_s2_x <- 138.3
             leg_ln_s2_xend <- 139.975
-            leg_ln_s_y <- 0.83575
+            leg_ln_s_y <- 0.82875
             leg_box_bd <- 1.0
             pan_boarder <- 1.75
             axis_txt_size <- 21.25
@@ -351,14 +353,14 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
             brass_label <- "Brassiceae"
             text_x1_pos <- 22
             text_x4_pos <- 157
-            text_y_pos <- 0.4845
+            text_y_pos <- 0.46525
             x_poll_pos <- 145.8
-            y_poll_pos <- 0.8225
+            y_poll_pos <- 0.81525
             leg_ln_s1_x <- 129.45
             leg_ln_s1_xend <- 131.7
             leg_ln_s2_x <- 133.15
             leg_ln_s2_xend <- 135.4
-            leg_ln_s_y <- 0.8225
+            leg_ln_s_y <- 0.8155
             leg_box_bd <- 0
             pan_boarder <- 1.8
             axis_txt_size <- 21.75
@@ -376,7 +378,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
                 "Leaf  "="#2c8654")) + 
         geom_line(size = linewd) +  
         scale_x_continuous(limits = c(5.5,161.5), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
-        scale_y_continuous(limits = c(0.4675, 0.91), expand = c(0.02, 0)) + 
+        scale_y_continuous(limits = c(0.4425, 0.907), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
             "#f2a72f", "#2c8654"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
@@ -387,17 +389,17 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
         annotate("text", x=x_poll_pos, y=y_poll_pos, label= "Pollen", size=7.56) + 
         geom_segment(x=leg_ln_s1_x, xend=leg_ln_s1_xend, y=leg_ln_s_y, yend=leg_ln_s_y, color="#a63126", size=linewd) + 
         geom_segment(x=leg_ln_s2_x, xend=leg_ln_s2_xend, y=leg_ln_s_y, yend=leg_ln_s_y, color="#a63126", size=linewd) + 
-        geom_segment(x=157.5, xend=157.5, y=0.461, yend=0.49, color="white", size=12.5) + 
+        geom_segment(x=156.75, xend=156.75, y=0.4475, yend=0.4775, color="white", size=12.5) + 
         annotate("text", x=text_x1_pos, y=text_y_pos, label= brass_label, size=8) + 
         annotate("text", x=46, y=text_y_pos, label= "TH", size=8) + 
         annotate("text", x=106, y=text_y_pos, label= "MT", size=8) + 
         annotate("text", x=text_x4_pos, y=text_y_pos, label= "BD", size=8) + 
-        geom_segment(x=7, xend=7, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
-        geom_segment(x=9, xend=9, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
-        geom_segment(x=25, xend=25, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
-        geom_segment(x=46, xend=46, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
-        geom_segment(x=106, xend=106, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
-        geom_segment(x=160, xend=160, y=0.435, yend=0.468, color="black", size=axis_ticks_s) + 
+        geom_segment(x=7, xend=7, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
+        geom_segment(x=9, xend=9, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
+        geom_segment(x=25, xend=25, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
+        geom_segment(x=46, xend=46, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
+        geom_segment(x=106, xend=106, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
+        geom_segment(x=160, xend=160, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
         guides(color = guide_legend(ncol = 3))
 
         q <- p + theme_bw() + xlab("Divergence time from A.lyrata (Myr)") + ylab("Pearson's r w/ A.lyrata") + 
@@ -612,21 +614,21 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
       # Get fit for data from compDivRates11_AL
       DS_AL_pea_dist_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31827, b = 0.26902, c = -0.02476))) # compDivRates11_AL[1:6, ]
+        nl_model, a = 0.32500, b = 0.27427, c = -0.02501))) # compDivRates11_AL[1:6, ]
       DS_AL_pea_dist_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.32286, b = 0.33262, c = -0.02213))) # compDivRates11_AL[7:12, ]
+        nl_model, a = 0.33077, b = 0.34060, c = -0.02239))) # compDivRates11_AL[7:12, ]
       DS_AL_pea_dist_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.3093, b = 0.3560, c = -0.0104))) # compDivRates11_AL[13:18, ]
+        nl_model, a = 0.31534, b = 0.35927, c = -0.01061))) # compDivRates11_AL[13:18, ]
       DS_AL_pea_dist_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30109, b = 0.28924, c = -0.02435))) # compDivRates11_AL[19:24, ]
+        nl_model, a = 0.30784, b = 0.29555, c = -0.02468))) # compDivRates11_AL[19:24, ]
       DS_AL_pea_dist_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29882, b = 0.28198, c = -0.02512))) # compDivRates11_AL[25:30, ]
+        nl_model, a = 0.3054, b = 0.2881, c = -0.0254))) # compDivRates11_AL[25:30, ]
       DS_AL_pea_dist_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30565, b = 0.28551, c = -0.03033))) # compDivRates11_AL[31:36, ]
+        nl_model, a = 0.31381, b = 0.29251, c = -0.03051))) # compDivRates11_AL[31:36, ]
       DS_AL_pea_dist_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.34405, b = 0.30761, c = -0.02173))) # compDivRates11_AL[37:42, ]
+        nl_model, a = 0.34969, b = 0.31283, c = -0.02221))) # compDivRates11_AL[37:42, ]
       DS_AL_pea_dist_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30025, b = 0.29019, c = -0.02278))) # compDivRates11_AL[43:48, ]
+        nl_model, a = 0.30708, b = 0.29608, c = -0.02313))) # compDivRates11_AL[43:48, ]
 
       DS_AL_pea_dist_nl_list <- list(DS_AL_pea_dist_root_nl=DS_AL_pea_dist_root_nl,
         DS_AL_pea_dist_hypo_nl=DS_AL_pea_dist_hypo_nl, DS_AL_pea_dist_leaf_nl=DS_AL_pea_dist_leaf_nl, 
@@ -637,21 +639,21 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
       # Get fit for data from DevSeq_AL_sou_v_div_rates
       DS_AL_sOU_v_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.16213, b = 0.89855, c = -0.01732))) # DevSeq_AL_sou_v_div_rates[1:6, ]
+        a = 0.16634, b = 0.96132, c = -0.01725))) # DevSeq_AL_sou_v_div_rates[1:6, ]
       DS_AL_sOU_v_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.14172, b = 1.44391, c = -0.01365))) # DevSeq_AL_sou_v_div_rates[7:12, ]
+        a = 0.14438, b = 1.61242, c = -0.01316))) # DevSeq_AL_sou_v_div_rates[7:12, ]
       DS_AL_sOU_v_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.19, b = 9.1, c = -0.0007))) # DevSeq_AL_sou_v_div_rates[13:18,]
+        a = 0.19, b = 9.1, c = -0.00075))) # DevSeq_AL_sou_v_div_rates[13:18,]
       DS_AL_sOU_v_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.12898, b = 0.94550, c = -0.01769))) # DevSeq_AL_sou_v_div_rates[19:24, ]
+        a = 0.13112, b = 1.01717, c = -0.01772))) # DevSeq_AL_sou_v_div_rates[19:24, ]
       DS_AL_sOU_v_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.15105, b = 0.91667, c = -0.01609))) # DevSeq_AL_sou_v_div_rates[25:30, ]
+        a = 0.15574, b = 0.98671, c = -0.01598))) # DevSeq_AL_sou_v_div_rates[25:30, ]
       DS_AL_sOU_v_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.1662, b = 0.9562, c = -0.0174))) # DevSeq_AL_sou_v_div_rates[31:36, ]
+        a = 0.17451, b = 1.04696, c = -0.01689))) # DevSeq_AL_sou_v_div_rates[31:36, ]
       DS_AL_sOU_v_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.229840, b = 1.571409, c = -0.008808))) # DevSeq_AL_sou_v_div_rates[37:42, ]
+        a = 0.233142, b = 1.674069, c = -0.008923))) # DevSeq_AL_sou_v_div_rates[37:42, ]
       DS_AL_sOU_v_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.15955, b = 1.00717, c = -0.01271))) # DevSeq_AL_sou_v_div_rates[43:48, ]
+        a = 0.16557, b = 1.08576, c = -0.01257))) # DevSeq_AL_sou_v_div_rates[43:48, ]
 
       DS_AL_sOU_v_nl_list <- list(DS_AL_sOU_v_root_nl=DS_AL_sOU_v_root_nl,
         DS_AL_sOU_v_hypo_nl=DS_AL_sOU_v_hypo_nl, DS_AL_sOU_v_leaf_nl=DS_AL_sOU_v_leaf_nl, 
@@ -662,21 +664,21 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
       # Get fit for data from compDivRates11 (AT)
       DS_AT_pea_dist_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30507, b = 0.30235, c = -0.02116))) # compDivRates11[1:6, ]
+        nl_model, a = 0.31170, b = 0.30843, c = -0.02139))) # compDivRates11[1:6, ]
       DS_AT_pea_dist_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31345, b = 0.34023, c = -0.01777))) # compDivRates11[7:12, ]
+        nl_model, a = 0.32112, b = 0.34801, c = -0.01803))) # compDivRates11[7:12, ]
       DS_AT_pea_dist_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29961, b = 0.33251, c = -0.01109))) # compDivRates11[13:18, ]
+        nl_model, a = 0.30526, b = 0.33547, c = -0.01144))) # compDivRates11[13:18, ]
       DS_AT_pea_dist_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29180, b = 0.28853, c = -0.02132))) # compDivRates11[19:24, ]
+        nl_model, a = 0.29865, b = 0.29448, c = -0.02171))) # compDivRates11[19:24, ]
       DS_AT_pea_dist_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.28499, b = 0.28122, c = -0.02315))) # compDivRates11[25:30, ]
+        nl_model, a = 0.2916, b = 0.2871, c = -0.0234))) # compDivRates11[25:30, ]
       DS_AT_pea_dist_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29492, b = 0.27549, c = -0.03015))) # compDivRates11[31:36, ]
+        nl_model, a = 0.30268, b = 0.28260, c = -0.03041))) # compDivRates11[31:36, ]
       DS_AT_pea_dist_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30777, b = 0.33599, c = -0.02589))) # compDivRates11[37:42, ]
+        nl_model, a = 0.31257, b = 0.34301, c = -0.02639))) # compDivRates11[37:42, ]
       DS_AT_pea_dist_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29157, b = 0.29653, c = -0.01898))) # compDivRates11[43:48, ]
+        nl_model, a = 0.29832, b = 0.30217, c = -0.01933))) # compDivRates11[43:48, ]
 
       DS_AT_pea_dist_nl_list <- list(DS_AT_pea_dist_root_nl=DS_AT_pea_dist_root_nl,
         DS_AT_pea_dist_hypo_nl=DS_AT_pea_dist_hypo_nl, DS_AT_pea_dist_leaf_nl=DS_AT_pea_dist_leaf_nl, 
@@ -687,21 +689,21 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
       # Get fit for data from compSouVDivRates11 (AT)
       DS_AT_sOU_v_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.10742, b = 1.04002, c = -0.01693))) # compSouVDivRates11[1:6, ]
+        a = 0.10680, b = 1.11853, c = -0.01696))) # compSouVDivRates11[1:6, ]
       DS_AT_sOU_v_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.176241, b = 1.781406, c = -0.006777))) # compSouVDivRates11[7:12, ]
+        a = 0.186766, b = 2.096886, c = -0.006047))) # compSouVDivRates11[7:12, ]
       DS_AT_sOU_v_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.18, b = 8.3, c = -0.0007))) # compSouVDivRates11[13:18, ]
+        a = 0.17, b = 8.3, c = -0.000758))) # compSouVDivRates11[13:18, ]
       DS_AT_sOU_v_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.13154, b = 0.89175, c = -0.01502))) # compSouVDivRates11[19:25, ]
+        a = 0.13551, b = 0.95734, c = -0.01505))) # compSouVDivRates11[19:25, ]
       DS_AT_sOU_v_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.10423, b = 0.83973, c = -0.01781))) # compSouVDivRates11[26:30, ]
+        a = 0.10593, b = 0.89923, c = -0.01783))) # compSouVDivRates11[26:30, ]
       DS_AT_sOU_v_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.14498, b = 0.83208, c = -0.01927))) # compSouVDivRates11[31:36, ]
+        a = 0.15118, b = 0.90408, c = -0.01896))) # compSouVDivRates11[31:36, ]
       DS_AT_sOU_v_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.05955, b = 1.29020, c = -0.02148))) # compSouVDivRates11[37:42, ]
+        a = 0, b = 1.4691, c = -0.02248))) # compSouVDivRates11[37:42, ]
       DS_AT_sOU_v_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.1669, b = 1.1686, c = -0.0078))) # compSouVDivRates11[43:48, ]
+        a = 0.175205, b = 1.275883, c = -0.007547))) # compSouVDivRates11[43:48, ]
 
       DS_AT_sOU_v_nl_list <- list(DS_AT_sOU_v_root_nl=DS_AT_sOU_v_root_nl,
         DS_AT_sOU_v_hypo_nl=DS_AT_sOU_v_hypo_nl, DS_AT_sOU_v_leaf_nl=DS_AT_sOU_v_leaf_nl, 
@@ -1214,7 +1216,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
 
       fname <- sprintf('%s.jpg', paste("compSouVDivRates11_AL_loess", expr_estimation, pos, sep="_"))
       y_min <- 0.055
-      y_max <- 1.55
+      y_max <- 1.7
       col_breaks <- c("Angiosperms.AL ", "Mammals.11")
       fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
       y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4)
@@ -1329,7 +1331,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       geom_line(data = data[1:159,], aes(x = div_times, y = correlation), color = '#81bcef', size = 2.5) +
       geom_line(data = data[160:318,], aes(x = div_times, y = correlation), color = '#728acb', size = 2.5) + 
       scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(-0.01, 1.0795), expand = c(0.02, 0), breaks = y_breaks) + 
+      scale_y_continuous(limits = c(-0.01, 1.1675), expand = c(0.02, 0), breaks = y_breaks) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_fill_manual(values = fill_scale) + 
       scale_size(range = c(0.5, 12)) + 
