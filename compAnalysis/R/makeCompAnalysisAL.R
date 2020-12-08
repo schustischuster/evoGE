@@ -7,7 +7,7 @@
 #-------------------------------------- Read data tables ---------------------------------------
 
 
-makeCompAnalylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman")) {
+makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman")) {
 
 
    	# Show error message if expression estimation or unknown expression estimation is chosen
@@ -1452,7 +1452,7 @@ makeCompAnalylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficien
 }
 
 
-makeCompAnalylsisAL(expr_estimation="TPM", coefficient="pearson")
+makeCompAnalysisAL(expr_estimation="TPM", coefficient="pearson")
 
 
 
