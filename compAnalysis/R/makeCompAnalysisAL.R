@@ -1219,7 +1219,7 @@ makeCompAnylsisAL <- function(expr_estimation = c("TPM", "counts"), coefficient 
       y_max <- 1.7
       col_breaks <- c("Angiosperms.AL ", "Mammals.11")
       fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
-      y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4)
+      y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4,1.6)
       y_title <- "Expression distance"
 
       if (pos == "main") {
