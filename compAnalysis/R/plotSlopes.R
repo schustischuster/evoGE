@@ -248,7 +248,7 @@ plotSlopes <- function() {
             guide = "none") + 
         scale_fill_manual(values=c('#81bcef','#728acb', 'red', 'red3'), 
             guide = "legend") + 
-        scale_y_continuous(expand = c(0.07, 0), labels = comma) + 
+        scale_y_continuous(expand = c(0.14, 0), labels = comma) + 
         scale_x_discrete(labels=c("AT_sOU_loess" = "Angiosperms.AT", "AT_Pearson_loess" = "Angiosperms.AT", 
             "AT_sOU_nlm" = "Angiosperms.AT", "AT_Pearson_nlm" = "Angiosperms.AT", "AL_sOU_loess" = "Angiosperms.AL", 
             "AL_Pearson_loess" = "Angiosperms.AL", "AL_sOU_nlm" = "Angiosperms.AL", "AL_Pearson_nlm" = "Angiosperms.AL", 
@@ -265,7 +265,7 @@ plotSlopes <- function() {
             axis.ticks.length = unit(0.35, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1), 
             axis.line = element_line(colour = 'black', size = 1), 
-            plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+            plot.margin = unit(c(0.55, 1.175, 2, 0.4),"cm"), 
             axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), colour="black", 
                 face = "bold"), 
             axis.title.x = element_text(size=24.6, margin = margin(t = -18, r = 0, b = 35, l = 0), colour="black", 
@@ -310,15 +310,18 @@ plotSlopes <- function() {
     AT_Br_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,3], format = "e", digits = 0)))
     AT_Br11_pea_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,4], format = "e", digits = 0)))
 
+    AL_Br11_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AL_Br_loess[16,2], format = "e", digits = 0)))
+    AL_Br_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AL_Br_loess[16,3], format = "e", digits = 0)))
+
     AL_Br11_sOU_nlm <- c(paste("italic('P =')~", round(DS_AL_Br_nlm[16,2], 3)))
     AL_Br_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AL_Br_nlm[16,3], format = "e", digits = 0)))
 
 
     dat_text <- data.frame(
-        label = c(AT_Br11_sOU_loess, AT_Br_sOU_loess, AT_Br11_sOU_nlm, AT_Br_sOU_nlm, 
-            AL_Br11_sOU_nlm, AL_Br_sOU_nlm, AT_Br11_pea_loess, AT_Br11_pea_nlm), # other p-values have same value
-        x = c(0.451, 0.569, 1.645, 1.76, 1.79, 1.875, 2.985, 4.21),
-        y = c(8.845, 9.47, 8.845, 9.47, 4.275, 4.9, 9.225, 9.225)
+        label = c(AT_Br11_sOU_loess, AT_Br_sOU_loess, AL_Br11_sOU_loess, AT_Br11_sOU_nlm, AT_Br_sOU_nlm, 
+            AL_Br11_sOU_nlm, AT_Br11_pea_loess, AT_Br11_pea_nlm), # other p-values have same value
+        x = c(0.481, 0.595, 0.5387, 1.688, 1.802, 1.747, 3.01, 4.22),
+        y = c(8.825, 9.47, 4.538, 8.825, 9.47, 4.668, 9.225, 9.225)
     )
 
     options(scipen = -1) # This sets scientific notation below 1e-2
