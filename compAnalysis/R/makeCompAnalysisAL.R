@@ -73,7 +73,7 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
     # "compDivRates" = compDivRates, "compDivRates11" = compDivRates11, "compSouVDivRates" = compSouVDivRates, "compSouVDivRates11" = compSouVDivRates11)
     # return(return_list)
     # }
-    # return_objects <- makeCompAnylsisAL(expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
+    # return_objects <- makeCompAnalysisAL(expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
 
@@ -596,7 +596,7 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       nl_model <- function(a, b, c, x){
 
-        y = a + b * (1 - exp(c * x))
+        y = a * exp(c * x) + b * (1 - exp(c * x))
         return(y)
       }
       # a + b defines maximum y value
@@ -608,27 +608,27 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Compute data points for DevSeq_AL_pearson_dist based on model
       # First try to manually find rough parameters, then use nls to fine tune
-      m <- nls(correlation ~ a + b * (1-(exp(div_times * c))), start = list(
-        a = 0.3, b = 0.2, c = -0.01), data = compDivRates11_AL[1:6,])
+      m <- nls(correlation ~ a * exp(div_times * c) + b * (1-(exp(div_times * c))), start = list(
+        a = 0.3, b = 0.5, c = -0.01), data = compDivRates11_AL[1:6,])
       # m # get the optimized parameters
 
       # Get fit for data from compDivRates11_AL
       DS_AL_pea_dist_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.32500, b = 0.27427, c = -0.02501))) # compDivRates11_AL[1:6, ]
+        nl_model, a = 0.32500, b = 0.59927, c = -0.02501))) # compDivRates11_AL[1:6, ]
       DS_AL_pea_dist_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.33077, b = 0.34060, c = -0.02239))) # compDivRates11_AL[7:12, ]
+        nl_model, a = 0.33077, b = 0.67137, c = -0.02239))) # compDivRates11_AL[7:12, ]
       DS_AL_pea_dist_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31534, b = 0.35927, c = -0.01061))) # compDivRates11_AL[13:18, ]
+        nl_model, a = 0.31534, b = 0.67461, c = -0.01061))) # compDivRates11_AL[13:18, ]
       DS_AL_pea_dist_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30784, b = 0.29555, c = -0.02468))) # compDivRates11_AL[19:24, ]
+        nl_model, a = 0.30784, b = 0.60339, c = -0.02468))) # compDivRates11_AL[19:24, ]
       DS_AL_pea_dist_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.3054, b = 0.2881, c = -0.0254))) # compDivRates11_AL[25:30, ]
+        nl_model, a = 0.3054, b = 0.5935, c = -0.0254))) # compDivRates11_AL[25:30, ]
       DS_AL_pea_dist_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31381, b = 0.29251, c = -0.03051))) # compDivRates11_AL[31:36, ]
+        nl_model, a = 0.31381, b = 0.60632, c = -0.03051))) # compDivRates11_AL[31:36, ]
       DS_AL_pea_dist_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.34969, b = 0.31283, c = -0.02221))) # compDivRates11_AL[37:42, ]
+        nl_model, a = 0.34969, b = 0.66253, c = -0.02221))) # compDivRates11_AL[37:42, ]
       DS_AL_pea_dist_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30708, b = 0.29608, c = -0.02313))) # compDivRates11_AL[43:48, ]
+        nl_model, a = 0.30708, b = 0.60315, c = -0.02313))) # compDivRates11_AL[43:48, ]
 
       DS_AL_pea_dist_nl_list <- list(DS_AL_pea_dist_root_nl=DS_AL_pea_dist_root_nl,
         DS_AL_pea_dist_hypo_nl=DS_AL_pea_dist_hypo_nl, DS_AL_pea_dist_leaf_nl=DS_AL_pea_dist_leaf_nl, 
@@ -639,21 +639,21 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from DevSeq_AL_sou_v_div_rates
       DS_AL_sOU_v_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.16634, b = 0.96132, c = -0.01725))) # DevSeq_AL_sou_v_div_rates[1:6, ]
+        a = 0.16634, b = 1.12767, c = -0.01725))) # DevSeq_AL_sou_v_div_rates[1:6, ]
       DS_AL_sOU_v_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.14438, b = 1.61242, c = -0.01316))) # DevSeq_AL_sou_v_div_rates[7:12, ]
+        a = 0.14438, b = 1.75679, c = -0.01316))) # DevSeq_AL_sou_v_div_rates[7:12, ]
       DS_AL_sOU_v_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.19, b = 9.1, c = -0.00075))) # DevSeq_AL_sou_v_div_rates[13:18,]
+        a = 0.19, b = 9.29, c = -0.00075))) # DevSeq_AL_sou_v_div_rates[13:18,]
       DS_AL_sOU_v_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.13112, b = 1.01717, c = -0.01772))) # DevSeq_AL_sou_v_div_rates[19:24, ]
+        a = 0.13112, b = 1.14828, c = -0.01772))) # DevSeq_AL_sou_v_div_rates[19:24, ]
       DS_AL_sOU_v_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.15574, b = 0.98671, c = -0.01598))) # DevSeq_AL_sou_v_div_rates[25:30, ]
+        a = 0.15574, b = 1.14245, c = -0.01598))) # DevSeq_AL_sou_v_div_rates[25:30, ]
       DS_AL_sOU_v_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.17451, b = 1.04696, c = -0.01689))) # DevSeq_AL_sou_v_div_rates[31:36, ]
+        a = 0.17451, b = 1.22147, c = -0.01689))) # DevSeq_AL_sou_v_div_rates[31:36, ]
       DS_AL_sOU_v_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.233142, b = 1.674069, c = -0.008923))) # DevSeq_AL_sou_v_div_rates[37:42, ]
+        a = 0.233142, b = 1.907211, c = -0.008923))) # DevSeq_AL_sou_v_div_rates[37:42, ]
       DS_AL_sOU_v_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.16557, b = 1.08576, c = -0.01257))) # DevSeq_AL_sou_v_div_rates[43:48, ]
+        a = 0.16557, b = 1.25133, c = -0.01257))) # DevSeq_AL_sou_v_div_rates[43:48, ]
 
       DS_AL_sOU_v_nl_list <- list(DS_AL_sOU_v_root_nl=DS_AL_sOU_v_root_nl,
         DS_AL_sOU_v_hypo_nl=DS_AL_sOU_v_hypo_nl, DS_AL_sOU_v_leaf_nl=DS_AL_sOU_v_leaf_nl, 
@@ -664,21 +664,21 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from compDivRates11 (AT)
       DS_AT_pea_dist_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31170, b = 0.30843, c = -0.02139))) # compDivRates11[1:6, ]
+        nl_model, a = 0.31170, b = 0.62013, c = -0.02139))) # compDivRates11[1:6, ]
       DS_AT_pea_dist_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.32112, b = 0.34801, c = -0.01803))) # compDivRates11[7:12, ]
+        nl_model, a = 0.32112, b = 0.66913, c = -0.01803))) # compDivRates11[7:12, ]
       DS_AT_pea_dist_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30526, b = 0.33547, c = -0.01144))) # compDivRates11[13:18, ]
+        nl_model, a = 0.30526, b = 0.64073, c = -0.01144))) # compDivRates11[13:18, ]
       DS_AT_pea_dist_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29865, b = 0.29448, c = -0.02171))) # compDivRates11[19:24, ]
+        nl_model, a = 0.29865, b = 0.59313, c = -0.02171))) # compDivRates11[19:24, ]
       DS_AT_pea_dist_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.2916, b = 0.2871, c = -0.0234))) # compDivRates11[25:30, ]
+        nl_model, a = 0.2916, b = 0.5787, c = -0.0234))) # compDivRates11[25:30, ]
       DS_AT_pea_dist_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30268, b = 0.28260, c = -0.03041))) # compDivRates11[31:36, ]
+        nl_model, a = 0.30268, b = 0.58528, c = -0.03041))) # compDivRates11[31:36, ]
       DS_AT_pea_dist_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31257, b = 0.34301, c = -0.02639))) # compDivRates11[37:42, ]
+        nl_model, a = 0.31257, b = 0.65557, c = -0.02639))) # compDivRates11[37:42, ]
       DS_AT_pea_dist_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29832, b = 0.30217, c = -0.01933))) # compDivRates11[43:48, ]
+        nl_model, a = 0.29832, b = 0.60049, c = -0.01933))) # compDivRates11[43:48, ]
 
       DS_AT_pea_dist_nl_list <- list(DS_AT_pea_dist_root_nl=DS_AT_pea_dist_root_nl,
         DS_AT_pea_dist_hypo_nl=DS_AT_pea_dist_hypo_nl, DS_AT_pea_dist_leaf_nl=DS_AT_pea_dist_leaf_nl, 
@@ -689,21 +689,21 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from compSouVDivRates11 (AT)
       DS_AT_sOU_v_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.10680, b = 1.11853, c = -0.01696))) # compSouVDivRates11[1:6, ]
+        a = 0.10680, b = 1.22533, c = -0.01696))) # compSouVDivRates11[1:6, ]
       DS_AT_sOU_v_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.186766, b = 2.096886, c = -0.006047))) # compSouVDivRates11[7:12, ]
+        a = 0.186767, b = 2.283662, c = -0.006047))) # compSouVDivRates11[7:12, ]
       DS_AT_sOU_v_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.17, b = 8.3, c = -0.000758))) # compSouVDivRates11[13:18, ]
+        a = 0.17, b = 8.47, c = -0.000758))) # compSouVDivRates11[13:18, ]
       DS_AT_sOU_v_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.13551, b = 0.95734, c = -0.01505))) # compSouVDivRates11[19:25, ]
+        a = 0.13551, b = 1.09286, c = -0.01505))) # compSouVDivRates11[19:25, ]
       DS_AT_sOU_v_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.10593, b = 0.89923, c = -0.01783))) # compSouVDivRates11[26:30, ]
+        a = 0.10593, b = 1.00517, c = -0.01783))) # compSouVDivRates11[26:30, ]
       DS_AT_sOU_v_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.15118, b = 0.90408, c = -0.01896))) # compSouVDivRates11[31:36, ]
+        a = 0.15118, b = 1.05525, c = -0.01896))) # compSouVDivRates11[31:36, ]
       DS_AT_sOU_v_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0, b = 1.4691, c = -0.02248))) # compSouVDivRates11[37:42, ]
+        a = 0.04578, b = 1.43109, c = -0.02214))) # compSouVDivRates11[37:42, ]
       DS_AT_sOU_v_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.175205, b = 1.275883, c = -0.007547))) # compSouVDivRates11[43:48, ]
+        a = 0.175205, b = 1.451090, c = -0.007547))) # compSouVDivRates11[43:48, ]
 
       DS_AT_sOU_v_nl_list <- list(DS_AT_sOU_v_root_nl=DS_AT_sOU_v_root_nl,
         DS_AT_sOU_v_hypo_nl=DS_AT_sOU_v_hypo_nl, DS_AT_sOU_v_leaf_nl=DS_AT_sOU_v_leaf_nl, 
@@ -714,17 +714,17 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from Brawand11_sou_v_div_rates
       Br11_sOU_v_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.088024, b = 1.228775, c = -0.002073))) # Brawand11_sou_v_div_rates[1:6, ]
+        a = 0.088024, b = 1.316801, c = -0.002073))) # Brawand11_sou_v_div_rates[1:6, ]
       Br11_sOU_v_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.105259, b = 0.559726, c = -0.008246))) # Brawand11_sou_v_div_rates[7:12, ]
+        a = 0.105259, b = 0.664985, c = -0.008246))) # Brawand11_sou_v_div_rates[7:12, ]
       Br11_sOU_v_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.142598, b = 0.582876, c = -0.006562))) # Brawand11_sou_v_div_rates[13:18, ]
+        a = 0.142598, b = 0.725474, c = -0.006562))) # Brawand11_sou_v_div_rates[13:18, ]
       Br11_sOU_v_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.08081, b = 0.54196, c = -0.01581))) # Brawand11_sou_v_div_rates[19:24, ]
+        a = 0.08081, b = 0.62277, c = -0.01581))) # Brawand11_sou_v_div_rates[19:24, ]
       Br11_sOU_v_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.162913, b = 0.556777, c = -0.007157))) # Brawand11_sou_v_div_rates[25:30, ]
+        a = 0.162913, b = 0.719690, c = -0.007157))) # Brawand11_sou_v_div_rates[25:30, ]
       Br11_sOU_v_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.24232, b = 1.07307, c = -0.01123))) # Brawand11_sou_v_div_rates[31:35, ]
+        a = 0.24232, b = 1.31539, c = -0.01123))) # Brawand11_sou_v_div_rates[31:35, ]
 
       Br11_sOU_v_nl_list <- list(Br11_sOU_v_brain_nl=Br11_sOU_v_brain_nl,
         Br11_sOU_v_cereb_nl=Br11_sOU_v_cereb_nl, Br11_sOU_v_heart_nl=Br11_sOU_v_heart_nl, 
@@ -734,17 +734,17 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from Brawand11_div_rates
       Br11_pea_dist_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.288191, b = 0.945977, c = -0.001159))) # Brawand11_div_rates[1:6, ]
+        a = 0.288191, b = 1.234179, c = -0.001159))) # Brawand11_div_rates[1:6, ]
       Br11_pea_dist_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.27303, b = 0.22076, c = -0.01226))) # Brawand11_div_rates[7:12, ]
+        a = 0.27303, b = 0.49379, c = -0.01226))) # Brawand11_div_rates[7:12, ]
       Br11_pea_dist_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.32462, b = 0.18004, c = -0.01044))) # Brawand11_div_rates[13:18, ]
+        a = 0.32462, b = 0.50466, c = -0.01044))) # Brawand11_div_rates[13:18, ]
       Br11_pea_dist_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.26899, b = 0.22670, c = -0.02594))) # Brawand11_div_rates[13:18, ]
+        a = 0.26899, b = 0.49569, c = -0.02594))) # Brawand11_div_rates[19:24, ]
       Br11_pea_dist_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.31945, b = 0.17743, c = -0.01323))) # Brawand11_div_rates[25:30, ]
+        a = 0.31945, b = 0.49688, c = -0.01323))) # Brawand11_div_rates[25:30, ]
       Br11_pea_dist_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.3679, b = 0.2501, c = -0.0213))) # Brawand11_div_rates[31:35, ]
+        a = 0.3679, b = 0.6180, c = -0.0213))) # Brawand11_div_rates[31:35, ]
 
       Br11_pea_dist_nl_list <- list(Br11_pea_dist_brain_nl=Br11_pea_dist_brain_nl,
         Br11_pea_dist_cereb_nl=Br11_pea_dist_cereb_nl, Br11_pea_dist_heart_nl=Br11_pea_dist_heart_nl, 
@@ -754,17 +754,17 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from compDivRates (re-analyzed Brawand data)
       Br_pea_dist_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.4056, b = 0.1150, c = -0.0158))) # compDivRates[49:54, ]
+        a = 0.4056, b = 0.5207, c = -0.0158))) # compDivRates[49:54, ]
       Br_pea_dist_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.36897, b = 0.14064, c = -0.02841))) # compDivRates[55:60, ]
+        a = 0.36897, b = 0.50961, c = -0.02841))) # compDivRates[55:60, ]
       Br_pea_dist_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.39415, b = 0.11490, c = -0.01995))) # compDivRates[61:66, ]
+        a = 0.39415, b = 0.50905, c = -0.01995))) # compDivRates[61:66, ]
       Br_pea_dist_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.34853, b = 0.18393, c = -0.05122))) # compDivRates[67:72, ]
+        a = 0.34853, b = 0.53246, c = -0.05122))) # compDivRates[67:72, ]
       Br_pea_dist_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.38445, b = 0.11896, c = -0.02365))) # compDivRates[73:78, ]
+        a = 0.38445, b = 0.50341, c = -0.02365))) # compDivRates[73:78, ]
       Br_pea_dist_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.45122, b = 0.16376, c = -0.02449))) # compDivRates[79:83, ]
+        a = 0.45122, b = 0.61498, c = -0.02449))) # compDivRates[79:83, ]
 
       Br_pea_dist_nl_list <- list(Br_pea_dist_brain_nl=Br_pea_dist_brain_nl,
         Br_pea_dist_cereb_nl=Br_pea_dist_cereb_nl, Br_pea_dist_heart_nl=Br_pea_dist_heart_nl, 
@@ -774,17 +774,17 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from compSouVDivRates (re-analyzed Brawand data)
       Br_sOU_v_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.283531, b = 0.455410, c = -0.008912))) # compSouVDivRates[49:54, ]
+        a = 0.283532, b = 0.738950, c = -0.008911))) # compSouVDivRates[49:54, ]
       Br_sOU_v_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.314821, b = 0.540446, c = -0.008012))) # compSouVDivRates[55:60, ]
+        a = 0.314822, b = 0.855278, c = -0.008012))) # compSouVDivRates[55:60, ]
       Br_sOU_v_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.323399, b = 0.441617, c = -0.009079))) # compSouVDivRates[61:66, ]
+        a = 0.323399, b = 0.765017, c = -0.009079))) # compSouVDivRates[61:66, ]
       Br_sOU_v_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.22394, b = 0.52105, c = -0.03426))) # compSouVDivRates[67:72, ]
+        a = 0.22394, b = 0.74498, c = -0.03426))) # compSouVDivRates[67:72, ]
       Br_sOU_v_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.316728, b = 0.426800, c = -0.009314))) # compSouVDivRates[73:78, ]
+        a = 0.316728, b = 0.743529, c = -0.009314))) # compSouVDivRates[73:78, ]
       Br_sOU_v_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.489517, b = 1.285899, c = -0.005308))) # compSouVDivRates[79:83, ]
+        a = 0.489517, b = 1.775418, c = -0.005308))) # compSouVDivRates[79:83, ]
 
       Br_sOU_v_nl_list <- list(Br_sOU_v_brain_nl=Br_sOU_v_brain_nl,
         Br_sOU_v_cereb_nl=Br_sOU_v_cereb_nl, Br_sOU_v_heart_nl=Br_sOU_v_heart_nl, 
