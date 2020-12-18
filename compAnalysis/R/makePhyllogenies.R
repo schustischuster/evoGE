@@ -496,7 +496,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
 
 
 makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="all")
-makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="all")
+makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae")
 
 
 
