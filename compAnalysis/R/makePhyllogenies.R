@@ -8,18 +8,9 @@
 #-------------------------------------- Read data tables ---------------------------------------
 
 
-makePhyllogenies <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
-	coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all", "all_w_mc"), 
-    devseq_ref = c("ATH", "ALY")) {
+makePhyllogenies <- function(expr_estimation = c("TPM", "counts"), 
+	coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all")) {
 	
-	# Show error message if no species or unknown data set is chosen
-    if ((missing(dataset)) || (!is.element(dataset, c("Brawand", "DevSeq"))))
-   
-       stop(
-       "Please choose one of the available data sets: 
-	   'Brawand', 'DevSeq'",
-	   call. = TRUE
-       )
 
    	# Show error message if expression estimation or unknown expression estimation is chosen
     if ((missing(expr_estimation)) || (!is.element(expr_estimation, c("TPM", "counts"))))
@@ -40,23 +31,12 @@ makePhyllogenies <- function(dataset = c("Brawand", "DevSeq"), expr_estimation =
        )
 
     # Show error message if no devseq_spec or unknown devseq_spec is chosen
-    if ((is.element("DevSeq", dataset)) && ((missing(devseq_spec)) || (!is.element(devseq_spec, 
-        c("Brassicaceae", "all", "all_w_mc")))))
+    if ((missing(devseq_spec)) || (!is.element(devseq_spec, c("Brassicaceae", "all"))))
    
        stop(
        "Please choose one of the available DevSeq species sets: 
-	   'Brassicaceae', 'all', 'all_w_mc'",
+	   'Brassicaceae', 'all'",
 	   call. = TRUE
-       )
-
-    # Show error message if expression estimation or unknown expression estimation is chosen
-    if ((is.element("DevSeq", dataset)) && ((missing(devseq_ref)) || (!is.element(devseq_ref, 
-        c("ATH", "ALY")))))
-   
-       stop(
-       "Please choose one of the available devseq_ref refernce species: 
-       'ATH', 'ALY'",
-       call. = TRUE
        )
 
 
@@ -65,149 +45,33 @@ makePhyllogenies <- function(dataset = c("Brawand", "DevSeq"), expr_estimation =
 
 
 	# Set expression input file
-    if ((is.element("Brawand", dataset)) && (is.element("TPM", expr_estimation))) {
-        genesExpr = file.path(in_dir, "Expression_data", "Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv")
-
-    } else if ((is.element("Brawand", dataset)) && (is.element("counts", expr_estimation))) {
-        genesExpr = file.path(in_dir, "Expression_data", "Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv")
-
-    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
-        && (is.element("Brassicaceae", devseq_spec)) && (is.element("ATH", devseq_ref))) {
+    if ((is.element("TPM", expr_estimation)) && (is.element("Brassicaceae", devseq_spec))) {
         genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_tpm_mat_deseq_sample_names.csv")
 
-    } else if ((is.element("DevSeq", dataset)) && (is.element("TPM", expr_estimation)) 
-        && (is.element("all", devseq_spec)) && (is.element("ATH", devseq_ref))) {
+    } else if ((is.element("TPM", expr_estimation)) && (is.element("all", devseq_spec))) {
         genesExpr = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
-    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
-        && (is.element("Brassicaceae", devseq_spec)) && (is.element("ATH", devseq_ref))) {
+    } else if ((is.element("counts", expr_estimation)) && (is.element("Brassicaceae", devseq_spec))) {
         genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_count_mat_vsd_sample_names.csv")
 
-    } else if ((is.element("DevSeq", dataset)) && (is.element("counts", expr_estimation)) 
-        && (is.element("all", devseq_spec)) && (is.element("ATH", devseq_ref))) {
+    } else if ((is.element("counts", expr_estimation)) && (is.element("all", devseq_spec))) {
         genesExpr = file.path(in_dir, "Expression_data", "AT_core_inter_count_mat_vsd_sample_names.csv")
     }
 
 
-    # Get data set is
-    if (is.element("Brawand", dataset)) {
-        dataset_id <- "Brawand"
-
-    } else if (is.element("DevSeq", dataset)) {
-        dataset_id <- "DevSeq"
-    }
-
-
-    # Get data normalization method
-    if (is.element("ATH", devseq_ref)) {
-        devseq_ref <- "ATH"
-
-    } else if (is.element("ALY", devseq_ref)) {
-        devseq_ref <- "ALY"
-    }
-
-
-	# Define simplified Brawand and DevSeq column names
-	if (is.element("DevSeq", dataset) && (is.element("all", devseq_spec)) && (is.element("ATH", devseq_ref))) {
-        col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-            "Flower", "Stamen", "Carpel", "Pollen"), each=21)
-        replicate_tag_samples <- rep(c(".1",".2",".3"), times=9)
-        col_names <- paste0(col_names,replicate_tag_samples)
-        spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), each=3)
-        spec_names <- rep(spec_names, times=9)
-        col_names <- paste0(col_names, spec_names)
-        col_names <- c("gene_id", col_names)
-
-    } else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec)) && 
-        (is.element("ATH", devseq_ref))) {
-        col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-            "Flower", "Stamen", "Carpel", "Pollen"), each=12)
-        replicate_tag_samples <- rep(c(".1",".2",".3"), times=4)
-        col_names <- paste0(col_names,replicate_tag_samples)
-        spec_names <- rep(c("_AT", "_AL", "_CR", "_ES"), each=3, times=9)
-        col_names <- paste0(col_names, spec_names)
-        col_names <- c("gene_id", col_names) 
-
-    } else if (is.element("DevSeq", dataset) && (is.element("all", devseq_spec)) && (is.element("ALY", devseq_ref))) {
-        col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-            "Flower", "Stamen", "Carpel", "Pollen"), each=21)
-        replicate_tag_samples <- rep(c(".1",".2",".3"), times=9)
-        col_names <- paste0(col_names,replicate_tag_samples)
-        spec_names <- rep(c("_AL", "_AT", "_CR", "_ES", "_TH", "_MT", "_BD"), each=3)
-        spec_names <- rep(spec_names, times=9)
-        col_names <- paste0(col_names, spec_names)
-        col_names <- c("gene_id", col_names)
-
-    } else if (is.element("DevSeq", dataset) && (is.element("Brassicaceae", devseq_spec)) && 
-        (is.element("ALY", devseq_ref))) {
-        col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
-            "Flower", "Stamen", "Carpel", "Pollen"), each=12)
-        replicate_tag_samples <- rep(c(".1",".2",".3"), times=4)
-        col_names <- paste0(col_names,replicate_tag_samples)
-        spec_names <- rep(c("_AL", "_AT", "_CR", "_ES"), each=3, times=9)
-        col_names <- paste0(col_names, spec_names)
-        col_names <- c("gene_id", col_names) 
-    }
-
-
-	# Read expression data
-	if (is.element("DevSeq", dataset)) {
-		x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
-
-	} else if (is.element("Brawand", dataset)) {
-		x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
-	}
+	x <- read.table(genesExpr, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
     # Stop function here to allow specific analysis of a single data set
     # For DevSeq
-    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names, "devseq_spec" = devseq_spec, "devseq_ref" = devseq_ref)
-    # For Brawand
-    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient)
+    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "devseq_spec" = devseq_spec, "devseq_ref" = devseq_ref)
     # return(return_list)
     # }
-    # return_objects <- makePhyllogenies(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", devseq_ref="ATH") # read in DevSeq expression data
-    # return_objects <- makePhyllogenies(dataset="Brawand", expr_estimation="counts", coefficient="pearson") # read in Brawand expression data
+    # return_objects <- makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="all") # read in DevSeq expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
-    # Update column names
-    if (dataset_id == "DevSeq") {
-
-    	# set column names
-    	colnames(x) <- col_names
-    
-    } else if (dataset_id == "Brawand") {
-
-        # Generate a sequence to replace missing gene_id column
-        # Remove this in case input table will have gene_id column again
-        ID_repl <- as.data.frame(seq(1:nrow(x)))
-        colnames(ID_repl) <- "gene_id"
-        x <- cbind(ID_repl, x)
-
-        # Merge replicates
-        # Need to do this manually because different number of replicates across organs and species
-        x <- data.frame(cbind("gene_id"=x[,1], rowMeans(x[,2:5]), rowMeans(x[,6:8]), 
-            rowMeans(x[,9:14]), rowMeans(x[,15:16]), rowMeans(x[,17:18]), rowMeans(x[,19:21]), 
-            rowMeans(x[,22:24]), rowMeans(x[,25:26]), rowMeans(x[,27:28]), rowMeans(x[,29:30]), 
-            rowMeans(x[,31:32]), rowMeans(x[,33:34]), x[,35], rowMeans(x[,36:37]), 
-            rowMeans(x[,38:40]), rowMeans(x[,41:42]), rowMeans(x[,43:44]), rowMeans(x[,45:46]), 
-            rowMeans(x[,47:48]), rowMeans(x[,49:50]), rowMeans(x[,51:52]), rowMeans(x[,53:54]), 
-            rowMeans(x[,55:57]), rowMeans(x[,58:59]), rowMeans(x[,60:61]), rowMeans(x[,62:63]), 
-            rowMeans(x[,64:65]), rowMeans(x[,66:67]), rowMeans(x[,68:69]), rowMeans(x[,70:71]), 
-            rowMeans(x[,72:74]), x[,75], rowMeans(x[,76:77]), rowMeans(x[,78:79]), 
-            rowMeans(x[,80:81]), rowMeans(x[,82:83]), rowMeans(x[,84:85]), rowMeans(x[,86:87]), 
-            rowMeans(x[,88:90]), rowMeans(x[,91:92]), rowMeans(x[,93:94]), x[,95:97],  
-            rowMeans(x[,98:99]), rowMeans(x[,100:101]), rowMeans(x[,102:103])))
-
-        tetra_organs <- rep(c("br", "cb", "ht", "kd", "lv", "ts"), each=8)
-        tetra_species <- rep(c("Hsa", "Ppa", "Ptr", "Ggo", "Ppy", "Mml", "Mmu", "Mdo"), times=6)
-        tetra_colnames <- paste(tetra_organs, tetra_species, sep="_")
-        tetra_colnames <- tetra_colnames[-45]
-
-        colnames(x)[2:ncol(x)] <- tetra_colnames
-
-    }
-
+    # set column names
+    colnames(x)[1] <- "gene_id"
 
 
     # Create "plots" folder in /out_dir/output/plots
@@ -234,12 +98,40 @@ makePhyllogenies <- function(dataset = c("Brawand", "DevSeq"), expr_estimation =
     if(expr_estimation == "TPM") { x_df[,2:ncol(x_df)] <- log2(x_df[,2:ncol(x_df)] + 1) }
 
 
+    # Replace pearson distance function from TreeExp2 package with metric pearson distance
+    dist.pea = function (expMat = NULL) {
+
+      object_n <- ncol(expMat)
+      gene_n <- nrow(expMat)
+
+      dis.mat <- matrix(0, nrow = object_n, ncol = object_n)
+
+
+      for (i in 1:(object_n-1)) {
+
+        for (j in (i+1):object_n) {
+
+          dis.mat[j,i] <- sqrt(1 - cor(expMat[,i],expMat[,j]))
+
+        }
+
+      }
+
+      #browser()
+      colnames(dis.mat) <- colnames(expMat)
+      rownames(dis.mat) <- colnames(dis.mat)
+      dis.mat  + t(dis.mat)
+
+    }
+
+
+
     # Construct distance matrix
     x_dist <- dist.pea(x_df[, 2:ncol(x_df)])
 
 
     # Perform analysis for all species and ATH as reference
-    if (dataset_id == "DevSeq" && devseq_ref == "ATH" && devseq_spec = "all") {
+    if (devseq_spec == "all") {
 
         # Construct organ gene expression phylogenies
         getPhyloTree <- function(org_dist) {
@@ -316,11 +208,10 @@ makePhyllogenies <- function(dataset = c("Brawand", "DevSeq"), expr_estimation =
         pollen_bsl <- getBSValues(pollen_bs$trees)
 
 
-        # Check bootstraps
-        root_tr$node.label = root_bs$BP 
-        plot(root_tr, show.node.label = TRUE)
-
-        # Generate nice phylo trees using ggtree
+        # Check bootstraps e.g.
+        # root_tr$node.label = root_bs$BP 
+        # plot(root_tr, show.node.label = TRUE)
+        # Generate enhanced phylo trees using ggtree
         # Set ladderize = TRUE to display ladderized tree
         # ladderize = FALSE is the default in plot.phylo()
 
@@ -502,7 +393,7 @@ makePhyllogenies <- function(dataset = c("Brawand", "DevSeq"), expr_estimation =
             sep="\t", col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
 
 
-    } else if (dataset_id == "DevSeq" && devseq_ref == "ATH" && devseq_spec="Brassicaceae") {
+    } else if (devseq_spec == "Brassicaceae") {
 
         # Construct organ gene expression phylogenies
         getPhyloTree <- function(org_dist) {
@@ -604,7 +495,8 @@ makePhyllogenies <- function(dataset = c("Brawand", "DevSeq"), expr_estimation =
 
 
 
-
+makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="all")
+makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="all")
 
 
 
