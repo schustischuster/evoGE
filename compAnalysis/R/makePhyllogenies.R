@@ -64,7 +64,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
 
     # Stop function here to allow specific analysis of a single data set
     # For DevSeq
-    # return_list <- list("dataset_id" = dataset_id, "expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "devseq_spec" = devseq_spec, "devseq_ref" = devseq_ref)
+    # return_list <- list("expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "devseq_spec" = devseq_spec)
     # return(return_list)
     # }
     # return_objects <- makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="all") # read in DevSeq expression data
@@ -220,33 +220,37 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "root_tr.png"))
         p <- ggtree(root_tr, ladderize = FALSE, size=0.6) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==40)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==37)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) +
-        geom_point2(aes(subset=(node==23)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==25)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==40)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==37)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) +
+        geom_point2(aes(subset=(node==23)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==25)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(25)
         plot(p2)
         dev.off()
 
         # Hypocotyl
+        hypo_tr2 <- groupClade(hypo_tr, c(30, 34))
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "hypo_tr.png"))
-        p <- ggtree(hypo_tr, ladderize = FALSE, size=0.6) + 
+        p <- ggtree(hypo_tr2, ladderize = FALSE, size=0.6, aes(linetype=group)) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==37)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==35)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) +
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==29)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        # scale_linetype_manual(values=c("solid", "dashed", "dashed")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==37)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==35)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) +
+        geom_point2(aes(subset=(node==31)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==29)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(24)
         plot(p2)
@@ -256,13 +260,14 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "leaf_tr.png"))
         p <- ggtree(leaf_tr, ladderize = FALSE, size=0.6) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==39)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==29)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) +
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==39)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==29)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) +
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(24)
         plot(p2)
@@ -272,14 +277,15 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "apex_v_tr.png"))
         p <- ggtree(apex_v_tr, ladderize = FALSE, size=0.6) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==37)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==35)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==37)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==35)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==33)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
         p2 <- flip(p, 28,30)
         plot(p2)
@@ -289,49 +295,56 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "apex_i_tr.png"))
         p <- ggtree(apex_i_tr, ladderize = FALSE, size=0.6) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==39)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==39)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==33)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==31)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(24)
         plot(p2)
         dev.off()
 
         # Flower
+        flower_tr2 <- groupClade(flower_tr, c(32, 34))
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "flower_tr.png"))
-        p <- ggtree(flower_tr, ladderize = FALSE, size=0.6) + 
+        p <- ggtree(flower_tr2, ladderize = FALSE, size=0.6, aes(linetype=group)) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==39)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        # scale_linetype_manual(values=c("solid", "dashed", "dashed")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==39)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==33)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
         p2 <- rotate(p, 24) %>% rotate(25)
         plot(p2)
         dev.off()
 
         # Stamen
+        stamen_tr2 <- groupClade(stamen_tr, c(36, 38))
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "stamen_tr.png"))
-        p <- ggtree(stamen_tr, ladderize = FALSE, size=0.6) + 
+        p <- ggtree(stamen_tr2, ladderize = FALSE, size=0.6, aes(linetype=group)) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==24)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==23)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        # scale_linetype_manual(values=c("solid", "dashed", "dashed")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==31)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==24)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==23)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
-        p2 <- rotate(p, 23)
+        p2 <- rotate(p, 23) %>% rotate(27)
         plot(p2)
         dev.off()
 
@@ -339,14 +352,15 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "carpel_tr.png"))
         p <- ggtree(carpel_tr, ladderize = FALSE, size=0.6) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==37)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==37)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==33)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==31)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(25)
         plot(p2)
@@ -356,16 +370,17 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "pollen_tr.png"))
         p <- ggtree(pollen_tr, ladderize = FALSE, size=0.6) + 
         geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.5, fill='green', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==39)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==35)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==29)), shape=21, size=2.5, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale() + scale_color_manual(values=c("black", "blue4")) + 
+        geom_nodepoint(shape=21, size=2.4, fill='olivedrab2', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==39)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==35)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==33)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==31)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_point2(aes(subset=(node==29)), shape=21, size=2.4, fill='red', alpha=1, stroke=0.5) + 
+        geom_treescale(color="white", y = 0.75) + 
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.95) + 
-        theme_tree2(plot.margin=margin(5, 5, 5, 5))
+        theme_tree2(plot.margin=margin(5, 5, 15, 5), text = element_text(size = 12.75), 
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(24)
         plot(p2)
