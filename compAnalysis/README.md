@@ -36,7 +36,7 @@ invisible(lapply(lib_List, loadLibrary))
 
 ```
 
-Install TreeExp2 package for Phylogenetic Transcriptome Analysis using devtools:
+Install TreeExp2 package for phylogenetic transcriptome analysis through devtools:
 
 ```R
 install.packages('devtools')
