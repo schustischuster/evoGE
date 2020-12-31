@@ -81,26 +81,28 @@ plotTreeLength <- function() {
 
         if (spec_order == "AS") {
 
-            y_breaks = c(1.9, 2.0, 2.1, 2.2, 2.3)
-            y_labels = c(1.9, sprintf(2.0, fmt = '%#.1f'), 2.1, 2.2, 2.3)
+            y_breaks = c(1.3, 1.4, 1.5, 1.6, 1.7)
+            y_labels = c(1.3, 1.4, 1.5, 1.6, 1.7)
+            y_exp <- 0.025
 
         } else { 
 
-            y_breaks = c(0.8, 0.85, 0.9, 0.95, 1.0)
-            y_labels = c(0.8, "", 0.9, "", sprintf(1.0, fmt = '%#.1f'))
+            y_breaks = c(0.55, 0.6, 0.65, 0.7)
+            y_labels = c("", 0.6, "", 0.7)
+            y_exp <- 0.035
         }
 
 
         fname <- sprintf('%s.jpg', paste("Total_tree_length", spec_order, sep="_"))
             
         p <- ggplot(data=data, aes(x = Organ, y = Total_tree_length, group = Organ)) + 
-        stat_boxplot(geom ='errorbar', width = 0.35, size=1.75, color="black") + 
-        geom_boxplot(width = 0.85, size = 1.75, fatten = 1.5, color="black", outlier.shape = NA, 
+        stat_boxplot(geom ='errorbar', width = 0.35, size=1.7, color="black") + 
+        geom_boxplot(width = 0.85, size = 1.7, fatten = 1.35, color="black", outlier.shape = NA, 
             alpha = 1, aes(fill = Organ)) + 
         geom_point(data = data2, position = position_dodge(width=0.75), size = 5, col = "red2", 
             aes(x = Organ, y = Total_tree_length)) + 
         scale_fill_manual(values=c('#6a54a9','#53b0db', '#2c8654', '#96ba37', '#fad819','#e075af', '#f2a72f', '#ed311c')) + 
-        scale_y_continuous(expand = c(0.025, 0), breaks = y_breaks, labels = y_labels) + 
+        scale_y_continuous(expand = c(y_exp, 0), breaks = y_breaks, labels = y_labels) + 
         scale_x_discrete(labels=c("Root" = "Root", "Hypocotyl" = "Hypocotyl", 
             "Leaf" = "Leaf", "veg_apex" = "Apex veg", "inf_apex" = "Apex inf", 
             "Flower" = "Flower", "Carpel" = "Carpel", "Stamen" = "Stamen"), 
@@ -108,19 +110,19 @@ plotTreeLength <- function() {
 
         q <- p + theme_classic() + ylab("Total tree length") + 
         theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 36.5), 
+            strip.text = element_text(size = 36.25), 
             strip.text.x = element_text(margin = margin(0.6, 0, 0.6, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 3.25), 
             axis.ticks.length = unit(0.45, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.75), 
-            axis.line = element_line(colour = 'black', size = 1.75), 
+            axis.ticks = element_line(colour = "black", size = 1.7), 
+            axis.line = element_line(colour = 'black', size = 1.7), 
             plot.margin = unit(c(0.5, 0.015, 0.5, 0.475),"cm"), 
-            axis.title.y = element_text(size=37, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
-                face = "bold"), 
+            axis.title.y = element_text(size=36.25, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
+                face = "plain"), 
             axis.title.x = element_blank(), 
-            axis.text.x = element_text(size=36.5, angle=45, margin = margin(t = -52, b = 42.5), colour="black", 
+            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t = -52, b = 42.5), colour="black", 
                 hjust = 0.99, vjust = 0.5), 
-            axis.text.y = element_text(size=36.5, angle=0, margin = margin(r = 5), colour="black"), 
+            axis.text.y = element_text(size=36.25, angle=0, margin = margin(r = 5), colour="black"), 
             panel.spacing = unit(0.5, "cm"), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
@@ -145,37 +147,42 @@ plotTreeLength <- function() {
 
         if (spec_order == "AS") {
 
-            y_breaks = c(2.3, 2.5, 2.7, 2.9, 3.1, 3.3)
+            y_breaks = c(1.6, 1.8, 2.0, 2.2, 2.4)
+            y_labels = c(1.6, 1.8, sprintf(2.0, fmt = '%#.1f'), 2.2, 2.4)
 
-        } else y_breaks = c(1, 1.1, 1.2, 1.3, 1.4, 1.5)
+        } else { 
+
+            y_breaks = c(0.75, 0.8, 0.85, 0.9, 0.95, 1.0)
+            y_labels = c("", 0.8, "", 0.9, "", sprintf(1.0, fmt = '%#.1f'))
+        }
 
         fname <- sprintf('%s.jpg', paste("Total_tree_length_pollen", spec_order, sep="_"))
             
         p <- ggplot(data=data, aes(x = Organ, y = Total_tree_length, group = Organ)) + 
-        stat_boxplot(geom ='errorbar', width = 0.35, size=1.75, color="black") + 
-        geom_boxplot(width = 0.9, size = 1.75, fatten = 1.5, color="black", outlier.shape = NA, 
+        stat_boxplot(geom ='errorbar', width = 0.35, size=1.7, color="black") + 
+        geom_boxplot(width = 0.9, size = 1.7, fatten = 1.35, color="black", outlier.shape = NA, 
             alpha = 1, aes(fill = Organ)) + 
         geom_point(data = data2, position = position_dodge(width=0.75), size = 5, col = "red2", 
             aes(x = Organ, y = Total_tree_length)) + 
         scale_fill_manual(values=c('#ed311c', '#a63126')) + 
-        scale_y_continuous(expand = c(0.025, 0), breaks = y_breaks) + 
+        scale_y_continuous(expand = c(0.035, 0), breaks = y_breaks, labels = y_labels) + 
         scale_x_discrete(labels=c("Stamen" = "Stamen", "Pollen" = "Pollen"), expand = c(0.125, 0))
 
         q <- p + theme_classic() + ylab("Total tree length") + 
         theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 36.5), 
+            strip.text = element_text(size = 36.25), 
             strip.text.x = element_text(margin = margin(0.6, 0, 0.6, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 3.25), 
             axis.ticks.length = unit(0.45, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.75), 
-            axis.line = element_line(colour = 'black', size = 1.75), 
+            axis.ticks = element_line(colour = "black", size = 1.7), 
+            axis.line = element_line(colour = 'black', size = 1.7), 
             plot.margin = unit(c(0.5, 0.5, 0.5, 10.55),"cm"), 
-            axis.title.y = element_text(size=37, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
-                face = "bold"), 
+            axis.title.y = element_text(size=36.25, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
+                face = "plain"), 
             axis.title.x = element_blank(), 
-            axis.text.x = element_text(size=36.5, angle=45, margin = margin(t=-44, b=59), colour="black", 
+            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t=-44, b=59), colour="black", 
                 hjust = 0.99, vjust = 0.5), 
-            axis.text.y = element_text(size=36.5, angle=0, margin = margin(r = 5), colour="black"), 
+            axis.text.y = element_text(size=36.25, angle=0, margin = margin(r = 5), colour="black"), 
             panel.spacing = unit(0.5, "cm"), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
