@@ -256,12 +256,12 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#c42d2d", "#cf3c1f", "#faa11b", "#fff529", "#fcfce2")
+    steps <- c("#d93527", "#d93527", "#faa92e", "#fff421", "#fefef4")
 
     if (dataset_id == "DevSeq") {
-        pal <- color.palette(steps, c(30, 30, 25, 10), space = "rgb")
+        pal <- color.palette(steps, c(30, 29, 26, 10), space = "rgb")
     } else if (dataset_id == "Brawand") {
-        pal <- color.palette(steps, c(25, 30, 25, 15), space = "rgb")
+        pal <- color.palette(steps, c(25, 29, 26, 15), space = "rgb")
     }
 
     # Set filename
@@ -322,21 +322,21 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         # as.dist(1-cor(t(x_cor))) if scale = FALSE
         if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
             x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
-            x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
+            x_dist <- as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = "pearson"))))
             scale_data <- TRUE 
             # correlation matrix does not need to be transposed for get_dist method (since ncol=nrow)
 
         } else if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation)) {
             x_df[,2:ncol(x_df)] <- log2(x_df[,2:ncol(x_df)] + 1)
             x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
-            x_dist <- get_dist(x_cor, stand = TRUE, method = "pearson")
+            x_dist <- as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = "pearson"))))
             scale_data <- TRUE
 
         } else if (is.element("spearman", coefficient)) {
             x_cor <- cor(x_df[, 2:ncol(x_df)], method = "spearman")
-            x_dist <- get_dist(x_cor, stand = FALSE, method = "spearman")
+            x_dist <- as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = "spearman"))))
             scale_data <- FALSE 
-        }   
+        }     
 
 
 
@@ -374,27 +374,31 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation) && 
             (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
-            dend_order=rotate(as.dendrogram(df_clust.res),c(145:168,121:144,100:120,1:99))
+            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(145:168,121:144,100:120,1:99))
+            # Need Update!
 
         } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
-            dend_order=rotate(as.dendrogram(df_clust.res),c(148:150,145:147,160:162,166:168,163:165,151:153,157:159,154:156,121:144,100:102,112:120,103:111,1:3,13:15,10:12,4:6,7:9,37:39,34:36,31:33,28:30,16:21,25:27,22:24,76:81,85:87,82:84,88:99,40:75))
+            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(145:168,1:24,25:30,37:42,34:36,31:33,46:57,43:45,58:72,76:78,73:75,88:90,85:87,82:84,79:81,91:144))
 
         } else if (is.element("spearman", coefficient) && is.element("TPM", expr_estimation) && 
             (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
             dend_order = TRUE
+            # Need update!
 
         } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "DevSeq") && is.element("inter-organ", data_norm)) {
 
-            dend_order = rotate(as.dendrogram(df_clust.res),c(1:12,133:144,145:168,13:18,28:30,34:36,31:33,25:27,22:24,19:21,46:48,43:45,40:42,37:39,49:54,58:60,55:57,61:72,109:132,73:108)) 
+            dend_order = TRUE
+            # Need update! 
 
         } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "Brawand") && is.element("inter-organ", data_norm)) {
 
-            dend_order = rotate(as.dendrogram(df_clust.res),c(25:31,32:35,36:37,46:47,44:45,38:43,23:24,17:22,2,1,3,4,8:10,5:7,11,15:16,12:14)) 
+            dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(25:31,32:35,36:37,46:47,44:45,38:43,23:24,17:22,2,1,3,4,8:10,5:7,11,15:16,12:14))
+            # Need update! 
 
         } else dend_order = TRUE 
 
@@ -409,7 +413,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         # Set dendrogram line width
         if (is.element("pearson", coefficient)) {
-            dendro_lwd <- 18.8
+            dendro_lwd <- 18.5
         } else dendro_lwd <- 16.75
 
         # Make corrplots
@@ -419,7 +423,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             revC = F,
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
-            distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
+            distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
             hclustfun = function(x) hclust(x_dist, method = "average"), 
             # Order dendrogram in a way that it starts with distant species BD, MT, TH
             Rowv = dend_order, 
@@ -442,15 +446,15 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             col = pal(800),
             cexRow = 2,
             cexCol = 2,
-            margins = c(15, 15),
+            margins = c(12, 12),
             key.par = list(cex = 2.75),
-            lwid = c(0.285,2.3,27.5), # column width
-            lhei = c(0.285,2.3,27.5), # column height
+            lwid = c(0.265,2.3,28.5), # column width
+            lhei = c(0.265,2.3,28.5), # column height
             offsetRow = 1,
             offsetCol = 1,
             key.xlab = NA,
             key.title = NULL,
-            distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
+            distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
             hclustfun = function(x) hclust(x_dist, method = "average"), 
             # Order dendrogram in a way that it starts with distant species BD, MT, TH
             Rowv = dend_order, 
@@ -479,7 +483,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             revC = F,
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
-            distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
+            distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
             hclustfun = function(x) hclust(x_dist, method = "average"),
             Rowv = dend_order, 
             Colv = "Rowv")
@@ -510,7 +514,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             offsetCol = 1,
             key.xlab = NA,
             key.title = NULL,
-            distfun = function(c) get_dist(x_cor, stand = scale_data, method = coefficient), 
+            distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
             hclustfun = function(x) hclust(x_dist, method = "average"))
         dev.off()
 
