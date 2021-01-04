@@ -447,9 +447,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             cexRow = 2,
             cexCol = 2,
             margins = c(12, 12),
-            key.par = list(cex = 2.75),
-            lwid = c(0.265,2.3,28.5), # column width
-            lhei = c(0.265,2.3,28.5), # column height
+            key = FALSE,
+            lwid = c(0.2,2.3,28.5), # column width
+            lhei = c(0.2,2.3,28.5), # column height
             offsetRow = 1,
             offsetCol = 1,
             key.xlab = NA,
