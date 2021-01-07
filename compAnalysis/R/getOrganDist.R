@@ -158,9 +158,31 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
 
     # Compute metric inter-organ distances
-    getOrganDist <- function(df, Species) {
+    getOrganDist <- function(df, Species, OrganSet) {
 
         x_df <- select(df, contains(Species))
+
+        if (OrganSet == "selBr") {
+
+            x_df.1 <- select(x_df, contains("br"))
+            x_df.2 <- select(x_df, contains("ht"))
+            x_df.3 <- select(x_df, contains("kd"))
+            x_df.4 <- select(x_df, contains("lv"))
+            x_df.5 <- select(x_df, contains("ts"))
+
+            x_df <- cbind(x_df.1, x_df.2, x_df.3, x_df.4, x_df.5)
+
+        } else if (OrganSet == "selDS") {
+
+            x_df.1 <- select(x_df, contains("Root"))
+            x_df.2 <- select(x_df, contains("Hypocotyl"))
+            x_df.3 <- select(x_df, contains("Leaf"))
+            x_df.4 <- select(x_df, contains("Carpel"))
+            x_df.5 <- select(x_df, contains("Stamen"))
+
+            x_df <- cbind(x_df.1, x_df.2, x_df.3, x_df.4, x_df.5)
+
+        }
 
         if (coefficient == "pearson") {
             x_cor_avg <- sqrt(1/2*(1-cor(x_df, method = "pearson")))
@@ -185,109 +207,106 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
     br_list <- list("Hsa", "Ppa", "Ptr", "Ggo", "Ppy", "Mml", "Mmu", "Mdo")
 
-    br_dist <- as.data.frame(do.call(rbind, lapply(br_list, getOrganDist, df = brExpr)))
-    comp_study_br <- rep("Mammals", nrow(br_dist))
-    comp_study_br <- as.data.frame(comp_study_br)
-    colnames(comp_study_br) <- "Class"
+    br_dist <- as.data.frame(do.call(rbind, lapply(br_list, getOrganDist, df = brExpr, OrganSet = "all")))
+    comp_study_br <- data.frame("Class" = rep("Mammals", nrow(br_dist)))
     br_dist <- cbind(br_dist, comp_study_br)
 
 
     ds_list <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
 
-    ds_dist <- as.data.frame(do.call(rbind, lapply(ds_list, getOrganDist, df = dsExpr)))
-    comp_study_ds <- rep("Angiosperms", nrow(ds_dist))
-    comp_study_ds <- as.data.frame(comp_study_ds)
-    colnames(comp_study_ds) <- "Class"
+    ds_dist <- as.data.frame(do.call(rbind, lapply(ds_list, getOrganDist, df = dsExpr, OrganSet = "all")))
+    comp_study_ds <- data.frame("Class" = rep("Angiosperms", nrow(ds_dist)))
     ds_dist <- cbind(ds_dist, comp_study_ds)
 
     # Combine angiosperm and mammalian data
     dist_df <- rbind(br_dist, ds_dist)
 
 
-
-    # Compute metric inter-organ distances for selected pairwise comparisons
-    selOrganDist.Br <- function(df, Species) {
-
-        x_df <- select(df, contains(Species))
-
-        x_df.1 <- select(x_df, contains("br"))
-        x_df.2 <- select(x_df, contains("ht"))
-        x_df.3 <- select(x_df, contains("kd"))
-        x_df.4 <- select(x_df, contains("lv"))
-        x_df.5 <- select(x_df, contains("ts"))
-
-        x_df <- cbind(x_df.1, x_df.2, x_df.3, x_df.4, x_df.5)
-
-        if (coefficient == "pearson") {
-            x_cor_avg <- sqrt(1/2*(1-cor(x_df, method = "pearson")))
-
-        } else if (coefficient == "spearman") {
-            x_cor_avg <- sqrt(1/2*(1-cor(x_df, method = "spearman")))
-        }
-
-        x_cor_avg <- as.data.frame(unique(as.vector(x_cor_avg)))[-1,]
-        x_cor_avg <- as.data.frame(x_cor_avg)
-        colnames(x_cor_avg) <- "Distance"
-
-        spec_tag <- rep(Species, nrow(x_cor_avg))
-        spec_tag <- as.data.frame(spec_tag)
-        names(spec_tag) <- "Species"
-
-        x_cor_avg <- cbind(spec_tag, x_cor_avg)
-
-        return(x_cor_avg)
-    }
-
-    br_dist_sel <- as.data.frame(do.call(rbind, lapply(br_list, selOrganDist.Br, df = brExpr)))
-    comp_study_br_sel <- rep("Mammals", nrow(br_dist_sel))
-    comp_study_br_sel <- as.data.frame(comp_study_br_sel)
-    colnames(comp_study_br_sel) <- "Class"
+    # Computete distances for selected organ data
+    br_dist_sel <- as.data.frame(do.call(rbind, lapply(br_list, getOrganDist, df = brExpr, OrganSet = "selBr")))
+    comp_study_br_sel <- data.frame("Class" = rep("Mammals", nrow(br_dist_sel)))
     br_dist_sel <- cbind(br_dist_sel, comp_study_br_sel)
 
-
-    selOrganDist.DS <- function(df, Species) {
-
-        x_df <- select(df, contains(Species))
-
-        x_df.1 <- select(x_df, contains("Root"))
-        x_df.2 <- select(x_df, contains("Hypocotyl"))
-        x_df.3 <- select(x_df, contains("Leaf"))
-        x_df.4 <- select(x_df, contains("Carpel"))
-        x_df.5 <- select(x_df, contains("Stamen"))
-
-        x_df <- cbind(x_df.1, x_df.2, x_df.3, x_df.4, x_df.5)
-
-        if (coefficient == "pearson") {
-            x_cor_avg <- sqrt(1/2*(1-cor(x_df, method = "pearson")))
-
-        } else if (coefficient == "spearman") {
-            x_cor_avg <- sqrt(1/2*(1-cor(x_df, method = "spearman")))
-        }
-
-        x_cor_avg <- as.data.frame(unique(as.vector(x_cor_avg)))[-1,]
-        x_cor_avg <- as.data.frame(x_cor_avg)
-        colnames(x_cor_avg) <- "Distance"
-
-        spec_tag <- rep(Species, nrow(x_cor_avg))
-        spec_tag <- as.data.frame(spec_tag)
-        names(spec_tag) <- "Species"
-
-        x_cor_avg <- cbind(spec_tag, x_cor_avg)
-
-        return(x_cor_avg)
-    }
-
-    ds_dist_sel <- as.data.frame(do.call(rbind, lapply(ds_list, selOrganDist.DS, df = dsExpr)))
-    comp_study_ds_sel <- rep("Angiosperms", nrow(ds_dist_sel))
-    comp_study_ds_sel <- as.data.frame(comp_study_ds_sel)
-    colnames(comp_study_ds_sel) <- "Class"
+    ds_dist_sel <- as.data.frame(do.call(rbind, lapply(ds_list, getOrganDist, df = dsExpr, OrganSet = "selDS")))
+    comp_study_ds_sel <- data.frame("Class" = rep("Angiosperms", nrow(ds_dist_sel)))
     ds_dist_sel <- cbind(ds_dist_sel, comp_study_ds_sel)
 
-    # Combine angiosperm and mammalian data
+    # Combine data
     dist_df_sel <- rbind(br_dist_sel, ds_dist_sel)
 
 
 
+    # Get pairwise distances organ "outliers" (e.g.distance for brain-cerebellum)
+    getOutlDist <- function(df, Species, OrganSet) {
+
+        x_df <- select(df, contains(Species))
+
+        if (OrganSet == "selBr") {
+
+            x_df.1 <- select(x_df, contains("br"))
+            x_df.2 <- select(x_df, contains("cb"))
+
+            x_df <- cbind(x_df.1, x_df.2)
+
+        } else if (OrganSet == "selDS") {
+
+            x_df.1 <- select(x_df, contains("veg_apex"))
+            x_df.2 <- select(x_df, contains("inf_apex"))
+            x_df.3 <- select(x_df, contains("Flower"))
+            x_df.4 <- select(x_df, contains("Carpel"))
+            x_df.5 <- select(x_df, contains("Stamen"))
+
+            x_df <- cbind(x_df.1, x_df.2, x_df.3, x_df.4, x_df.5)
+        }
+
+        if (coefficient == "pearson") {
+            x_cor_avg <- sqrt(1/2*(1-cor(x_df, method = "pearson")))
+
+        } else if (coefficient == "spearman") {
+            x_cor_avg <- sqrt(1/2*(1-cor(x_df, method = "spearman")))
+        }
+
+        # select pairwise organ distances
+        if (OrganSet == "selBr") {
+
+            x_cor_avg <- x_cor_avg[1,2] # brain-cerebellum
+
+        } else if (OrganSet == "selDS") {
+
+            x_cor_avg.1 <- x_cor_avg[1,2] # apex_v-apex_i
+            x_cor_avg.2 <- x_cor_avg[1,4] # apex_v-carpel
+            x_cor_avg.3 <- x_cor_avg[2,4] # apex_i-carpel
+            x_cor_avg.4 <- x_cor_avg[3,4] # flower-carpel
+            x_cor_avg.5 <- x_cor_avg[3,5] # flower-stamen
+
+            x_cor_avg <- cbind(x_cor_avg.1, x_cor_avg.2, x_cor_avg.3, x_cor_avg.4, x_cor_avg.5)
+        }
+
+        x_cor_avg <- data.frame("Distance" = as.vector(x_cor_avg))
+
+        spec_tag <- rep(Species, nrow(x_cor_avg))
+        spec_tag <- as.data.frame(spec_tag)
+        names(spec_tag) <- "Species"
+
+        x_cor_avg <- cbind(spec_tag, x_cor_avg)
+
+        return(x_cor_avg)
+    }
+
+
+    br_dist_outl <- as.data.frame(do.call(rbind, lapply(br_list, getOutlDist, df = brExpr, OrganSet = "selBr")))
+    comp_study_br_outl <- data.frame("Class" = rep("Mammals", nrow(br_dist_outl)))
+    comp_organ_br_outl <- data.frame("Organ pair" = rep(c("Brain-Cereb"), 8))
+    br_dist_outl <- cbind(br_dist_outl, comp_organ_br_outl, comp_study_br_outl)
+
+    ds_dist_outl <- as.data.frame(do.call(rbind, lapply(ds_list, getOutlDist, df = dsExpr, OrganSet = "selDS")))
+    comp_study_ds_outl <- data.frame("Class" = rep("Angiosperms", nrow(ds_dist_outl)))
+    comp_organ_ds_outl <- data.frame("Organ pair" = rep(c("Apex_v-Apex_i", "Apex_v-Carpel", "Apex_i-Carpel", 
+        "Flower-Carpel", "Flower-Stamen"), 7))
+    ds_dist_outl <- cbind(ds_dist_outl, comp_organ_ds_outl, comp_study_ds_outl)
+
+    # Combine data
+    dist_df_outl <- rbind(br_dist_outl, ds_dist_outl)
 
 
 
