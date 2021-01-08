@@ -310,58 +310,120 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
 
 
-    # Make plot
-    plotDist <- function(data) {
+    # Make distance plot of individual species
+    plotDist <- function(data, data_outl) {
 
         fname <- sprintf('%s.jpg', paste("Intra-species_inter-organ_distances"))
+
+        cor_colors <- c(rep(c("#5176ad"), each=115), rep(c("#4ca130"), each=196))
+        box_colors <- c(rep(c("#437bcf"), each=8), rep(c("#3c9f28"), each=7))
+        outl_shape <- c(rep(c(8),8), rep(c(16,16,16,16,16),7))
+        shape_col <- c(rep(c("red"),8), rep(c("#419730"),35))
+        shape_size <- c(rep(c(5.5),8), rep(c(4.85,4.85,4.85,4.85,4.85),7))
         
         p <- ggplot(data=data, aes(x = Species, y = Distance)) + 
-        stat_boxplot(geom ='errorbar', width = 0, size=1.0, color="black") + 
-        geom_boxplot(width = 0.75, size=1.05, fatten = 3.5, color="black", outlier.shape = NA, alpha = 0) + 
-        geom_point(aes(color = Species, stroke = 3.0)) + 
-        scale_y_continuous(expand = c(0.14, 0), labels = comma) + 
+        geom_boxplot(width = 0.75, size=1.25, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.4) + 
+        geom_beeswarm(data = data, groupOnX = TRUE, priority = c("ascending"), colour=cor_colors, cex=2, size=6.2) + 
+        geom_beeswarm(data = data_outl, groupOnX = TRUE, priority = c("ascending"), colour=shape_col, cex=2, size=shape_size, shape=outl_shape, stroke=3) + 
+        scale_y_continuous(expand = c(0.05, 0), labels = comma) + 
         scale_x_discrete(labels=c("Hsa" = "Hsa", "Ppa" = "Ppa", 
             "Ptr" = "Ptr", "Ggo" = "Ggo", "Ppy" = "Ppy", 
-            "Mml" = "Mml", "Mmu" = "Mmu", "Mdo" = "Mdo", 
+            "Mml" = "Mml", "Mmu" = "Mm", "Mdo" = "Mdo", 
             "AT" = "AT", "AL" = "AL", "CR" = "CR", 
             "ES" = "ES", "TH" = "TH", "MT" = "MT", 
             "BD" = "BD")) + 
-        guides(color = guide_legend(override.aes = list(stroke=1.5)))
+        guides(shape = guide_legend(override.aes = list(stroke=1.5)))
 
         q <- p + theme_classic() + xlab("Data set") + ylab("Distance") + 
         theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 23.75), 
-            strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
-            strip.background = element_rect(colour = 'black', fill = NA, size = 2.25), 
-            axis.ticks.length = unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1), 
-            axis.line = element_line(colour = 'black', size = 1), 
-            plot.margin = unit(c(0.55, 1.175, 2, 0.4),"cm"), 
-            axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), colour="black", 
-                face = "bold"), 
-            axis.title.x = element_text(size=24.6, margin = margin(t = -18, r = 0, b = 35, l = 0), colour="black", 
-                face = "bold"), 
-            axis.text.x = element_text(size=22.5, angle=45, margin = margin(t = -61, b = 100), colour="black", 
-                hjust = 0.99, vjust = 0.45), 
-            axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
-            panel.spacing = unit(0.5, "cm"), 
+            strip.text = element_text(size = 36.5), 
+            strip.text.x = element_text(margin = margin(0.685, 0, 0.685, 0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+            axis.ticks.length = unit(0.62, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.25), 
+            axis.line = element_line(colour = 'black', size = 1.25), 
+            plot.margin = unit(c(1, 1, 1, 1),"cm"), 
+            axis.title.y = element_text(size=37, margin = margin(t = 0, r = 20, b = 0, l = 10), colour="black"), 
+            axis.title.x = element_text(size=37, margin = margin(t = 10, r = 0, b = 0, l = 0), colour="black"), 
+            axis.text.x = element_text(size=32.5, margin = margin(t = 7.5, b = 10), colour="black"), 
+            axis.text.y = element_text(size=32, angle=0, margin = margin(r = 7.5), colour="black"), 
+            panel.spacing = unit(1, "cm"), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
-            legend.position = "right", 
+            legend.position = "none", 
             legend.title = element_blank(), 
-            legend.text = element_text(size = 22.5), 
-            legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(1.2, "cm"), 
+            legend.text = element_text(size = 32.5), 
+            legend.spacing.x = unit(0, 'cm'), 
+            legend.key.size = unit(1.7, "cm"), 
             legend.background=element_blank()) 
 
-        q <- q + facet_wrap(~ Class, scales = "free_x", nrow = 1)
+        q <- q + facet_grid(~ Class, scales = "free_x")
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 22.5, height = 12.8, dpi = 300, units = c("in"), limitsize = FALSE) 
+            width = 23, height = 12, dpi = 300, units = c("in"), limitsize = FALSE) 
     }
 
-    plotDist(data = dist_df)
+    plotDist(data = dist_df, data_outl = dist_df_outl)
+
+
+
+    # Plot averaged distances for ammals and angiosperms
+    # Prepare data
+    dist_data_all <- data.frame("Data" = rep(c("All data"), nrow(dist_df)))
+    dist_df_data <- cbind(dist_df, dist_data_all)
+    dist_data_sel <- data.frame("Data" = rep(c("Subset"), nrow(dist_df_sel)))
+    dist_df_sel_data <- cbind(dist_df_sel, dist_data_sel)
+    dist_data_avg <- rbind(dist_df_data, dist_df_sel_data)
+
+
+    plotAvgDist <- function(data) {
+
+        fname <- sprintf('%s.jpg', paste("Averaged_intra-species_inter-organ_distances"))
+
+        cor_colors <- c(rep(c("#5176ad"), each=115), rep(c("#4ca130"), each=196), 
+            rep(c("#5176ad"), each=76), rep(c("#4ca130"), each=70))
+        box_colors <- c(rep(c("#437bcf", "#3c9f28"), 2))
+        
+        p <- ggplot(data=data, aes(x = Class, y = Distance)) + 
+        geom_boxplot(width = 0.75, size=1.25, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.4) + 
+        geom_beeswarm(data = data, groupOnX = TRUE, priority = c("ascending"), colour=cor_colors, cex=2, size=5.5) + 
+        scale_y_continuous(expand = c(0.05, 0), labels = comma) + 
+        scale_x_discrete(labels=c("Mammals" = "Mammals", "Angiosperms" = "Angiosperms", 
+            "Mammals" = "Mammals", "Angiosperms" = "Angiosperms")) + 
+        guides(shape = guide_legend(override.aes = list(stroke=1.5)))
+
+        q <- p + theme_classic() + xlab("Data set") + ylab("Distance") + 
+        theme(text=element_text(size = 16), 
+            strip.text = element_text(size = 36.5), 
+            strip.text.x = element_text(margin = margin(0.685, 0, 0.685, 0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+            axis.ticks.length = unit(0.62, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.25), 
+            axis.line = element_line(colour = 'black', size = 1.25), 
+            plot.margin = unit(c(1, 1, 1, 21),"cm"), 
+            axis.title.y = element_text(size=37, margin = margin(t = 0, r = 20, b = 0, l = 10), colour="black"), 
+            axis.title.x = element_text(size=37, margin = margin(t = 10, r = 0, b = 0, l = 0), colour="black"), 
+            axis.text.x = element_text(size=32.5, margin = margin(t = 7.5, b = 10), colour="black"), 
+            axis.text.y = element_text(size=32, angle=0, margin = margin(r = 7.5), colour="black"), 
+            panel.spacing = unit(1, "cm"), 
+            panel.grid.major = element_blank(),
+            panel.grid.minor.x = element_blank(), 
+            panel.grid.minor.y = element_blank(), 
+            legend.position = "none", 
+            legend.title = element_blank(), 
+            legend.text = element_text(size = 32.5), 
+            legend.spacing.x = unit(0, 'cm'), 
+            legend.key.size = unit(1.7, "cm"), 
+            legend.background=element_blank()) 
+
+        q <- q + facet_grid(~ Data, scales = "free_x")
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+            width = 23, height = 12, dpi = 300, units = c("in"), limitsize = FALSE) 
+    }
+
+    plotAvgDist(data = dist_data_avg)
 
 
 
