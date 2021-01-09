@@ -315,16 +315,20 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
         fname <- sprintf('%s.jpg', paste("Intra-species_inter-organ_distances"))
 
-        cor_colors <- c(rep(c("#5176ad"), each=115), rep(c("#4ca130"), each=196))
-        box_colors <- c(rep(c("#437bcf"), each=8), rep(c("#3c9f28"), each=7))
+        cor_colors <- c(rep(c("#4c74b0"), each=115), rep(c("#4ca130"), each=196))
+        box_colors <- c(rep(c("#2082dd"), each=8), rep(c("#32af18"), each=7))
         outl_shape <- c(rep(c(8),8), rep(c(16,16,16,16,16),7))
-        shape_col <- c(rep(c("red"),8), rep(c("#419730"),35))
-        shape_size <- c(rep(c(5.5),8), rep(c(4.85,4.85,4.85,4.85,4.85),7))
+        shape_col <- c(rep(c("red"),8), rep(c("#4ca130"),35))
+        shape_size <- c(rep(c(7),8), rep(c(4.65,4.65,4.65,4.65,4.65),7))
+        outl_shape2 <- c(rep(c(16),8), rep(c(16,16,16,16,16),7))
+        shape_col2 <- c(rep(c("#4c74b0"),8), rep(c("#4ca130"),35))
+        shape_size2 <- c(rep(c(4.55),8), rep(c(4.65,4.65,4.65,4.65,4.65),7))
         
         p <- ggplot(data=data, aes(x = Species, y = Distance)) + 
-        geom_boxplot(width = 0.75, size=1.25, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.4) + 
-        geom_beeswarm(data = data, groupOnX = TRUE, priority = c("ascending"), colour=cor_colors, cex=2, size=6.2) + 
+        geom_boxplot(width = 0.75, size=1.5, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.44) + 
+        geom_beeswarm(data = data, groupOnX = TRUE, priority = c("ascending"), colour=cor_colors, cex=2, size=6) + 
         geom_beeswarm(data = data_outl, groupOnX = TRUE, priority = c("ascending"), colour=shape_col, cex=2, size=shape_size, shape=outl_shape, stroke=3) + 
+        geom_beeswarm(data = data_outl, groupOnX = TRUE, priority = c("ascending"), colour=shape_col2, cex=2, size=shape_size2, shape=outl_shape2, stroke=3) + 
         scale_y_continuous(expand = c(0.05, 0), labels = comma) + 
         scale_x_discrete(labels=c("Hsa" = "Hsa", "Ppa" = "Ppa", 
             "Ptr" = "Ptr", "Ggo" = "Ggo", "Ppy" = "Ppy", 
@@ -334,15 +338,15 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
             "BD" = "BD")) + 
         guides(shape = guide_legend(override.aes = list(stroke=1.5)))
 
-        q <- p + theme_classic() + xlab("Data set") + ylab("Distance") + 
+        q <- p + theme_classic() + xlab("Species") + ylab("Pearson distance") + 
         theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 36.5), 
+            strip.text = element_text(size = 37), 
             strip.text.x = element_text(margin = margin(0.685, 0, 0.685, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
-            axis.ticks.length = unit(0.62, "cm"), 
+            axis.ticks.length = unit(0.5825, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(1, 1, 1, 1),"cm"), 
+            plot.margin = unit(c(1, 0.85, 1, 1),"cm"), 
             axis.title.y = element_text(size=37, margin = margin(t = 0, r = 20, b = 0, l = 10), colour="black"), 
             axis.title.x = element_text(size=37, margin = margin(t = 10, r = 0, b = 0, l = 0), colour="black"), 
             axis.text.x = element_text(size=32.5, margin = margin(t = 7.5, b = 10), colour="black"), 
@@ -381,24 +385,24 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
         fname <- sprintf('%s.jpg', paste("Averaged_intra-species_inter-organ_distances"))
 
-        cor_colors <- c(rep(c("#5176ad"), each=115), rep(c("#4ca130"), each=196), 
-            rep(c("#5176ad"), each=76), rep(c("#4ca130"), each=70))
-        box_colors <- c(rep(c("#437bcf", "#3c9f28"), 2))
+        cor_colors <- c(rep(c("#4c74b0"), each=115), rep(c("#4ca130"), each=196), 
+            rep(c("#4c74b0"), each=76), rep(c("#4ca130"), each=70))
+        box_colors <- c(rep(c("#2082dd", "#32af18"), 2))
         
         p <- ggplot(data=data, aes(x = Class, y = Distance)) + 
-        geom_boxplot(width = 0.75, size=1.25, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.4) + 
-        geom_beeswarm(data = data, groupOnX = TRUE, priority = c("ascending"), colour=cor_colors, cex=2, size=5.5) + 
+        geom_boxplot(width = 0.75, size=1.5, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.44) + 
+        geom_beeswarm(data = data, groupOnX = TRUE, priority = c("ascending"), colour=cor_colors, cex=2, size=5.25) + 
         scale_y_continuous(expand = c(0.05, 0), labels = comma) + 
         scale_x_discrete(labels=c("Mammals" = "Mammals", "Angiosperms" = "Angiosperms", 
             "Mammals" = "Mammals", "Angiosperms" = "Angiosperms")) + 
         guides(shape = guide_legend(override.aes = list(stroke=1.5)))
 
-        q <- p + theme_classic() + xlab("Data set") + ylab("Distance") + 
+        q <- p + theme_classic() + xlab("Data set") + ylab("Pearson distance") + 
         theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 36.5), 
+            strip.text = element_text(size = 37), 
             strip.text.x = element_text(margin = margin(0.685, 0, 0.685, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
-            axis.ticks.length = unit(0.62, "cm"), 
+            axis.ticks.length = unit(0.5825, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
             plot.margin = unit(c(1, 1, 1, 21),"cm"), 
