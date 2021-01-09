@@ -322,7 +322,7 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
         shape_size <- c(rep(c(7),8), rep(c(4.65,4.65,4.65,4.65,4.65),7))
         outl_shape2 <- c(rep(c(16),8), rep(c(16,16,16,16,16),7))
         shape_col2 <- c(rep(c("#4c74b0"),8), rep(c("#4ca130"),35))
-        shape_size2 <- c(rep(c(4.55),8), rep(c(4.65,4.65,4.65,4.65,4.65),7))
+        shape_size2 <- c(rep(c(4.65),8), rep(c(4.65,4.65,4.65,4.65,4.65),7))
         
         p <- ggplot(data=data, aes(x = Species, y = Distance)) + 
         geom_boxplot(width = 0.75, size=1.5, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.44) + 
