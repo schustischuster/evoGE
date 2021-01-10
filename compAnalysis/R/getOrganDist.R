@@ -316,7 +316,7 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
         fname <- sprintf('%s.jpg', paste("Intra-species_inter-organ_distances"))
 
         cor_colors <- c(rep(c("#4c74b0"), each=115), rep(c("#4ca130"), each=196))
-        box_colors <- c(rep(c("#2082dd"), each=8), rep(c("#32af18"), each=7))
+        box_colors <- c(rep(c("#4c74b0"), each=8), rep(c("#4ca130"), each=7))
         outl_shape <- c(rep(c(8),8), rep(c(16,16,16,16,16),7))
         shape_col <- c(rep(c("red"),8), rep(c("#4ca130"),35))
         shape_size <- c(rep(c(7),8), rep(c(4.65,4.65,4.65,4.65,4.65),7))
@@ -387,7 +387,7 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
         cor_colors <- c(rep(c("#4c74b0"), each=115), rep(c("#4ca130"), each=196), 
             rep(c("#4c74b0"), each=76), rep(c("#4ca130"), each=70))
-        box_colors <- c(rep(c("#2082dd", "#32af18"), 2))
+        box_colors <- c(rep(c("#4c74b0", "#4ca130"), 2))
         
         p <- ggplot(data=data, aes(x = Class, y = Distance)) + 
         geom_boxplot(width = 0.75, size=1.5, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.44) + 
