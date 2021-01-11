@@ -315,13 +315,13 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
         fname <- sprintf('%s.jpg', paste("Intra-species_inter-organ_distances"))
 
-        cor_colors <- c(rep(c("#4c74b0"), each=115), rep(c("#4ca130"), each=196))
-        box_colors <- c(rep(c("#4c74b0"), each=8), rep(c("#4ca130"), each=7))
+        cor_colors <- c(rep(c("#5077b2"), each=115), rep(c("#47972d"), each=196))
+        box_colors <- c(rep(c("#5077b2"), each=8), rep(c("#47972d"), each=7))
         outl_shape <- c(rep(c(8),8), rep(c(16,16,16,16,16),7))
-        shape_col <- c(rep(c("red"),8), rep(c("#4ca130"),35))
+        shape_col <- c(rep(c("red"),8), rep(c("#47972d"),35))
         shape_size <- c(rep(c(7),8), rep(c(4.65,4.65,4.65,4.65,4.65),7))
         outl_shape2 <- c(rep(c(16),8), rep(c(16,16,16,16,16),7))
-        shape_col2 <- c(rep(c("#4c74b0"),8), rep(c("#4ca130"),35))
+        shape_col2 <- c(rep(c("#5077b2"),8), rep(c("#47972d"),35))
         shape_size2 <- c(rep(c(4.65),8), rep(c(4.65,4.65,4.65,4.65,4.65),7))
         
         p <- ggplot(data=data, aes(x = Species, y = Distance)) + 
@@ -338,7 +338,7 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
             "BD" = "BD")) + 
         guides(shape = guide_legend(override.aes = list(stroke=1.5)))
 
-        q <- p + theme_classic() + xlab("Species") + ylab("Pearson distance") + 
+        q <- p + theme_classic() + xlab("Species") + ylab("Inter-organ distance") + 
         theme(text=element_text(size = 16), 
             strip.text = element_text(size = 37), 
             strip.text.x = element_text(margin = margin(0.685, 0, 0.685, 0, "cm")), 
@@ -385,9 +385,9 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
         fname <- sprintf('%s.jpg', paste("Averaged_intra-species_inter-organ_distances"))
 
-        cor_colors <- c(rep(c("#4c74b0"), each=115), rep(c("#4ca130"), each=196), 
-            rep(c("#4c74b0"), each=76), rep(c("#4ca130"), each=70))
-        box_colors <- c(rep(c("#4c74b0", "#4ca130"), 2))
+        cor_colors <- c(rep(c("#5077b2"), each=115), rep(c("#47972d"), each=196), 
+            rep(c("#5077b2"), each=76), rep(c("#47972d"), each=70))
+        box_colors <- c(rep(c("#5077b2", "#47972d"), 2))
         
         p <- ggplot(data=data, aes(x = Class, y = Distance)) + 
         geom_boxplot(width = 0.75, size=1.5, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.44) + 
@@ -397,7 +397,7 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
             "Mammals" = "Mammals", "Angiosperms" = "Angiosperms")) + 
         guides(shape = guide_legend(override.aes = list(stroke=1.5)))
 
-        q <- p + theme_classic() + xlab("Data set") + ylab("Pearson distance") + 
+        q <- p + theme_classic() + xlab("Data set") + ylab("Inter-organ distance") + 
         theme(text=element_text(size = 16), 
             strip.text = element_text(size = 37), 
             strip.text.x = element_text(margin = margin(0.685, 0, 0.685, 0, "cm")), 
@@ -440,9 +440,6 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 
 
 getOrganDist(expr_estimation="TPM", coefficient="pearson")
-getOrganDist(expr_estimation="TPM", coefficient="spearman")
-getOrganDist(expr_estimation="counts", coefficient="pearson")
-getOrganDist(expr_estimation="counts", coefficient="spearman")
 
 
 
