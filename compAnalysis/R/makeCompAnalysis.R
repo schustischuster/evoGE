@@ -9,7 +9,7 @@
 
 makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), 
 	coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"), 
-    data_norm = c("intra-organ", "inter-organ"), devseq_organs = c("all", "selected")) {
+    data_norm = c("intra-organ", "inter-organ"), devseq_organs = c("all", "subset")) {
 	
 	# Show error message if no species or unknown data set is chosen
     if ((missing(dataset)) || (!is.element(dataset, c("Brawand", "DevSeq"))))
@@ -48,11 +48,11 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
        )
 
     # Show error message if no devseq_spec or unknown devseq_spec is chosen
-    if ((is.element("DevSeq", dataset) && is.element("all", devseq_spec)) && ((missing(devseq_organs)) || (!is.element(devseq_organs, c("all", "selected")))))
+    if ((is.element("DevSeq", dataset) && is.element("all", devseq_spec)) && ((missing(devseq_organs)) || (!is.element(devseq_organs, c("all", "subset")))))
    
        stop(
        "Please choose one of the available DevSeq organ sets: 
-       'all', 'selected'",
+       'all', 'subset'",
        call. = TRUE
        )
 
@@ -276,7 +276,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # Set filename
     fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, sep="_"))
 
-    if (devseq_organs == "selected") {
+    if (devseq_organs == "subset") {
 
         fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, devseq_organs, sep="_"))
     }
@@ -316,7 +316,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             Pollen.1_TH, Pollen.2_TH, Pollen.3_TH, Pollen.1_MT, Pollen.2_MT, Pollen.3_MT, Pollen.1_BD, 
             Pollen.2_BD, Pollen.3_BD))
 
-    } else if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (devseq_organs == "selected")) {
+    } else if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (devseq_organs == "subset")) {
 
         x_df <- x_df %>% select (-c(Pollen.1_AT, Pollen.2_AT, Pollen.3_AT, Pollen.1_AL, Pollen.2_AL, 
             Pollen.3_AL, Pollen.1_CR, Pollen.2_CR, Pollen.3_CR, Pollen.1_ES, Pollen.2_ES, Pollen.3_ES, 
@@ -351,8 +351,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         # Log2 transform data if expr_estimation=TPM is chosen
         # Compute correlation and build distance matrix
         # get_dist is an wrapper implemented in the factoextra package around
-        # as.dist(1-cor(t(scale(x_cor)))) if scale = TRUE; or
-        # as.dist(1-cor(t(x_cor))) if scale = FALSE
+        # as.dist(1-cor(scale(x_cor))) if scale = TRUE; or
+        # as.dist(1-cor(x_cor)) if scale = FALSE
         if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
             x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
             x_dist <- as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = "pearson"))))
@@ -403,41 +403,37 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
 
     
-        # Rotate leaves of dendrogram so that clusters appear in evolutionary order
-        if (is.element("pearson", coefficient) && is.element("TPM", expr_estimation) && 
+        # Rotate leaves of dendrogram so that clusters appear in evolutionary order wherevever possible
+        # This also re-orders the colors of the colorbar where possible to make them more distinguishable 
+        if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "DevSeq") && is.element("inter-organ", data_norm) && is.element("all", devseq_organs)) {
 
-            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(145:147,151:153,148:150,154:168,1:63,67:69,64:66,76:87,70:75,88:144))
+            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(145:147,151:153,148:150,154:168,1:18,22:24,19:21,25:30,37:42,34:36,31:33,46:57,43:45,58:72,76:78,73:75,79:84,88:90,85:87,91:144))
 
         } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
-            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm) && is.element("all", devseq_organs)) {
+            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm) && is.element("subset", devseq_organs)) {
 
-            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(145:147,151:153,148:150,154:168,1:24,25:30,37:42,34:36,31:33,46:57,43:45,58:72,76:78,73:75,88:90,85:87,82:84,79:81,91:144))
-
-        } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
-            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm) && is.element("selected", devseq_organs)) {
-
-            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(1:24,28:30,25:27,43:105,31:36,40:42,37:39))
-
-        } else if (is.element("spearman", coefficient) && is.element("TPM", expr_estimation) && 
-            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm) && is.element("all", devseq_organs)) {
-
-            dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:3,22:24,19:21,16:18,4:15,25:72,73:99,103:105,100:102,109:111,106:108,112:132,136:144,133:135,145:168))
+            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(1:24,28:30,25:27,43:87,91:93,88:90,94:99,103:105,100:102,31:33,40:42,37:39,34:36))
 
         } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "DevSeq") && is.element("inter-organ", data_norm) && is.element("all", devseq_organs)) {
 
-            dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:3,7:9,4:6,10:84,85:99,103:105,100:102,106:129,133:141,130:132,142:156,160:168,157:159))
+            dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:3,7:9,4:6,10:72,76:84,73:75,88:90,85:87,91:99,103:105,100:102,106:129,130:156,160:168,157:159))
 
         } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
-            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm) && is.element("selected", devseq_organs)) {
+            (dataset_id == "DevSeq") && is.element("inter-organ", data_norm) && is.element("subset", devseq_organs)) {
 
-            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(91:105,1:9,13:15,10:12,28:36,40:42,37:39,34:36,31:33,46:48,52:54,49:51,43:45,58:60,64:66,61:63,55:57,67:90,16:18,19:21,22:24,25:27))
+            dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(91:105,1:9,13:15,10:12,28:36,40:42,37:39,46:48,52:54,49:51,43:45,58:60,64:66,61:63,55:57,67:90,16:27))
 
         } else if (is.element("pearson", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "Brawand") && is.element("inter-organ", data_norm)) {
 
-            dend_order = TRUE
+            dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:13,20:23,16:17,14:15,18:19,45:47,42:44,24:27,29,28,30:33,35,34,36,40:41,37:39))
+
+        } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
+            (dataset_id == "Brawand") && is.element("inter-organ", data_norm)) {
+
+            dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:13,20:23,16:17,14:15,18:19,45:47,42:44,24,28:29,25,27,26,30:36,41,40,37:39))
 
         } else dend_order = TRUE 
 
@@ -448,7 +444,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
 
 
-    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec)) && is.element("inter-organ", data_norm)) {
+    if ((dataset_id == "DevSeq") && (is.element("all", devseq_spec)) && is.element("inter-organ", data_norm)
+        && is.element("counts", expr_estimation)) {
 
         # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
@@ -1398,7 +1395,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
 makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae", data_norm="inter-organ", devseq_organs="all")
 makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="selected")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="subset")
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 
