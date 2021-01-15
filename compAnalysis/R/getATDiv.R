@@ -166,9 +166,9 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             sou_v_distance <- as.data.frame(sou_v_out$distance)
 
             getError <- function(cor_data) {
-                sd <- sd(cor_data, na.rm=TRUE)
-                n <- length(cor_data)
-                error <- sd/sqrt(n)
+                std <- sd(cor_data, na.rm=TRUE)
+                num <- length(cor_data)
+                error <- std/sqrt(num)
                 return(error)
             }
 
@@ -230,7 +230,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             }
 
             div_tag <- data.frame(Divergence_time = c("T1", "T2", "T3", "T4", "T5", "T6"))
-            organ_id <- data.frame(Organ = rep(unique(sub(".*_", "", rownames(sou_v_distance)))))
+            organ_id <- data.frame(Organ = rep(unique(sub(".*_", "", rownames(sou_v_distance))),6))
             sou_v_distance_div <- cbind(div_tag, organ_id, sou_v_distance_div, sou_v_distance_error)
 
             return(sou_v_distance_div)
