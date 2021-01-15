@@ -141,9 +141,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         x_Br2011_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
             "output", "data", 'x_Br2011_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
 
-        x_Br2011_all_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
-            "output", "data", 'x_Br2011_all_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
-
         x_DS_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
             "output", "data", 'x_DS_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
 
@@ -154,107 +151,100 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         Brawand2011_organ_list <- list("br", "cb", "ht", "kd", "lv", "ts")
 
         DevSeq_organ_list <- list("Root", "Hypocotyl", "Leaf", "vegApex", "infApex", "Flower", 
-            "Stamen", "Carpel", "Pollen")
+            "Stamen", "Carpel")
 
 
 
-        # Function to apply extended OU model with dynamic expression optimum ("variable-µ method")
-        getExtOU <- function(organ, taxa_obj, samples) {
+        # Apply extended OU model with dynamic expression optimum ("variable-µ method")
+        getExtOU <- function(organ, taxa_obj) {
 
             sou_v_out <- expdist(taxa_obj, taxa = "all",
                 subtaxa = organ,
                 method = "sou_v")
 
-            sou_v_pi <- sou_v_out$pi
+            # sou_v_pi <- sou_v_out$pi ##### To retrieve pi #####
             sou_v_distance <- as.data.frame(sou_v_out$distance)
-            sou_v_distance_div <- as.data.frame(sou_v_distance[,1])
-            sou_v_distance_div <- rbind(sou_v_distance_div, sou_v_pi)
 
-            spec_id <- c(sub("\\_.*", "", rownames(sou_v_distance)), "pi")
-            organ_id <- unique(sub(".*_", "", rownames(sou_v_distance)))
-
-            if ((organ_id == "ts") && (samples == "sel")) {
-
-                ppy_testis <- "NA"
-                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], ppy_testis, 
-                    sou_v_distance_div[4:7,]), stringsAsFactors = FALSE)
-                spec_id <- c("hsa", "ppa", "ggo", "ppy", "mml", "mmu", "mdo", "pi")
-            
-            } 
-
-            if ((organ_id == "ts") && (samples == "all")) {
-
-                ppy_testis <- "NA"
-                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], ppy_testis, 
-                    sou_v_distance_div[4:9,]), stringsAsFactors = FALSE)
-                spec_id <- c("hsa", "ppa", "ggo", "ppy", "mml", "mmu", "mdo", "oan", "gga", "pi")
-
+            getError <- function(cor_data) {
+                sd <- sd(cor_data, na.rm=TRUE)
+                n <- length(cor_data)
+                error <- sd/sqrt(n)
+                return(error)
             }
 
-            if (organ_id == "testis") {
+            # Dixon test to statistically test if one value is an outlier
+            # library(outliers)
+            # A single pairwise distance was detected as a significant outlier:
+            # [1] THA_Stamen-BDY_Stamen (value:2.878409)
+                  # dixon.test(as.numeric(unlist(sou_v_distance[7,c(1:6)])))
+                  # Dixon test p-value = 0.04838
+            # THA_Stamen-BDY_Stamen was excluded from downstream analysis
 
-                Orangutan_testis <- "NA"
-                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], Orangutan_testis, 
-                    sou_v_distance_div[4:7,]), stringsAsFactors = FALSE)
-                spec_id <- c("Human", "Bonobo", "Gorilla", "Orangutan", "Macaque", "Mouse", 
-                    "Opossum", "pi")
+            if ((organ == "ts") || (organ == "testis")) {
+
+                sou_v_distance_div <- data.frame(Distance = c(sou_v_distance[2,1], 
+                    mean(as.numeric(c(sou_v_distance[3, c(1:2)]))), 
+                    NA, 
+                    mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
+                    mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
+                    mean(as.numeric(c(sou_v_distance[6, c(1:5)])))))
+
+                sou_v_distance_error <- data.frame(Error = c(NA, 
+                    as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
+                    NA, 
+                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(getError(sou_v_distance[6, c(1:5)])))))
+
+            } else if (organ == "Stamen") {
+
+                sou_v_distance_div <- data.frame(Distance = c(sou_v_distance[2,1], 
+                    mean(as.numeric(c(sou_v_distance[3, c(1:2)]))), 
+                    mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
+                    mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
+                    mean(as.numeric(c(sou_v_distance[6, c(1:5)]))), 
+                    mean(as.numeric(c(sou_v_distance[7, c(1:4,6)])))))
+
+                sou_v_distance_error <- data.frame(Error = c(NA, 
+                    as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
+                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(getError(sou_v_distance[7, c(1:4,6)])))))
+
+            } else {
+
+                sou_v_distance_div <- data.frame(Distance = c(sou_v_distance[2,1], 
+                    mean(as.numeric(c(sou_v_distance[3, c(1:2)]))), 
+                    mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
+                    mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
+                    mean(as.numeric(c(sou_v_distance[6, c(1:5)]))), 
+                    mean(as.numeric(c(sou_v_distance[7, c(1:6)])))))
+
+                sou_v_distance_error <- data.frame(Error = c(NA, 
+                    as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
+                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(getError(sou_v_distance[7, c(1:6)])))))
             }
 
-            rownames(sou_v_distance_div) <- spec_id
-            colnames(sou_v_distance_div) <- organ_id
+            div_tag <- data.frame(Divergence_time = c("T1", "T2", "T3", "T4", "T5", "T6"))
+            organ_id <- data.frame(Organ = rep(unique(sub(".*_", "", rownames(sou_v_distance)))))
+            sou_v_distance_div <- cbind(div_tag, organ_id, sou_v_distance_div, sou_v_distance_error)
 
             return(sou_v_distance_div)
         }
 
 
-        Br_sou_v <- as.data.frame(do.call(cbind, lapply(Brawand_organ_list, getExtOU,
+        Br_sou_v <- as.data.frame(do.call(rbind, lapply(Brawand_organ_list, getExtOU,
             taxa_obj = x_Br_taxa_objects)))
 
-        rows_to_remove_Br <- "Human"
-        Br_sou_v <- Br_sou_v[!(row.names(Br_sou_v) %in% rows_to_remove_Br), ]
-        Br_sou_v$testis <- suppressWarnings(as.numeric(Br_sou_v$testis))
+        Br2011_sou_v <- as.data.frame(do.call(rbind, lapply(Brawand2011_organ_list, getExtOU,
+            taxa_obj = x_Br2011_taxa_objects)))
 
-
-        Br2011_sou_v <- as.data.frame(do.call(cbind, lapply(Brawand2011_organ_list, getExtOU,
-            taxa_obj = x_Br2011_taxa_objects, samples = "sel")))
-        rows_to_remove_Br2011 <- "hsa"
-        Br2011_sou_v <- Br2011_sou_v[!(row.names(Br2011_sou_v) %in% rows_to_remove_Br2011), ]
-        Br2011_sou_v$ts <- suppressWarnings(as.numeric(Br2011_sou_v$ts))
-
-
-        Br2011_all_sou_v <- as.data.frame(do.call(cbind, lapply(Brawand2011_organ_list, getExtOU,
-            taxa_obj = x_Br2011_all_taxa_objects, samples = "all")))
-        rows_to_remove_Br2011_all <- "hsa"
-        Br2011_all_sou_v <- Br2011_all_sou_v[!(row.names(Br2011_all_sou_v) %in% rows_to_remove_Br2011_all), ]
-        Br2011_all_sou_v$ts <- suppressWarnings(as.numeric(Br2011_all_sou_v$ts))
-
-
-        DS_sou_v <- as.data.frame(do.call(cbind, lapply(DevSeq_organ_list, getExtOU,
+        DS_sou_v <- as.data.frame(do.call(rbind, lapply(DevSeq_organ_list, getExtOU,
             taxa_obj = x_DS_taxa_objects)))
-        rows_to_remove_DS <- "ATH"
-        DS_sou_v <- DS_sou_v[!(row.names(DS_sou_v) %in% rows_to_remove_DS), ]
-        # Note: The computation for THA and BDY Pollen distance will produce NaN due to large
-        # number of genes having only "0" TPM values in this combination; We can ignore this warning
-        # since we carry out downstream analyses only for ATH vs.X and ALY vs.X combinations
-
-
-
-        # Reshape data for ggplot2
-        Brawand_sou_v_div <- as.data.frame(c(Br_sou_v[1:6, 1], Br_sou_v[1:6, 2], Br_sou_v[1:6, 3], 
-            Br_sou_v[1:6, 4], Br_sou_v[1:6, 5], Br_sou_v[1:6, 6]))
-        colnames(Brawand_sou_v_div) <- "correlation"
-
-        Brawand2011_sou_v_div <- as.data.frame(c(Br2011_sou_v[1:6, 1], Br2011_sou_v[1:6, 2], 
-            Br2011_sou_v[1:6, 3], Br2011_sou_v[1:6, 4], Br2011_sou_v[1:6, 5], Br2011_sou_v[1:6, 6]))
-        colnames(Brawand2011_sou_v_div) <- "correlation"
-
-        Brawand2011_all_sou_v_div <- as.data.frame(c(Br2011_all_sou_v[1:8, 1], Br2011_all_sou_v[1:8, 2], 
-            Br2011_all_sou_v[1:8, 3], Br2011_all_sou_v[1:8, 4], Br2011_all_sou_v[1:8, 5], Br2011_all_sou_v[1:8, 6]))
-        colnames(Brawand2011_all_sou_v_div) <- "correlation"
-
-        DevSeq_sou_v_div <- as.data.frame(c(DS_sou_v[1:6, 1], DS_sou_v[1:6, 2], DS_sou_v[1:6, 3], 
-            DS_sou_v[1:6, 4], DS_sou_v[1:6, 5], DS_sou_v[1:6, 6], DS_sou_v[1:6, 7], DS_sou_v[1:6, 8]))
-        colnames(DevSeq_sou_v_div) <- "correlation"
 
     }
 
