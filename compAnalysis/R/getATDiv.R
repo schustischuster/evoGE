@@ -258,30 +258,67 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getDSOrganCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[4:nrow(df_cor), 1:3]
+        df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
+        df_cor <- df_cor[4:nrow(df_cor),]
 
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+        sp1 <- mean(df_cor[1:3,1:3])
+        sp2 <- mean(df_cor[4:6,1:6])
+        sp3 <- mean(df_cor[7:9,1:9])
+        sp4 <- mean(df_cor[10:12,1:12])
+        sp5 <- mean(df_cor[13:15,1:15])
+        sp6 <- mean(df_cor[16:18,1:18])
 
-        sp1 <- mean(df_cor_rs[1:9,])
-        sp2 <- mean(df_cor_rs[10:18,])
-        sp3 <- mean(df_cor_rs[19:27,])
-        sp4 <- mean(df_cor_rs[28:36,])
-        sp5 <- mean(df_cor_rs[37:45,])
-        sp6 <- mean(df_cor_rs[46:54,])
+        # Get errors
+        df_cor <- as.data.frame(df_cor, stringsAsFactors=FALSE)
+
+        avgRepl <- function(x_df) {
+
+            getRepl <- function(x) {
+
+                split.default(x, 
+                    rep(seq_along(x), 
+                        each = 3, 
+                        length.out=ncol(x)
+                        )
+                    )
+            }
+
+            repl_lst <- getRepl(x_df)
+            repl_sum <- lapply(repl_lst, sum)
+            repl_mean <- as.numeric(unlist(repl_sum))/9
+
+            return(repl_mean)
+        }
+
+        sp1_repl <- avgRepl(df_cor[1:3,1:3]) # AT-AL
+        sp2_repl <- avgRepl(df_cor[4:6,1:6]) # AT-CR AL-CR
+        sp3_repl <- avgRepl(df_cor[7:9,1:9]) # AT-ES AL-ES CR-ES
+        sp4_repl <- avgRepl(df_cor[10:12,1:12]) # AT-TH AL-TH CR-TH ES-TH
+        sp5_repl <- avgRepl(df_cor[13:15,1:15]) # AT-MT AL-MT CR-MT ES-MT TH-MT
+        sp6_repl <- avgRepl(df_cor[16:18,1:18]) # AT-BD AL-BD CR-BD ES-BD TH-BD MT-BD
+
+        getError <- function(cor_data) {
+                std <- sd(cor_data, na.rm=TRUE)
+                num <- length(cor_data)
+                error <- std/sqrt(num)
+                return(error)
+            }
+
+        df_cor_error <- data.frame(Error = c(as.numeric(c(getError(sp1_repl))),
+                    as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
+                    as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
+                    as.numeric(c(getError(sp6_repl)))))
 
         df_cor_avg <- rbind(sp1, sp2, sp3, sp4, sp5, sp6)
-        colnames(df_cor_avg) <- organ
-
-        getRowNames = function(x,n){ substring(x,nchar(x)-n+1) }
-        row_names_repl <- getRowNames(rownames(df_cor),2)
-        rnames_div_rates <- unique(row_names_repl)
-        rownames(df_cor_avg) <- rnames_div_rates
+        df_cor_avg <- data.frame(Distance = c(sp1, sp2, sp3, sp4, sp5, sp6))
+        div_tag <- data.frame(Divergence_time = c("T1", "T2", "T3", "T4", "T5", "T6"))
+        organ_id <- data.frame(Organ = rep(organ,6))
+        df_cor_avg <- cbind(div_tag, organ_id, df_cor_avg, df_cor_error)
 
         return(df_cor_avg)
 
     }
+    
 
     root_div <- getDSOrganCor(df=x_DS[,2:22], organ="Root", coefficient=coefficient)
     hypocotyl_div <- getDSOrganCor(df=x_DS[,23:43], organ="Hypocotyl", coefficient=coefficient)
