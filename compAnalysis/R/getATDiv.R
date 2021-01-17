@@ -182,14 +182,14 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
             if ((organ == "ts") || (organ == "testis")) {
 
-                sou_v_distance_div <- data.frame(Distance = c(sou_v_distance[2,1], 
+                sou_v_distance_div <- data.frame(correlation = c(sou_v_distance[2,1], 
                     mean(as.numeric(c(sou_v_distance[3, c(1:2)]))), 
                     NA, 
                     mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
                     mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
                     mean(as.numeric(c(sou_v_distance[6, c(1:5)])))))
 
-                sou_v_distance_error <- data.frame(Error = c(NA, 
+                sou_v_distance_error <- data.frame(error = c(NA, 
                     as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
                     NA, 
                     as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
@@ -198,14 +198,14 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
             } else if (organ == "Stamen") {
 
-                sou_v_distance_div <- data.frame(Distance = c(sou_v_distance[2,1], 
+                sou_v_distance_div <- data.frame(correlation = c(sou_v_distance[2,1], 
                     mean(as.numeric(c(sou_v_distance[3, c(1:2)]))), 
                     mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
                     mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
                     mean(as.numeric(c(sou_v_distance[6, c(1:5)]))), 
                     mean(as.numeric(c(sou_v_distance[7, c(1:4,6)])))))
 
-                sou_v_distance_error <- data.frame(Error = c(NA, 
+                sou_v_distance_error <- data.frame(error = c(NA, 
                     as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
                     as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
                     as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
@@ -214,14 +214,14 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
             } else {
 
-                sou_v_distance_div <- data.frame(Distance = c(sou_v_distance[2,1], 
+                sou_v_distance_div <- data.frame(correlation = c(sou_v_distance[2,1], 
                     mean(as.numeric(c(sou_v_distance[3, c(1:2)]))), 
                     mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
                     mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
                     mean(as.numeric(c(sou_v_distance[6, c(1:5)]))), 
                     mean(as.numeric(c(sou_v_distance[7, c(1:6)])))))
 
-                sou_v_distance_error <- data.frame(Error = c(NA, 
+                sou_v_distance_error <- data.frame(error = c(NA, 
                     as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
                     as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
                     as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
@@ -229,8 +229,8 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                     as.numeric(c(getError(sou_v_distance[7, c(1:6)])))))
             }
 
-            div_tag <- data.frame(Divergence_time = c("T1", "T2", "T3", "T4", "T5", "T6"))
-            organ_id <- data.frame(Organ = rep(unique(sub(".*_", "", rownames(sou_v_distance))),6))
+            div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+            organ_id <- data.frame(comp_organ = rep(unique(sub(".*_", "", rownames(sou_v_distance))),6))
             sou_v_distance_div <- cbind(div_tag, organ_id, sou_v_distance_div, sou_v_distance_error)
 
             return(sou_v_distance_div)
@@ -304,15 +304,17 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                 return(error)
             }
 
-        df_cor_error <- data.frame(Error = c(as.numeric(c(getError(sp1_repl))),
+        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
                     as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
                     as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
                     as.numeric(c(getError(sp6_repl)))))
 
-        df_cor_avg <- data.frame(Distance = c(sp1, sp2, sp3, sp4, sp5, sp6))
-        div_tag <- data.frame(Divergence_time = c("T1", "T2", "T3", "T4", "T5", "T6"))
-        organ_id <- data.frame(Organ = rep(organ,6))
-        df_cor_avg <- cbind(div_tag, organ_id, df_cor_avg, df_cor_error)
+        df_cor_avg <- data.frame(correlation = c(sp1, sp2, sp3, sp4, sp5, sp6))
+        div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+        organ_id <- data.frame(comp_organ = rep(organ, 6))
+        div_times <- data.frame(div_times = c(7.1, 9.4, 25.6, 46, 106, 160))
+        dataset <- data.frame(dataset = rep("Angiosperms ", 6))
+        df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_error, dataset)
 
         return(df_cor_avg)
 
@@ -328,43 +330,20 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     stamen_div <- getDSOrganCor(df=x_DS[,128:148], organ="Stamen", coefficient=coefficient)
     carpel_div <- getDSOrganCor(df=x_DS[,149:169], organ="Carpel", coefficient=coefficient)
 
-    DevSeq_organ_cor <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
+    DevSeq_div_rates <- rbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
         flower_div, stamen_div, carpel_div)
 
-
-    # Reshape data table for ggplot
-    # divergence times are estimated taxon pair times from TimeTree
-    # http://www.timetree.org/
-    div_times <- rep(c(7.1, 9.4, 25.6, 46, 106, 160), times=8)
-    comp_organ <- rep(colnames(DevSeq_organ_cor), each=6)
-    comp_spec <- rep(rownames(DevSeq_organ_cor), times=8)
-    dataset <- rep("Angiosperms ", 48)
-
-    DevSeq_GE_div <- rbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
-        flower_div, stamen_div, carpel_div)
-    rownames(DevSeq_GE_div) <- NULL
-    colnames(DevSeq_GE_div) <- "correlation"
-
-    DevSeq_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, DevSeq_GE_div, dataset), 
-        stringsAsFactors=FALSE)
-
-    DevSeq_div_rates$div_times <- as.numeric(DevSeq_div_rates$div_times)
-    DevSeq_div_rates$correlation <- as.numeric(DevSeq_div_rates$correlation)
-      
-    DevSeq_div_rates$comp_organ <- factor(DevSeq_div_rates$comp_organ, 
-        levels = unique(DevSeq_div_rates$comp_organ))
 
 
     if (is.element("TPM", expr_estimation)) {
 
-        DevSeq_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, DevSeq_sou_v_div, dataset), 
+        ds_dataset <- data.frame(dataset = rep("Angiosperms ", 48))
+        div_times <- data.frame(div_times = rep(c(7.1, 9.4, 25.6, 46, 106, 160),8))
+
+        DevSeq_sou_v_div_rates <- data.frame(cbind(DS_sou_v, ds_dataset, div_times), 
             stringsAsFactors=FALSE)
 
-        DevSeq_sou_v_div_rates$div_times <- as.numeric(DevSeq_sou_v_div_rates$div_times)
-        DevSeq_sou_v_div_rates$correlation <- as.numeric(DevSeq_sou_v_div_rates$correlation)
-
-        DevSeq_sou_v_div_rates$comp_organ <- factor(DevSeq_sou_v_div_rates$comp_organ, 
-            levels = unique(DevSeq_sou_v_div_rates$comp_organ))
+        DevSeq_sou_v_div_rates <- DevSeq_sou_v_div_rates %>% select(clade, comp_organ, div_times, everything())
 
     }
 
