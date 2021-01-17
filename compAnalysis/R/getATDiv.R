@@ -309,7 +309,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                     as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
                     as.numeric(c(getError(sp6_repl)))))
 
-        df_cor_avg <- rbind(sp1, sp2, sp3, sp4, sp5, sp6)
         df_cor_avg <- data.frame(Distance = c(sp1, sp2, sp3, sp4, sp5, sp6))
         div_tag <- data.frame(Divergence_time = c("T1", "T2", "T3", "T4", "T5", "T6"))
         organ_id <- data.frame(Organ = rep(organ,6))
