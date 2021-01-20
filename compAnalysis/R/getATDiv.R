@@ -354,25 +354,41 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Use pearson correlation, inter-organ normalization and TPM for ms
+    # update from here
+    getError <- function(cor_data) {
+                std <- sd(cor_data, na.rm=TRUE)
+                num <- length(cor_data)
+                error <- std/sqrt(num)
+                return(error)
+            }
 
     getBrBrainCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[5:nrow(df_cor), 1:4]
+        df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
+        df_cor <- df_cor[5:nrow(df_cor), ]
 
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+        sp1_repl <- c(mean(df_cor[1:3,1:4])) # Hsa-Ppa
+        sp2_repl <- c(mean(df_cor[10:11,1:4]), mean(df_cor[10:11,5:7])) # Hsa-Ggo Ppa-Ggo
+        sp3_repl <- c(mean(df_cor[12:13,1:4]), mean(df_cor[12:13,5:7]), mean(df_cor[12:13,14:15])) # Hsa-Ppy Ppa-Ppy Ggo-Ppy
+        sp4_repl <- c(mean(df_cor[14:16,1:4]), mean(df_cor[14:16,5:7]), mean(df_cor[14:16,14:15]), 
+            mean(df_cor[14:16,16:17])) # Hsa-Mml Ppa-Mml Ggo-Mml Ppy-Mml
+        sp5_repl <- c(mean(df_cor[17:19,1:4]), mean(df_cor[17:19,5:7]), mean(df_cor[17:19,14:15]), 
+            mean(df_cor[17:19,16:17]), mean(df_cor[17:19,18:20])) # Hsa-Mmu Ppa-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
+        sp6_repl <- c(mean(df_cor[20:21,1:4]), mean(df_cor[20:21,5:7]), mean(df_cor[20:21,14:15]), 
+            mean(df_cor[20:21,16:17]), mean(df_cor[20:21,18:20]), mean(df_cor[20:21,21:23])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
 
-        Ppa <- mean(df_cor_rs[1:12,]) # bonobo
-        Pan <- mean(df_cor_rs[13:36,]) # chimp
-        Ggo <- mean(df_cor_rs[37:44,]) # gorilla
-        Ppy <- mean(df_cor_rs[45:52,]) # orangutan
-        Mml <- mean(df_cor_rs[53:64,]) # macaque
-        Mmu <- mean(df_cor_rs[65:76,]) # mouse
-        Mdo <- mean(df_cor_rs[77:84,]) # opossum
+        # Get mean and SE
+        df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
+            mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
 
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
+        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
+            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
+            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
+            as.numeric(c(getError(sp6_repl)))))
+
+        div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+        organ_id <- data.frame(comp_organ = rep(organ, 6))
+        df_cor_avg <- cbind(div_tag, organ_id, df_cor_avg, df_cor_error)
 
         return(df_cor_avg)
 
@@ -383,22 +399,31 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrCerebCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+        df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
+        df_cor <- df_cor[3:nrow(df_cor), ]
 
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+        sp1_repl <- c(mean(df_cor[1:2,1:2])) # Hsa-Ppa
+        sp2_repl <- c(mean(df_cor[5:6,1:2]), mean(df_cor[5:6,3:4])) # Hsa-Ggo Ppa-Ggo
+        sp3_repl <- c(mean(df_cor[7,1:2]), mean(df_cor[7,3:4]), mean(df_cor[7,7:8])) # Hsa-Ppy Ppa-Ppy Ptr-Ppy Ggo-Ppy
+        sp4_repl <- c(mean(df_cor[8:9,1:2]), mean(df_cor[8:9,3:4]), mean(df_cor[8:9,7:8]), 
+            mean(df_cor[8:9,9])) # Hsa-Mml Ppa-Mml Ggo-Mml Ppy-Mml
+        sp5_repl <- c(mean(df_cor[10:12,1:2]), mean(df_cor[10:12,3:4]), mean(df_cor[10:12,7:8]), 
+            mean(df_cor[10:12,9]), mean(df_cor[10:12,10:11])) # Hsa-Mmu Ppa-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
+        sp6_repl <- c(mean(df_cor[13:14,1:2]), mean(df_cor[13:14,3:4]), mean(df_cor[13:14,7:8]), 
+            mean(df_cor[13:14,9]), mean(df_cor[13:14,10:11]), mean(df_cor[13:14,12:14])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
 
-        Ppa <- mean(df_cor_rs[1:4,]) # bonobo
-        Pan <- mean(df_cor_rs[5:8,]) # chimp
-        Ggo <- mean(df_cor_rs[9:12,]) # gorilla
-        Ppy <- mean(df_cor_rs[13:14,]) # orangutan
-        Mml <- mean(df_cor_rs[15:18,]) # macaque
-        Mmu <- mean(df_cor_rs[19:24,]) # mouse
-        Mdo <- mean(df_cor_rs[25:28,]) # opossum
+        # Get mean and SE
+        df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
+            mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
 
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
+        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
+            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
+            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
+            as.numeric(c(getError(sp6_repl)))))
+
+        div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+        organ_id <- data.frame(comp_organ = rep(organ, 6))
+        df_cor_avg <- cbind(div_tag, organ_id, df_cor_avg, df_cor_error)
 
         return(df_cor_avg)
 
@@ -409,26 +434,36 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrHtKdLvCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+        df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
+        df_cor <- df_cor[3:nrow(df_cor), ]
 
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
-
-        Ppa <- mean(df_cor_rs[1:4,]) # bonobo
-        Pan <- mean(df_cor_rs[5:8,]) # chimp
-        Ggo <- mean(df_cor_rs[9:12,]) # gorilla
-        Ppy <- mean(df_cor_rs[13:16,]) # orangutan
-        Mml <- mean(df_cor_rs[17:20,]) # macaque
-        Mmu <- mean(df_cor_rs[21:26,]) # mouse
-        if(organ == "Kidney") {
-        	Mdo <- mean(df_cor_rs[27:28,]) # opossum
+        sp1_repl <- c(mean(df_cor[1:2,1:2])) # Hsa-Ppa
+        sp2_repl <- c(mean(df_cor[5:6,1:2]), mean(df_cor[5:6,3:4])) # Hsa-Ggo Ppa-Ggo
+        sp3_repl <- c(mean(df_cor[7:8,1:2]), mean(df_cor[7:8,3:4]), mean(df_cor[7:8,7:8])) # Hsa-Ppy Ppa-Ppy Ggo-Ppy
+        sp4_repl <- c(mean(df_cor[9:10,1:2]), mean(df_cor[9:10,3:4]), mean(df_cor[9:10,7:8]), 
+            mean(df_cor[9:10,9:10])) # Hsa-Mml Ppa-Mml Ggo-Mml Ppy-Mml
+        sp5_repl <- c(mean(df_cor[11:13,1:2]), mean(df_cor[11:13,3:4]), mean(df_cor[11:13,7:8]), 
+            mean(df_cor[11:13,9:10]), mean(df_cor[11:13,11:12])) # Hsa-Mmu Ppa-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
+        if (organ == "Kidney") {
+            sp6_repl <- c(mean(df_cor[14,1:2]), mean(df_cor[14,3:4]), mean(df_cor[14,7:8]), 
+            mean(df_cor[14,9:10]), mean(df_cor[14,11:12]), mean(df_cor[14,13:15])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
         } else {
-        	Mdo <- mean(df_cor_rs[27:30,]) # opossum
+            sp6_repl <- c(mean(df_cor[14:15,1:2]), mean(df_cor[14:15,3:4]), mean(df_cor[14:15,7:8]), 
+            mean(df_cor[14:15,9:10]), mean(df_cor[14:15,11:12]), mean(df_cor[14:15,13:15])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
         }
 
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
+        # Get mean and SE
+        df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
+            mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
+
+        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
+            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
+            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
+            as.numeric(c(getError(sp6_repl)))))
+
+        div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+        organ_id <- data.frame(comp_organ = rep(organ, 6))
+        df_cor_avg <- cbind(div_tag, organ_id, df_cor_avg, df_cor_error)
 
         return(df_cor_avg)
 
@@ -441,22 +476,30 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     getBrTestisCor <- function(df, organ, coefficient) {
 
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[3:nrow(df_cor), 1:2]
+        df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
+        df_cor <- df_cor[3:nrow(df_cor), ]
 
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
+        sp1_repl <- c(mean(df_cor[1,1:2])) # Hsa-Ppa
+        sp2_repl <- c(mean(df_cor[3,1:2]), mean(df_cor[3,3])) # Hsa-Ggo Ppa-Ggo
+        sp3_repl <- NA # orangutan: no data available
+        sp4_repl <- c(mean(df_cor[4:5,1:2]), mean(df_cor[4:5,3]), mean(df_cor[4:5,5])) # Hsa-Mml Ppa-Mml Ggo-Mml
+        sp5_repl <- c(mean(df_cor[6:7,1:2]), mean(df_cor[6:7,3]), mean(df_cor[6:7,5]), 
+            mean(df_cor[6:7,6:7])) # Hsa-Mmu Ppa-Mmu Ggo-Mmu Mml-Mmu
+        sp6_repl <- c(mean(df_cor[8:9,1:2]), mean(df_cor[8:9,3]), mean(df_cor[8:9,5]), 
+            mean(df_cor[8:9,6:7]), mean(df_cor[8:9,8:9])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Mml-Mdo Mmu-Mdo
 
-        Ppa <- mean(df_cor_rs[1:2,]) # bonobo
-        Pan <- mean(df_cor_rs[3:4,]) # chimp
-        Ggo <- mean(df_cor_rs[5:6,]) # gorilla
-        Ppy <- NA # orangutan: no data available
-        Mml <- mean(df_cor_rs[7:10,]) # macaque
-        Mmu <- mean(df_cor_rs[11:14,]) # mouse
-        Mdo <- mean(df_cor_rs[15:18,]) # opossum
+        # Get mean and SE
+        df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
+            mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
 
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
+        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
+            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
+            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
+            as.numeric(c(getError(sp6_repl)))))
+
+        div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+        organ_id <- data.frame(comp_organ = rep(organ, 6))
+        df_cor_avg <- cbind(div_tag, organ_id, df_cor_avg, df_cor_error)
 
         return(df_cor_avg)
 
@@ -464,7 +507,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     testis_div <- getBrTestisCor(df=x_Br[,93:103], organ="Testis", coefficient=coefficient)
 
-    Brawand_organ_cor <- cbind(brain_div, cereb_div, heart_div, kidney_div, liver_div, testis_div)
+    Brawand_organ_cor <- rbind(brain_div, cereb_div, heart_div, kidney_div, liver_div, testis_div)
 
 
     # Reshape data table for ggplot
