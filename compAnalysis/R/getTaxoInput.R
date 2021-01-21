@@ -78,12 +78,6 @@ getTaxoInput <- function() {
     colnames(x_Br_tbj) <- x_Br_taxa_object_names
 
 
-    # Remove Pan troglodytes (Chimp) samples
-    x_Br_tbj <- subset(x_Br_tbj, select = -c(Chimp_brain_M4, Chimp_brain_M5, Chimp_brain_M3, 
-    	Chimp_brain_M2, Chimp_brain_F1, Chimp_brain_M1, Chimp_cerebellum_F1, Chimp_cerebellum_M1, 
-    	Chimp_heart_F1, Chimp_heart_M1, Chimp_kidney_F1, Chimp_kidney_M1, Chimp_liver_F1, 
-        Chimp_liver_M1, Chimp_testis_M1))
-
     write.table(x_Br_tbj, 
     	file=file.path(out_dir, "output", "data", "x_Br_taxobj_input.txt"), sep="\t", 
         col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
@@ -102,25 +96,18 @@ getTaxoInput <- function() {
 
 
     # Remove Pan troglodytes (chimp) samples
-    x_Br2011_sel_tbj <- subset(x_Br2011_tbj, select = -c(ptr_br_M1, ptr_br_M3, ptr_br_M5, 
-    	ptr_br_M2, ptr_br_M4, ptr_br_F1, ptr_cb_M1, ptr_cb_F1, ptr_ht_M1, ptr_ht_F1, 
-        ptr_kd_M1, ptr_kd_F1, ptr_lv_M1, ptr_lv_F1, ptr_ts_M1, oan_br_M1, oan_br_F1, 
+    x_Br2011_sel_tbj <- subset(x_Br2011_tbj, select = -c(oan_br_M1, oan_br_F1, 
         oan_cb_M1, oan_cb_F1, oan_ht_M1, oan_ht_F1, oan_kd_M1, oan_kd_F1, oan_lv_M1, 
         oan_lv_F1, oan_ts_M3, oan_ts_M2, oan_ts_M1, gga_br_M1, gga_br_F1, gga_cb_M1, 
         gga_cb_F1, gga_ht_M1, gga_ht_F1, gga_kd_M1, gga_kd_F1, gga_lv_M1, gga_lv_F1, 
         gga_ts_M1, gga_ts_M2))
 
 
-    x_Br2011_all_tbj <- subset(x_Br2011_tbj, select = -c(ptr_br_M1, ptr_br_M3, ptr_br_M5, 
-        ptr_br_M2, ptr_br_M4, ptr_br_F1, ptr_cb_M1, ptr_cb_F1, ptr_ht_M1, ptr_ht_F1, 
-        ptr_kd_M1, ptr_kd_F1, ptr_lv_M1, ptr_lv_F1, ptr_ts_M1))
-
-
     write.table(x_Br2011_sel_tbj, 
     	file=file.path(out_dir, "output", "data", "x_Br2011_taxobj_input.txt"), sep="\t", 
         col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
 
-    write.table(x_Br2011_all_tbj, 
+    write.table(x_Br2011_tbj, 
         file=file.path(out_dir, "output", "data", "x_Br2011_all_taxobj_input.txt"), sep="\t", 
         col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
 
