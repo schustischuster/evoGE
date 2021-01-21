@@ -354,7 +354,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
     # Use pearson correlation, inter-organ normalization and TPM for ms
-    # update from here
     getError <- function(cor_data) {
                 std <- sd(cor_data, na.rm=TRUE)
                 num <- length(cor_data)
@@ -367,15 +366,15 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
         df_cor <- df_cor[5:nrow(df_cor), ]
 
-        sp1_repl <- c(mean(df_cor[1:3,1:4])) # Hsa-Ppa
-        sp2_repl <- c(mean(df_cor[10:11,1:4]), mean(df_cor[10:11,5:7])) # Hsa-Ggo Ppa-Ggo
-        sp3_repl <- c(mean(df_cor[12:13,1:4]), mean(df_cor[12:13,5:7]), mean(df_cor[12:13,14:15])) # Hsa-Ppy Ppa-Ppy Ggo-Ppy
-        sp4_repl <- c(mean(df_cor[14:16,1:4]), mean(df_cor[14:16,5:7]), mean(df_cor[14:16,14:15]), 
-            mean(df_cor[14:16,16:17])) # Hsa-Mml Ppa-Mml Ggo-Mml Ppy-Mml
-        sp5_repl <- c(mean(df_cor[17:19,1:4]), mean(df_cor[17:19,5:7]), mean(df_cor[17:19,14:15]), 
-            mean(df_cor[17:19,16:17]), mean(df_cor[17:19,18:20])) # Hsa-Mmu Ppa-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
-        sp6_repl <- c(mean(df_cor[20:21,1:4]), mean(df_cor[20:21,5:7]), mean(df_cor[20:21,14:15]), 
-            mean(df_cor[20:21,16:17]), mean(df_cor[20:21,18:20]), mean(df_cor[20:21,21:23])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
+        sp1_repl <- c(mean(df_cor[1:3,1:4]), mean(df_cor[4:9,1:4])) # Hsa-Ppa Hsa-Ptr
+        sp2_repl <- c(mean(df_cor[10:11,1:4]), mean(df_cor[10:11,5:7]), mean(df_cor[10:11,8:13])) # Hsa-Ggo Ppa-Ggo Ptr-Ggo
+        sp3_repl <- c(mean(df_cor[12:13,1:4]), mean(df_cor[12:13,5:7]), mean(df_cor[12:13,8:13]), mean(df_cor[12:13,14:15])) # Hsa-Ppy Ppa-Ppy Ptr-Ppy Ggo-Ppy
+        sp4_repl <- c(mean(df_cor[14:16,1:4]), mean(df_cor[14:16,5:7]), mean(df_cor[14:16,8:13]), mean(df_cor[14:16,14:15]), 
+            mean(df_cor[14:16,16:17])) # Hsa-Mml Ppa-Mml Ptr-Mml Ggo-Mml Ppy-Mml
+        sp5_repl <- c(mean(df_cor[17:19,1:4]), mean(df_cor[17:19,5:7]), mean(df_cor[17:19,8:13]), mean(df_cor[17:19,14:15]), 
+            mean(df_cor[17:19,16:17]), mean(df_cor[17:19,18:20])) # Hsa-Mmu Ppa-Mmu Ptr-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
+        sp6_repl <- c(mean(df_cor[20:21,1:4]), mean(df_cor[20:21,5:7]), mean(df_cor[20:21,8:13]), mean(df_cor[20:21,14:15]), 
+            mean(df_cor[20:21,16:17]), mean(df_cor[20:21,18:20]), mean(df_cor[20:21,21:23])) # Hsa-Mdo Ppa-Mdo Ptr-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
 
         # Get mean and SE
         df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
@@ -396,21 +395,24 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     brain_div <- getBrBrainCor(df=x_Br[,2:26], organ="Brain", coefficient=coefficient)
 
+    brain_div_11 <- getBrBrainCor(df=x_Br2011[,c(2:5,33:35,18:23,45:46,56:57,65:67,78:80,95:96)], 
+        organ="Brain", coefficient=coefficient)
+
 
     getBrCerebCor <- function(df, organ, coefficient) {
 
         df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
         df_cor <- df_cor[3:nrow(df_cor), ]
 
-        sp1_repl <- c(mean(df_cor[1:2,1:2])) # Hsa-Ppa
-        sp2_repl <- c(mean(df_cor[5:6,1:2]), mean(df_cor[5:6,3:4])) # Hsa-Ggo Ppa-Ggo
-        sp3_repl <- c(mean(df_cor[7,1:2]), mean(df_cor[7,3:4]), mean(df_cor[7,7:8])) # Hsa-Ppy Ppa-Ppy Ptr-Ppy Ggo-Ppy
-        sp4_repl <- c(mean(df_cor[8:9,1:2]), mean(df_cor[8:9,3:4]), mean(df_cor[8:9,7:8]), 
-            mean(df_cor[8:9,9])) # Hsa-Mml Ppa-Mml Ggo-Mml Ppy-Mml
-        sp5_repl <- c(mean(df_cor[10:12,1:2]), mean(df_cor[10:12,3:4]), mean(df_cor[10:12,7:8]), 
-            mean(df_cor[10:12,9]), mean(df_cor[10:12,10:11])) # Hsa-Mmu Ppa-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
-        sp6_repl <- c(mean(df_cor[13:14,1:2]), mean(df_cor[13:14,3:4]), mean(df_cor[13:14,7:8]), 
-            mean(df_cor[13:14,9]), mean(df_cor[13:14,10:11]), mean(df_cor[13:14,12:14])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
+        sp1_repl <- c(mean(df_cor[1:2,1:2]), mean(df_cor[3:4,1:2])) # Hsa-Ppa Hsa-Ptr
+        sp2_repl <- c(mean(df_cor[5:6,1:2]), mean(df_cor[5:6,3:4]), mean(df_cor[5:6,5:6])) # Hsa-Ggo Ppa-Ggo Ptr-Ggo
+        sp3_repl <- c(mean(df_cor[7,1:2]), mean(df_cor[7,3:4]), mean(df_cor[7,5:6]), mean(df_cor[7,7:8])) # Hsa-Ppy Ppa-Ppy Ptr-Ppy Ggo-Ppy
+        sp4_repl <- c(mean(df_cor[8:9,1:2]), mean(df_cor[8:9,3:4]), mean(df_cor[8:9,5:6]), mean(df_cor[8:9,7:8]), 
+            mean(df_cor[8:9,9])) # Hsa-Mml Ppa-Mml Ptr-Mml Ggo-Mml Ppy-Mml
+        sp5_repl <- c(mean(df_cor[10:12,1:2]), mean(df_cor[10:12,3:4]), mean(df_cor[10:12,5:6]), mean(df_cor[10:12,7:8]), 
+            mean(df_cor[10:12,9]), mean(df_cor[10:12,10:11])) # Hsa-Mmu Ppa-Mmu Ptr-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
+        sp6_repl <- c(mean(df_cor[13:14,1:2]), mean(df_cor[13:14,3:4]), mean(df_cor[13:14,5:6]), mean(df_cor[13:14,7:8]), 
+            mean(df_cor[13:14,9]), mean(df_cor[13:14,10:11]), mean(df_cor[13:14,12:14])) # Hsa-Mdo Ppa-Mdo Ptr-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
 
         # Get mean and SE
         df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
@@ -431,25 +433,28 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     cereb_div <- getBrCerebCor(df=x_Br[,27:42], organ="Cerebellum", coefficient=coefficient)
 
+    cereb_div_11 <- getBrCerebCor(df=x_Br2011[,c(6:7,36:37,24:25,47:48,58,68:69,81:83,97:98)], 
+        organ="Cerebellum", coefficient=coefficient)
+
 
     getBrHtKdLvCor <- function(df, organ, coefficient) {
 
         df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
         df_cor <- df_cor[3:nrow(df_cor), ]
 
-        sp1_repl <- c(mean(df_cor[1:2,1:2])) # Hsa-Ppa
-        sp2_repl <- c(mean(df_cor[5:6,1:2]), mean(df_cor[5:6,3:4])) # Hsa-Ggo Ppa-Ggo
-        sp3_repl <- c(mean(df_cor[7:8,1:2]), mean(df_cor[7:8,3:4]), mean(df_cor[7:8,7:8])) # Hsa-Ppy Ppa-Ppy Ggo-Ppy
-        sp4_repl <- c(mean(df_cor[9:10,1:2]), mean(df_cor[9:10,3:4]), mean(df_cor[9:10,7:8]), 
-            mean(df_cor[9:10,9:10])) # Hsa-Mml Ppa-Mml Ggo-Mml Ppy-Mml
-        sp5_repl <- c(mean(df_cor[11:13,1:2]), mean(df_cor[11:13,3:4]), mean(df_cor[11:13,7:8]), 
-            mean(df_cor[11:13,9:10]), mean(df_cor[11:13,11:12])) # Hsa-Mmu Ppa-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
+        sp1_repl <- c(mean(df_cor[1:2,1:2]), mean(df_cor[3:4,1:2])) # Hsa-Ppa Hsa-Ptr
+        sp2_repl <- c(mean(df_cor[5:6,1:2]), mean(df_cor[5:6,3:4]), mean(df_cor[5:6,5:6])) # Hsa-Ggo Ppa-Ggo Ptr-Ggo
+        sp3_repl <- c(mean(df_cor[7:8,1:2]), mean(df_cor[7:8,3:4]), mean(df_cor[7:8,5:6]), mean(df_cor[7:8,7:8])) # Hsa-Ppy Ppa-Ppy Ptr-Ppy Ggo-Ppy
+        sp4_repl <- c(mean(df_cor[9:10,1:2]), mean(df_cor[9:10,3:4]), mean(df_cor[9:10,5:6]), mean(df_cor[9:10,7:8]), 
+            mean(df_cor[9:10,9:10])) # Hsa-Mml Ppa-Mml Ptr-Mml Ggo-Mml Ppy-Mml
+        sp5_repl <- c(mean(df_cor[11:13,1:2]), mean(df_cor[11:13,3:4]), mean(df_cor[11:13,5:6]), mean(df_cor[11:13,7:8]), 
+            mean(df_cor[11:13,9:10]), mean(df_cor[11:13,11:12])) # Hsa-Mmu Ppa-Mmu Ptr-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
         if (organ == "Kidney") {
-            sp6_repl <- c(mean(df_cor[14,1:2]), mean(df_cor[14,3:4]), mean(df_cor[14,7:8]), 
-            mean(df_cor[14,9:10]), mean(df_cor[14,11:12]), mean(df_cor[14,13:15])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
+            sp6_repl <- c(mean(df_cor[14,1:2]), mean(df_cor[14,3:4]), mean(df_cor[14,5:6]), mean(df_cor[14,7:8]), 
+            mean(df_cor[14,9:10]), mean(df_cor[14,11:12]), mean(df_cor[14,13:15])) # Hsa-Mdo Ppa-Mdo Ptr-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
         } else {
-            sp6_repl <- c(mean(df_cor[14:15,1:2]), mean(df_cor[14:15,3:4]), mean(df_cor[14:15,7:8]), 
-            mean(df_cor[14:15,9:10]), mean(df_cor[14:15,11:12]), mean(df_cor[14:15,13:15])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
+            sp6_repl <- c(mean(df_cor[14:15,1:2]), mean(df_cor[14:15,3:4]), mean(df_cor[14:15,5:6]), mean(df_cor[14:15,7:8]), 
+            mean(df_cor[14:15,9:10]), mean(df_cor[14:15,11:12]), mean(df_cor[14:15,13:15])) # Hsa-Mdo Ppa-Mdo Ptr-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
         }
 
         # Get mean and SE
@@ -473,20 +478,61 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     kidney_div <- getBrHtKdLvCor(df=x_Br[,60:75], organ="Kidney", coefficient=coefficient)
     liver_div <- getBrHtKdLvCor(df=x_Br[,76:92], organ="Liver", coefficient=coefficient)
 
+    liver_div_11 <- getBrHtKdLvCor(df=x_Br2011[,c(14:15,42:43,30:31,53:54,63:64,74:75,90:92,103:104)], 
+        organ="Liver", coefficient=coefficient)
+
+
+    getBrHtKdCor <- function(df, organ, coefficient) {
+
+        df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
+        df_cor <- df_cor[4:nrow(df_cor), ]
+
+        sp1_repl <- c(mean(df_cor[1:2,1:3]), mean(df_cor[3:4,1:3])) # Hsa-Ppa Hsa-Ptr
+        sp2_repl <- c(mean(df_cor[5:6,1:3]), mean(df_cor[5:6,4:5]), mean(df_cor[5:6,6:7])) # Hsa-Ggo Ppa-Ggo Ptr-Ggo
+        sp3_repl <- c(mean(df_cor[7:8,1:3]), mean(df_cor[7:8,4:5]), mean(df_cor[7:8,6:7]), mean(df_cor[7:8,8:9])) # Hsa-Ppy Ppa-Ppy Ptr-Ppy Ggo-Ppy
+        sp4_repl <- c(mean(df_cor[9:10,1:3]), mean(df_cor[9:10,4:5]), mean(df_cor[9:10,6:7]), mean(df_cor[9:10,8:9]), 
+            mean(df_cor[9:10,10:11])) # Hsa-Mml Ppa-Mml Ptr-Mml Ggo-Mml Ppy-Mml
+        sp5_repl <- c(mean(df_cor[11:13,1:3]), mean(df_cor[11:13,4:5]), mean(df_cor[11:13,6:7]), mean(df_cor[11:13,8:9]), 
+            mean(df_cor[11:13,10:11]), mean(df_cor[11:13,12:13])) # Hsa-Mmu Ppa-Mmu Ptr-Mmu Ggo-Mmu Ppy-Mmu Mml-Mmu
+        sp6_repl <- c(mean(df_cor[14:15,1:3]), mean(df_cor[14:15,4:5]), mean(df_cor[14:15,6:7]), mean(df_cor[14:15,8:9]), 
+            mean(df_cor[14:15,10:11]), mean(df_cor[14:15,12:13]), mean(df_cor[14:15,14:16])) # Hsa-Mdo Ppa-Mdo Ptr-Mdo Ggo-Mdo Ppy-Mdo Mml-Mdo Mmu-Mdo
+
+        # Get mean and SE
+        df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
+            mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
+
+        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
+            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
+            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
+            as.numeric(c(getError(sp6_repl)))))
+
+        div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+        organ_id <- data.frame(comp_organ = rep(organ, 6))
+        df_cor_avg <- cbind(div_tag, organ_id, df_cor_avg, df_cor_error)
+
+        return(df_cor_avg)
+
+    }
+
+    heart_div_11 <- getBrHtKdCor(df=x_Br2011[,c(8:10,38:39,26:27,49:50,59:60,70:71,84:86,99:100)], 
+        organ="Heart", coefficient=coefficient)
+    kidney_div_11 <- getBrHtKdCor(df=x_Br2011[,c(11:13,40:41,28:29,51:52,61:62,72:73,87:89,101:102)], 
+        organ="Kidney", coefficient=coefficient)
+
 
     getBrTestisCor <- function(df, organ, coefficient) {
 
         df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
         df_cor <- df_cor[3:nrow(df_cor), ]
 
-        sp1_repl <- c(mean(df_cor[1,1:2])) # Hsa-Ppa
-        sp2_repl <- c(mean(df_cor[3,1:2]), mean(df_cor[3,3])) # Hsa-Ggo Ppa-Ggo
+        sp1_repl <- c(mean(df_cor[1,1:2]), mean(df_cor[2,1:2])) # Hsa-Ppa Hsa-Ptr
+        sp2_repl <- c(mean(df_cor[3,1:2]), mean(df_cor[3,3]), mean(df_cor[3,4])) # Hsa-Ggo Ppa-Ggo Ptr-Ggo
         sp3_repl <- NA # orangutan: no data available
-        sp4_repl <- c(mean(df_cor[4:5,1:2]), mean(df_cor[4:5,3]), mean(df_cor[4:5,5])) # Hsa-Mml Ppa-Mml Ggo-Mml
-        sp5_repl <- c(mean(df_cor[6:7,1:2]), mean(df_cor[6:7,3]), mean(df_cor[6:7,5]), 
-            mean(df_cor[6:7,6:7])) # Hsa-Mmu Ppa-Mmu Ggo-Mmu Mml-Mmu
-        sp6_repl <- c(mean(df_cor[8:9,1:2]), mean(df_cor[8:9,3]), mean(df_cor[8:9,5]), 
-            mean(df_cor[8:9,6:7]), mean(df_cor[8:9,8:9])) # Hsa-Mdo Ppa-Mdo Ggo-Mdo Mml-Mdo Mmu-Mdo
+        sp4_repl <- c(mean(df_cor[4:5,1:2]), mean(df_cor[4:5,3]), mean(df_cor[4:5,4]), mean(df_cor[4:5,5])) # Hsa-Mml Ppa-Mml Ptr-Mml Ggo-Mml
+        sp5_repl <- c(mean(df_cor[6:7,1:2]), mean(df_cor[6:7,3]), mean(df_cor[6:7,4]), mean(df_cor[6:7,5]), 
+            mean(df_cor[6:7,6:7])) # Hsa-Mmu Ppa-Mmu Ptr-Mmu Ggo-Mmu Mml-Mmu
+        sp6_repl <- c(mean(df_cor[8:9,1:2]), mean(df_cor[8:9,3]), mean(df_cor[8:9,4]), mean(df_cor[8:9,5]), 
+            mean(df_cor[8:9,6:7]), mean(df_cor[8:9,8:9])) # Hsa-Mdo Ppa-Mdo Ptr-Mdo Ggo-Mdo Mml-Mdo Mmu-Mdo
 
         # Get mean and SE
         df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
@@ -507,33 +553,27 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     testis_div <- getBrTestisCor(df=x_Br[,93:103], organ="Testis", coefficient=coefficient)
 
+    testis_div_11 <- getBrTestisCor(df=x_Br2011[,c(16:17,44,32,55,76:77,93:94,105:106)], 
+        organ="Testis", coefficient=coefficient)
+
+
     Brawand_organ_cor <- rbind(brain_div, cereb_div, heart_div, kidney_div, liver_div, testis_div)
 
+    Brawand11_organ_cor <- rbind(brain_div_11, cereb_div_11, heart_div_11, kidney_div_11, 
+        liver_div_11, testis_div_11)
 
-    # Reshape data table for ggplot
     # divergence times are estimated taxon pair times from TimeTree
     # http://www.timetree.org/
-    div_times <- rep(c(6.7, 9.1, 15.8, 29.4, 90, 159), times=6)
-    comp_organ <- rep(colnames(Brawand_organ_cor), each=6)
-    comp_spec <- rep(rownames(Brawand_organ_cor), times=6)
-    dataset <- rep("Mammals(re-analyzed)", 36)
+    br_dataset <- data.frame(dataset = rep("Mammals(re-analyzed)", 36))
+    br_div_times <- data.frame(div_times = rep(c(6.7, 9.1, 15.8, 29.4, 90, 159), times=6))
 
-    Brawand_GE_div <- rbind(brain_div, cereb_div, heart_div, kidney_div, liver_div, testis_div)
-    rownames(Brawand_GE_div) <- NULL
-    colnames(Brawand_GE_div) <- "correlation"
-
-    Brawand_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, Brawand_GE_div, dataset), 
+    Brawand_div_rates <- data.frame(cbind(Brawand_organ_cor, br_dataset, br_div_times), 
         stringsAsFactors=FALSE)
 
-    Brawand_div_rates$div_times <- as.numeric(Brawand_div_rates$div_times)
-    Brawand_div_rates$correlation <- as.numeric(Brawand_div_rates$correlation)
+    Brawand_div_rates <- Brawand_div_rates %>% select(clade, comp_organ, div_times, everything())
 
     # Remove Orangutan testis (missing data)
     Brawand_div_rates <- Brawand_div_rates[c(-33),]
-
-    Brawand_div_rates$comp_organ <- factor(Brawand_div_rates$comp_organ, 
-        levels = unique(Brawand_div_rates$comp_organ))
-
 
     # Combine DevSeq and Brawand GE divergence data
     compDivRates <- rbind(DevSeq_div_rates, Brawand_div_rates)
@@ -541,17 +581,13 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     if (is.element("TPM", expr_estimation)) {
 
-        Brawand_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, 
-        Brawand_sou_v_div, dataset), stringsAsFactors=FALSE)
+        Brawand_sou_v_div_rates <- data.frame(cbind(Br_sou_v, br_dataset, br_div_times), 
+            stringsAsFactors=FALSE)
 
-        Brawand_sou_v_div_rates$div_times <- as.numeric(Brawand_sou_v_div_rates$div_times)
-        Brawand_sou_v_div_rates$correlation <- as.numeric(Brawand_sou_v_div_rates$correlation)
+        Brawand_sou_v_div_rates <- Brawand_sou_v_div_rates %>% select(clade, comp_organ, div_times, everything())
 
         # Remove Orangutan testis (missing data)
         Brawand_sou_v_div_rates <- Brawand_sou_v_div_rates[c(-33),]
-
-        Brawand_sou_v_div_rates$comp_organ <- factor(Brawand_sou_v_div_rates$comp_organ, 
-            levels = unique(Brawand_sou_v_div_rates$comp_organ))
 
         # Combine DevSeq and Brawand GE divergence data
         compSouVDivRates <- rbind(DevSeq_sou_v_div_rates, Brawand_sou_v_div_rates)
