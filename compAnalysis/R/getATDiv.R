@@ -156,7 +156,89 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
         # Apply extended OU model with dynamic expression optimum ("variable-µ method")
-        getExtOU <- function(organ, taxa_obj) {
+        getExtOUBr <- function(organ, taxa_obj) {
+
+            sou_v_out <- expdist(taxa_obj, taxa = "all",
+                subtaxa = organ,
+                method = "sou_v")
+
+            # sou_v_pi <- sou_v_out$pi ##### To retrieve pi #####
+            sou_v_distance <- as.data.frame(sou_v_out$distance)
+
+            getError <- function(cor_data) {
+                std <- sd(cor_data, na.rm=TRUE)
+                num <- length(cor_data)
+                error <- std/sqrt(num)
+                return(error)
+            }
+
+            if (organ == "ts") {
+
+                sou_v_distance_div <- data.frame(correlation = c(sou_v_distance[3, 1], 
+                    mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
+                    NA, # ppy (orangutan) data missing
+                    mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
+                    mean(as.numeric(c(sou_v_distance[6, c(1:5)]))), 
+                    mean(as.numeric(c(sou_v_distance[7, c(1:6)])))))
+
+                sou_v_distance_error <- data.frame(error = c(NA, 
+                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
+                    NA, # ppy (orangutan) data missing
+                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(getError(sou_v_distance[7, c(1:6)])))))
+
+            } else if (organ == "testis") {
+
+                sou_v_distance_div <- data.frame(correlation = c(sou_v_distance[2, 1], 
+                    mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
+                    NA, # ppy (orangutan) data missing
+                    mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
+                    mean(as.numeric(c(sou_v_distance[6, c(1:5)]))), 
+                    mean(as.numeric(c(sou_v_distance[7, c(1:6)])))))
+
+                sou_v_distance_error <- data.frame(error = c(NA, 
+                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
+                    NA, # ppy (orangutan) data missing
+                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(getError(sou_v_distance[7, c(1:6)])))))
+
+            } else {
+
+                sou_v_distance_div <- data.frame(correlation = c(
+                    mean(as.numeric(c(sou_v_distance[2:3, 1]))), 
+                    mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
+                    mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
+                    mean(as.numeric(c(sou_v_distance[6, c(1:5)]))), 
+                    mean(as.numeric(c(sou_v_distance[7, c(1:6)]))), 
+                    mean(as.numeric(c(sou_v_distance[8, c(1:7)])))))
+
+                sou_v_distance_error <- data.frame(error = c(
+                    as.numeric(c(getError(sou_v_distance[2:3, 1]))),
+                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(getError(sou_v_distance[7, c(1:6)]))), 
+                    as.numeric(c(getError(sou_v_distance[8, c(1:7)])))))
+            }
+
+            div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+            organ_id <- data.frame(comp_organ = rep(unique(sub(".*_", "", rownames(sou_v_distance))),6))
+            sou_v_distance_div <- cbind(div_tag, organ_id, sou_v_distance_div, sou_v_distance_error)
+
+            return(sou_v_distance_div)
+        }
+
+
+        Br_sou_v <- as.data.frame(do.call(rbind, lapply(Brawand_organ_list, getExtOUBr,
+            taxa_obj = x_Br_taxa_objects)))
+
+        Br2011_sou_v <- as.data.frame(do.call(rbind, lapply(Brawand2011_organ_list, getExtOUBr,
+            taxa_obj = x_Br2011_taxa_objects)))
+
+
+        getExtOUDS <- function(organ, taxa_obj) {
 
             sou_v_out <- expdist(taxa_obj, taxa = "all",
                 subtaxa = organ,
@@ -180,23 +262,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                   # Dixon test p-value = 0.04838
             # THA_Stamen-BDY_Stamen was excluded from downstream analysis
 
-            if ((organ == "ts") || (organ == "testis")) {
-
-                sou_v_distance_div <- data.frame(correlation = c(sou_v_distance[2,1], 
-                    mean(as.numeric(c(sou_v_distance[3, c(1:2)]))), 
-                    NA, 
-                    mean(as.numeric(c(sou_v_distance[4, c(1:3)]))), 
-                    mean(as.numeric(c(sou_v_distance[5, c(1:4)]))), 
-                    mean(as.numeric(c(sou_v_distance[6, c(1:5)])))))
-
-                sou_v_distance_error <- data.frame(error = c(NA, 
-                    as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
-                    NA, 
-                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
-                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
-                    as.numeric(c(getError(sou_v_distance[6, c(1:5)])))))
-
-            } else if (organ == "Stamen") {
+            if (organ == "Stamen") {
 
                 sou_v_distance_div <- data.frame(correlation = c(sou_v_distance[2,1], 
                     mean(as.numeric(c(sou_v_distance[3, c(1:2)]))), 
@@ -236,14 +302,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             return(sou_v_distance_div)
         }
 
-
-        Br_sou_v <- as.data.frame(do.call(rbind, lapply(Brawand_organ_list, getExtOU,
-            taxa_obj = x_Br_taxa_objects)))
-
-        Br2011_sou_v <- as.data.frame(do.call(rbind, lapply(Brawand2011_organ_list, getExtOU,
-            taxa_obj = x_Br2011_taxa_objects)))
-
-        DS_sou_v <- as.data.frame(do.call(rbind, lapply(DevSeq_organ_list, getExtOU,
+        DS_sou_v <- as.data.frame(do.call(rbind, lapply(DevSeq_organ_list, getExtOUDS,
             taxa_obj = x_DS_taxa_objects)))
 
     }
@@ -525,7 +584,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         df_cor <- sqrt(1/2*(1 - cor(df, method=coefficient)))
         df_cor <- df_cor[3:nrow(df_cor), ]
 
-        sp1_repl <- c(mean(df_cor[1,1:2]), mean(df_cor[2,1:2])) # Hsa-Ppa Hsa-Ptr
+        sp1_repl <- mean(df_cor[1,1:2]) # Hsa-Ppa
         sp2_repl <- c(mean(df_cor[3,1:2]), mean(df_cor[3,3]), mean(df_cor[3,4])) # Hsa-Ggo Ppa-Ggo Ptr-Ggo
         sp3_repl <- NA # orangutan: no data available
         sp4_repl <- c(mean(df_cor[4:5,1:2]), mean(df_cor[4:5,3]), mean(df_cor[4:5,4]), mean(df_cor[4:5,5])) # Hsa-Mml Ppa-Mml Ptr-Mml Ggo-Mml
