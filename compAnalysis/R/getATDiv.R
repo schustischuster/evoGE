@@ -654,178 +654,16 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     }
 
 
+    # Reshape origibal Brawand data table
+    br11_dataset <- data.frame(dataset = rep("Mammals", 36))
 
-
-#---- Get GE divergence rates for Human vs species X (original data from Brawand 2011 paper)----
-
-
-    # Use pearson correlation, inter-organ normalization and TPM for ms
-
-    getBrBrainCor11 <- function(df, organ, coefficient) {
-
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[5:nrow(df_cor), 1:4]
-
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
-
-        Ptr <- mean(df_cor_rs[1:24,]) # chimp
-        Ppa <- mean(df_cor_rs[25:36,]) # bonobo
-        Ggo <- mean(df_cor_rs[37:44,]) # gorilla
-        Ppy <- mean(df_cor_rs[45:52,]) # orangutan
-        Mml <- mean(df_cor_rs[53:64,]) # macaque
-        Mmu <- mean(df_cor_rs[65:76,]) # mouse
-        Mdo <- mean(df_cor_rs[77:84,]) # opossum
-
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
-
-        return(df_cor_avg)
-
-    }
-
-    brain_div_11 <- getBrBrainCor11(df=x_Br2011[,c(2:5,18:23,33:35,45:46,56:57,65:67,78:80,95:96)], 
-        organ="Brain", coefficient=coefficient)
-
-
-    getBrCerebCor11 <- function(df, organ, coefficient) {
-
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[3:nrow(df_cor), 1:2]
-
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
-
-        Ptr <- mean(df_cor_rs[1:4,]) # chimp
-        Ppa <- mean(df_cor_rs[5:8,]) # bonobo
-        Ggo <- mean(df_cor_rs[9:12,]) # gorilla
-        Ppy <- mean(df_cor_rs[13:14,]) # orangutan
-        Mml <- mean(df_cor_rs[15:18,]) # macaque
-        Mmu <- mean(df_cor_rs[19:24,]) # mouse
-        Mdo <- mean(df_cor_rs[25:28,]) # opossum
-
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
-
-        return(df_cor_avg)
-
-    }
-
-    cereb_div_11 <- getBrCerebCor11(df=x_Br2011[,c(6:7,24:25,36:37,47:48,58,68:69,81:83,97:98)], 
-        organ="Cerebellum", coefficient=coefficient)
-
-
-    getBrHtKdCor11 <- function(df, organ, coefficient) {
-
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[4:nrow(df_cor), 1:3]
-
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
-
-        Ptr <- mean(df_cor_rs[1:6,]) # chimp
-        Ppa <- mean(df_cor_rs[7:12,]) # bonobo
-        Ggo <- mean(df_cor_rs[13:18,]) # gorilla
-        Ppy <- mean(df_cor_rs[19:24,]) # orangutan
-        Mml <- mean(df_cor_rs[25:30,]) # macaque
-        Mmu <- mean(df_cor_rs[31:39,]) # mouse
-        Mdo <- mean(df_cor_rs[40:45,]) # opossum
-
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
-
-        return(df_cor_avg)
-
-    }
-
-    heart_div_11 <- getBrHtKdCor11(df=x_Br2011[,c(8:10,26:27,38:39,49:50,59:60,70:71,84:86,99:100)], 
-        organ="Heart", coefficient=coefficient)
-    kidney_div_11 <- getBrHtKdCor11(df=x_Br2011[,c(11:13,28:29,40:41,51:52,61:62,72:73,87:89,101:102)], 
-        organ="Kidney", coefficient=coefficient)
-
-
-    getBrLvCor11 <- function(df, organ, coefficient) {
-
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[3:nrow(df_cor), 1:2]
-
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
-
-        Ptr <- mean(df_cor_rs[1:4,]) # chimp
-        Ppa <- mean(df_cor_rs[5:8,]) # bonobo
-        Ggo <- mean(df_cor_rs[9:12,]) # gorilla
-        Ppy <- mean(df_cor_rs[13:16,]) # orangutan
-        Mml <- mean(df_cor_rs[17:20,]) # macaque
-        Mmu <- mean(df_cor_rs[21:26,]) # mouse
-        Mdo <- mean(df_cor_rs[27:30,]) # opossum
-
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
-
-        return(df_cor_avg)
-
-    }
-
-    liver_div_11 <- getBrLvCor11(df=x_Br2011[,c(14:15,30:31,42:43,53:54,63:64,74:75,90:92,103:104)], 
-        organ="Liver", coefficient=coefficient)
-
-
-    getBrTestisCor11 <- function(df, organ, coefficient) {
-
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[3:nrow(df_cor), 1:2]
-
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
-
-        Ptr <- mean(df_cor_rs[1:2,]) # chimp
-        Ppa <- mean(df_cor_rs[3:4,]) # bonobo
-        Ggo <- mean(df_cor_rs[5:6,]) # gorilla
-        Ppy <- NA # orangutan: no data available
-        Mml <- mean(df_cor_rs[7:10,]) # macaque
-        Mmu <- mean(df_cor_rs[11:14,]) # mouse
-        Mdo <- mean(df_cor_rs[15:18,]) # opossum
-
-        df_cor_avg <- rbind(Ppa, Ggo, Ppy, Mml, Mmu, Mdo)
-        colnames(df_cor_avg) <- organ
-
-        return(df_cor_avg)
-
-    }
-
-    testis_div_11 <- getBrTestisCor11(df=x_Br2011[,c(16:17,32,44,55,76:77,93:94,105:106)], 
-        organ="Testis", coefficient=coefficient)
-
-    Brawand11_organ_cor <- cbind(brain_div_11, cereb_div_11, heart_div_11, kidney_div_11, 
-        liver_div_11, testis_div_11)
-
-
-    # Reshape data table for ggplot
-    # divergence times are estimated taxon pair times from TimeTree
-    # http://www.timetree.org/
-    div_times <- rep(c(6.7, 9.1, 15.8, 29.4, 90, 159), times=6)
-    comp_organ <- rep(colnames(Brawand11_organ_cor), each=6)
-    comp_spec <- rep(rownames(Brawand11_organ_cor), times=6)
-    dataset <- rep("Mammals", 36)
-
-    Brawand11_GE_div <- rbind(brain_div_11, cereb_div_11, heart_div_11, kidney_div_11, 
-        liver_div_11, testis_div_11)
-    rownames(Brawand11_GE_div) <- NULL
-    colnames(Brawand11_GE_div) <- "correlation"
-
-    Brawand11_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, Brawand11_GE_div, dataset), 
+    Brawand11_div_rates <- data.frame(cbind(Brawand11_organ_cor, br11_dataset, br_div_times), 
         stringsAsFactors=FALSE)
 
-    Brawand11_div_rates$div_times <- as.numeric(Brawand11_div_rates$div_times)
-    Brawand11_div_rates$correlation <- as.numeric(Brawand11_div_rates$correlation)
+    Brawand11_div_rates <- Brawand11_div_rates %>% select(clade, comp_organ, div_times, everything())
 
-    # Remove Orangutan testis (missing data) and Opossum kidney (replicate corr < 0.85) data
+    # Remove Orangutan testis (missing data)
     Brawand11_div_rates <- Brawand11_div_rates[c(-33),]
-
-    Brawand11_div_rates$comp_organ <- factor(Brawand11_div_rates$comp_organ, 
-        levels = unique(Brawand11_div_rates$comp_organ))
-
 
     # Combine DevSeq and Brawand GE divergence data
     compDivRates11 <- rbind(DevSeq_div_rates, Brawand11_div_rates)
@@ -833,238 +671,18 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     if (is.element("TPM", expr_estimation)) {
 
-        Brawand11_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, 
-        Brawand2011_sou_v_div, dataset), stringsAsFactors=FALSE)
+        Brawand11_sou_v_div_rates <- data.frame(cbind(Br2011_sou_v, br11_dataset, br_div_times), 
+            stringsAsFactors=FALSE)
 
-        Brawand11_sou_v_div_rates$div_times <- as.numeric(Brawand11_sou_v_div_rates$div_times)
-        Brawand11_sou_v_div_rates$correlation <- as.numeric(Brawand11_sou_v_div_rates$correlation)
+        Brawand11_sou_v_div_rates <- Brawand11_sou_v_div_rates %>% select(clade, comp_organ, div_times, everything())
 
-        # Remove ppy testis sample (has NA value)
+        # Remove Orangutan testis (missing data)
         Brawand11_sou_v_div_rates <- Brawand11_sou_v_div_rates[c(-33),]
 
-        Brawand11_sou_v_div_rates$comp_organ <- factor(Brawand11_sou_v_div_rates$comp_organ, 
-            levels = unique(Brawand11_sou_v_div_rates$comp_organ))
-
-
-        # Combine DevSeq and Brawand 2011 GE divergence data
+        # Combine DevSeq and Brawand GE divergence data
         compSouVDivRates11 <- rbind(DevSeq_sou_v_div_rates, Brawand11_sou_v_div_rates)
 
-
-        div_times_Br_all <- rep(c(6.7, 9.1, 15.8, 29.4, 90, 159, 177, 312), times=6)
-        comp_organ_all <- rep(colnames(Brawand11_organ_cor), each=8)
-        comp_spec_all <- rep(rownames(Br2011_all_sou_v[1:8,]), times=6)
-        dataset_all <- rep("Mammals", 48)
-
-        Brawand11_all_sou_v_div_rates <- data.frame(cbind(comp_spec_all, comp_organ_all, div_times_Br_all, 
-            Brawand2011_all_sou_v_div, dataset_all), stringsAsFactors=FALSE)
-
-        Brawand11_all_sou_v_div_rates$div_times_Br_all <- as.numeric(Brawand11_all_sou_v_div_rates$div_times_Br_all)
-        Brawand11_all_sou_v_div_rates$correlation <- as.numeric(Brawand11_all_sou_v_div_rates$correlation)
-
-        # Remove ppy testis sample (has NA value)
-        Brawand11_all_sou_v_div_rates <- Brawand11_all_sou_v_div_rates[c(-43),]
-
-        Brawand11_all_sou_v_div_rates$comp_organ_all <- factor(Brawand11_all_sou_v_div_rates$comp_organ_all, 
-            levels = unique(Brawand11_all_sou_v_div_rates$comp_organ_all))
-
     }
-
-
-    # Generate data set with both Brawand data (re-analyzed = "Mammals_DevSeq"; original = "Mammals_Brawand")
-    Brawand_div_rates_comp <- Brawand_div_rates
-    Brawand11_div_rates_comp <- Brawand11_div_rates
-    Brawand_div_rates_comp$dataset[Brawand_div_rates_comp$dataset == 'Mammals'] <- 'Mammals(re-analyzed)'
-    Brawand11_div_rates_comp$dataset[Brawand11_div_rates_comp$dataset == 'Mammals'] <- 'Mammals '
-    compDivRatesBr <- rbind(Brawand_div_rates_comp, Brawand11_div_rates_comp)
-
-    Brawand_sou_v_div_rates_comp <- Brawand_sou_v_div_rates
-    Brawand11_sou_v_div_rates_comp <- Brawand11_sou_v_div_rates
-    Brawand_sou_v_div_rates_comp$dataset <- 'Mammals(re-analyzed)'
-    Brawand11_sou_v_div_rates_comp$dataset <- 'Mammals '
-    compSouVDivRatesBr <- rbind(Brawand_sou_v_div_rates_comp, Brawand11_sou_v_div_rates_comp)
-
-
-
-
-#---------------------------- Test the logarithmic regression model ----------------------------
-
-
-    getModelFormula <- function(model) {
-
-        formula <- as.formula(paste0("y ~ ", round(coefficients(model)[1], 2), "", 
-            paste(sprintf(" %+.2f*%s ", 
-                coefficients(model)[-1], 
-                names(coefficients(model)[-1])), 
-            collapse="")
-            )
-        )
-
-        return(formula)
-    }
-
-
-    DevSeq_log_pea_lm <- lm(correlation ~ log(div_times), data = compDivRates[1:48,])
-    Br_log_pea_lm <- lm(correlation ~ log(div_times), data = compDivRates11[49:nrow(compDivRates),])
-
-    DevSeq_log_pea_lm_form <- getModelFormula(model = DevSeq_log_pea_lm)
-    # y ~ 1.05 - 0.08 * log(div_times)
-    Br_log_pea_lm_form <- getModelFormula(model = Br_log_pea_lm)
-    # y ~ 0.99 - 0.04 * log(div_times)
-
-
-    # log regression model for DevSeq pearson
-    DevSeq_log_pea_lm_form_eq <- function(x) {
-        pea_cor <- 1.04705 - 0.07686 * log(x)
-        return(pea_cor)
-    }
-    # At 8.2e+05 Myr (8.2e+11 years), the DevSeq log regression model would reach a pearson cor of 0
-    # This is 500 times longer than ATH-red algea divergence time
-
-    # log regression model for DevSeq pearson
-    Br_log_pea_lm_form_eq <- function(x) {
-        pea_cor <-  0.99001 - 0.04469 * log(x)
-        return(pea_cor)
-    }
-    # At 4.1e+09 Myr (4.1e+15 years), the Brawand log regression model would reach a pearson cor of 0
-
-
-    # A log model will go to infinite -> check if pearson cor would reach 0 at emergence of plants
-    # divergence times are estimated taxon pair times from TimeTree
-    # http://www.timetree.org/ 
-    # Angiosperms (Basal angiosperm, Amborella; 181)
-    # Spermatophyta (seed plants: angiosperms, gymnosperms; 313)
-    # Euphyllophyta (ferns and seed plants; 402), 
-    # Tracheophyta (vascular plants; 431)
-    # Bryophyta (non-vascular land plants: liverworts, hornworts and mosses; 471)
-    # Charophyta (green algae, e.g. Coleochaetophyceae - one of the closest relatives to land plants; 778)
-    # Chlorophyta (green algae: Chlorophyta and Charophyta/Streptophyta, e.g. volvox sp.; 1150)
-    # Viridiplantae (green plants: 1150)
-    # Rhodophyta (red algea; 1660)
-    div_times_for_DevSeq <- c(7.1, 9.4, 25.6, 46, 106, 160, 181, 313, 402, 431, 471, 778, 1150, 1660)
-    div_times_list_for_DevSeq <- list(div_times_for_DevSeq)
-    species_for_DevSeq <- data.frame(Taxon=c("A.lyrata", "C.rubella", "E.salsugineum", "T.hassleriana", 
-        "M.truncatula", "B.distachyon", "Angiosperms", "Spermatophyta", "Euphyllophyta", "Tracheophyta", 
-        "Bryophyta", "Charophyta", "Chlorophyta", "Rhodophyta"))
-
-
-    estimated_cor_for_DevSeq <- t(as.data.frame(do.call(cbind, lapply(div_times_for_DevSeq, 
-        DevSeq_log_pea_lm_form_eq))))
-    colnames(estimated_cor_for_DevSeq) <- "Estimated_cor"
-    div_times_for_DevSeq <- data.frame(Divergence_time_Myr=div_times_for_DevSeq)
-    DevSeq_log_pea_est <- cbind(div_times_for_DevSeq, species_for_DevSeq, estimated_cor_for_DevSeq)
-
-
-    # Check Brawand sOU model based on GE data for HS to MDO
-    # Compare model predictions with complete Brawand data
-    Br_log_sOU_lm <- lm(correlation ~ log(div_times), data = Brawand11_sou_v_div_rates)
-    Br_log_sOU_lm_form <- getModelFormula(model = Br_log_sOU_lm)
-    # y ~ -0.15 + 0.14 * log(div_times)
-
-    Br_all_log_sOU_lm <- lm(correlation ~ log(div_times_Br_all), data = Brawand11_all_sou_v_div_rates)
-    Br_all_log_sOU_lm_form <- getModelFormula(model = Br_all_log_sOU_lm)
-    # y ~ -0.2 + 0.16 * log(div_times_Br_all)
-
-
-    # log regression model for DevSeq sOU_v
-    Br_log_sOU_lm_form_eq <- function(x) {
-        sOU <- -0.1456 + 0.1429 * log(x)
-        return(sOU)
-    }
-
-    # log regression model for DevSeq sOU_v
-    Br_all_log_sOU_lm_form_eq <- function(x) {
-        sOU <-  -0.2014 + 0.1594 * log(x)
-        return(sOU)
-    }
-
-
-# Predict fit of log model and confidence intervals
-    predictBr.log.sOU <- function(x) {
-
-        log_lm <- predict(Br_log_sOU_lm, data.frame(div_times = x), se.fit = TRUE, 
-            interval = "confidence", level = 0.95)
-
-        log_fit <- log_lm$fit
-        log_fit <- as.data.frame(log_fit)
-        x_data <- data.frame(div_time = x)
-        model_fit <- cbind(x_data, log_fit)
-        names(model_fit)[names(model_fit) == "fit"] <- "sOU_value"
-
-        return(model_fit)
-    }
-
-
-
-    # Generate data based on log regression model that was built with Brawand11
-    # sOU model with variable-µ distance and expression data from 7-150Myr
-    # Use this model to predict transcriptome diostance at 350 Myr, and compare this
-    # with real data from Brawand chicken (gga) ortholog genes
-
-    x_Br_grid <- seq(6.7, 350, length = 250)  ## prediction grid
-    x_Br_grid_list <- list(x_Br_grid)
-
-    # Compute data points based on model
-    Br_regr_pred <- as.data.frame(do.call(rbind, lapply(x_Br_grid, predictBr.log.sOU)))
-
-    gga_ge_div <- rbind(Brawand11_all_sou_v_div_rates[8,], Brawand11_all_sou_v_div_rates[16,], 
-        Brawand11_all_sou_v_div_rates[24,], Brawand11_all_sou_v_div_rates[32,], Brawand11_all_sou_v_div_rates[40,], 
-        Brawand11_all_sou_v_div_rates[47,])
-
-    Br_log_sOU_lm_form_txt <- paste(format(Br_log_sOU_lm_form))
-
-    Br_log_sOU_lm_form_txt <- Br_log_sOU_lm_form_txt %<>% 
-                                   gsub("~", "=", .) %>% 
-                                   gsub("log", "ln", .) %>% 
-                                   gsub("div_times", "x", .)
-
-
-
-    # Make plot with predictive log regression
-    plotDivPredict <- function(data, data2, regr_form) {
-
-      fname <- sprintf('%s.jpg', paste("Br_prediction", sep="_"))
-
-      p <- ggplot(data=data, aes(x=div_time, y=sOU_value)) + 
-      geom_line(size = 3) + 
-      geom_point(data=data2, aes(x=div_times_Br_all, y=correlation), size=5, colour="red") + 
-      geom_ribbon(data=data, aes(ymin = lwr, ymax = upr), alpha=0.14) + 
-      scale_x_continuous(limits = c(2.0, 350), expand = c(0.02,0)) + 
-      scale_y_continuous(limits = c(0, 1.31), expand = c(0.02, 0)) + 
-      geom_text(label = regr_form, x = 101, y = 1.193, color = "black", size=7.4) + 
-      geom_rect(xmin = 12, xmax = 26, ymin = 1.1845, ymax = 1.2, color="black", fill="black", size=0.7) + 
-      geom_rect(xmin = 0, xmax = 159, ymin = 0, ymax = 1.09, color="blue3", fill=NA, size=0.7) + 
-      annotate("text", x = 312, y = 0.137, label= "Mouse", size=8, angle = 90) + 
-      geom_segment(x = 312, xend = 312, y = -0.05, yend = 0.0025, color="black", size=0.7) + 
-      guides(color = guide_legend(ncol = 3))
-
-      q <- p + theme_bw() + xlab("Divergence time from HSA (Myr)") + ylab("Expression distance") + 
-      theme(text=element_text(size=16), 
-        axis.ticks.length=unit(0.35, "cm"), 
-        axis.ticks = element_line(colour = "black", size = 0.95),  
-        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=24.5, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
-            face = "bold"), 
-        axis.title.x = element_text(size=24.5, margin = margin(t = 15.75, r = 0, b = 1, l = 0), colour="black", 
-            face = "bold"), 
-        axis.text.x = element_text(size=21.5, angle=0, margin = margin(t = 5.5), colour="black"), 
-        axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
-        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.2), 
-        panel.border = element_rect(colour = "black", fill=NA, size=1.8), 
-        panel.grid.major = element_blank(),
-        panel.grid.minor.x = element_blank(), 
-        panel.grid.minor.y = element_blank(), 
-        legend.position = c(0.757, 0.888), 
-        legend.title = element_blank(), 
-        legend.text = element_text(size=22.5), 
-        legend.spacing.x = unit(0.5, 'cm'), 
-        legend.key.size = unit(0.95, "cm"), 
-        legend.background=element_blank())  
-
-      ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-        width = 9.5, height = 6.75, dpi = 300, units = c("in"), limitsize = FALSE) 
-    }
-
-    plotDivPredict(data = Br_regr_pred, data2 = gga_ge_div, regr_form = Br_log_sOU_lm_form_txt)
 
 
 
@@ -1098,7 +716,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     names(organ_names_Br) <- "comp_organ"
     names(organ_names_Br11) <- "comp_organ"
     organ_names <- rbind(organ_names_Br, organ_names_Br11)
-    compSouVDivRatesBr_io <- compSouVDivRatesBr
+    compSouVDivRatesBr_io <- rbind(Brawand_sou_v_div_rates, Brawand11_sou_v_div_rates)
     compSouVDivRatesBr_io[,2] <- organ_names
     compSouVDivRatesBr_io$comp_organ <- factor(compSouVDivRatesBr_io$comp_organ)
 
@@ -1184,7 +802,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     p_value_io <- paste("p =", round(p_values_compDivRates_io["Wilcox_test", "log_reg"], 4))
     p_value11_io <- paste("p =", round(p_values_compDivRates11_io["Wilcox_test", "log_reg"], 4))
     p_value_SouVio <- paste("p =", round(p_values_compSouVDivRates_io["Wilcox_test", "log_reg"], 4))
-    p_value11_SouVio <- paste("p =", round(p_values_compSouVDivRates11_io["Wilcox_test", "log_reg"], 3))
+    p_value11_SouVio <- paste("p =", round(p_values_compSouVDivRates11_io["Wilcox_test", "log_reg"], 4))
 
 
 
