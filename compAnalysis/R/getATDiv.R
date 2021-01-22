@@ -654,7 +654,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     }
 
 
-    # Reshape origibal Brawand data table
+    # Reshape original Brawand data table
     br11_dataset <- data.frame(dataset = rep("Mammals", 36))
 
     Brawand11_div_rates <- data.frame(cbind(Brawand11_organ_cor, br11_dataset, br_div_times), 
@@ -665,7 +665,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     # Remove Orangutan testis (missing data)
     Brawand11_div_rates <- Brawand11_div_rates[c(-33),]
 
-    # Combine DevSeq and Brawand GE divergence data
+    # Combine DevSeq and Brawand 2011 GE divergence data
     compDivRates11 <- rbind(DevSeq_div_rates, Brawand11_div_rates)
 
 
@@ -679,7 +679,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         # Remove Orangutan testis (missing data)
         Brawand11_sou_v_div_rates <- Brawand11_sou_v_div_rates[c(-33),]
 
-        # Combine DevSeq and Brawand GE divergence data
+        # Combine DevSeq and Brawand 2011 GE divergence data
         compSouVDivRates11 <- rbind(DevSeq_sou_v_div_rates, Brawand11_sou_v_div_rates)
 
     }
