@@ -998,7 +998,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     p_dat_text <- data.frame(
         label = c(paste("italic('P =')~", formatC(sOU_loess_DevSeq_AT_Br11_wilcox, format = "e", digits = 0))),
         x = c(16.25),
-        y = c(1.475)
+        y = c(1.477)
     )
 
 
@@ -1015,7 +1015,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
             plot_wdt <- 12.535
             plot_hdt <- 8
-            legend_x_pos <- 0.241
+            legend_x_pos <- 0.2427
             legend_y_pos <- 0.914
             linewd <- 3
             point_size <- 5.75
@@ -1048,7 +1048,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       p <- p + geom_line(size = linewd, data = data1[2601:2800,], aes(x = div_times, y = correlation, group = comp_organ, 
         colour = dataset, linetype = dataset)) # plot testis data over angiosperm data for better visibility
       p <- p + scale_x_continuous(limits = c(0,161), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(0.055, 1.588), expand = c(0.02, 0), breaks = c(0.2,0.4,0.6,0.8,1,1.2,1.4)) + 
+      scale_y_continuous(limits = c(0.055, 1.763), expand = c(0.02, 0), breaks = c(0.2,0.4,0.6,0.8,1,1.2,1.4,1.6)) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
       scale_shape_manual(values = shape_scale) + 
@@ -1074,6 +1074,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         legend.text = element_text(size=22), 
         legend.spacing.x = unit(0.5, 'cm'), 
         legend.key.size = unit(0.95, "cm"), 
+        legend.margin = margin(c(5.75,8,5.75,5.75)), 
         legend.background=element_blank()) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
