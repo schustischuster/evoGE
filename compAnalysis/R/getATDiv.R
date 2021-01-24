@@ -906,7 +906,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         poly_deg <- 2
         alpha <- 1
 
-      } # Use quadratic poynomes for all organs except root
+      } # Use quadratic polynomes for all organs except root
 
       temp <- loess.smooth(organ_data$div_times, organ_data$correlation, span = alpha, 
         degree = poly_deg, family="gaussian", evaluation = 200)
@@ -925,7 +925,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     DevSeqSouV_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Slopes)))
     DevSeqSouV_sel_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst_sel, getLOESS.Slopes))) ## hypocotyl slope is 0.00797 instead 0.00934 if BD is left out
     Brawand11SouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Slopes)))
-    sOU_loess_DevSeq_AT_Br11_wilcox <- wilcox.test(as.numeric(unlist(DevSeqSouV_AT_loess_slopes)), as.numeric(unlist(Brawand11SouV_loess_slopes)))$p.value
+    sOU_loess_DevSeq_AT_Br11_wilcox <- wilcox.test(as.numeric(unlist(DevSeqSouV_sel_AT_loess_slopes)), as.numeric(unlist(Brawand11SouV_loess_slopes)))$p.value
 
     BrawandSouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV_organ_lst, getLOESS.Slopes)))
     sOU_loess_Br_Br11_wilcox <- wilcox.test(as.numeric(unlist(Brawand11SouV_loess_slopes)), as.numeric(unlist(BrawandSouV_loess_slopes)))$p.value
