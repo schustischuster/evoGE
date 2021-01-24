@@ -892,21 +892,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
 
-    getLOESS.Slopes <- function(organ_data, data_set) {
+    getLOESS.Slopes <- function(organ_data) {
 
       comp_organ <- unique(organ_data$comp_organ)
 
-      if ((data_set == "selected") && (comp_organ == "Root")) {
-
-        poly_deg <- 1
-        alpha <- 1
-
-      } else if ((data_set == "selected") && (comp_organ == "Hypocotyl")) {
-
-        poly_deg <- 1
-        alpha <- 1
-
-      } else if ((data_set == "complete") && (comp_organ == "Root")) {
+      if (comp_organ == "Root") {
 
         poly_deg <- 1
         alpha <- 1
@@ -932,23 +922,24 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
     # Get LOESS slopes for DevSeq and Brawand data
     # For sOU expression distances
-    DevSeqSouV_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Slopes, data_set="complete")))
-    DevSeqSouV_sel_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst_sel, getLOESS.Slopes, data_set="selected"))) ## hypocotyl slope is 0.00779 instead 0.00758 if BD is left out
-    Brawand11SouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Slopes, data_set="complete")))
+    DevSeqSouV_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Slopes)))
+    DevSeqSouV_sel_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst_sel, getLOESS.Slopes))) ## hypocotyl slope is 0.00797 instead 0.00934 if BD is left out
+    Brawand11SouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Slopes)))
     sOU_loess_DevSeq_AT_Br11_wilcox <- wilcox.test(as.numeric(unlist(DevSeqSouV_AT_loess_slopes)), as.numeric(unlist(Brawand11SouV_loess_slopes)))$p.value
 
-    BrawandSouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV_organ_lst, getLOESS.Slopes, data_set="complete")))
+    BrawandSouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV_organ_lst, getLOESS.Slopes)))
     sOU_loess_Br_Br11_wilcox <- wilcox.test(as.numeric(unlist(Brawand11SouV_loess_slopes)), as.numeric(unlist(BrawandSouV_loess_slopes)))$p.value
 
     # For metric pearson expression distances
-    DevSeq_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseq_organ_lst, getLOESS.Slopes, data_set="complete")))
-    Brawand11_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawand11_organ_lst, getLOESS.Slopes, data_set="complete")))
+    DevSeq_AT_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseq_organ_lst, getLOESS.Slopes)))
+    DevSeq_AT_sel_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseq_organ_lst_sel, getLOESS.Slopes)))
+    Brawand11_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawand11_organ_lst, getLOESS.Slopes)))
 
-    Brawand_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawand_organ_lst, getLOESS.Slopes, data_set="complete")))
+    Brawand_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawand_organ_lst, getLOESS.Slopes)))
 
 
     # Write slope values to csv file
-    DevSeq_slopes <- cbind(DevSeqSouV_AT_loess_slopes, DevSeqSouV_AT_loess_slopes, DevSeq_AT_loess_slopes, DevSeq_AT_loess_slopes)
+    DevSeq_slopes <- cbind(DevSeqSouV_sel_AT_loess_slopes, DevSeqSouV_sel_AT_loess_slopes, DevSeq_AT_loess_slopes, DevSeq_AT_loess_slopes)
     colnames(DevSeq_slopes) <- c("DS_AT_Br11_sOU_loess", "DS_AT_Br_sOU_loess", "DS_AT_Br11_pea_loess", "DS_AT_Br_pea_loess")
     ds_organs <- data.frame(sample = c("Root", "Hypocotyl", "Leaf", "Apex_veg", "Apex_inf", "Flower", "Stamen", "Carpel"))
     DevSeq_slopes <- cbind(ds_organs, DevSeq_slopes)
@@ -1007,7 +998,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     p_dat_text <- data.frame(
         label = c(paste("italic('P =')~", formatC(sOU_loess_DevSeq_AT_Br11_wilcox, format = "e", digits = 0))),
         x = c(16.25),
-        y = c(1.3328)
+        y = c(1.475)
     )
 
 
@@ -1039,10 +1030,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             point_size <- 5
       }
 
-      ds_col <- rep(c("#798dc4"), 48)
+      ds_col <- rep(c("#677ebc"), 48)
       bw_col <- rep(c("red"), 35)
-      col_scale <- c("#798dc4", "red")
-      fill_scale <- c("#798dc4", "red")
+      col_scale <- c("#677ebc", "red")
+      fill_scale <- c("#677ebc", "red")
       col_breaks <- c("Angiosperms ", "Mammals")
       fill_breaks <- c("Angiosperms ", "Mammals")
       shape_scale <- c(16, 17)
@@ -1054,6 +1045,8 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         colour = dataset, linetype = dataset))
       p <- p + geom_point(size = point_size, data = data2, aes(x = div_times, y = correlation, group = comp_organ, 
         colour = dataset, shape = dataset))
+      p <- p + geom_line(size = linewd, data = data1[2601:2800,], aes(x = div_times, y = correlation, group = comp_organ, 
+        colour = dataset, linetype = dataset)) # plot testis data over angiosperm data for better visibility
       p <- p + scale_x_continuous(limits = c(0,161), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
       scale_y_continuous(limits = c(0.055, 1.588), expand = c(0.02, 0), breaks = c(0.2,0.4,0.6,0.8,1,1.2,1.4)) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
@@ -1094,97 +1087,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AT_Br11_slope_p)
 
 
-
-
-   # Make sOU plot of LOESS regression from Brawand11 and Brawand_re-analyzed data for SI
-   makeGlobalBrRegPlot <- function(data, coefficient, expr_estimation, p_value) {
-
-      if (deparse(substitute(data)) == "compSouVDivRatesBr") {
-
-        fname <- sprintf('%s.jpg', paste("Brawand_vs_Brawand_2011_sOU_loess", expr_estimation, sep="_"))
-
-        ymin <- 0.05
-        ymax <- 1.45
-
-        ds_col <- rep(c("red3"), 35)
-        bw_col <- rep(c("red"), 35)
-        col_scale <- c("red", "red3")
-        fill_scale <- c("red", "red3")
-        col_breaks <- c("Mammals ", "Mammals(re-analyzed)")
-        fill_breaks <- c("Mammals ", "Mammals(re-analyzed)")
-        shape_scale <- c(17, 15)
-        linetype_a <- rep("dashed",35)
-        linetype_b <- rep("solid",35)
-        leg_pos_x <- 0.4051
-        leg_pos_y <- 0.9
-
-      } else if (deparse(substitute(data)) == "compSouVDivRates11") {
-
-        fname <- sprintf('%s.jpg', paste("compSouVDivRates11_loess_avg", expr_estimation, sep="_"))
-
-        ymin <- 0.05
-        ymax <- 1.45
-
-        ds_col <- rep(c("#798dc4"), 48)
-        bw_col <- rep(c("red"), 35)
-        col_scale <- c("#798dc4", "red")
-        fill_scale <- c("#798dc4", "red")
-        col_breaks <- c("Angiosperms ", "Mammals")
-        fill_breaks <- c("Angiosperms ", "Mammals")
-        shape_scale <- c(16, 17)
-        linetype_a <- rep("dashed",48)
-        linetype_b <- rep("solid",35)
-        leg_pos_x <- 0.317
-        leg_pos_y <- 0.9
-      }
-
-      fill_col <- c(as.character(ds_col), as.character(bw_col))
-
-      p <- ggplot() 
-      p <- p + geom_smooth(size = 2.5, data = data, span=1, alpha = 0.17, aes(x = div_times, y = correlation, 
-        group = dataset, colour = dataset, linetype = c(linetype_a, linetype_b), fill = fill_col))
-      p <- p + geom_point(size = 5, data = data, aes(x = div_times, y = correlation, group = dataset, 
-        colour = dataset, shape = dataset))
-      p <- p + scale_x_continuous(limits = c(0,160), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(ymin, ymax), expand = c(0.02, 0)) + 
-      scale_color_manual(values = col_scale, breaks = col_breaks) + 
-      scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
-      scale_shape_manual(values = shape_scale) + 
-      scale_size(range = c(0.5, 12)) + 
-      guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"), 
-        linetype="none")
-
-      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Expression distance") + 
-      theme(text=element_text(size=16), 
-        axis.ticks.length=unit(0.35, "cm"), 
-        axis.ticks = element_line(colour = "black", size = 0.7),  
-        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=25, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black"), 
-        axis.title.x = element_text(size=25, margin = margin(t = 14.75, r = 0, b = 2, l = 0), colour="black"), 
-        axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5.5), colour="black"), 
-        axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5.5), colour="black"), 
-        legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=1.0), 
-        panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
-        panel.grid.major = element_line(color="#d5d5d5"),
-        panel.grid.minor.x = element_blank(), 
-        panel.grid.minor.y = element_blank(), 
-        legend.position = c(leg_pos_x, leg_pos_y), 
-        legend.title = element_blank(), 
-        legend.text = element_text(size=22), 
-        legend.spacing.x = unit(0.5, 'cm'), 
-        legend.key.size = unit(0.95, "cm"), 
-        legend.background=element_blank()) 
-
-        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 9.5, height = 6.75, dpi = 300, units = c("in"), limitsize = FALSE) 
-      
-    }
-
-    makeGlobalBrRegPlot(data = compSouVDivRates11, coefficient = coefficient, 
-      expr_estimation = expr_estimation)
-    makeGlobalBrRegPlot(data = compSouVDivRatesBr, coefficient = coefficient, 
-      expr_estimation = expr_estimation)
-
   }
 
 
@@ -1198,18 +1100,18 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
       fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), coefficient, expr_estimation, sep="_"))
 
       if (deparse(substitute(data)) == "Brawand_div_rates") {
-        y_min <- 0.34
-        y_max <- 0.692
-        yseg_min <- 0.24
-        yseg_max <- 0.3418
-        y_text <- 0.3525
+        y_min <- 0.24
+        y_max <- 0.48
+        yseg_min <- 0.14
+        yseg_max <- 0.2415
+        y_text <- 0.25
 
       } else if (deparse(substitute(data)) == "Brawand11_div_rates") {
-        y_min <- 0.20
-        y_max <- 0.71
-        yseg_min <- 0.15
-        yseg_max <- 0.2027
-        y_text <- 0.218
+        y_min <- 0.17
+        y_max <- 0.461
+        yseg_min <- 0.12
+        yseg_max <- 0.1715
+        y_text <- 0.1822
       }
 
       p <- ggplot(data=data, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
