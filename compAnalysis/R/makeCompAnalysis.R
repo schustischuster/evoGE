@@ -433,7 +433,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
             (dataset_id == "Brawand") && is.element("inter-organ", data_norm)) {
 
-            dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:13,20:23,16:17,14:15,18:19,45:47,42:44,24,28:29,25,27,26,30:36,41,40,37:39))
+            dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:13,22:23,20:21,14:19,45:47,42:44,24,29,28,25,26,27,30:36,41,40,37:39))
 
         } else dend_order = TRUE 
 
