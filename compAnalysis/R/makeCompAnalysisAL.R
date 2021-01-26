@@ -101,104 +101,6 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
 
 
-#-------------------- Read taxa objects for DevSeq AL data with replicates --------------------
-
-
-    if (is.element("TPM", expr_estimation)) {
-
-   
-        # Construc taxa object
-        x_DS_AL_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
-            "output", "data", 'x_DS_AL_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
-
-        x_Br2011_taxa_objects = TEconstruct(ExpValueFP = file.path(out_dir, 
-            "output", "data", 'x_Br2011_taxobj_input.txt'), taxa = "all", subtaxa = 'all')
-
-
-        DevSeq_AL_organ_list <- list("Root", "Hypocotyl", "Leaf", "vegApex", "infApex", "Flower", 
-            "Stamen", "Carpel", "Pollen")
-
-        Brawand2011_organ_list <- list("br", "cb", "ht", "kd", "lv", "ts")
-
-
-        # Function to apply extended OU model with dynamic expression optimum ("variable-µ method")
-        getExtOU <- function(organ, taxa_obj, samples) {
-
-            sou_v_out <- expdist(taxa_obj, taxa = "all",
-                subtaxa = organ,
-                method = "sou_v")
-
-            sou_v_pi <- sou_v_out$pi
-            sou_v_distance <- as.data.frame(sou_v_out$distance)
-            sou_v_distance_div <- as.data.frame(sou_v_distance[,1])
-            sou_v_distance_div <- rbind(sou_v_distance_div, sou_v_pi)
-
-            spec_id <- c(sub("\\_.*", "", rownames(sou_v_distance)), "pi")
-            organ_id <- unique(sub(".*_", "", rownames(sou_v_distance)))
-
-            if ((organ_id == "ts") && (samples == "sel")) {
-
-                ppy_testis <- "NA"
-                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], ppy_testis, 
-                    sou_v_distance_div[4:7,]), stringsAsFactors = FALSE)
-                spec_id <- c("hsa", "ppa", "ggo", "ppy", "mml", "mmu", "mdo", "pi")
-            
-            } 
-
-            if ((organ_id == "ts") && (samples == "all")) {
-
-                ppy_testis <- "NA"
-                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], ppy_testis, 
-                    sou_v_distance_div[4:9,]), stringsAsFactors = FALSE)
-                spec_id <- c("hsa", "ppa", "ggo", "ppy", "mml", "mmu", "mdo", "oan", "gga", "pi")
-
-            }
-
-            if (organ_id == "testis") {
-
-                Orangutan_testis <- "NA"
-                sou_v_distance_div <- as.data.frame(c(sou_v_distance_div[1:3,], Orangutan_testis, 
-                    sou_v_distance_div[4:7,]), stringsAsFactors = FALSE)
-                spec_id <- c("Human", "Bonobo", "Gorilla", "Orangutan", "Macaque", "Mouse", 
-                    "Opossum", "pi")
-            }
-
-            rownames(sou_v_distance_div) <- spec_id
-            colnames(sou_v_distance_div) <- organ_id
-
-            return(sou_v_distance_div)
-        }
-
-
-        DS_AL_sou_v <- as.data.frame(do.call(cbind, lapply(DevSeq_AL_organ_list, getExtOU,
-            taxa_obj = x_DS_AL_taxa_objects)))
-        rows_to_remove_DS_AL <- "ALY"
-        DS_AL_sou_v <- DS_AL_sou_v[!(row.names(DS_AL_sou_v) %in% rows_to_remove_DS_AL), ]
-
-
-        Br2011_sou_v <- as.data.frame(do.call(cbind, lapply(Brawand2011_organ_list, getExtOU,
-            taxa_obj = x_Br2011_taxa_objects, samples = "sel")))
-        rows_to_remove_Br2011 <- "hsa"
-        Br2011_sou_v <- Br2011_sou_v[!(row.names(Br2011_sou_v) %in% rows_to_remove_Br2011), ]
-        Br2011_sou_v$ts <- suppressWarnings(as.numeric(Br2011_sou_v$ts))
-
-
-
-        # Reshape data for ggplot2
-        DevSeq_AL_sou_v_div <- as.data.frame(c(DS_AL_sou_v[1:6, 1], DS_AL_sou_v[1:6, 2], 
-          DS_AL_sou_v[1:6, 3], DS_AL_sou_v[1:6, 4], DS_AL_sou_v[1:6, 5], 
-          DS_AL_sou_v[1:6, 6], DS_AL_sou_v[1:6, 7], DS_AL_sou_v[1:6, 8]))
-        colnames(DevSeq_AL_sou_v_div) <- "correlation"
-
-        Brawand2011_sou_v_div <- as.data.frame(c(Br2011_sou_v[1:6, 1], Br2011_sou_v[1:6, 2], 
-            Br2011_sou_v[1:6, 3], Br2011_sou_v[1:6, 4], Br2011_sou_v[1:6, 5], Br2011_sou_v[1:6, 6]))
-        colnames(Brawand2011_sou_v_div) <- "correlation"
-
-    }
-
-
-
-
 #---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
 
 
@@ -217,37 +119,36 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
          df_cor <- cor(df, method=coefficient)
          df_cor <- df_cor[4:nrow(df_cor), 1:3]
 
-         # Reshape cor data frame to one column
-         df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
-
          getError <- function(cor_data) {
-            sd <- sd(cor_data)
-            error <- qt(0.975, df = 9-1) * sd/sqrt(9)
+            std <- sd(cor_data)
+            n_value <- length(cor_data)
+            error <- qt(0.995, df = n_value-1) * std/sqrt(n_value)
+            return(error)
          }
 
-         sp1 <- mean(df_cor_rs[1:9,])
-         sp1_li <- sp1 - getError(df_cor_rs[1:9,])
-         sp1_ri <- sp1 + getError(df_cor_rs[1:9,])
+         sp1 <- mean(c(df_cor[1:3,]))
+         sp1_li <- sp1 - getError(c(df_cor[1:3,]))
+         sp1_ri <- sp1 + getError(c(df_cor[1:3,]))
 
-         sp2 <- mean(df_cor_rs[10:18,])
-         sp2_li <- sp2 - getError(df_cor_rs[10:18,])
-         sp2_ri <- sp2 + getError(df_cor_rs[10:18,])
+         sp2 <- mean(c(df_cor[4:6,]))
+         sp2_li <- sp2 - getError(c(df_cor[4:6,]))
+         sp2_ri <- sp2 + getError(c(df_cor[4:6,]))
 
-         sp3 <- mean(df_cor_rs[19:27,])
-         sp3_li <- sp3 - getError(df_cor_rs[19:27,])
-         sp3_ri <- sp3 + getError(df_cor_rs[19:27,])
+         sp3 <- mean(c(df_cor[7:9,]))
+         sp3_li <- sp3 - getError(c(df_cor[7:9,]))
+         sp3_ri <- sp3 + getError(c(df_cor[7:9,]))
 
-         sp4 <- mean(df_cor_rs[28:36,])
-         sp4_li <- sp4 - getError(df_cor_rs[28:36,])
-         sp4_ri <- sp4 + getError(df_cor_rs[28:36,])
+         sp4 <- mean(c(df_cor[10:12,]))
+         sp4_li <- sp4 - getError(c(df_cor[10:12,]))
+         sp4_ri <- sp4 + getError(c(df_cor[10:12,]))
 
-         sp5 <- mean(df_cor_rs[37:45,])
-         sp5_li <- sp5 - getError(df_cor_rs[37:45,])
-         sp5_ri <- sp5 + getError(df_cor_rs[37:45,])
+         sp5 <- mean(c(df_cor[13:15,]))
+         sp5_li <- sp5 - getError(c(df_cor[13:15,]))
+         sp5_ri <- sp5 + getError(c(df_cor[13:15,]))
 
-         sp6 <- mean(df_cor_rs[46:54,])
-         sp6_li <- sp6 - getError(df_cor_rs[46:54,])
-         sp6_ri <- sp6 + getError(df_cor_rs[46:54,])
+         sp6 <- mean(c(df_cor[16:18,]))
+         sp6_li <- sp6 - getError(c(df_cor[16:18,]))
+         sp6_ri <- sp6 + getError(c(df_cor[16:18,]))
 
          df_cor_avg <- rbind(sp1, sp2, sp3, sp4, sp5, sp6)
          colnames(df_cor_avg) <- organ
@@ -303,92 +204,58 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       
       # Change order of organs in df
       DevSeq_AL_div <- DevSeq_AL_div[c(7:12,37:42,31:36,1:6,19:30,43:48,13:18,49:54),]
-      DevSeq_AL_div_rates_wo_pollen <- DevSeq_AL_div[1:48,]
+      DevSeq_AL_div_rates <- DevSeq_AL_div[1:54,]
       DevSeq_AL_div_rates_pollen <- DevSeq_AL_div[49:54,]
-      DevSeq_AL_div_rates_wo_pollen$comp_organ <- factor(DevSeq_AL_div_rates_wo_pollen$comp_organ, 
-        levels = unique(DevSeq_AL_div_rates_wo_pollen$comp_organ))
+      DevSeq_AL_div_rates$comp_organ <- factor(DevSeq_AL_div_rates$comp_organ, 
+        levels = unique(DevSeq_AL_div_rates$comp_organ))
       DevSeq_AL_div_rates_pollen$comp_organ <- factor(DevSeq_AL_div_rates_pollen$comp_organ, 
         levels = unique(DevSeq_AL_div_rates_pollen$comp_organ))
 
       
 
       # Make GE divergence plot
-      makeGEDivPlot <- function(data1, data2, plot_title, coefficient, pos) {
+      makeGEDivPlot <- function(data1, data2, plot_title, coefficient) {
 
-        if (pos == "main") {
-
-            fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, expr_estimation, pos, sep="_"))
-            plot_wdt <- 12.535
-            plot_hdt <- 8
-            legend_x_pos <- 0.723
-            legend_y_pos <- 0.88
-            legend_key_s <- 0.95
-            linewd <- 3.1
-            brass_label <- "Brassicaceae"
-            text_x1_pos <- 19.5
-            text_x4_pos <- 158.6
-            text_y_pos <- 0.46225
-            x_poll_pos <- 147.47
-            y_poll_pos <- 0.82875
-            leg_ln_s1_x <- 135.55
-            leg_ln_s1_xend <- 137.25
-            leg_ln_s2_x <- 138.3
-            leg_ln_s2_xend <- 139.975
-            leg_ln_s_y <- 0.82875
-            leg_box_bd <- 1.0
-            pan_boarder <- 1.75
-            axis_txt_size <- 21.25
-            axis_ticks_s <- 0.7
-            title_face <- "plain"
-
-        } else {
-
-            fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, expr_estimation, pos, sep="_"))
-            plot_wdt <- 9.5 # condenced plot width for suppl
-            plot_hdt <- 6.75 # condenced plot width for suppl
-            legend_x_pos <- 0.638
-            legend_y_pos <- 0.862
-            legend_key_s <- 0.9
-            linewd <- 2.6
-            brass_label <- "Brassiceae"
-            text_x1_pos <- 22
-            text_x4_pos <- 157
-            text_y_pos <- 0.46525
-            x_poll_pos <- 145.8
-            y_poll_pos <- 0.81525
-            leg_ln_s1_x <- 129.45
-            leg_ln_s1_xend <- 131.7
-            leg_ln_s2_x <- 133.15
-            leg_ln_s2_xend <- 135.4
-            leg_ln_s_y <- 0.8155
-            leg_box_bd <- 0
-            pan_boarder <- 1.8
-            axis_txt_size <- 21.75
-            axis_ticks_s <- 0.95
-            title_face <- "bold"
-        }
-
-        
+        fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, expr_estimation, "ext", sep="_"))
+        plot_wdt <- 9.5 # condenced plot width for suppl
+        plot_hdt <- 6.75 # condenced plot width for suppl
+        legend_x_pos <- 0.638
+        legend_y_pos <- 0.862
+        legend_key_s <- 0.9
+        linewd <- 2.6
+        brass_label <- "Brassiceae"
+        text_x1_pos <- 22
+        text_x4_pos <- 157
+        text_y_pos <- 0.46525
+        x_poll_pos <- 145.8
+        y_poll_pos <- 0.81525
+        leg_ln_s1_x <- 129.45
+        leg_ln_s1_xend <- 131.7
+        leg_ln_s2_x <- 133.15
+        leg_ln_s2_xend <- 135.4
+        leg_ln_s_y <- 0.8155
+        leg_box_bd <- 0
+        pan_boarder <- 1.8
+        axis_txt_size <- 21.75
+        axis_ticks_s <- 0.95
+        title_face <- "bold"
 
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
         geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
             linetype = 0, show.legend = FALSE) + 
         scale_fill_manual(values = c("Hypocotyl  "="#53b0db", "Stamen  "="#ee412e", "Flower  "="#e075af", 
                 "Root  "="#6a54a9", "Apex veg  "="#96ba37", "Apex inf  "="#fad819", "Carpel  "="#f2a72f", 
-                "Leaf  "="#2c8654")) + 
+                "Leaf  "="#2c8654", "Pollen  "="#a63126")) + 
         geom_line(size = linewd) +  
         scale_x_continuous(limits = c(5.5,161.5), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.4425, 0.907), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
-            "#f2a72f", "#2c8654"), 
+            "#f2a72f", "#2c8654", "#a63126"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
             breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
-                "Stamen  ", "Carpel  ")) + 
-        geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
+                "Stamen  ", "Carpel  ", "Pollen  ")) + 
+        geom_line(aes(x=div_times, y=correlation), data=data2, color = "white", lty = "22", 
             lwd = linewd) + # pollen
-        annotate("text", x=x_poll_pos, y=y_poll_pos, label= "Pollen", size=7.56) + 
-        geom_segment(x=leg_ln_s1_x, xend=leg_ln_s1_xend, y=leg_ln_s_y, yend=leg_ln_s_y, color="#a63126", size=linewd) + 
-        geom_segment(x=leg_ln_s2_x, xend=leg_ln_s2_xend, y=leg_ln_s_y, yend=leg_ln_s_y, color="#a63126", size=linewd) + 
         geom_segment(x=156.75, xend=156.75, y=0.4475, yend=0.4775, color="white", size=12.5) + 
         annotate("text", x=text_x1_pos, y=text_y_pos, label= brass_label, size=8) + 
         annotate("text", x=46, y=text_y_pos, label= "TH", size=8) + 
@@ -429,10 +296,8 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
             width = plot_wdt, height = plot_hdt, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
-      makeGEDivPlot(data1 = DevSeq_AL_div_rates_wo_pollen, data2 = DevSeq_AL_div_rates_pollen, 
-        coefficient = coefficient, pos = "main")
-      makeGEDivPlot(data1 = DevSeq_AL_div_rates_wo_pollen, data2 = DevSeq_AL_div_rates_pollen, 
-        coefficient = coefficient, pos = "ext")
+      makeGEDivPlot(data1 = DevSeq_AL_div_rates, data2 = DevSeq_AL_div_rates_pollen, 
+        coefficient = coefficient)
 
 
 
