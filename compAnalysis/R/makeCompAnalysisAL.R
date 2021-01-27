@@ -254,7 +254,9 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
             breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ", "Pollen  ")) + 
-        geom_line(aes(x=div_times, y=correlation), data=data2, color = "white", lty = "22", 
+        geom_line(aes(x=div_times, y=correlation), data=data2, color = "white", lty = "solid", 
+            lwd = linewd) + # pollen
+        geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
             lwd = linewd) + # pollen
         geom_segment(x=156.75, xend=156.75, y=0.4475, yend=0.4775, color="white", size=12.5) + 
         annotate("text", x=text_x1_pos, y=text_y_pos, label= brass_label, size=8) + 
