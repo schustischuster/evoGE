@@ -304,156 +304,6 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
 
 
-#------- Get pearson dist and reshape pearson dist and sOU data for regression analysis --------
-
-
-      # Use pearson correlation, inter-organ normalization and TPM for ms
-
-      getDSOrganCor <- function(df, organ, coefficient) {
-
-        # log-transform data if TPM and Pearson are chosen
-        if ((coefficient == "pearson") && (expr_estimation == "TPM")) {
-            df <- log2(df + 1)
-        }
-
-        df_cor <- sqrt(1 - cor(df, method=coefficient))
-        df_cor <- df_cor[4:nrow(df_cor), 1:3]
-
-        # Reshape cor data frame to one column
-        df_cor_rs <- data.frame(newcol = c(t(df_cor)), stringsAsFactors=FALSE)
-
-        sp1 <- mean(df_cor_rs[1:9,])
-        sp2 <- mean(df_cor_rs[10:18,])
-        sp3 <- mean(df_cor_rs[19:27,])
-        sp4 <- mean(df_cor_rs[28:36,])
-        sp5 <- mean(df_cor_rs[37:45,])
-        sp6 <- mean(df_cor_rs[46:54,])
-
-        df_cor_avg <- rbind(sp1, sp2, sp3, sp4, sp5, sp6)
-        colnames(df_cor_avg) <- organ
-
-        getRowNames = function(x,n){ substring(x,nchar(x)-n+1) }
-        row_names_repl <- getRowNames(rownames(df_cor),2)
-        rnames_div_rates <- unique(row_names_repl)
-        rownames(df_cor_avg) <- rnames_div_rates
-
-        return(df_cor_avg)
-
-      }
-
-      root_div <- getDSOrganCor(df=x[,2:22], organ="Root", coefficient=coefficient)
-      hypocotyl_div <- getDSOrganCor(df=x[,23:43], organ="Hypocotyl", coefficient=coefficient)
-      leaf_div <- getDSOrganCor(df=x[,44:64], organ="Leaf", coefficient=coefficient)
-      veg_apex_div <- getDSOrganCor(df=x[,65:85], organ="Apex veg", coefficient=coefficient)
-      inf_apex_div <- getDSOrganCor(df=x[,86:106], organ="Apex inf", coefficient=coefficient)
-      flower_div <- getDSOrganCor(df=x[,107:127], organ="Flower", coefficient=coefficient)
-      stamen_div <- getDSOrganCor(df=x[,128:148], organ="Stamen", coefficient=coefficient)
-      carpel_div <- getDSOrganCor(df=x[,149:169], organ="Carpel", coefficient=coefficient)
-
-      DevSeq_AL_organ_cor <- cbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
-        flower_div, stamen_div, carpel_div)
-
-
-      # Reshape data table for ggplot
-      # divergence times are estimated taxon pair times from TimeTree
-      # http://www.timetree.org/
-      div_times <- rep(c(7.1, 9.4, 25.6, 46, 106, 160), times=8)
-      comp_organ <- rep(colnames(DevSeq_AL_organ_cor), each=6)
-      comp_spec <- rep(rownames(DevSeq_AL_organ_cor), times=8)
-      dataset <- rep("Angiosperms ", 48)
-
-      DevSeq_AL_GE_dist <- rbind(root_div, hypocotyl_div, leaf_div, veg_apex_div, inf_apex_div, 
-        flower_div, stamen_div, carpel_div)
-      rownames(DevSeq_AL_GE_dist) <- NULL
-      colnames(DevSeq_AL_GE_dist) <- "correlation"
-
-      DevSeq_AL_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, DevSeq_AL_GE_dist, dataset), 
-        stringsAsFactors=FALSE)
-
-      DevSeq_AL_div_rates$div_times <- as.numeric(DevSeq_AL_div_rates$div_times)
-      DevSeq_AL_div_rates$correlation <- as.numeric(DevSeq_AL_div_rates$correlation)
-
-      DevSeq_AL_div_rates$comp_organ <- factor(DevSeq_AL_div_rates$comp_organ, 
-        levels = unique(DevSeq_AL_div_rates$comp_organ))
-
-      Brawand11_div_rates <- compDivRates11[compDivRates11$dataset == "Mammals", ]
-      compDivRates11_AL <- rbind(DevSeq_AL_div_rates, Brawand11_div_rates)
-      compDivRates11_AL$dataset <- factor(compDivRates11_AL$dataset)
-      compDivRates11_AL$comp_organ <- factor(compDivRates11_AL$comp_organ, 
-        levels = unique(compDivRates11_AL$comp_organ))
-
-
-      # Reshape DevSeq AL sOU expression data
-      DevSeq_AL_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, DevSeq_AL_sou_v_div, dataset), 
-        stringsAsFactors=FALSE)
-
-      DevSeq_AL_sou_v_div_rates$div_times <- as.numeric(DevSeq_AL_sou_v_div_rates$div_times)
-      DevSeq_AL_sou_v_div_rates$correlation <- as.numeric(DevSeq_AL_sou_v_div_rates$correlation)
-
-      DevSeq_AL_sou_v_div_rates$comp_organ <- factor(DevSeq_AL_sou_v_div_rates$comp_organ, 
-        levels = unique(DevSeq_AL_sou_v_div_rates$comp_organ))
-
-
-
-      # Reshape Brawand sOU expression data
-      div_times <- rep(c(6.7, 9.1, 15.8, 29.4, 90, 159), times=6)
-      comp_organ <- rep(colnames(Br2011_sou_v), each=6)
-      comp_spec <- rep(rownames(Br2011_sou_v[1:6,]), times=6)
-      dataset <- rep("Mammals", 36)
-
-      Brawand11_sou_v_div_rates <- data.frame(cbind(comp_spec, comp_organ, div_times, 
-      Brawand2011_sou_v_div, dataset), stringsAsFactors=FALSE)
-
-      Brawand11_sou_v_div_rates$div_times <- as.numeric(Brawand11_sou_v_div_rates$div_times)
-      Brawand11_sou_v_div_rates$correlation <- as.numeric(Brawand11_sou_v_div_rates$correlation)
-
-      # Remove ppy testis sample (has NA value)
-      Brawand11_sou_v_div_rates <- Brawand11_sou_v_div_rates[c(-33),]
-
-      Brawand11_sou_v_div_rates$comp_organ <- factor(Brawand11_sou_v_div_rates$comp_organ, 
-        levels = unique(Brawand11_sou_v_div_rates$comp_organ))
-
-
-      # Combine DevSeq and Brawand 2011 GE divergence data
-      compSouVDivRates11_AL <- rbind(DevSeq_AL_sou_v_div_rates, Brawand11_sou_v_div_rates)
-
-
-
-
-#------------------------------ Get slopes of DevSeq AL log model ------------------------------
-
-
-      # Retrieve slope value from individual organ regressions and compute p value
-      getLogReg <- function(corrdata) {
-
-        model_var <- correlation ~ log(div_times) * comp_organ #linear regression with log-x-transform
-
-        model_lmp = lm(model_var, data = corrdata)
-
-        div_trend <- lstrends(model_lmp, "comp_organ", var = "div_times") # get slopes for regressions
-        div_trend_df <- summary(div_trend)
-
-        slopes <- as.data.frame(div_trend_df[,2])
-        colnames(slopes) <- "log_reg"
-        rownames(slopes) <- div_trend_df[,1]
-
-        return(slopes)
-      }
-
-
-      # Get organ slopes and p-values
-      p_values_compDivRates_AL_io <- getLogReg(DevSeq_AL_div_rates)
-      colnames(p_values_compDivRates_AL_io) <- "DS_AL_pea_log"
-      p_values_compSouVDivRates_AL_io <- getLogReg(DevSeq_AL_sou_v_div_rates)
-      colnames(p_values_compSouVDivRates_AL_io) <- "DS_AL_sOU_log"
-
-      sample <- rownames(p_values_compDivRates_AL_io)
-      sample <- gsub(" ", "_", sample)
-      DevSeq_AL_log_slopes <- cbind(sample, p_values_compSouVDivRates_AL_io, p_values_compDivRates_AL_io)
-      rownames(DevSeq_AL_log_slopes) <- NULL
-
-
-
 #---- Apply non-linear regression to sOU and pearson dist expression data and compare slopes -----
 
 # Non-linear regression using negative exponential law fit: pairwise expression differences
@@ -479,73 +329,24 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
         a = 0.3, b = 0.5, c = -0.01), data = compDivRates11_AL[1:6,])
       # m # get the optimized parameters
 
-      # Get fit for data from compDivRates11_AL
-      DS_AL_pea_dist_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.32500, b = 0.59927, c = -0.02501))) # compDivRates11_AL[1:6, ]
-      DS_AL_pea_dist_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.33077, b = 0.67137, c = -0.02239))) # compDivRates11_AL[7:12, ]
-      DS_AL_pea_dist_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31534, b = 0.67461, c = -0.01061))) # compDivRates11_AL[13:18, ]
-      DS_AL_pea_dist_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30784, b = 0.60339, c = -0.02468))) # compDivRates11_AL[19:24, ]
-      DS_AL_pea_dist_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.3054, b = 0.5935, c = -0.0254))) # compDivRates11_AL[25:30, ]
-      DS_AL_pea_dist_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31381, b = 0.60632, c = -0.03051))) # compDivRates11_AL[31:36, ]
-      DS_AL_pea_dist_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.34969, b = 0.66253, c = -0.02221))) # compDivRates11_AL[37:42, ]
-      DS_AL_pea_dist_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30708, b = 0.60315, c = -0.02313))) # compDivRates11_AL[43:48, ]
-
-      DS_AL_pea_dist_nl_list <- list(DS_AL_pea_dist_root_nl=DS_AL_pea_dist_root_nl,
-        DS_AL_pea_dist_hypo_nl=DS_AL_pea_dist_hypo_nl, DS_AL_pea_dist_leaf_nl=DS_AL_pea_dist_leaf_nl, 
-        DS_AL_pea_dist_apex_veg_nl=DS_AL_pea_dist_apex_veg_nl, DS_AL_pea_dist_apex_inf_nl=DS_AL_pea_dist_apex_inf_nl, 
-        DS_AL_pea_dist_flower_nl=DS_AL_pea_dist_flower_nl, DS_AL_pea_dist_stamen_nl=DS_AL_pea_dist_stamen_nl, 
-        DS_AL_pea_dist_carpel_nl=DS_AL_pea_dist_carpel_nl)
-
-
-      # Get fit for data from DevSeq_AL_sou_v_div_rates
-      DS_AL_sOU_v_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.16634, b = 1.12767, c = -0.01725))) # DevSeq_AL_sou_v_div_rates[1:6, ]
-      DS_AL_sOU_v_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.14438, b = 1.75679, c = -0.01316))) # DevSeq_AL_sou_v_div_rates[7:12, ]
-      DS_AL_sOU_v_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.19, b = 9.29, c = -0.00075))) # DevSeq_AL_sou_v_div_rates[13:18,]
-      DS_AL_sOU_v_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.13112, b = 1.14828, c = -0.01772))) # DevSeq_AL_sou_v_div_rates[19:24, ]
-      DS_AL_sOU_v_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.15574, b = 1.14245, c = -0.01598))) # DevSeq_AL_sou_v_div_rates[25:30, ]
-      DS_AL_sOU_v_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.17451, b = 1.22147, c = -0.01689))) # DevSeq_AL_sou_v_div_rates[31:36, ]
-      DS_AL_sOU_v_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.233142, b = 1.907211, c = -0.008923))) # DevSeq_AL_sou_v_div_rates[37:42, ]
-      DS_AL_sOU_v_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.16557, b = 1.25133, c = -0.01257))) # DevSeq_AL_sou_v_div_rates[43:48, ]
-
-      DS_AL_sOU_v_nl_list <- list(DS_AL_sOU_v_root_nl=DS_AL_sOU_v_root_nl,
-        DS_AL_sOU_v_hypo_nl=DS_AL_sOU_v_hypo_nl, DS_AL_sOU_v_leaf_nl=DS_AL_sOU_v_leaf_nl, 
-        DS_AL_sOU_v_apex_veg_nl=DS_AL_sOU_v_apex_veg_nl, DS_AL_sOU_v_apex_inf_nl=DS_AL_sOU_v_apex_inf_nl, 
-        DS_AL_sOU_v_flower_nl=DS_AL_sOU_v_flower_nl, DS_AL_sOU_v_stamen_nl=DS_AL_sOU_v_stamen_nl, 
-        DS_AL_sOU_v_carpel_nl=DS_AL_sOU_v_carpel_nl)
-
 
       # Get fit for data from compDivRates11 (AT)
       DS_AT_pea_dist_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31170, b = 0.62013, c = -0.02139))) # compDivRates11[1:6, ]
+        nl_model, a = 0.22559, b = 0.43214, c = -0.02308))) # compDivRates11[1:6, ]
       DS_AT_pea_dist_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.32112, b = 0.66913, c = -0.01803))) # compDivRates11[7:12, ]
+        nl_model, a = 0.23702, b = 0.48283, c = -0.01718))) # compDivRates11[7:12, ]
       DS_AT_pea_dist_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30526, b = 0.64073, c = -0.01144))) # compDivRates11[13:18, ]
+        nl_model, a = 0.21827, b = 0.46071, c = -0.01101))) # compDivRates11[13:18, ]
       DS_AT_pea_dist_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29865, b = 0.59313, c = -0.02171))) # compDivRates11[19:24, ]
+        nl_model, a = 0.21392, b = 0.42240, c = -0.02446))) # compDivRates11[19:24, ]
       DS_AT_pea_dist_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.2916, b = 0.5787, c = -0.0234))) # compDivRates11[25:30, ]
+        nl_model, a = 0.21304, b = 0.41412, c = -0.02389))) # compDivRates11[25:30, ]
       DS_AT_pea_dist_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.30268, b = 0.58528, c = -0.03041))) # compDivRates11[31:36, ]
+        nl_model, a = 0.21738, b = 0.43576, c = -0.02739))) # compDivRates11[31:36, ]
       DS_AT_pea_dist_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.31257, b = 0.65557, c = -0.02639))) # compDivRates11[37:42, ]
+        nl_model, a = 0.23374, b = 0.47328, c = -0.02325))) # compDivRates11[37:42, ]
       DS_AT_pea_dist_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, 
-        nl_model, a = 0.29832, b = 0.60049, c = -0.01933))) # compDivRates11[43:48, ]
+        nl_model, a = 0.2123, b = 0.4342, c = -0.0208))) # compDivRates11[43:48, ]
 
       DS_AT_pea_dist_nl_list <- list(DS_AT_pea_dist_root_nl=DS_AT_pea_dist_root_nl,
         DS_AT_pea_dist_hypo_nl=DS_AT_pea_dist_hypo_nl, DS_AT_pea_dist_leaf_nl=DS_AT_pea_dist_leaf_nl, 
@@ -556,21 +357,21 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from compSouVDivRates11 (AT)
       DS_AT_sOU_v_root_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.10680, b = 1.22533, c = -0.01696))) # compSouVDivRates11[1:6, ]
+        a = 0.13873, b = 1.19261, c = -0.01683))) # compSouVDivRates11[1:6, ]
       DS_AT_sOU_v_hypo_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.186767, b = 2.283662, c = -0.006047))) # compSouVDivRates11[7:12, ]
+        a = 0.233979, b = 4.567626, c = -0.002489))) # compSouVDivRates11[7:12, ]
       DS_AT_sOU_v_leaf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.17, b = 8.47, c = -0.000758))) # compSouVDivRates11[13:18, ]
+        a = 0.178, b = 8.698, c = -0.000758))) # compSouVDivRates11[13:18, ]
       DS_AT_sOU_v_apex_veg_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.13551, b = 1.09286, c = -0.01505))) # compSouVDivRates11[19:25, ]
+        a = 0.13038, b = 1.11839, c = -0.01728))) # compSouVDivRates11[19:24, ]
       DS_AT_sOU_v_apex_inf_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.10593, b = 1.00517, c = -0.01783))) # compSouVDivRates11[26:30, ]
+        a = 0.14499, b = 1.07888, c = -0.01609))) # compSouVDivRates11[25:30, ]
       DS_AT_sOU_v_flower_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.15118, b = 1.05525, c = -0.01896))) # compSouVDivRates11[31:36, ]
+        a = 0.15837, b = 1.34561, c = -0.01447))) # compSouVDivRates11[31:36, ]
       DS_AT_sOU_v_stamen_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.04578, b = 1.43109, c = -0.02214))) # compSouVDivRates11[37:42, ]
+        a = 0.13809, b = 1.61684, c = -0.01508))) # compSouVDivRates11[37:42, ]
       DS_AT_sOU_v_carpel_nl <- as.data.frame(do.call(rbind, lapply(x_DS_grid, nl_model, 
-        a = 0.175205, b = 1.451090, c = -0.007547))) # compSouVDivRates11[43:48, ]
+        a = 0.165474, b = 1.489164, c = -0.008982))) # compSouVDivRates11[43:48, ]
 
       DS_AT_sOU_v_nl_list <- list(DS_AT_sOU_v_root_nl=DS_AT_sOU_v_root_nl,
         DS_AT_sOU_v_hypo_nl=DS_AT_sOU_v_hypo_nl, DS_AT_sOU_v_leaf_nl=DS_AT_sOU_v_leaf_nl, 
