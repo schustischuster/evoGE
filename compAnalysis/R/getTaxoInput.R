@@ -95,7 +95,7 @@ getTaxoInput <- function() {
     colnames(x_Br2011_tbj) <- x_Br2011_taxa_object_names
 
 
-    # Remove Pan troglodytes (chimp) samples
+    # Remove platypus and chicken samples
     x_Br2011_sel_tbj <- subset(x_Br2011_tbj, select = -c(oan_br_M1, oan_br_F1, 
         oan_cb_M1, oan_cb_F1, oan_ht_M1, oan_ht_F1, oan_kd_M1, oan_kd_F1, oan_lv_M1, 
         oan_lv_F1, oan_ts_M3, oan_ts_M2, oan_ts_M1, gga_br_M1, gga_br_F1, gga_cb_M1, 
