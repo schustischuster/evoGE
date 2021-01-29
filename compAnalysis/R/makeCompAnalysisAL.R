@@ -382,17 +382,17 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from Brawand11_sou_v_div_rates
       Br11_sOU_v_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.088024, b = 1.316801, c = -0.002073))) # Brawand11_sou_v_div_rates[1:6, ]
+        a = 0.084866, b = 0.745355, c = -0.004761))) # compSouVDivRates11[49:54, ]
       Br11_sOU_v_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.105259, b = 0.664985, c = -0.008246))) # Brawand11_sou_v_div_rates[7:12, ]
+        a = 0.103590, b = 0.710710, c = -0.007094))) # compSouVDivRates11[55:60, ]
       Br11_sOU_v_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.142598, b = 0.725474, c = -0.006562))) # Brawand11_sou_v_div_rates[13:18, ]
+        a = 0.159070, b = 0.759801, c = -0.005688))) # compSouVDivRates11[61:66, ]
       Br11_sOU_v_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.08081, b = 0.62277, c = -0.01581))) # Brawand11_sou_v_div_rates[19:24, ]
+        a = 0.07539, b = 0.60388, c = -0.01536))) # compSouVDivRates11[67:72, ]
       Br11_sOU_v_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.162913, b = 0.719690, c = -0.007157))) # Brawand11_sou_v_div_rates[25:30, ]
+        a = 0.11775, b = 0.54527, c = -0.01522))) # compSouVDivRates11[73:78, ]
       Br11_sOU_v_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.24232, b = 1.31539, c = -0.01123))) # Brawand11_sou_v_div_rates[31:35, ]
+        a = 0.268853, b = 2.245665, c = -0.002769))) # compSouVDivRates11[79:83, ]
 
       Br11_sOU_v_nl_list <- list(Br11_sOU_v_brain_nl=Br11_sOU_v_brain_nl,
         Br11_sOU_v_cereb_nl=Br11_sOU_v_cereb_nl, Br11_sOU_v_heart_nl=Br11_sOU_v_heart_nl, 
@@ -402,17 +402,17 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       # Get fit for data from Brawand11_div_rates
       Br11_pea_dist_brain_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.288191, b = 1.234179, c = -0.001159))) # Brawand11_div_rates[1:6, ]
+        a = 0.206154, b = 0.423120, c = -0.004325))) # compDivRates11[49:54, ]
       Br11_pea_dist_cereb_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.27303, b = 0.49379, c = -0.01226))) # Brawand11_div_rates[7:12, ]
+        a = 0.19167, b = 0.35432, c = -0.01104))) # compDivRates11[55:60, ]
       Br11_pea_dist_heart_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.32462, b = 0.50466, c = -0.01044))) # Brawand11_div_rates[13:18, ]
+        a = 0.23327, b = 0.35153, c = -0.01156))) # compDivRates11[61:66, ]
       Br11_pea_dist_kidney_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.26899, b = 0.49569, c = -0.02594))) # Brawand11_div_rates[19:24, ]
+        a = 0.18597, b = 0.34359, c = -0.02366))) # compDivRates11[67:72, ]
       Br11_pea_dist_liver_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.31945, b = 0.49688, c = -0.01323))) # Brawand11_div_rates[25:30, ]
+        a = 0.20957, b = 0.33178, c = -0.02351))) # compDivRates11[73:78, ]
       Br11_pea_dist_testis_nl <- as.data.frame(do.call(rbind, lapply(x_Br_grid, nl_model, 
-        a = 0.3679, b = 0.6180, c = -0.0213))) # Brawand11_div_rates[31:35, ]
+        a = 0.263177, b = 0.466058, c = -0.008119))) # compDivRates11[79:83, ]
 
       Br11_pea_dist_nl_list <- list(Br11_pea_dist_brain_nl=Br11_pea_dist_brain_nl,
         Br11_pea_dist_cereb_nl=Br11_pea_dist_cereb_nl, Br11_pea_dist_heart_nl=Br11_pea_dist_heart_nl, 
