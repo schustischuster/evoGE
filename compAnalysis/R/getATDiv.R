@@ -170,7 +170,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                 num <- length(cor_data)
                 error <- std/sqrt(num)
                 return(error)
-            }
+            } # Use this function to replace sd if reqired
 
             if (organ == "ts") {
 
@@ -182,11 +182,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                     mean(as.numeric(c(sou_v_distance[7, c(1:6)])))))
 
                 sou_v_distance_error <- data.frame(error = c(NA, 
-                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(sd(sou_v_distance[4, c(1:3)]))), 
                     NA, # ppy (orangutan) data missing
-                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
-                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
-                    as.numeric(c(getError(sou_v_distance[7, c(1:6)])))))
+                    as.numeric(c(sd(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(sd(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(sd(sou_v_distance[7, c(1:6)])))))
 
             } else if (organ == "testis") {
 
@@ -198,11 +198,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                     mean(as.numeric(c(sou_v_distance[7, c(1:6)])))))
 
                 sou_v_distance_error <- data.frame(error = c(NA, 
-                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(sd(sou_v_distance[4, c(1:3)]))), 
                     NA, # ppy (orangutan) data missing
-                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
-                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
-                    as.numeric(c(getError(sou_v_distance[7, c(1:6)])))))
+                    as.numeric(c(sd(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(sd(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(sd(sou_v_distance[7, c(1:6)])))))
 
             } else {
 
@@ -215,12 +215,12 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                     mean(as.numeric(c(sou_v_distance[8, c(1:7)])))))
 
                 sou_v_distance_error <- data.frame(error = c(
-                    as.numeric(c(getError(sou_v_distance[2:3, 1]))),
-                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
-                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
-                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
-                    as.numeric(c(getError(sou_v_distance[7, c(1:6)]))), 
-                    as.numeric(c(getError(sou_v_distance[8, c(1:7)])))))
+                    as.numeric(c(sd(sou_v_distance[2:3, 1]))),
+                    as.numeric(c(sd(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(sd(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(sd(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(sd(sou_v_distance[7, c(1:6)]))), 
+                    as.numeric(c(sd(sou_v_distance[8, c(1:7)])))))
             }
 
             div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
@@ -252,7 +252,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                 num <- length(cor_data)
                 error <- std/sqrt(num)
                 return(error)
-            }
+            } # Use this function to replace sd if reqired
 
             # Dixon test to statistically test if one value is an outlier
             # library(outliers)
@@ -272,11 +272,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                     mean(as.numeric(c(sou_v_distance[7, c(1:4,6)])))))
 
                 sou_v_distance_error <- data.frame(error = c(NA, 
-                    as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
-                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
-                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
-                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
-                    as.numeric(c(getError(sou_v_distance[7, c(1:4,6)])))))
+                    as.numeric(c(sd(sou_v_distance[3, c(1:2)]))), 
+                    as.numeric(c(sd(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(sd(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(sd(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(sd(sou_v_distance[7, c(1:4,6)])))))
 
             } else {
 
@@ -288,11 +288,11 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                     mean(as.numeric(c(sou_v_distance[7, c(1:6)])))))
 
                 sou_v_distance_error <- data.frame(error = c(NA, 
-                    as.numeric(c(getError(sou_v_distance[3, c(1:2)]))), 
-                    as.numeric(c(getError(sou_v_distance[4, c(1:3)]))), 
-                    as.numeric(c(getError(sou_v_distance[5, c(1:4)]))), 
-                    as.numeric(c(getError(sou_v_distance[6, c(1:5)]))), 
-                    as.numeric(c(getError(sou_v_distance[7, c(1:6)])))))
+                    as.numeric(c(sd(sou_v_distance[3, c(1:2)]))), 
+                    as.numeric(c(sd(sou_v_distance[4, c(1:3)]))), 
+                    as.numeric(c(sd(sou_v_distance[5, c(1:4)]))), 
+                    as.numeric(c(sd(sou_v_distance[6, c(1:5)]))), 
+                    as.numeric(c(sd(sou_v_distance[7, c(1:6)])))))
             }
 
             div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
@@ -361,12 +361,12 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                 num <- length(cor_data)
                 error <- std/sqrt(num)
                 return(error)
-            }
+            } # Use this function to replace sd if reqired
 
-        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
-                    as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
-                    as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
-                    as.numeric(c(getError(sp6_repl)))))
+        df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp1_repl))),
+                    as.numeric(c(sd(sp2_repl))), as.numeric(c(sd(sp3_repl))), 
+                    as.numeric(c(sd(sp4_repl))), as.numeric(c(sd(sp5_repl))), 
+                    as.numeric(c(sd(sp6_repl)))))
 
         df_cor_avg <- data.frame(correlation = c(sp1, sp2, sp3, sp4, sp5, sp6))
         div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
@@ -418,7 +418,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                 num <- length(cor_data)
                 error <- std/sqrt(num)
                 return(error)
-            }
+            } # Use this function to replace sd if reqired
 
     getBrBrainCor <- function(df, organ, coefficient) {
 
@@ -439,10 +439,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
             mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
 
-        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
-            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
-            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
-            as.numeric(c(getError(sp6_repl)))))
+        df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp1_repl))),
+            as.numeric(c(sd(sp2_repl))), as.numeric(c(sd(sp3_repl))), 
+            as.numeric(c(sd(sp4_repl))), as.numeric(c(sd(sp5_repl))), 
+            as.numeric(c(sd(sp6_repl)))))
 
         div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
         organ_id <- data.frame(comp_organ = rep(organ, 6))
@@ -477,10 +477,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
             mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
 
-        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
-            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
-            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
-            as.numeric(c(getError(sp6_repl)))))
+        df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp1_repl))),
+            as.numeric(c(sd(sp2_repl))), as.numeric(c(sd(sp3_repl))), 
+            as.numeric(c(sd(sp4_repl))), as.numeric(c(sd(sp5_repl))), 
+            as.numeric(c(sd(sp6_repl)))))
 
         div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
         organ_id <- data.frame(comp_organ = rep(organ, 6))
@@ -520,10 +520,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
             mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
 
-        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
-            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
-            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
-            as.numeric(c(getError(sp6_repl)))))
+        df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp1_repl))),
+            as.numeric(c(sd(sp2_repl))), as.numeric(c(sd(sp3_repl))), 
+            as.numeric(c(sd(sp4_repl))), as.numeric(c(sd(sp5_repl))), 
+            as.numeric(c(sd(sp6_repl)))))
 
         div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
         organ_id <- data.frame(comp_organ = rep(organ, 6))
@@ -560,10 +560,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
             mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
 
-        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
-            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
-            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
-            as.numeric(c(getError(sp6_repl)))))
+        df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp1_repl))),
+            as.numeric(c(sd(sp2_repl))), as.numeric(c(sd(sp3_repl))), 
+            as.numeric(c(sd(sp4_repl))), as.numeric(c(sd(sp5_repl))), 
+            as.numeric(c(sd(sp6_repl)))))
 
         div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
         organ_id <- data.frame(comp_organ = rep(organ, 6))
@@ -597,10 +597,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
         df_cor_avg <- data.frame(correlation = c(mean(sp1_repl), mean(sp2_repl), mean(sp3_repl), 
             mean(sp4_repl), mean(sp5_repl), mean(sp6_repl)))
 
-        df_cor_error <- data.frame(error = c(as.numeric(c(getError(sp1_repl))),
-            as.numeric(c(getError(sp2_repl))), as.numeric(c(getError(sp3_repl))), 
-            as.numeric(c(getError(sp4_repl))), as.numeric(c(getError(sp5_repl))), 
-            as.numeric(c(getError(sp6_repl)))))
+        df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp1_repl))),
+            as.numeric(c(sd(sp2_repl))), as.numeric(c(sd(sp3_repl))), 
+            as.numeric(c(sd(sp4_repl))), as.numeric(c(sd(sp5_repl))), 
+            as.numeric(c(sd(sp6_repl)))))
 
         div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
         organ_id <- data.frame(comp_organ = rep(organ, 6))
