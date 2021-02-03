@@ -495,24 +495,7 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
 
       # Create tables of nlm slope values for all organs with comp_organ, div_times and dataset
-      # columns for plotting non-linear regressions for individual organs
-      DS_AL_pea_dist_root_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_root_nl))
-      DS_AL_pea_dist_hypo_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_hypo_nl))
-      DS_AL_pea_dist_leaf_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_leaf_nl))
-      DS_AL_pea_dist_apex_veg_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_apex_veg_nl))
-      DS_AL_pea_dist_apex_inf_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_apex_inf_nl))
-      DS_AL_pea_dist_flower_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_flower_nl))
-      DS_AL_pea_dist_stamen_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_stamen_nl))
-      DS_AL_pea_dist_carpel_nl_df <- as.data.frame(formatNLM.table(DS_AL_pea_dist_carpel_nl))
-
-      DS_AL_pea_dist_nlm_coord <- rbind(DS_AL_pea_dist_root_nl_df, DS_AL_pea_dist_hypo_nl_df, 
-        DS_AL_pea_dist_leaf_nl_df, DS_AL_pea_dist_apex_veg_nl_df, DS_AL_pea_dist_apex_inf_nl_df, 
-        DS_AL_pea_dist_flower_nl_df, DS_AL_pea_dist_stamen_nl_df, DS_AL_pea_dist_carpel_nl_df)
-
-      DS_AL_pea_dist_nlm_sp <- DS_AL_pea_dist_nlm_coord
-      DS_AL_pea_dist_nlm_sp$dataset <- rep(c("Angiosperms.AL "), nrow(DS_AL_pea_dist_nlm_sp))
-
-
+      # columns for plotting non-linear regressions for individual organs (facets)
       DS_AT_pea_dist_root_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_root_nl))
       DS_AT_pea_dist_hypo_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_hypo_nl))
       DS_AT_pea_dist_leaf_nl_df <- as.data.frame(formatNLM.table(DS_AT_pea_dist_leaf_nl))
@@ -526,40 +509,64 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
         DS_AT_pea_dist_leaf_nl_df, DS_AT_pea_dist_apex_veg_nl_df, DS_AT_pea_dist_apex_inf_nl_df, 
         DS_AT_pea_dist_flower_nl_df, DS_AT_pea_dist_stamen_nl_df, DS_AT_pea_dist_carpel_nl_df)
 
-      DS_AT_pea_dist_nlm_sp <- DS_AT_pea_dist_nlm_coord
-      DS_AT_pea_dist_nlm_sp$dataset <- rep(c("Angiosperms.AT "), nrow(DS_AT_pea_dist_nlm_sp))
+      DS_AT_sOU_v_root_nl_df <- as.data.frame(formatNLM.table(DS_AT_sOU_v_root_nl))
+      DS_AT_sOU_v_hypo_nl_df <- as.data.frame(formatNLM.table(DS_AT_sOU_v_hypo_nl))
+      DS_AT_sOU_v_leaf_nl_df <- as.data.frame(formatNLM.table(DS_AT_sOU_v_leaf_nl))
+      DS_AT_sOU_v_apex_veg_nl_df <- as.data.frame(formatNLM.table(DS_AT_sOU_v_apex_veg_nl))
+      DS_AT_sOU_v_apex_inf_nl_df <- as.data.frame(formatNLM.table(DS_AT_sOU_v_apex_inf_nl))
+      DS_AT_sOU_v_flower_nl_df <- as.data.frame(formatNLM.table(DS_AT_sOU_v_flower_nl))
+      DS_AT_sOU_v_stamen_nl_df <- as.data.frame(formatNLM.table(DS_AT_sOU_v_stamen_nl))
+      DS_AT_sOU_v_carpel_nl_df <- as.data.frame(formatNLM.table(DS_AT_sOU_v_carpel_nl))
+
+      DS_AT_sOU_v_nlm_coord <- rbind(DS_AT_sOU_v_root_nl_df, DS_AT_sOU_v_hypo_nl_df, 
+        DS_AT_sOU_v_leaf_nl_df, DS_AT_sOU_v_apex_veg_nl_df, DS_AT_sOU_v_apex_inf_nl_df, 
+        DS_AT_sOU_v_flower_nl_df, DS_AT_sOU_v_stamen_nl_df, DS_AT_sOU_v_carpel_nl_df)
 
 
-      # Get final table for organ regression plot
-      nlmPea_coor11_AT_AL <- rbind(DS_AT_pea_dist_nlm_sp, DS_AL_pea_dist_nlm_sp)
+      Br11_pea_dist_brain_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_brain_nl))
+      Br11_pea_dist_cereb_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_cereb_nl))
+      Br11_pea_dist_heart_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_heart_nl))
+      Br11_pea_dist_kidney_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_kidney_nl))
+      Br11_pea_dist_liver_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_liver_nl))
+      Br11_pea_dist_testis_nl_df <- as.data.frame(formatNLM.table(Br11_pea_dist_testis_nl))
+
+      Br11_pea_dist_nlm_coord <- rbind(Br11_pea_dist_brain_nl_df, Br11_pea_dist_cereb_nl_df, 
+        Br11_pea_dist_heart_nl_df, Br11_pea_dist_kidney_nl_df, Br11_pea_dist_liver_nl_df, 
+        Br11_pea_dist_testis_nl_df)
+
+      Br11_sOU_v_brain_nl_df <- as.data.frame(formatNLM.table(Br11_sOU_v_brain_nl))
+      Br11_sOU_v_cereb_nl_df <- as.data.frame(formatNLM.table(Br11_sOU_v_cereb_nl))
+      Br11_sOU_v_heart_nl_df <- as.data.frame(formatNLM.table(Br11_sOU_v_heart_nl))
+      Br11_sOU_v_kidney_nl_df <- as.data.frame(formatNLM.table(Br11_sOU_v_kidney_nl))
+      Br11_sOU_v_liver_nl_df <- as.data.frame(formatNLM.table(Br11_sOU_v_liver_nl))
+      Br11_sOU_v_testis_nl_df <- as.data.frame(formatNLM.table(Br11_sOU_v_testis_nl))
+
+      Br11_sOU_v_nlm_coord <- rbind(Br11_sOU_v_brain_nl_df, Br11_sOU_v_cereb_nl_df, 
+        Br11_sOU_v_heart_nl_df, Br11_sOU_v_kidney_nl_df, Br11_sOU_v_liver_nl_df, 
+        Br11_sOU_v_testis_nl_df)
 
 
-      # Make pea dist table for DevSeq-AT and DevSeq.AL organs
-      compDivRates11_AT_sp <- compDivRates11[1:48,]
-      compDivRates11_AL_sp <- compDivRates11_AL[1:48,]
-      pea_dist_organs <- c("root", "hypo", "leaf", "veg", "inf", "flower", "stamen", "carpel")
-      pea_dist_organs <- rep(pea_dist_organs, each=6)
-      pea_dist_organs <- as.data.frame(pea_dist_organs)
-      compDivRates11_AT_sp$comp_organ <- pea_dist_organs
-      compDivRates11_AL_sp$comp_organ <- pea_dist_organs
-      compDivRates11_AT_sp$dataset <- rep(c("Angiosperms.AT "), nrow(compDivRates11_AT_sp))
-      compDivRates11_AT_sp$comp_organ <- factor(unlist(compDivRates11_AT_sp$comp_organ))
-      compDivRates11_AL_sp$dataset <- rep(c("Angiosperms.AL "), nrow(compDivRates11_AL_sp))
-      compDivRates11_AL_sp$comp_organ <- factor(unlist(compDivRates11_AL_sp$comp_organ))
-      pea_dist_organs_AT_AL <- rbind(compDivRates11_AT_sp, compDivRates11_AL_sp)
-      pea_dist_organs_AT_AL$comp_spec <- factor(pea_dist_organs_AT_AL$comp_spec)
-      pea_dist_organs_AT_AL$dataset <- factor(pea_dist_organs_AT_AL$dataset)
 
 
-      # Get mean value of slopes
-      DS_AL_sOU_v_nl_mean <- rowMeans(do.call(cbind, DS_AL_sOU_v_nl_list))
+#-- Get cumulative slope values of mean organ regressions for pea and sOU non-linear models --
+
+
+      # Get mean value of non-linear regression slopes for cumulative slope values
+      DS_AT_pea_nl_mean <- rowMeans(do.call(cbind, DS_AT_pea_dist_nl_list))
+      Br11_pea_nl_mean <- rowMeans(do.call(cbind, Br11_pea_dist_nl_list))
+      Br_pea_nl_mean <- rowMeans(do.call(cbind, Br_pea_dist_nl_list))
       DS_AT_sOU_v_nl_mean <- rowMeans(do.call(cbind, DS_AT_sOU_v_nl_list))
       Br11_sOU_v_nl_mean <- rowMeans(do.call(cbind, Br11_sOU_v_nl_list))
       Br_sOU_v_nl_mean <- rowMeans(do.call(cbind, Br_sOU_v_nl_list))
 
 
-      # Get cumulative slope values
-      getCum.NL.Slope <- function(x){
+      # Define factors to get cumsum of DS slopes to 1
+      cum_fact_pea <- 4.242602
+      cum_fact_sOU <- 0.789039
+
+
+      # Get cumulative slope values for non-linear model
+      getCum.NL.Slope <- function(x, cfact){
 
         fname <- deparse(substitute(x))
 
@@ -576,16 +583,24 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
         slopes_cumsum <- cumsum(as.data.frame(slopes)[,1])
         slopes_cumsum <- as.numeric(as.data.frame(slopes_cumsum)[,1])
 
+        slopes_cumsum <- slopes_cumsum * cfact
+
         return(slopes_cumsum)
       }
 
-      DS_AL_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(DS_AL_sOU_v_nl_mean)
-      DS_AT_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(DS_AT_sOU_v_nl_mean)
-      Br11_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(Br11_sOU_v_nl_mean)
-      Br_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(Br_sOU_v_nl_mean)
+      DS_AT_pea_nl_mean_cumslopes <- getCum.NL.Slope(DS_AT_pea_nl_mean, cfact=cum_fact_pea)
+      Br11_pea_nl_mean_cumslopes <- getCum.NL.Slope(Br11_pea_nl_mean, cfact=cum_fact_pea)
+      Br_pea_nl_mean_cumslopes <- getCum.NL.Slope(Br_pea_nl_mean, cfact=cum_fact_pea)
+      DS_AT_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(DS_AT_sOU_v_nl_mean, cfact=cum_fact_sOU)
+      Br11_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(Br11_sOU_v_nl_mean, cfact=cum_fact_sOU)
+      Br_sOU_v_nl_mean_cumslopes <- getCum.NL.Slope(Br_sOU_v_nl_mean, cfact=cum_fact_sOU)
 
 
-      # Compute slope
+
+#---- Compute mean slope value of non-linear regression for all DS and Br/Br11 organs -----
+
+
+      # Compute mean slope value for each organ for non-linear regression
       getDS.NL.Slope <- function(x){
 
         fname <- deparse(substitute(x))
@@ -607,8 +622,6 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       }
 
-      DevSeq_AL_pea_dist_nl_slopes <- as.data.frame(do.call(rbind, lapply(DS_AL_pea_dist_nl_list, getDS.NL.Slope)))
-      DevSeq_AL_sOU_v_nl_slopes <- as.data.frame(do.call(rbind, lapply(DS_AL_sOU_v_nl_list, getDS.NL.Slope)))
       DevSeq_AT_pea_dist_nl_slopes <- as.data.frame(do.call(rbind, lapply(DS_AT_pea_dist_nl_list, getDS.NL.Slope)))
       DevSeq_AT_sOU_v_nl_slopes <- as.data.frame(do.call(rbind, lapply(DS_AT_sOU_v_nl_list, getDS.NL.Slope)))
       Br11_sOU_v_nl_slopes <- as.data.frame(do.call(rbind, lapply(Br11_sOU_v_nl_list, getDS.NL.Slope)))
@@ -618,12 +631,11 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
 
       # Add organ id column
-      formatNL.Slope <- function(x, data_set, regr_mod) {
+      formatNL.Slope <- function(x, regr_mod) {
 
         names(x) <- regr_mod
 
-        if ((regr_mod == "DS_AL_pea_nlm") || (regr_mod == "DS_AL_sOU_nlm") 
-          || (regr_mod == "DS_AT_pea_nlm") || (regr_mod == "DS_AT_sOU_nlm")) {
+        if ((regr_mod == "DS_AT_pea_nlm") || (regr_mod == "DS_AT_sOU_nlm")) {
 
           organ <- data.frame(sample = c("Root", "Hypocotyl", "Leaf", "Apex_veg", "Apex_inf", 
             "Flower", "Stamen", "Carpel"))
@@ -642,13 +654,6 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       }
 
 
-      DevSeq_AL_pea_nlm_slopes <- formatNL.Slope(DevSeq_AL_pea_dist_nl_slopes, regr_mod = "DS_AL_pea_nlm")
-      DevSeq_AL_sOU_nlm_slopes <- formatNL.Slope(DevSeq_AL_sOU_v_nl_slopes, regr_mod = "DS_AL_sOU_nlm")
-      DevSeq_AL_nlm_slopes <- cbind(DevSeq_AL_sOU_nlm_slopes, DevSeq_AL_sOU_nlm_slopes[-1], 
-        DevSeq_AL_pea_nlm_slopes[-1], DevSeq_AL_pea_nlm_slopes[-1])
-      colnames(DevSeq_AL_nlm_slopes) <- c("sample", "DS_AL_Br11_sOU_nlm", "DS_AL_Br_sOU_nlm", 
-        "DS_AL_Br11_pea_nlm", "DS_AL_Br_pea_nlm")
-
       DevSeq_AT_pea_nlm_slopes <- formatNL.Slope(DevSeq_AT_pea_dist_nl_slopes, regr_mod = "DS_AT_pea_nlm")
       DevSeq_AT_sOU_nlm_slopes <- formatNL.Slope(DevSeq_AT_sOU_v_nl_slopes, regr_mod = "DS_AT_sOU_nlm")
       DevSeq_AT_nlm_slopes <- cbind(DevSeq_AT_sOU_nlm_slopes, DevSeq_AT_sOU_nlm_slopes[-1], 
@@ -664,52 +669,33 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       Br_nlm_slopes <- cbind(Br11_sOU_nlm_slopes, Br_sOU_nlm_slopes[-1], Br11_pea_nlm_slopes[-1], 
         Br_pea_nlm_slopes[-1])
 
+
       # Generate final data table for DevSeq and Brawand nlm slopes
-      Br_nlm_slopes_AL <- Br_nlm_slopes
-      colnames(Br_nlm_slopes_AL) <- c("sample", "DS_AL_Br11_sOU_nlm", "DS_AL_Br_sOU_nlm", 
-        "DS_AL_Br11_pea_nlm", "DS_AL_Br_pea_nlm")
       Br_nlm_slopes_AT <- Br_nlm_slopes
       colnames(Br_nlm_slopes_AT) <- c("sample", "DS_AT_Br11_sOU_nlm", "DS_AT_Br_sOU_nlm", 
         "DS_AT_Br11_pea_nlm", "DS_AT_Br_pea_nlm")
-
-      DS_AL_Br_nlm_slopes <- rbind(DevSeq_AL_nlm_slopes, Br_nlm_slopes_AL)
       DS_AT_Br_nlm_slopes <- rbind(DevSeq_AT_nlm_slopes, Br_nlm_slopes_AT)
 
 
+      # Save Angiosperm and mammalian nlm slope values
+      message("Writing data tables...")
 
+      slopes_regr_list <- list(DS_AT_Br_nlm_slopes = DS_AT_Br_nlm_slopes)
 
-#---- Apply LOESS regression to sOU and pearson dist expression data and compare slopes -----
-
-
-      getLOESS.Coord <- function(organ_data) {
-
-        comp_organ <- unique(organ_data$comp_organ)
-
-        temp <- loess.smooth(organ_data$div_times, organ_data$correlation, span = 1.18, 
-            degree = 2, family="symmetric", evaluation = 200)
-
-        # Obtain coordinates of the smooth curve
-        div_times <- as.numeric(unlist(temp$x))
-        correlation <- as.numeric(unlist(temp$y))
-        comp_organ <- rep(comp_organ, 200)
-
-        experiment <- unique(organ_data$dataset)
-        experiment <- rep(experiment, 200)
-
-        loess_out <- data.frame(comp_organ = comp_organ, div_times = div_times, correlation = correlation, 
-          dataset = experiment)
-
-        return(loess_out)
+      for(i in names(slopes_regr_list)) { 
+        write.table(slopes_regr_list[[i]], file = file.path(out_dir, "output", "data", paste0(i,".txt")), 
+          sep="\t", col.names=TRUE, row.names = FALSE, dec=".", quote = FALSE)
       }
 
 
-      # Set up lists containing sOU expression distances
-      devseqSouV_organ_lst <- list(compSouVDivRates11_AL[1:6,], compSouVDivRates11_AL[7:12,], compSouVDivRates11_AL[13:18,], 
-        compSouVDivRates11_AL[19:24,], compSouVDivRates11_AL[25:30,], compSouVDivRates11_AL[31:36,], compSouVDivRates11_AL[37:42,], 
-        compSouVDivRates11_AL[43:48,])
 
-      brawandSouV11_organ_lst <- list(compSouVDivRates11_AL[49:54,], compSouVDivRates11_AL[55:60,], compSouVDivRates11_AL[61:66,], 
-        compSouVDivRates11_AL[67:72,],compSouVDivRates11_AL[73:78,], compSouVDivRates11_AL[79:83,])
+
+#--- Apply LOESS to sOU and pea dist expression data and compute cumulative slope values ----
+
+
+      # Set up lists containing sOU expression distances
+      brawandSouV11_organ_lst <- list(compSouVDivRates11[49:54,], compSouVDivRates11[55:60,], compSouVDivRates11[61:66,], 
+        compSouVDivRates11[67:72,],compSouVDivRates11[73:78,], compSouVDivRates11[79:83,])
 
       devseq_AT_SouV_organ_lst <- list(compSouVDivRates11[1:6,], compSouVDivRates11[7:12,], compSouVDivRates11[13:18,], 
         compSouVDivRates11[19:24,], compSouVDivRates11[25:30,], compSouVDivRates11[31:36,], compSouVDivRates11[37:42,], 
@@ -719,33 +705,7 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
         compSouVDivRates[67:72,],compSouVDivRates[73:78,], compSouVDivRates[79:83,])
 
 
-      # Set up lists containing metric pearson expression distances
-      devseq_organ_lst <- list(DevSeq_AL_div_rates[1:6,], DevSeq_AL_div_rates[7:12,], DevSeq_AL_div_rates[13:18,], 
-        DevSeq_AL_div_rates[19:24,], DevSeq_AL_div_rates[25:30,], DevSeq_AL_div_rates[31:36,], DevSeq_AL_div_rates[37:42,], 
-        DevSeq_AL_div_rates[43:48,])
-
-
-      # Get LOESS coordinates for DevSeq and Brawand data
-      DevSeqSouV_loess_coord <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Coord)))
-      Brawand11SouV_loess_coord <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Coord)))
-      loessSouV_coor11_AL <- rbind(DevSeqSouV_loess_coord, Brawand11SouV_loess_coord)
-
-
-      # Format loess df for ggplot2
-      formatLOESS.DF <- function(df) {
-
-        df$div_times <- as.numeric(df$div_times)
-        df$correlation <- as.numeric(df$correlation)
-        df$dataset <- as.factor(df$dataset)
-
-        return(df)
-      }
-
-      loessSouV_coor11_AL <- formatLOESS.DF(loessSouV_coor11_AL)
-
-
-
-      # Get cumulative slope values
+      # Get cumulative slope values for LOESS regression
       getCum.LOESS.Slope <- function(x, span = span, degree = degree, family = family){
 
         temp <- loess.smooth(x$div_times, x$correlation, span = span, 
@@ -773,7 +733,7 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
         sd_out <- as.data.frame(sd_out)
         sd_out <- as.numeric(sd_out[,1])
 
-        error <- qnorm(0.975) * sd_out/sqrt(nsamples)
+        error <- qt(0.975, df = nsamples-1) * sd_out/sqrt(nsamples)
 
         mean_li <- loess_mean - error
         mean_ri <- loess_mean + error
@@ -785,10 +745,6 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
 
       # Get mean value of slopes
-      DevSeqSouV_AL_loess_mean <- do.call(cbind, lapply(devseqSouV_organ_lst, getCum.LOESS.Slope, 
-        span = 1, degree = 2, family = "gaussian"))
-      DevSeqSouV_AL_loess_mean <- getLoessStats(DevSeqSouV_AL_loess_mean)
-
       DevSeqSouV_AT_loess_mean <- do.call(cbind, lapply(devseq_AT_SouV_organ_lst, getCum.LOESS.Slope, 
         span = 1, degree = 2, family = "gaussian"))
       DevSeqSouV_AT_loess_mean <- getLoessStats(DevSeqSouV_AT_loess_mean)
@@ -806,12 +762,12 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       x_DS_grid_cum <- seq(7.1, 160, length = 159)  ## prediction grid
       x_Br_grid_cum <- seq(6.7, 159, length = 159)  ## prediction grid
 
-      div_times <- c(x_DS_grid_cum, x_DS_grid_cum, x_Br_grid_cum, x_Br_grid_cum)
+      div_times <- c(x_DS_grid_cum, x_Br_grid_cum, x_Br_grid_cum)
       div_times <- as.data.frame(div_times)
       colnames(div_times) <- "div_times"
-      dataset <- data.frame(rep(c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an."), each=159))
+      dataset <- data.frame(rep(c("Angiosperms", "Mammals.11", "Mammals.ra"), each=159))
       colnames(dataset) <- "dataset"
-      correlation <- rbind(DevSeqSouV_AT_loess_mean, DevSeqSouV_AL_loess_mean, brawandSouV11_loess_mean, 
+      correlation <- rbind(DevSeqSouV_AT_loess_mean, brawandSouV11_loess_mean, 
         brawandSouV_loess_mean)
       sOU_v_loess_cum_slopes <- data.frame(div_times, correlation, dataset)
 
@@ -823,160 +779,6 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
 
 
-      getLOESS.Slopes <- function(organ_data) {
-
-        comp_organ <- unique(organ_data$comp_organ)
-
-        temp <- loess.smooth(organ_data$div_times, organ_data$correlation, span = 1.18, 
-          degree = 2, family="symmetric", evaluation = 200)
-
-        # Get slope values
-        slopes = diff(temp$y)/diff(temp$x)
-        slopes_avg <- mean(slopes)
-        slopes_avg <- as.numeric(as.data.frame(slopes_avg))
-
-        return(slopes_avg)
-      }
-
-
-      # Get LOESS slopes for DevSeq and Brawand data
-      # For sOU expression distances
-      DevSeqSouV_AL_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseqSouV_organ_lst, getLOESS.Slopes)))
-      Brawand11SouV_loess_slopes <- as.data.frame(do.call(rbind, lapply(brawandSouV11_organ_lst, getLOESS.Slopes)))
-      sOU_loess_DevSeq_AL_Br11_wilcox <- wilcox.test(as.numeric(unlist(DevSeqSouV_AL_loess_slopes)), as.numeric(unlist(Brawand11SouV_loess_slopes)))$p.value
-
-      # For metric pearson expression distances
-      DevSeq_AL_loess_slopes <- as.data.frame(do.call(rbind, lapply(devseq_organ_lst, getLOESS.Slopes)))
-
-
-      # Write slope values to csv file
-      DevSeq_AL_loess_slopes <- cbind(DevSeqSouV_AL_loess_slopes, DevSeq_AL_loess_slopes)
-      colnames(DevSeq_AL_loess_slopes) <- c("DS_AL_sOU_loess", "DS_AL_pea_loess")
-      ds_organs <- data.frame(sample = c("Root", "Hypocotyl", "Leaf", "Apex_veg", "Apex_inf", "Flower", "Stamen", "Carpel"))
-      DevSeq_AL_loess_slopes <- cbind(ds_organs, DevSeq_AL_loess_slopes)
-
-
-
-      # Show message
-      message("Writing data tables...")
-
-      slopes_regr_list <- list(DevSeq_AL_loess_slopes = DevSeq_AL_loess_slopes, 
-        DevSeq_AL_log_slopes = DevSeq_AL_log_slopes, DS_AL_Br_nlm_slopes = DS_AL_Br_nlm_slopes, 
-        DS_AT_Br_nlm_slopes = DS_AT_Br_nlm_slopes)
-
-      for(i in names(slopes_regr_list)) { 
-        write.table(slopes_regr_list[[i]], file = file.path(out_dir, "output", "data", paste0(i,".txt")), 
-          sep="\t", col.names=TRUE, row.names = FALSE, dec=".", quote = FALSE)
-      }
-
-
-      # Create p-value containing test strings for plots
-      sOU_loess_DevSeq_AL_Br11_slope_p <- paste("P =", formatC(sOU_loess_DevSeq_AL_Br11_wilcox, format="e", digits=0))
-
-      # Change dataset ID for shorter legend
-      compSouVDivRates11_AL$dataset <- c(rep('Angiosperms.AL ', 48), rep('Mammals.11', 35))
-      loessSouV_coor11_AL$dataset <- c(rep('Angiosperms.AL ', 1600), rep('Mammals.11', 1200))
-
-
-
-   # Make sOU GE divergence plot showing individual organ regressions for SI
-   makeOrgRegPlot <- function(data1, data2, coefficient, expr_estimation, p_value, pos) {
-
-      fname <- sprintf('%s.jpg', paste("compSouVDivRates11_AL_loess", expr_estimation, pos, sep="_"))
-      y_min <- 0.055
-      y_max <- 1.7
-      col_breaks <- c("Angiosperms.AL ", "Mammals.11")
-      fill_breaks <- c("Angiosperms.AL ", "Mammals.11")
-      y_breaks <- c(0.2,0.4,0.6,0.8,1,1.2,1.4,1.6)
-      y_title <- "Expression distance"
-
-      if (pos == "main") {
-
-            plot_wdt <- 12.535
-            plot_hdt <- 8
-            legend_x_pos <- 0.2825
-            legend_y_pos <- 0.914
-            linewd <- 3
-            point_size <- 5.75
-            txt_x_pos <- 16.25
-            txt_y_pos <- 1.283
-            pan_boarder <- 1.75
-            axis_txt_size <- 21.25
-            axis_ticks_s <- 0.7
-            title_face <- "plain"
-
-      } else if (pos == "ext") {
-
-            plot_wdt <- 9.5 # condenced plot width for suppl
-            plot_hdt <- 6.75 # condenced plot width for suppl
-            legend_x_pos <- 0.368
-            legend_y_pos <- 0.926
-            linewd <- 2.5
-            point_size <- 4.75
-            txt_x_pos <- 16.25
-            txt_y_pos <- 1.283
-            pan_boarder <- 1.8
-            axis_txt_size <- 21.75
-            axis_ticks_s <- 0.95
-            title_face <- "bold"
-      }
-
-      ds_col <- rep(c("#728acb"), 48)
-      bw_col <- rep(c("red"), 35)
-      col_scale <- c("#728acb", "red")
-      fill_scale <- c("#728acb", "red")
-      shape_scale <- c(16, 17)
-
-      fill_col <- c(as.character(ds_col), as.character(bw_col))
-
-      p <- ggplot() 
-      p <- p + geom_line(size = linewd, data = data1, aes(x = div_times, y = correlation, group = comp_organ, 
-        colour = dataset, linetype = dataset))
-      p <- p + geom_point(size = point_size, data = data2, aes(x = div_times, y = correlation, group = comp_organ, 
-        colour = dataset, shape = comp_organ, stroke = 2.7))
-      p <- p + scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(y_min, y_max), expand = c(0.02, 0), breaks = y_breaks) + 
-      scale_color_manual(values = col_scale, breaks = col_breaks) + 
-      scale_fill_manual(values = fill_scale, breaks = fill_breaks) + 
-      scale_shape_manual(values = c(0, 8, 2, 5, 3, 4, 6, 1, 15, 16, 17, 18, 19, 10)) + 
-      annotate("text", x = txt_x_pos, y = txt_y_pos, label = p_value, size = 8) + 
-      guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"), 
-        shape = FALSE)
-
-      q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab(y_title) + 
-      theme(text=element_text(size=16), 
-        axis.ticks.length=unit(0.35, "cm"), 
-        axis.ticks = element_line(colour = "black", size = axis_ticks_s),  
-        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-        axis.title.y = element_text(size=24.5, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
-            face = title_face), 
-        axis.title.x = element_text(size=24.5, margin = margin(t = 15.75, r = 0, b = 1, l = 0), colour="black", 
-            face = title_face), 
-        axis.text.x = element_text(size=axis_txt_size, angle=0, margin = margin(t = 5.5), colour="black"), 
-        axis.text.y = element_text(size=axis_txt_size, angle=0, margin = margin(r = 5.5), colour="black"), 
-        legend.box.background = element_rect(colour = NA, fill= "white" , size=1.0), 
-        panel.border = element_rect(colour = "black", fill=NA, size=pan_boarder), 
-        panel.grid.major = element_blank(),
-        panel.grid.minor.x = element_blank(), 
-        panel.grid.minor.y = element_blank(), 
-        legend.position = c(legend_x_pos, legend_y_pos), 
-        legend.title = element_blank(), 
-        legend.text = element_text(size=22), 
-        legend.spacing.x = unit(0.5, 'cm'), 
-        legend.key.size = unit(0.95, "cm"), 
-        legend.background=element_blank()) 
-
-        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = plot_wdt, height = plot_hdt, dpi = 300, units = c("in"), limitsize = FALSE) 
-  }
-
-  makeOrgRegPlot(data1 = loessSouV_coor11_AL, data2 = compSouVDivRates11_AL, coefficient = coefficient, 
-    expr_estimation = expr_estimation, pos = "ext", p_value = "")
-
-  makeOrgRegPlot(data1 = loessSouV_coor11_AL, data2 = compSouVDivRates11_AL, coefficient = coefficient, 
-    expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AL_Br11_slope_p)
-
-
 
    # Make sOU GE divergence plot showing cumulative mean slope values for SI
    plotCumSlopes <- function(data, coefficient, expr_estimation) {
@@ -984,44 +786,44 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
       fname <- sprintf('%s.jpg', paste("compSouV_loess_cum_slopes", coefficient, expr_estimation, sep="_"))
         
-      col_breaks <- c("Angiosperms.AT", "Angiosperms.AL", "Mammals.11", "Mammals.re-an.")
+      col_breaks <- c("Angiosperms", "Mammals.11", "Mammals.ra")
       y_breaks <- c(0,0.2,0.4,0.6,0.8,1,1.2,1.4)
 
-      col_scale <- c('#728acb', '#81bcef', 'red', 'red3')
-      fill_scale <- c('#728acb', '#81bcef', 'red', 'red3')
+      col_scale <- c('#728acb', 'red', 'red3')
+      fill_scale <- c('#728acb', 'red', 'red3')
 
 
       p <- ggplot(data=data, aes(x = div_times, y = correlation, group = dataset)) + 
       geom_ribbon(aes(ymin = data$li, ymax = data$ri, fill = dataset), alpha = 0.088, 
             linetype = 0, show.legend = FALSE) + 
-      geom_line(size = 2.6, data = data, aes(x = div_times, y = correlation, group = dataset, 
+      geom_line(size = 2.75, data = data, aes(x = div_times, y = correlation, group = dataset, 
         colour = dataset)) + 
-      geom_line(data = data[1:159,], aes(x = div_times, y = correlation), color = '#81bcef', size = 2.5) +
-      geom_line(data = data[160:318,], aes(x = div_times, y = correlation), color = '#728acb', size = 2.5) + 
+      geom_line(data = data[1:159,], aes(x = div_times, y = correlation), color = '#728acb', size = 2.5) +
       scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-      scale_y_continuous(limits = c(-0.01, 1.1675), expand = c(0.02, 0), breaks = y_breaks) + 
+      scale_y_continuous(limits = c(-0.035, 1.22), expand = c(0.01, 0), breaks = y_breaks) + 
       scale_color_manual(values = col_scale, breaks = col_breaks) + 
       scale_fill_manual(values = fill_scale) + 
       scale_size(range = c(0.5, 12)) + 
-      guides(color = guide_legend(ncol=1, keywidth = 0.4, keyheight = 0.4, default.unit = "inch"))
+      guides(color = guide_legend(ncol=1, keywidth = 0.4, keyheight = 0.4, default.unit = "inch", 
+        title = ""))
 
       q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Cumulative mean slope value") + 
       theme(text=element_text(size=16), 
         axis.ticks.length=unit(0.35, "cm"), 
-        axis.ticks = element_line(colour = "black", size = 0.95),  
-        plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
+        axis.ticks = element_line(colour = "black", size = 1.25),  
+        plot.margin = unit(c(0.55, 1.175, 1.55, 0.4),"cm"), 
         axis.title.y = element_text(size=24.5, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
             face = "bold"), 
         axis.title.x = element_text(size=24.5, margin = margin(t = 15.75, r = 0, b = 1, l = 0), colour="black", 
             face = "bold"), 
-        axis.text.x = element_text(size=21.75, angle=0, margin = margin(t = 5.5), colour="black"), 
-        axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
-        legend.box.background = element_rect(colour = NA, fill= "white" , size=1.0), 
-        panel.border = element_rect(colour = "black", fill=NA, size=1.8), 
+        axis.text.x = element_text(size=21.75, angle=0, margin = margin(t = 4), colour="black"), 
+        axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 4), colour="black"), 
+        legend.box.background = element_rect(colour = NA, fill= "white" , size=1.2), 
+        panel.border = element_rect(colour = "black", fill=NA, size=2.4), 
         panel.grid.major = element_blank(),
         panel.grid.minor.x = element_blank(), 
         panel.grid.minor.y = element_blank(), 
-        legend.position = c(0.22, 0.815), 
+        legend.position = c(0.18, 0.84), 
         legend.title = element_blank(), 
         legend.text = element_text(size=22), 
         legend.spacing.x = unit(0.5, 'cm'), 
@@ -1036,10 +838,15 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
 
 
-  # Plot AT and AL nlm's for pea dist
+
+#-------- Plot Angiosperm and Mammalian nlm's for metric pearson and sOU-v distance ---------
+
+
   # Change organ names for facet strip
-  nlmPea_coor11_AT_AL_df <- nlmPea_coor11_AT_AL
-  nlmPea_coor11_AT_AL_df$comp_organ <- nlmPea_coor11_AT_AL_df$comp_organ %<>% 
+
+  formDsDistMod <- function(dist_df) {
+
+     dist_df$comp_organ <- dist_df$comp_organ %<>% 
         gsub("root", "Root", .) %>% 
         gsub("hypo", "Hypocotyl", .) %>% 
         gsub("leaf", "Leaf", .) %>% 
@@ -1048,63 +855,142 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
         gsub("flower", "Flower", .) %>% 
         gsub("stamen", "Stamen", .) %>% 
         gsub("carpel", "Carpel", .)
-  nlmPea_coor11_AT_AL_df$comp_organ <- factor(nlmPea_coor11_AT_AL_df$comp_organ, 
+
+     dist_df$comp_organ <- factor(dist_df$comp_organ, 
+        levels=c("Root","Hypocotyl","Leaf","Apex veg","Apex inf","Flower","Stamen","Carpel"))
+
+     return(dist_df)
+  }
+
+  DS_AT_pea_dist_nlm_coord_df <- formDsDistMod(DS_AT_pea_dist_nlm_coord)
+  DS_AT_sOU_v_nlm_coord_df <- formDsDistMod(DS_AT_sOU_v_nlm_coord)
+
+
+  formBrDistMod <- function(dist_df) {
+
+     dist_df$comp_organ <- dist_df$comp_organ %<>% 
+        gsub("brain", "Brain", .) %>% 
+        gsub("cereb", "Cerebellum", .) %>% 
+        gsub("heart", "Heart", .) %>% 
+        gsub("kidney", "Kidney", .) %>% 
+        gsub("liver", "Liver", .) %>% 
+        gsub("testis", "Testis", .)
+
+     dist_df$comp_organ <- factor(dist_df$comp_organ, 
+        levels=c("Brain", "Cerebellum", "Heart", "Kidney", "Liver", "Testis"))
+
+     return(dist_df)
+  }
+
+  Br11_pea_dist_nlm_coord_df <- formBrDistMod(Br11_pea_dist_nlm_coord)
+  Br11_sOU_v_nlm_coord_df <- formBrDistMod(Br11_sOU_v_nlm_coord)
+
+
+  # Format pea and sOU-v dist tables for DS and Br11 data
+  pea_dist_organs_DS_df <- compDivRates11[1:48,]
+  pea_dist_organs_Br11_df <- compDivRates11[49:nrow(compDivRates11),]
+  sOU_v_dist_organs_DS_df <- compSouVDivRates11[1:48,]
+  sOU_v_dist_organs_Br11_df <- compSouVDivRates11[49:nrow(compSouVDivRates11),]
+  sOU_v_dist_organs_DS_df$comp_organ <- sOU_v_dist_organs_DS_df$comp_organ %<>% 
+        gsub("vegApex", "Apex veg", .) %>% 
+        gsub("infApex", "Apex inf", .)
+  sOU_v_dist_organs_Br11_df$comp_organ <- sOU_v_dist_organs_Br11_df$comp_organ %<>% 
+        gsub("br", "Brain", .) %>% 
+        gsub("cb", "Cerebellum", .) %>% 
+        gsub("ht", "Heart", .) %>% 
+        gsub("kd", "Kidney", .) %>% 
+        gsub("lv", "Liver", .) %>% 
+        gsub("ts", "Testis", .)
+  pea_dist_organs_DS_df$comp_organ <- factor(pea_dist_organs_DS_df$comp_organ, 
     levels=c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
-
-  pea_dist_organs_AT_AL_df <- pea_dist_organs_AT_AL
-  pea_dist_organs_AT_AL_df$comp_organ <- pea_dist_organs_AT_AL_df$comp_organ %<>% 
-        gsub("root", "Root", .) %>% 
-        gsub("hypo", "Hypocotyl", .) %>% 
-        gsub("leaf", "Leaf", .) %>% 
-        gsub("veg", "Apex veg", .) %>% 
-        gsub("inf", "Apex inf", .) %>% 
-        gsub("flower", "Flower", .) %>% 
-        gsub("stamen", "Stamen", .) %>% 
-        gsub("carpel", "Carpel", .)
-  pea_dist_organs_AT_AL_df$comp_organ <- factor(pea_dist_organs_AT_AL_df$comp_organ, 
+  sOU_v_dist_organs_DS_df$comp_organ <- factor(sOU_v_dist_organs_DS_df$comp_organ, 
     levels=c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
+  pea_dist_organs_Br11_df$comp_organ <- factor(pea_dist_organs_Br11_df$comp_organ, 
+    levels=c("Brain", "Cerebellum", "Heart", "Kidney", "Liver", "Testis"))
+  sOU_v_dist_organs_Br11_df$comp_organ <- factor(sOU_v_dist_organs_Br11_df$comp_organ, 
+    levels=c("Brain", "Cerebellum", "Heart", "Kidney", "Liver", "Testis"))
 
 
-  plotAT.AL.pea.NLM <- function(data, data2) {
 
-    fname <- sprintf('%s.jpg', paste("AT_AL_pea_nlm_regression_slopes"))
+  plotDS.Br.pea.NLM <- function(data, data2, data_set) {
+
+    fname <- sprintf('%s.jpg', paste(data_set, "nlm_regression_slopes", sep="_"))
+
+    data2$error[is.na(data2$error)] <- 0
+
+    lower <- as.numeric(data.frame(lower=data2$correlation-data2$error)[,1])
+    upper <- as.numeric(data.frame(lower=data2$correlation+data2$error)[,1])
+
+    data2 <- cbind(data2, lower, upper)
+
+    if ((data_set == "Angiosperm_pea") || (data_set == "Angiosperm_sOU")) {
+
+      spec_col <- '#728acb'
+      spec_label <- "Angiosperms"
+      spec_shape <- 16
+      margin_r <- 1
+
+    } else { 
+
+      spec_col <- 'red'
+      spec_label <- "Mammals.11"
+      spec_shape <- 17
+      margin_r <- 18.1
+
+    }
+
+    # Define y axis breaks and labels
+    if (data_set == "Angiosperm_pea") {
+      y_breaks = c(0.3,0.4,0.5)
+      y_title <- "Pearson distance"
+      marg_r <- 15.2
+    } else if (data_set == "Angiosperm_sOU") {
+      y_breaks = c(0.5,1,1.5)
+      y_title <- "Expression distance"
+      marg_r <- 13.0
+    } else if (data_set == "Mammalian_pea") {
+      y_breaks = c(0.2,0.3,0.4)
+      y_title <- "Pearson distance"
+      marg_r <- 15.2
+    } else if (data_set == "Mammalian_sOU") {
+      y_breaks = c(0.3,0.6,0.9)
+      y_title <- "Expression distance"
+      marg_r <- 13.0
+    }
 
     p <- ggplot(data=data, color = dataset, aes(x=div_times, y=correlation)) + 
-    geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = dataset, 
-        colour = dataset)) + 
-    geom_point(data=data2, aes(shape = dataset, color = dataset, stroke = 7.5)) + 
-    scale_color_manual(values=c('#728acb','#81bcef'), guide = "legend") + 
-    scale_fill_manual(values=c('#728acb','#81bcef'), guide = "legend") + 
-    scale_y_continuous(expand = c(0.15, 0), labels = comma) + 
+    geom_line(size = 2.9, data = data, aes(x = div_times, y = correlation, group = dataset, 
+        colour = spec_col)) + 
+    geom_point(data=data2, shape = spec_shape, aes(color = spec_col, stroke = 7.85)) + 
+    geom_pointrange(data = data2, shape = spec_shape, mapping = aes(x=div_times, y=correlation, 
+      ymin = lower, ymax = upper), 
+      fatten = 0.1, size = 1.75, color=spec_col) + 
+    scale_color_manual(labels=c(spec_label) , values=c(spec_col), guide = "legend") + 
+    scale_fill_manual(values=c(spec_col), guide = "legend") + 
+    scale_y_continuous(expand = c(0.062, 0), breaks = y_breaks) + 
     scale_x_continuous(expand = c(0.1, 0), breaks=c(0, 50, 100, 150)) + 
-    guides(shape = guide_legend(override.aes = list(stroke = 7.5)))
+    guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
-    q <- p + theme_classic() + xlab("Divergence time (Myr)") + ylab("Pearson distance") + 
+    q <- p + theme_classic() + xlab("Divergence time (Myr)") + ylab(y_title) + 
     theme(text=element_text(size = 16), 
       strip.text = element_text(size = 23.75), 
       strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
-      strip.background = element_rect(colour = 'black', fill = NA, size = 2.2), 
+      strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
       axis.ticks.length = unit(0.35, "cm"), 
-      axis.ticks = element_line(colour = "black", size = 0.95), 
-      axis.line = element_line(colour = 'black', size = 0.95), 
-      plot.margin = unit(c(1, 1, 2.5, 0.4),"cm"), 
-      axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
+      axis.ticks = element_line(colour = "black", size = 1.2), 
+      axis.line = element_line(colour = 'black', size = 1.2), 
+      plot.margin = unit(c(1, margin_r, 3.1, 0.4),"cm"), 
+      axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = marg_r, b = 0, l = 10.8), 
         colour="black", face = "bold"), 
       axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
         colour="black", face = "bold"), 
-      axis.text.x = element_text(size=21.75, margin = margin(t = 5.5, b = 8), colour="black"), 
-      axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 7), colour="black"), 
+      axis.text.x = element_text(size=21.75, margin = margin(t = 4, b = 8), colour="black"), 
+      axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 4), colour="black"), 
       panel.spacing = unit(0.55, "cm"), 
       panel.grid.major = element_blank(),
       panel.grid.minor.x = element_blank(), 
       panel.grid.minor.y = element_blank(), 
-      legend.position = c(0.125, -0.225), 
-      legend.direction = "horizontal", 
-      legend.title = element_blank(), 
-      legend.text = element_text(size = 22.5), 
-      legend.spacing.x = unit(0.5, 'cm'), 
-      legend.key.size = unit(1.2, "cm"), 
-      legend.background=element_blank()) 
+      legend.position = "none") 
 
     q <- q + facet_wrap(~ comp_organ, nrow = 1)
 
@@ -1112,7 +998,10 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
   }
 
-  plotAT.AL.pea.NLM(data = nlmPea_coor11_AT_AL_df, data2 = pea_dist_organs_AT_AL_df)
+  plotDS.Br.pea.NLM(data = DS_AT_pea_dist_nlm_coord_df, data2 = pea_dist_organs_DS_df, data_set = "Angiosperm_pea")
+  plotDS.Br.pea.NLM(data = DS_AT_sOU_v_nlm_coord_df, data2 = sOU_v_dist_organs_DS_df, data_set = "Angiosperm_sOU")
+  plotDS.Br.pea.NLM(data = Br11_pea_dist_nlm_coord_df, data2 = pea_dist_organs_Br11_df, data_set = "Mammalian_pea")
+  plotDS.Br.pea.NLM(data = Br11_sOU_v_nlm_coord_df, data2 = sOU_v_dist_organs_Br11_df, data_set = "Mammalian_sOU")
 
 
   }
