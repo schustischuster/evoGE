@@ -941,19 +941,15 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
     # Define y axis breaks and labels
     if (data_set == "Angiosperm_pea") {
-      y_breaks = c(0.3,0.4,0.5)
       y_title <- "Pearson distance"
       marg_r <- 15.2
     } else if (data_set == "Angiosperm_sOU") {
-      y_breaks = c(0.5,1,1.5)
       y_title <- "Expression distance"
       marg_r <- 13.0
     } else if (data_set == "Mammalian_pea") {
-      y_breaks = c(0.2,0.3,0.4)
       y_title <- "Pearson distance"
       marg_r <- 15.2
     } else if (data_set == "Mammalian_sOU") {
-      y_breaks = c(0.3,0.6,0.9)
       y_title <- "Expression distance"
       marg_r <- 13.0
     }
@@ -967,7 +963,7 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       fatten = 0.1, size = 1.75, color=spec_col) + 
     scale_color_manual(labels=c(spec_label) , values=c(spec_col), guide = "legend") + 
     scale_fill_manual(values=c(spec_col), guide = "legend") + 
-    scale_y_continuous(expand = c(0.062, 0), breaks = y_breaks) + 
+    scale_y_continuous(expand = c(0.1, 0), breaks = pretty_breaks()) + 
     scale_x_continuous(expand = c(0.1, 0), breaks=c(0, 50, 100, 150)) + 
     guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
@@ -976,23 +972,23 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       strip.text = element_text(size = 23.75), 
       strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
       strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
-      axis.ticks.length = unit(0.35, "cm"), 
+      axis.ticks.length = unit(0.325, "cm"), 
       axis.ticks = element_line(colour = "black", size = 1.2), 
       axis.line = element_line(colour = 'black', size = 1.2), 
-      plot.margin = unit(c(1, margin_r, 3.1, 0.4),"cm"), 
+      plot.margin = unit(c(1, margin_r, 4.85, 0.4),"cm"), 
       axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = marg_r, b = 0, l = 10.8), 
         colour="black", face = "bold"), 
       axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
         colour="black", face = "bold"), 
-      axis.text.x = element_text(size=21.75, margin = margin(t = 4, b = 8), colour="black"), 
-      axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 4), colour="black"), 
-      panel.spacing = unit(0.55, "cm"), 
+      axis.text.x = element_text(size=21.75, margin = margin(t = 3.5, b = 8), colour="black"), 
+      axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 2.5), colour="black"), 
+      panel.spacing = unit(0.15, "cm"), 
       panel.grid.major = element_blank(),
       panel.grid.minor.x = element_blank(), 
       panel.grid.minor.y = element_blank(), 
       legend.position = "none") 
 
-    q <- q + facet_wrap(~ comp_organ, nrow = 1)
+    q <- q + facet_wrap(~ comp_organ, nrow = 1, scales = "free")
 
     ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
       width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
