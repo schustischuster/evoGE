@@ -649,51 +649,52 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 
         fname <- sprintf('%s.jpg', paste(deparse(substitute(data))))
 
-        col_breaks <- c("Angiosperms", "Mammals.11", "Mammals.ra")
+        col_breaks <- c("Mammals.11", "Mammals.ra", "Angiosperms")
         y_breaks <- c(0,0.2,0.4,0.6,0.8,1,1.2,1.4)
 
         col_scale <- c('#728acb', 'red', 'red3')
         fill_scale <- c('#728acb', 'red', 'red3')
 
         p <- ggplot(data=data, aes(x = div_times, y = correlation, group = dataset)) + 
-        geom_ribbon(aes(ymin = data$li, ymax = data$ri, fill = dataset), alpha = 0.088, 
+        geom_ribbon(aes(ymin = data$li, ymax = data$ri, fill = dataset), alpha = 0.125, 
           linetype = 0, show.legend = FALSE) + 
         geom_line(size = 2.75, data = data, aes(x = div_times, y = correlation, group = dataset, 
           colour = dataset)) + 
         geom_line(data = data[1:159,], aes(x = div_times, y = correlation), color = '#728acb', size = 2.5) +
-        scale_x_continuous(limits = c(0,162), expand = c(0.02,0), breaks = c(0,20,40,60,80,100,120,140,160)) + 
-        scale_y_continuous(limits = c(-0.035, 1.22), expand = c(0.01, 0), breaks = y_breaks) + 
+        scale_x_continuous(limits = c(0,161.25), expand = c(0.02,0), breaks = c(0,25,50,75,100,125,150)) + 
+        scale_y_continuous(limits = c(-0.035, 1.3585), expand = c(0.01, 0), breaks = y_breaks) + 
         scale_color_manual(values = col_scale, breaks = col_breaks) + 
         scale_fill_manual(values = fill_scale) + 
         scale_size(range = c(0.5, 12)) + 
-        guides(color = guide_legend(ncol=1, keywidth = 0.4, keyheight = 0.4, default.unit = "inch", 
+        guides(color = guide_legend(ncol=2, keywidth = 0.4, keyheight = 0.4, default.unit = "inch", 
           title = ""))
 
-        q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Cumulative mean slope value") + 
-        theme(text=element_text(size=16), 
-          axis.ticks.length=unit(0.35, "cm"), 
-          axis.ticks = element_line(colour = "black", size = 1.25),  
-          plot.margin = unit(c(0.55, 1.175, 1.55, 0.4),"cm"), 
-          axis.title.y = element_text(size=24.5, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
-            face = "bold"), 
-          axis.title.x = element_text(size=24.5, margin = margin(t = 15.75, r = 0, b = 1, l = 0), colour="black", 
-            face = "bold"), 
-          axis.text.x = element_text(size=21.75, angle=0, margin = margin(t = 4), colour="black"), 
-          axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 4), colour="black"), 
-          legend.box.background = element_rect(colour = NA, fill= "white" , size=1.2), 
-          panel.border = element_rect(colour = "black", fill=NA, size=2.4), 
+        q <- p + theme_bw() + xlab("Divergence time (Myr)") + ylab("Cumulative mean \n slope value") + 
+        theme(text=element_text(size = 16), 
+          panel.border = element_rect(colour = "white", fill=NA, size = 2.3), 
+          axis.line = element_line(colour = 'black', size = 1.15), 
+          axis.ticks.length = unit(0.325, "cm"), 
+          axis.ticks = element_line(colour = "black", size = 1.15), 
+          plot.margin = unit(c(1, 0.932, 4.8575, 0.025),"cm"), 
+          axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 14, b = 0, l = 0), 
+            colour="black", face = "bold"), 
+          axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
+            colour="black", face = "bold"), 
+          axis.text.x = element_text(size=21.75, margin = margin(t = 3.5, b = 8), colour="grey5"), 
+          axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
+          panel.spacing = unit(0.15, "cm"), 
           panel.grid.major = element_blank(),
           panel.grid.minor.x = element_blank(), 
           panel.grid.minor.y = element_blank(), 
-          legend.position = c(0.18, 0.84), 
+          legend.position = c(0.507, 0.856), 
           legend.title = element_blank(), 
-          legend.text = element_text(size=22), 
+          legend.text = element_text(size=21.75), 
           legend.spacing.x = unit(0.5, 'cm'), 
           legend.key.size = unit(0.95, "cm"), 
           legend.background=element_blank()) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-          width = 9.5, height = 6.75, dpi = 300, units = c("in"), limitsize = FALSE)
+          width = 6.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
       }
 
       plotsOUPeaCumSlopes(data = DS_Br11_Br_pea_nlm_cum)
@@ -1040,7 +1041,7 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       spec_col <- 'red'
       spec_label <- "Mammals.11"
       spec_shape <- 17
-      margin_r <- 18.1
+      margin_r <- 18.397
 
     }
 
@@ -1048,15 +1049,23 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
     if (data_set == "Angiosperm_pea") {
       y_title <- "Pearson distance"
       marg_r <- 15.2
+      marg_l <- 10.8
+      p_space <- 0.15
     } else if (data_set == "Angiosperm_sOU") {
       y_title <- "Expression distance"
       marg_r <- 13.0
+      marg_l <- 23.0
+      p_space <- 0.575
     } else if (data_set == "Mammalian_pea") {
       y_title <- "Pearson distance"
       marg_r <- 15.2
+      marg_l <- 10.8
+      p_space <- 0.15
     } else if (data_set == "Mammalian_sOU") {
       y_title <- "Expression distance"
       marg_r <- 13.0
+      marg_l <- 23.0
+      p_space <- 0.575
     }
 
     p <- ggplot(data=data, color = dataset, aes(x=div_times, y=correlation)) + 
@@ -1076,18 +1085,18 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
     theme(text=element_text(size = 16), 
       strip.text = element_text(size = 23.75), 
       strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
-      strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+      strip.background = element_rect(colour = 'black', fill = NA, size = 2.4), 
       axis.ticks.length = unit(0.325, "cm"), 
-      axis.ticks = element_line(colour = "black", size = 1.2), 
-      axis.line = element_line(colour = 'black', size = 1.2), 
+      axis.ticks = element_line(colour = "black", size = 1.15), 
+      axis.line = element_line(colour = 'black', size = 1.15), 
       plot.margin = unit(c(1, margin_r, 4.85, 0.4),"cm"), 
-      axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = marg_r, b = 0, l = 10.8), 
+      axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = marg_r, b = 0, l = marg_l), 
         colour="black", face = "bold"), 
       axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
         colour="black", face = "bold"), 
-      axis.text.x = element_text(size=21.75, margin = margin(t = 3.5, b = 8), colour="black"), 
-      axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 2.5), colour="black"), 
-      panel.spacing = unit(0.15, "cm"), 
+      axis.text.x = element_text(size=21.75, margin = margin(t = 3.5, b = 8), colour="grey5"), 
+      axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
+      panel.spacing = unit(p_space, "cm"), 
       panel.grid.major = element_blank(),
       panel.grid.minor.x = element_blank(), 
       panel.grid.minor.y = element_blank(), 
