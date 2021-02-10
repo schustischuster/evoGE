@@ -15,16 +15,12 @@ plotSlopes <- function() {
 
 
     DS_AT_Br_loess_slopes = file.path(out_dir, "output", "data", "DS_AT_Br_loess_slopes.txt")
-    DS_AL_loess_slopes = file.path(out_dir, "output", "data", "DevSeq_AL_loess_slopes.txt")
     DS_AT_Br_nlm_slopes = file.path(out_dir, "output", "data", "DS_AT_Br_nlm_slopes.txt")
-    DS_AL_Br_nlm_slopes = file.path(out_dir, "output", "data", "DS_AL_Br_nlm_slopes.txt")
 
 
     # Read expression data
     DS_AT_Br_loess <- read.table(DS_AT_Br_loess_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
-    DS_AL_loess <- read.table(DS_AL_loess_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
     DS_AT_Br_nlm <- read.table(DS_AT_Br_nlm_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
-    DS_AL_Br_nlm <- read.table(DS_AL_Br_nlm_slopes, header=TRUE, sep="\t", dec=".", stringsAsFactors=FALSE)
 
     DS_AT_Br_loess <- DS_AT_Br_loess[-c(15:16),]
 
@@ -40,16 +36,6 @@ plotSlopes <- function() {
 
     # Show message
     message("Starting analysis and generate plots...")
-
-
-
-    # Prepare data for ggplot2
-    DS_AL_loess_dupl <- data.frame(sample = DS_AL_loess$sample, 
-        DS_AL_Br11_sOU_loess = DS_AL_loess$DS_AL_sOU_loess, DS_AL_Br_sOU_loess = DS_AL_loess$DS_AL_sOU_loess, 
-        DS_AL_Br11_pea_loess = DS_AL_loess$DS_AL_pea_loess, DS_AL_Br_pea_loess = DS_AL_loess$DS_AL_pea_loess)
-    Br_loess <- DS_AT_Br_loess[9:nrow(DS_AT_Br_loess),]
-    colnames(Br_loess) <- colnames(DS_AL_loess_dupl)
-    DS_AL_Br_loess <- rbind(DS_AL_loess_dupl, Br_loess)
 
 
     getStats <- function(df) {
@@ -75,18 +61,12 @@ plotSlopes <- function() {
 
     DS_AT_Br_loess <- as.data.frame(rbind(DS_AT_Br_loess, getStats(DS_AT_Br_loess)))
     rownames(DS_AT_Br_loess) <- NULL
-    DS_AL_Br_loess <- as.data.frame(rbind(DS_AL_Br_loess, getStats(DS_AL_Br_loess)))
-    rownames(DS_AL_Br_loess) <- NULL
     DS_AT_Br_nlm <- as.data.frame(rbind(DS_AT_Br_nlm, getStats(DS_AT_Br_nlm)))
     rownames(DS_AT_Br_nlm) <- NULL
-    DS_AL_Br_nlm <- as.data.frame(rbind(DS_AL_Br_nlm, getStats(DS_AL_Br_nlm)))
-    rownames(DS_AL_Br_nlm) <- NULL
 
 
     Angiosperms.AT <- as.data.frame(rep("Angiosperms.AT", 16))
     colnames(Angiosperms.AT) <- "Species"
-    Angiosperms.AL <- as.data.frame(rep("Angiosperms.AL", 16))
-    colnames(Angiosperms.AL) <- "Species"
     Mammals <- as.data.frame(rep("Mammals", 24))
     colnames(Mammals) <- "Species"
     Mammals.RA <- as.data.frame(rep("Mammals.RA", 24))
@@ -129,13 +109,6 @@ plotSlopes <- function() {
     DS_AT_Pea_nlm <- formatTableDS(DS_AT_Br_nlm, dist = "Pearson", spec = "AT")
     DS_AT <- rbind(DS_AT_sOU_loess, DS_AT_Pea_loess, DS_AT_sOU_nlm, DS_AT_Pea_nlm)
     DS_AT <- cbind(DS_AT, Angiosperms.AT)
-
-    DS_AL_sOU_loess <- formatTableDS(DS_AL_Br_loess, dist = "sOU", spec = "AL")
-    DS_AL_Pea_loess <- formatTableDS(DS_AL_Br_loess, dist = "Pearson", spec = "AL")
-    DS_AL_sOU_nlm <- formatTableDS(DS_AL_Br_nlm, dist = "sOU", spec = "AL")
-    DS_AL_Pea_nlm <- formatTableDS(DS_AL_Br_nlm, dist = "Pearson", spec = "AL")
-    DS_AL <- rbind(DS_AL_sOU_loess, DS_AL_Pea_loess, DS_AL_sOU_nlm, DS_AL_Pea_nlm)
-    DS_AL <- cbind(DS_AL, Angiosperms.AL)
 
 
 
@@ -195,7 +168,7 @@ plotSlopes <- function() {
 
 
     # Generate final table containing all organ slopes and data sets
-    DSBr_reg_slopes <- rbind(DS_AT, DS_AL, Br_2011, Br_RA)
+    DSBr_reg_slopes <- rbind(DS_AT, Br_2011, Br_RA)
 
     DSBr_reg_slopes$sample <- factor(DSBr_reg_slopes$sample, 
         levels = unique(DSBr_reg_slopes$sample))
@@ -226,16 +199,27 @@ plotSlopes <- function() {
         DSBr_reg_slopes[25,])
     max_values <- DSBr_reg_slopes %>% group_by(Regression) %>% summarize(max.Slope = max(Slope))
     max_values$max.Slope <- (max_values$max.Slope) * 1.148
-    scale_layer$Slope <- c(max_values$max.Slope[1], max_values$max.Slope[3]-0.00004, max_values$max.Slope[2], 
-        max_values$max.Slope[4]-0.00002)
+    scale_layer$Slope <- c(max_values$max.Slope[1], max_values$max.Slope[3], max_values$max.Slope[2], 
+        max_values$max.Slope[4])
     scale_layer$Slope <- as.numeric(scale_layer$Slope)
 
 
 
 
-    makeSlopePlot <- function(data, data2) {
+    makeSlopePlot <- function(data, data2, dist_meth) {
 
-        fname <- sprintf('%s.jpg', paste("Organ_regression_slopes"))
+        if (dist_meth == "pea") {
+            x_labels <- c("AT_Pearson_loess" = "Angiosperms.AT", "AT_Pearson_nlm" = "Angiosperms.AT",  
+            "Br11_Pearson_loess" = "Mammals.11", "Br11_Pearson_nlm" = "Mammals.11", 
+            "Br_Pearson_loess" = "Mammals.re-an.", "Br_Pearson_nlm" = "Mammals.re-an.")
+
+        } else if (dist_meth == "sOU_v") {
+            x_labels <- c("AT_sOU_loess" = "Angiosperms.AT", "AT_sOU_nlm" = "Angiosperms.AT",   
+            "Br11_sOU_loess" = "Mammals.11", "Br11_sOU_nlm" = "Mammals.11", 
+            "Br_sOU_loess" = "Mammals.re-an.", "Br_sOU_nlm" = "Mammals.re-an.")
+        }
+
+        fname <- sprintf('%s.jpg', paste("Organ_regression_slopes", dist_meth, sep = "_"))
             
 
         p <- ggplot(data=data, aes(x=ID, y=Slope)) + 
@@ -244,36 +228,31 @@ plotSlopes <- function() {
         geom_point(aes(shape = sample, color = Species, size = sample, stroke = 3.0)) + 
         scale_shape_manual(values = c(0, 8, 2, 5, 3, 4, 6, 1, 15, 16, 17, 18, 19, 10)) + 
         scale_size_manual(values = c(4.75, 4.75, 4.75, 4.75, 5.25, 5.25, 4.75, 5.25, 5.5, 5.5, 5.5, 8.8, 5.5, 5.5)) + 
-        scale_color_manual(values=c('#81bcef','#728acb', 'red', 'red3'), 
+        scale_color_manual(values=c('#728acb', 'red', 'red3'), 
             guide = "none") + 
-        scale_fill_manual(values=c('#81bcef','#728acb', 'red', 'red3'), 
+        scale_fill_manual(values=c('#728acb', 'red', 'red3'), 
             guide = "legend") + 
-        scale_y_continuous(expand = c(0.14, 0), labels = comma) + 
-        scale_x_discrete(labels=c("AT_sOU_loess" = "Angiosperms.AT", "AT_Pearson_loess" = "Angiosperms.AT", 
-            "AT_sOU_nlm" = "Angiosperms.AT", "AT_Pearson_nlm" = "Angiosperms.AT", "AL_sOU_loess" = "Angiosperms.AL", 
-            "AL_Pearson_loess" = "Angiosperms.AL", "AL_sOU_nlm" = "Angiosperms.AL", "AL_Pearson_nlm" = "Angiosperms.AL", 
-            "Br11_sOU_loess" = "Mammals.11", "Br11_sOU_nlm" = "Mammals.11", "Br11_Pearson_loess" = "Mammals.11", 
-            "Br11_Pearson_nlm" = "Mammals.11", "Br_sOU_loess" = "Mammals.re-an.", "Br_sOU_nlm" = "Mammals.re-an.", 
-            "Br_Pearson_loess" = "Mammals.re-an.", "Br_Pearson_nlm" = "Mammals.re-an.")) + 
+        scale_y_continuous(expand = c(0.075, 0), labels = comma) + 
+        scale_x_discrete(labels = x_labels) + 
         guides(shape = guide_legend(override.aes = list(stroke=1.5)))
 
         q <- p + theme_classic() + xlab("Data set") + ylab("Slope value") + 
         theme(text=element_text(size = 16), 
             strip.text = element_text(size = 23.75), 
             strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
-            strip.background = element_rect(colour = 'black', fill = NA, size = 2.25), 
-            axis.ticks.length = unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1), 
-            axis.line = element_line(colour = 'black', size = 1), 
-            plot.margin = unit(c(0.55, 1.175, 2, 0.4),"cm"), 
-            axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), colour="black", 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.4), 
+            axis.ticks.length = unit(0.325, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.15), 
+            axis.line = element_line(colour = 'black', size = 1.15), 
+            plot.margin = unit(c(0.55, 1.175, 1, 0.4),"cm"), 
+            axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 13.0, b = 0, l = 10.8), colour="black", 
                 face = "bold"), 
-            axis.title.x = element_text(size=24.6, margin = margin(t = -18, r = 0, b = 35, l = 0), colour="black", 
+            axis.title.x = element_text(size=24.6, margin = margin(t = 0, r = 0, b = 0, l = 0), colour="black", 
                 face = "bold"), 
-            axis.text.x = element_text(size=22.5, angle=45, margin = margin(t = -61, b = 100), colour="black", 
+            axis.text.x = element_text(size=22.5, angle=45, margin = margin(t = -61, b = 80), colour="grey5", 
                 hjust = 0.99, vjust = 0.45), 
-            axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 5.5), colour="black"), 
-            panel.spacing = unit(0.5, "cm"), 
+            axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
+            panel.spacing = unit(0.7, "cm"), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
@@ -281,17 +260,18 @@ plotSlopes <- function() {
             legend.title = element_blank(), 
             legend.text = element_text(size = 22.5), 
             legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(1.2, "cm"), 
+            legend.key.size = unit(1, "cm"), 
             legend.background=element_blank()) 
 
-        q <- q + facet_wrap(~ Regression, scales = "free", nrow = 1) + 
+        q <- q + facet_wrap(~ Regression, scales = "free_x", nrow = 1) + 
           geom_blank(data=data2, aes(x=ID, y=Slope))
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 28.5, height = 12.8, dpi = 300, units = c("in"), limitsize = FALSE) 
+            width = 11, height = 8.5, dpi = 300, units = c("in"), limitsize = FALSE) 
     }
 
-    makeSlopePlot(data = DSBr_reg_slopes, data2 = scale_layer)
+    makeSlopePlot(data = DSBr_reg_slopes[c(1:8,17:24,33:44,57:68),], data2 = scale_layer[c(1,3),], dist_meth = "sOU_v")
+    makeSlopePlot(data = DSBr_reg_slopes[c(9:16,25:32,45:56,69:80),], data2 = scale_layer[c(2,4),], dist_meth = "pea")
 
 
 
@@ -310,18 +290,12 @@ plotSlopes <- function() {
     AT_Br_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,3], format = "e", digits = 0)))
     AT_Br11_pea_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,4], format = "e", digits = 0)))
 
-    AL_Br11_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AL_Br_loess[16,2], format = "e", digits = 0)))
-    AL_Br_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AL_Br_loess[16,3], format = "e", digits = 0)))
-
-    AL_Br11_sOU_nlm <- c(paste("italic('P =')~", round(DS_AL_Br_nlm[16,2], 3)))
-    AL_Br_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AL_Br_nlm[16,3], format = "e", digits = 0)))
-
 
     dat_text <- data.frame(
-        label = c(AT_Br11_sOU_loess, AT_Br_sOU_loess, AL_Br11_sOU_loess, AT_Br11_sOU_nlm, AT_Br_sOU_nlm, 
-            AL_Br11_sOU_nlm, AT_Br11_pea_loess, AT_Br11_pea_nlm), # other p-values have same value
-        x = c(0.481, 0.595, 0.5387, 1.688, 1.802, 1.747, 3.01, 4.22),
-        y = c(8.825, 9.47, 4.538, 8.825, 9.47, 4.668, 9.225, 9.225)
+        label = c(AT_Br11_sOU_loess, AT_Br_sOU_loess, AT_Br11_sOU_nlm, AT_Br_sOU_nlm, 
+            AT_Br11_pea_loess, AT_Br11_pea_nlm), # other p-values have same value
+        x = c(0.481, 0.595, 0.5387, 1.802, 3.01, 4.22),
+        y = c(8.825, 9.47, 4.538, 9.47, 9.225, 9.225)
     )
 
     options(scipen = -1) # This sets scientific notation below 1e-2
