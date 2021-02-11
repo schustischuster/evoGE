@@ -209,14 +209,14 @@ plotSlopes <- function() {
     makeSlopePlot <- function(data, data2, dist_meth) {
 
         if (dist_meth == "pea") {
-            x_labels <- c("AT_Pearson_loess" = "Angiosperms.AT", "AT_Pearson_nlm" = "Angiosperms.AT",  
+            x_labels <- c("AT_Pearson_loess" = "Angiosperms", "AT_Pearson_nlm" = "Angiosperms",  
             "Br11_Pearson_loess" = "Mammals.11", "Br11_Pearson_nlm" = "Mammals.11", 
-            "Br_Pearson_loess" = "Mammals.re-an.", "Br_Pearson_nlm" = "Mammals.re-an.")
+            "Br_Pearson_loess" = "Mammals.ra", "Br_Pearson_nlm" = "Mammals.ra")
 
         } else if (dist_meth == "sOU_v") {
-            x_labels <- c("AT_sOU_loess" = "Angiosperms.AT", "AT_sOU_nlm" = "Angiosperms.AT",   
+            x_labels <- c("AT_sOU_loess" = "Angiosperms", "AT_sOU_nlm" = "Angiosperms",   
             "Br11_sOU_loess" = "Mammals.11", "Br11_sOU_nlm" = "Mammals.11", 
-            "Br_sOU_loess" = "Mammals.re-an.", "Br_sOU_nlm" = "Mammals.re-an.")
+            "Br_sOU_loess" = "Mammals.ra", "Br_sOU_nlm" = "Mammals.ra")
         }
 
         fname <- sprintf('%s.jpg', paste("Organ_regression_slopes", dist_meth, sep = "_"))
@@ -224,7 +224,7 @@ plotSlopes <- function() {
 
         p <- ggplot(data=data, aes(x=ID, y=Slope)) + 
         stat_boxplot(geom ='errorbar', width = 0, size=1.0, color="black") + 
-        geom_boxplot(width = 0.75, size=1.05, fatten = 3.5, color="black", outlier.shape = NA, alpha = 0) + 
+        geom_boxplot(width = 0.75, size=1.05, fatten = 3.25, color="black", outlier.shape = NA, alpha = 0) + 
         geom_point(aes(shape = sample, color = Species, size = sample, stroke = 3.0)) + 
         scale_shape_manual(values = c(0, 8, 2, 5, 3, 4, 6, 1, 15, 16, 17, 18, 19, 10)) + 
         scale_size_manual(values = c(4.75, 4.75, 4.75, 4.75, 5.25, 5.25, 4.75, 5.25, 5.5, 5.5, 5.5, 8.8, 5.5, 5.5)) + 
@@ -244,13 +244,13 @@ plotSlopes <- function() {
             axis.ticks.length = unit(0.325, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.15), 
             axis.line = element_line(colour = 'black', size = 1.15), 
-            plot.margin = unit(c(0.55, 1.175, 1, 0.4),"cm"), 
+            plot.margin = unit(c(0.55, 0.2, 1, 0.4),"cm"), 
             axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 13.0, b = 0, l = 10.8), colour="black", 
                 face = "bold"), 
             axis.title.x = element_text(size=24.6, margin = margin(t = 0, r = 0, b = 0, l = 0), colour="black", 
                 face = "bold"), 
-            axis.text.x = element_text(size=22.5, angle=45, margin = margin(t = -61, b = 80), colour="grey5", 
-                hjust = 0.99, vjust = 0.45), 
+            axis.text.x = element_text(size=22, angle=45, margin = margin(t = -51, b = 80), colour="grey5", 
+                hjust = 1.0, vjust = 0.45), 
             axis.text.y = element_text(size=21.75, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
             panel.spacing = unit(0.7, "cm"), 
             panel.grid.major = element_blank(),
@@ -258,16 +258,16 @@ plotSlopes <- function() {
             panel.grid.minor.y = element_blank(), 
             legend.position = "right", 
             legend.title = element_blank(), 
-            legend.text = element_text(size = 22.5), 
+            legend.text = element_text(size = 22), 
             legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(1, "cm"), 
+            legend.key.size = unit(0.95, "cm"), 
             legend.background=element_blank()) 
 
         q <- q + facet_wrap(~ Regression, scales = "free_x", nrow = 1) + 
           geom_blank(data=data2, aes(x=ID, y=Slope))
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 11, height = 8.5, dpi = 300, units = c("in"), limitsize = FALSE) 
+            width = 10.5, height = 8.5, dpi = 300, units = c("in"), limitsize = FALSE) 
     }
 
     makeSlopePlot(data = DSBr_reg_slopes[c(1:8,17:24,33:44,57:68),], data2 = scale_layer[c(1,3),], dist_meth = "sOU_v")
@@ -282,23 +282,24 @@ plotSlopes <- function() {
 
     df_blank <- data.frame()
 
-    AT_Br11_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,2], format = "e", digits = 0)))
-    AT_Br_sOU_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,3], format = "e", digits = 0)))
-    AT_Br11_pea_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,4], format = "e", digits = 0)))
+    sOU_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,2], format = "e", digits = 0)))
+    pea_loess <- c(paste("italic('P =')~", formatC(DS_AT_Br_loess[16,4], format = "e", digits = 0)))
 
-    AT_Br11_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,2], format = "e", digits = 0)))
-    AT_Br_sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,3], format = "e", digits = 0)))
-    AT_Br11_pea_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,4], format = "e", digits = 0)))
+    sOU_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,2], format = "e", digits = 0)))
+    pea_nlm <- c(paste("italic('P =')~", formatC(DS_AT_Br_nlm[16,4], format = "e", digits = 0)))
 
 
-    dat_text <- data.frame(
-        label = c(AT_Br11_sOU_loess, AT_Br_sOU_loess, AT_Br11_sOU_nlm, AT_Br_sOU_nlm, 
-            AT_Br11_pea_loess, AT_Br11_pea_nlm), # other p-values have same value
-        x = c(0.481, 0.595, 0.5387, 1.802, 3.01, 4.22),
-        y = c(8.825, 9.47, 4.538, 9.47, 9.225, 9.225)
+    dat_text_sOU_v <- data.frame(
+        label = c(sOU_loess, sOU_nlm), # other p-values have same value
+        x = c(1.507, 3.223),
+        y = c(9.05, 9.05)
     )
 
-    options(scipen = -1) # This sets scientific notation below 1e-2
+    dat_text_pea <- data.frame(
+        label = c(pea_loess, pea_nlm), # other p-values have same value
+        x = c(1.507, 3.223),
+        y = c(9.05, 9.05)
+    )
 
     p <- ggplot(df_blank) + geom_point() + xlim(0, 5) + ylim(0, 10) + theme_void() + 
     theme(
@@ -310,16 +311,25 @@ plotSlopes <- function() {
         legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
         )
 
-    q <- p + geom_text(
-        data = dat_text,
+    q_sOU <- p + geom_text(
+        data = dat_text_sOU_v,
+        mapping = aes(x = x, y = y, label = format(label, scientific=TRUE)), 
+        size = 8.25, parse = TRUE
+    )
+
+    q_pea <- p + geom_text(
+        data = dat_text_pea,
         mapping = aes(x = x, y = y, label = format(label, scientific=TRUE)), 
         size = 8.25, parse = TRUE
     )
 
     png("NUL")
 
-    ggsave(file = file.path(out_dir, "output", "plots", "p_value_annotation_layer.png"), plot = q,
-        width = 28.5, height = 12.8, units = c("in"), dpi = 300, limitsize = FALSE, bg = "transparent")
+    ggsave(file = file.path(out_dir, "output", "plots", "p_value_annotation_layer_sOU.png"), plot = q_sOU,
+        width = 10.5, height = 8.5, units = c("in"), dpi = 300, limitsize = FALSE, bg = "transparent")
+
+    ggsave(file = file.path(out_dir, "output", "plots", "p_value_annotation_layer_pea.png"), plot = q_pea,
+        width = 10.5, height = 8.5, units = c("in"), dpi = 300, limitsize = FALSE, bg = "transparent")
 
    
 }
