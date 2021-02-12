@@ -217,28 +217,6 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
       makeGEDivPlot <- function(data1, data2, plot_title, coefficient) {
 
         fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, expr_estimation, "ext", sep="_"))
-        plot_wdt <- 9.5 # condenced plot width for suppl
-        plot_hdt <- 6.75 # condenced plot width for suppl
-        legend_x_pos <- 0.638
-        legend_y_pos <- 0.862
-        legend_key_s <- 0.9
-        linewd <- 2.6
-        brass_label <- "Brassiceae"
-        text_x1_pos <- 22
-        text_x4_pos <- 157
-        text_y_pos <- 0.46525
-        x_poll_pos <- 145.8
-        y_poll_pos <- 0.81525
-        leg_ln_s1_x <- 129.45
-        leg_ln_s1_xend <- 131.7
-        leg_ln_s2_x <- 133.15
-        leg_ln_s2_xend <- 135.4
-        leg_ln_s_y <- 0.8155
-        leg_box_bd <- 0
-        pan_boarder <- 1.8
-        axis_txt_size <- 21.75
-        axis_ticks_s <- 0.95
-        title_face <- "bold"
 
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
         geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
@@ -246,8 +224,9 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
         scale_fill_manual(values = c("Hypocotyl  "="#53b0db", "Stamen  "="#ee412e", "Flower  "="#e075af", 
                 "Root  "="#6a54a9", "Apex veg  "="#96ba37", "Apex inf  "="#fad819", "Carpel  "="#f2a72f", 
                 "Leaf  "="#2c8654", "Pollen  "="#a63126")) + 
-        geom_line(size = linewd) +  
-        scale_x_continuous(limits = c(5.5,161.5), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
+        geom_line(size = 2.9) +  
+        scale_x_continuous(limits = c(5.5,161.5), expand = c(0.02,0), breaks = c(7,9,25,46,106,160), 
+          labels = c( "7 ", " 9", 25, 46, 106, 160)) + 
         scale_y_continuous(limits = c(0.4425, 0.907), expand = c(0.02, 0)) + 
         scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
             "#f2a72f", "#2c8654", "#a63126"), 
@@ -255,51 +234,52 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
             breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ", "Pollen  ")) + 
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "white", lty = "solid", 
-            lwd = linewd) + # pollen
+            lwd = 2.9) + # pollen
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
-            lwd = linewd) + # pollen
+            lwd = 2.9) + # pollen
         geom_segment(x=156.75, xend=156.75, y=0.4475, yend=0.4775, color="white", size=12.5) + 
-        annotate("text", x=text_x1_pos, y=text_y_pos, label= brass_label, size=8) + 
-        annotate("text", x=46, y=text_y_pos, label= "TH", size=8) + 
-        annotate("text", x=106, y=text_y_pos, label= "MT", size=8) + 
-        annotate("text", x=text_x4_pos, y=text_y_pos, label= "BD", size=8) + 
-        geom_segment(x=7, xend=7, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
-        geom_segment(x=9, xend=9, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
-        geom_segment(x=25, xend=25, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
-        geom_segment(x=46, xend=46, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
-        geom_segment(x=106, xend=106, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
-        geom_segment(x=160, xend=160, y=0.425, yend=0.4475, color="black", size=axis_ticks_s-0.05) + 
+        annotate("text", x=20.5, y=0.46525, label= "Brassiceae", size=8) + 
+        annotate("text", x=46, y=0.46525, label= "TH", size=8) + 
+        annotate("text", x=106, y=0.46525, label= "MT", size=8) + 
+        annotate("text", x=157, y=0.46525, label= "BD", size=8) + 
+        geom_segment(x=7, xend=7, y=0.425, yend=0.4475, color="black", size=1.1) + 
+        geom_segment(x=9, xend=9, y=0.425, yend=0.4475, color="black", size=1.1) + 
+        geom_segment(x=25, xend=25, y=0.425, yend=0.4475, color="black", size=1.1) + 
+        geom_segment(x=46, xend=46, y=0.425, yend=0.4475, color="black", size=1.1) + 
+        geom_segment(x=106, xend=106, y=0.425, yend=0.4475, color="black", size=1.1) + 
+        geom_segment(x=160, xend=160, y=0.425, yend=0.4475, color="black", size=1.1) + 
         guides(color = guide_legend(ncol = 3))
 
         q <- p + theme_bw() + xlab("Divergence time from A.lyrata (Myr)") + ylab("Pearson's r w/ A.lyrata") + 
         theme(text=element_text(size=16), 
-            axis.ticks.length=unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = axis_ticks_s),  
-            plot.margin = unit(c(0.55, 1.175, 0.5, 0.4),"cm"), 
-            axis.title.y = element_text(size=24.5, margin = margin(t = 0, r = 15, b = 0, l = 11), colour="black", 
-                face = title_face), 
-            axis.title.x = element_text(size=24.5, margin = margin(t = 15.75, r = 0, b = 1, l = 0), colour="black", 
-                face = title_face), 
-            axis.text.x = element_text(size=axis_txt_size, angle=0, margin = margin(t = 5.5), colour="black"), 
-            axis.text.y = element_text(size=axis_txt_size, angle=0, margin = margin(r = 5.5), colour="black"), 
-            legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=leg_box_bd), 
-            panel.border = element_rect(colour = "black", fill=NA, size=pan_boarder), 
+            axis.ticks.length=unit(0.325, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.15),  
+            plot.margin = unit(c(0.55, 0.46, 4.26, 1.27),"cm"), 
+            axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 13, b = 0, l = 10.8), colour="black", 
+                face = "bold"), 
+            axis.title.x = element_text(size=24.6, margin = margin(t = 13.75, r = 0, b = 1, l = 0), colour="black", 
+                face = "bold"), 
+            axis.text.x = element_text(size=21.75, angle=0, margin = margin(t = 4.5), colour="grey5"), 
+            axis.text.y = element_text(size=21.75, angle=0, margin = margin(r = 2.5), colour="grey5"), 
+            legend.box.background = element_rect(colour = "#d5d5d5", fill=NA, size=0), 
+            panel.border = element_rect(colour = "black", fill=NA, size=2.3), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
-            legend.position = c(legend_x_pos, legend_y_pos), 
+            legend.position = c(0.671, 0.865), 
             legend.title = element_blank(), 
-            legend.text = element_text(size=21.5), 
+            legend.text = element_text(size=22), 
             legend.spacing.x = unit(0.5, 'cm'), 
-            legend.key.size = unit(legend_key_s, "cm"), 
+            legend.key.size = unit(0.9, "cm"), 
             legend.background=element_blank()) 
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = plot_wdt, height = plot_hdt, dpi = 300, units = c("in"), limitsize = FALSE) 
+            width = 10.5, height = 8.5, dpi = 300, units = c("in"), limitsize = FALSE) 
       }
 
       makeGEDivPlot(data1 = DevSeq_AL_div_rates, data2 = DevSeq_AL_div_rates_pollen, 
         coefficient = coefficient)
+    }
 
 
 
