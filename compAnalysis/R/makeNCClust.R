@@ -604,12 +604,13 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
             order_guide <- 0
 
         } else if (data_scale == "raw") {
-            legend_pos <- c(0.849, 0.505)
-            legend_spacing <- 5.2
+            legend_pos <- c(0.5, 0.23125)
+            legend_spacing <- 7.7
             order_guide <- 1
         }
 
         if (set == "pc2_3") legend_pos <- "none"
+        if (set == "pc1_3") legend_pos <- "none"
 
 
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
@@ -618,13 +619,13 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
         plot <- ggplot(data, aes(x = PC1, y = PC2, colour=Organ, fill = Organ)) + 
         stat_bag(prop = 0.95, size=1.5) + 
         geom_point(aes(shape=Species, color=Organ, size=Species, stroke=2.25)) + 
-        scale_shape_manual(values = c(16, 17, 18, 15))  + 
-        scale_x_continuous(expand = c(0.05, 0), limits = NULL) + 
-        scale_y_continuous(expand = c(0.05, 0)) +
-        guides(shape = guide_legend(override.aes = list(size = c(5.0, 4.5, 6.75, 4.5), stroke=2.75), 
+        scale_shape_manual(values = c(16, 17, 18, 15), labels = c("A.lyr.","A.thal.","C.rub.","E.sals.")) + 
+        scale_x_continuous(expand = c(0.059, 0), limits = NULL) + 
+        scale_y_continuous(expand = c(0.07, 0)) +
+        guides(shape = guide_legend(override.aes = list(size = c(5.75, 5.5, 7.5, 5.5), stroke=2.75), 
                order = order_guide, ncol = 1), size = FALSE) + 
         guides(colour = guide_legend(override.aes = list(size=5, linetype = "blank", alpha=1))) + 
-        scale_size_manual(values = c(5.0, 4.5, 6.75, 4.5)) + 
+        scale_size_manual(values = c(5.75, 5.5, 7.5, 5.5)) + 
         # shapes = filled round, filled rect, empty square, filled square_rot, filled square, empty rect, inverted empty rect
         # colors = dark moderate violet, soft blue, dark green, moderate green, vivid yellow, orange, vivid red, soft pink
         scale_color_manual(values=c('#6a54a9','#53b0db', '#2c8654', '#96ba37','#fad819', '#f2a72f', '#ee412e', '#e075af'), 
@@ -634,21 +635,23 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
         labs(x = x_lab, y = y_lab) + 
         theme(panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
+            panel.border = element_rect(colour = "black", fill=NA, size=2.3), 
             panel.background = element_blank(), 
-            axis.title.y = element_text(size=24, margin = margin(t = 0, r = -3.5, b = 0, l = 18.0), colour="black"), 
-            axis.title.x = element_text(size=24, margin = margin(t = 12.75, r = 0, b = 4.5, l = 0), colour="black"), 
-            axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5), colour="black"), 
-            axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5), colour="black"), 
+            axis.title.y = element_text(size=25.75, margin = margin(t = 0, r = -3.5, b = 0, l = 18.0), colour="black"), 
+            axis.title.x = element_text(size=25.75, margin = margin(t = 12.75, r = 0, b = 4.5, l = 0), colour="black"), 
+            axis.text.x = element_text(size=24.5, angle=0, margin = margin(t = 5), colour="black"), 
+            axis.text.y = element_text(size=24.5, angle=0, margin = margin(r = 5), colour="black"), 
             axis.ticks.length=unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.7), 
+            axis.ticks = element_line(colour = "black", size = 1.15), 
             legend.key = element_rect(colour = "transparent", fill = "white"), 
             legend.key.size = unit(1.65,"line"), # default is 1.2
-            legend.text = element_text(size=21.25), 
+            legend.text = element_text(size=24.5), 
             legend.background = element_rect(fill = "transparent"),
             legend.title = element_blank(),
-            legend.spacing.y = unit(legend_spacing,'cm'), 
+            legend.spacing.x = unit(legend_spacing,'cm'), 
             legend.position = legend_pos,
+            legend.box="horizontal", 
+            legend.box.just = "bottom", 
             plot.margin = unit(c(0.55, 0.55, 0.5, 0.5),"cm"))
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
