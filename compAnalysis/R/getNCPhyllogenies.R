@@ -196,7 +196,7 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
 
     # Make phyloplots
     # Root
-    png(height = 1150, width = 1150, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_root_tr.png"))
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_root_tr.png"))
     p <- ggtree(root_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
     geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
@@ -207,163 +207,169 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.671) + 
+    xlim(0, 0.55) + 
     theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     plot(p)
     dev.off()
 
-        # Hypocotyl
-        hypo_tr2 <- groupClade(hypo_tr, c(30, 34))
-        png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_hypo_tr.png"))
-        p <- ggtree(hypo_tr2, ladderize = FALSE, size=0.55, aes(linetype=group)) + 
-        geom_tiplab() + 
-        # scale_linetype_manual(values=c("solid", "dashed", "dashed")) + 
-        geom_nodepoint(shape=21, size=2.45, fill='#c3f857', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==37)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==35)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) +
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==29)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale(color="white", y = 0.75) + 
-        # geom_text(aes(label=node), hjust=-.3) + 
-        xlim(0, 0.671) + 
-        theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
-        # Rotate nodes
-        p2 <- flip(p, 25, 30)
-        plot(p2)
-        dev.off()
+    # Hypocotyl
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_hypo_tr.png"))
+    p <- ggtree(hypo_tr2, ladderize = FALSE, size=0.55, aes(linetype=group)) + 
+    geom_tiplab() + 
+    # scale_linetype_manual(values=c("solid", "dashed", "dashed")) + 
+    geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) +
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_treescale(color="white", y = 0.75) + 
+    # geom_text(aes(label=node), hjust=-.3) + 
+    xlim(0, 0.55) + 
+    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+        line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+    # Rotate nodes
+    p2 <- rotate(p, 23) %>% rotate(14)
+    plot(p2)
+    dev.off()
 
-        # Leaf
-        png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_leaf_tr.png"))
-        p <- ggtree(leaf_tr, ladderize = FALSE, size=0.55) + 
-        geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.45, fill='#c3f857', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==39)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==29)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) +
-        geom_treescale(color="white", y = 0.75) + 
-        # geom_text(aes(label=node), hjust=-.3) + 
-        xlim(0, 0.671) + 
-        theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
-        # Rotate nodes
-        p2 <- flip(p, 25, 30)
-        plot(p2)
-        dev.off()
+    # Leaf
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_leaf_tr.png"))
+    p <- ggtree(leaf_tr, ladderize = FALSE, size=0.55) + 
+    geom_tiplab() + 
+    geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_treescale(color="white", y = 0.75) + 
+    # geom_text(aes(label=node), hjust=-.3) + 
+    xlim(0, 0.55) + 
+    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+        line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+    # Rotate nodes
+    p2 <- rotate(p, 23) %>% rotate(14)
+    plot(p2)
+    dev.off()
 
-        # Apex veg
-        png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_apex_v_tr.png"))
-        p <- ggtree(apex_v_tr, ladderize = FALSE, size=0.55) + 
-        geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.45, fill='#c3f857', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==37)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==35)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_treescale(color="white", y = 0.75) + 
-        # geom_text(aes(label=node), hjust=-.3) + 
-        xlim(0, 0.671) + 
-        theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
-        # Rotate nodes
-        p2 <- flip(p, 28,30)
-        plot(p2)
-        dev.off()
+    # Apex veg
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_apex_v_tr.png"))
+    p <- ggtree(apex_v_tr, ladderize = FALSE, size=0.55) + 
+    geom_tiplab() + 
+    geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_treescale(color="white", y = 0.75) + 
+    # geom_text(aes(label=node), hjust=-.3) + 
+    xlim(0, 0.55) + 
+    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+        line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+    # Rotate nodes
+    p2 <- rotate(p, 14) %>% rotate(15)
+    plot(p2)
+    dev.off()
 
-        # Apex inf
-        png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_apex_i_tr.png"))
-        p <- ggtree(apex_i_tr, ladderize = FALSE, size=0.55) + 
-        geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.45, fill='#c3f857', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==39)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_treescale(color="white", y = 0.75) + 
-        # geom_text(aes(label=node), hjust=-.3) + 
-        xlim(0, 0.671) + 
-        theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
-        # Rotate nodes
-        p2 <- rotate(p, 23) %>% rotate(24) %>% rotate(34)
-        plot(p2)
-        dev.off()
+    # Apex inf
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_apex_i_tr.png"))
+    p <- ggtree(apex_i_tr, ladderize = FALSE, size=0.55) + 
+    geom_tiplab() + 
+    geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_treescale(color="white", y = 0.75) + 
+    # geom_text(aes(label=node), hjust=-.3) + 
+    xlim(0, 0.55) + 
+    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+        line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+    # Rotate nodes
+    p2 <- rotate(p, 23) %>% rotate(14)
+    plot(p2)
+    dev.off()
 
-        # Flower
-        flower_tr2 <- groupClade(flower_tr, c(32, 34))
-        png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_flower_tr.png"))
-        p <- ggtree(flower_tr2, ladderize = FALSE, size=0.55, aes(linetype=group)) + 
-        geom_tiplab() + 
-        # scale_linetype_manual(values=c("solid", "dashed", "dashed")) + 
-        geom_nodepoint(shape=21, size=2.45, fill='#c3f857', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==39)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==23)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale(color="white", y = 0.75) + 
-        # geom_text(aes(label=node), hjust=-.3) + 
-        xlim(0, 0.671) + 
-        theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
-        # Rotate nodes
-        p2 <- rotate(p, 24) %>% rotate(25) %>% rotate(36)
-        plot(p2)
-        dev.off()
+    # Flower
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_flower_tr.png"))
+    p <- ggtree(flower_tr, ladderize = FALSE, size=0.55) + 
+    geom_tiplab() + 
+    geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_treescale(color="white", y = 0.75) + 
+    # geom_text(aes(label=node), hjust=-.3) + 
+    xlim(0, 0.55) + 
+    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+        line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+    # Rotate nodes
+    p2 <- rotate(p, 23) %>% rotate(14)
+    p3 <- flip(p2, 16, 19)
+    p4 <- flip(p3, 17, 21)
+    plot(p4)
+    dev.off()
 
-        # Stamen
-        stamen_tr2 <- groupClade(stamen_tr, c(36, 38))
-        png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_stamen_tr.png"))
-        p <- ggtree(stamen_tr2, ladderize = FALSE, size=0.55, aes(linetype=group)) + 
-        geom_tiplab() + 
-        scale_linetype_manual(values=c("solid", 42, 22)) + 
-        geom_nodepoint(shape=21, size=2.45, fill='#c3f857', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==24)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==23)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale(color="white", y = 0.75) + 
-        # geom_text(aes(label=node), hjust=-.3) + 
-        xlim(0, 0.671) + 
-        theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
-        # Rotate nodes
-        p2 <- rotate(p, 23) %>% rotate(27) %>% rotate(24)
-        plot(p2)
-        dev.off()
+    # Stamen
+    stamen_tr2 <- groupClade(stamen_tr, c(19, 21))
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_stamen_tr.png"))
+    p <- ggtree(stamen_tr2, ladderize = FALSE, size=0.55, aes(linetype=group)) + 
+    geom_tiplab() + 
+    scale_linetype_manual(values=c("solid", 42, 22)) + 
+    geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_treescale(color="white", y = 0.75) + 
+    # geom_text(aes(label=node), hjust=-.3) + 
+    xlim(0, 0.55) + 
+    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+        line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+    # Rotate nodes
+    p2 <- rotate(p, 14) %>% rotate(15)
+    plot(p2)
+    dev.off()
 
-        # Carpel
-        png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_carpel_tr.png"))
-        p <- ggtree(carpel_tr, ladderize = FALSE, size=0.55) + 
-        geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.45, fill='#c3f857', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==37)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale(color="white", y = 0.75) + 
-        # geom_text(aes(label=node), hjust=-.3) + 
-        xlim(0, 0.671) + 
-        theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
-        # Rotate nodes
-        p2 <- rotate(p, 23) %>% rotate(25)
-        plot(p2)
-        dev.off()
+    # Carpel
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_carpel_tr.png"))
+    p <- ggtree(carpel_tr, ladderize = FALSE, size=0.55) + 
+    geom_tiplab() + 
+    geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_treescale(color="white", y = 0.75) + 
+    # geom_text(aes(label=node), hjust=-.3) + 
+    xlim(0, 0.55) + 
+    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+        line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+    plot(p)
+    dev.off()
 
-        # Pollen
-        png(height = 1750, width = 1450, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_pollen_tr.png"))
-        p <- ggtree(pollen_tr, ladderize = FALSE, size=0.55) + 
-        geom_tiplab() + 
-        geom_nodepoint(shape=21, size=2.45, fill='#c3f857', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==39)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==35)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==33)), shape=21, size=2.45, fill='red4', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==31)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_point2(aes(subset=(node==29)), shape=21, size=2.45, fill='red', alpha=1, stroke=0.5) + 
-        geom_treescale(color="white", y = 0.75) + 
-        # geom_text(aes(label=node), hjust=-.3) + 
-        xlim(0, 0.671) + 
-        theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
-        # Rotate nodes
-        p2 <- flip(p, 25, 32)
-        plot(p2)
-        dev.off()
+    # Pollen
+    pollen_tr2 <- groupClade(pollen_tr, c(16, 21))
+    png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_pollen_tr.png"))
+    p <- ggtree(pollen_tr2, ladderize = FALSE, size=0.55, aes(linetype=group)) + 
+    geom_tiplab() + 
+    scale_linetype_manual(values=c("solid", 42, 22)) + 
+    geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==17)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
+    geom_treescale(color="white", y = 0.75) + 
+    # geom_text(aes(label=node), hjust=-.3) + 
+    xlim(0, 0.55) + 
+    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+        line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+    p2 <- flip(p, 16, 21)
+    plot(p2)
+    dev.off()
 
 
 
