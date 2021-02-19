@@ -140,9 +140,9 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#d93527", "#d93527", "#faa92e", "#fff421", "#fefef4")
+    steps <- c("#e14134", "#e14134", "#fab141", "#fff200", "#fcfcf7")
 
-    pal <- color.palette(steps, c(30, 29, 26, 10), space = "rgb")
+    pal <- color.palette(steps, c(30, 29, 21, 15), space = "rgb")
 
     # Set filename
     fname <- sprintf('%s.png', paste("Brassicaceae", transcripttype, expr_estimation, coefficient, sep="_"))
