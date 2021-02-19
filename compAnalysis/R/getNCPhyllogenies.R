@@ -207,15 +207,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     plot(p)
     dev.off()
 
     # Hypocotyl
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_hypo_tr.png"))
-    p <- ggtree(hypo_tr2, ladderize = FALSE, size=0.55, aes(linetype=group)) + 
+    p <- ggtree(hypo_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
     # scale_linetype_manual(values=c("solid", "dashed", "dashed")) + 
     geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
@@ -225,8 +225,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
     p2 <- rotate(p, 23) %>% rotate(14)
@@ -243,8 +243,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
     p2 <- rotate(p, 23) %>% rotate(14)
@@ -263,8 +263,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
     p2 <- rotate(p, 14) %>% rotate(15)
@@ -283,8 +283,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
     p2 <- rotate(p, 23) %>% rotate(14)
@@ -303,8 +303,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
     p2 <- rotate(p, 23) %>% rotate(14)
@@ -325,8 +325,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
     p2 <- rotate(p, 14) %>% rotate(15)
@@ -344,8 +344,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     plot(p)
     dev.off()
@@ -355,7 +355,7 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_pollen_tr.png"))
     p <- ggtree(pollen_tr2, ladderize = FALSE, size=0.55, aes(linetype=group)) + 
     geom_tiplab() + 
-    scale_linetype_manual(values=c("solid", 42, 22)) + 
+    scale_linetype_manual(values=c("solid", 22, 42)) + 
     geom_nodepoint(shape=21, size=2.75, fill='#c3f857', alpha=1, stroke=0.5) + 
     geom_point2(aes(subset=(node==17)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
     geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red', alpha=1, stroke=0.5) + 
@@ -364,8 +364,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.5) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(0, 0.55) + 
-    theme_tree2(plot.margin=margin(5, 5, 25, 5), text = element_text(size = 11.75), 
+    xlim(-0.005, 0.54) + 
+    theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     p2 <- flip(p, 16, 21)
     plot(p2)
