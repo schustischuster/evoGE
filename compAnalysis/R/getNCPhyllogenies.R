@@ -447,61 +447,12 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
             sep="\t", col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
 
 
-    # Plot lncRNA ortholog total tree length
-    plotTTL <- function(data) {
-
-        level_order <- c('Root', 'Hypocotyl', 'Leaf', 'veg_apex', 'inf_apex', 'Flower', 
-            'Carpel', 'Stamen', 'Pollen')
-
-        fname <- sprintf('%s.jpg', paste("Brass", transcripttype, "total_tree_length", coefficient, expr_estimation, sep="_"))
-            
-        p <- ggplot(data=data, aes(x=factor(organ, level=level_order), y=tree_length, group=organ)) + 
-        stat_boxplot(geom ='errorbar', width = 0.35, size=1.25, color="black") + 
-        geom_boxplot(width = 0.8, size = 1.25, fatten = 1.35, color="black", outlier.shape = NA, 
-            alpha = 1, aes(fill = organ)) + 
-        geom_point(data = data, position = position_dodge(width=0.75), size = 5, col = "red2", 
-            aes(x = organ, y = orig_tree_length)) + 
-        scale_fill_manual(values=c('#6a54a9','#53b0db', '#2c8654', '#96ba37', '#fad819', 
-            '#e075af', '#f2a72f', '#ed311c', '#a63126')) + 
-        scale_y_continuous(expand = c(0.025, 0)) + 
-        scale_x_discrete(labels=c("Root" = "Root", "Hypocotyl" = "Hypocotyl", 
-            "Leaf" = "Leaf", "veg_apex" = "Apex veg", "inf_apex" = "Apex inf", 
-            "Flower" = "Flower", "Carpel" = "Carpel", "Stamen" = "Stamen", 
-            "Pollen" = "Pollen"), 
-            expand = c(0.035, 0))
-
-        q <- p + theme_classic() + ylab("Total tree length") + 
-        theme(text=element_text(size = 16), 
-            axis.ticks.length = unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.15), 
-            axis.line = element_line(colour = 'black', size = 1.15), 
-            plot.margin = unit(c(0.1, 1.0, 0.5, 0.5),"cm"), 
-            axis.title.y = element_text(size=25.75, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
-                face = "plain"), 
-            axis.title.x = element_blank(), 
-            axis.text.x = element_text(size=25.75, angle=45, margin = margin(t = -38, b = 42.5), colour="black", 
-                hjust = 1, vjust = 0.5), 
-            axis.text.y = element_text(size=24.5, angle=0, margin = margin(r = 5), colour="black"), 
-            panel.spacing = unit(0.5, "cm"), 
-            panel.grid.major = element_blank(),
-            panel.grid.minor.x = element_blank(), 
-            panel.grid.minor.y = element_blank(), 
-            legend.position = "none", 
-            legend.title = element_blank()) 
-
-        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-            width = 9.5, height = 8, dpi = 300, units = c("in"), limitsize = FALSE) 
-    }
-
-    plotTTL(data = phyloBSTreeL)
-
-
 }
 
 
 
-makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="all")
-makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae")
+getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="non-coding")
+getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="coding")
 
 
 
