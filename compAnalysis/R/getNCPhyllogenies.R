@@ -8,7 +8,7 @@
 
 
 getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"), 
-    coefficient = c("pearson", "spearman")) {
+    coefficient = c("pearson", "spearman"), transcripttype = c("coding", "non-coding")) {
 	
 
     # Show error message if expression estimation or unknown expression estimation is chosen
@@ -29,17 +29,32 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
             call. = TRUE
             )
 
+    # Show error message if no transcript type or unknown type is chosen
+    if ((missing(transcripttype)) || (!is.element(transcripttype, c("coding", "non-coding"))))
+   
+       stop(
+       "Please choose one of the available transcript types: 
+       'coding', 'non-coding'",
+       call. = TRUE
+       )
+
 
     # Show startup message
     message("Reading data...")
 
 
     # Set expression input file
-    if (is.element("TPM", expr_estimation)) {
+    if ((is.element("TPM", expr_estimation)) && (is.element("non-coding", transcripttype))) {
         genesExpr = file.path(in_dir, "Expression_data", "lnc_AT_brass_inter_combined_tpm_mat_deseq_sample_names.csv")
 
-    } else if (is.element("counts", expr_estimation)) {
+    } else if ((is.element("counts", expr_estimation)) && (is.element("non-coding", transcripttype))) {
         genesExpr = file.path(in_dir, "Expression_data", "lnc_AT_brass_inter_combined_count_mat_vsd_sample_names.csv")
+    
+    } else if ((is.element("TPM", expr_estimation)) && (is.element("coding", transcripttype))) {
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_tpm_mat_deseq_sample_names.csv")
+
+    } else if ((is.element("counts", expr_estimation)) && (is.element("coding", transcripttype))) {
+        genesExpr = file.path(in_dir, "Expression_data", "AT_brass_inter_count_mat_vsd_sample_names.csv")
     }
 
 
@@ -47,10 +62,10 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
 
 
     # Stop function here to allow specific analysis of a single data set
-    # return_list <- list("expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient)
+    # return_list <- list("expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "transcripttype" = transcripttype)
     # return(return_list)
     # }
-    # return_objects <- getNCPhyllogenies(expr_estimation="counts", coefficient="pearson")
+    # return_objects <- getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="non-coding")
     # list2env(return_objects, envir = .GlobalEnv)
 
     # set column names
@@ -236,7 +251,7 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     # ladderize = FALSE is the default in plot.phylo()
 
     # Make phyloplots
-    if ((coefficient == "spearman") && (expr_estimation ==  "counts")) {
+    if ((coefficient == "spearman") && (expr_estimation ==  "counts") && (transcripttype == "non-coding")) {
 
     # Root
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_root_tr.png"))
@@ -426,6 +441,11 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     phyloBSTreeL$orig_tree_length <- as.numeric(phyloBSTreeL$orig_tree_length)
     phyloBSTreeL$organ <- factor(phyloBSTreeL$organ, levels = unique(phyloBSTreeL$organ))
 
+    sfname <- sprintf('%s.txt', paste("Brass", transcripttype, "total_tree_length", coefficient, expr_estimation, sep="_"))
+
+    write.table(phyloBSTreeL, file=file.path(out_dir, "output", "data", sfname), 
+            sep="\t", col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+
 
     # Plot lncRNA ortholog total tree length
     plotTTL <- function(data) {
@@ -433,7 +453,7 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         level_order <- c('Root', 'Hypocotyl', 'Leaf', 'veg_apex', 'inf_apex', 'Flower', 
             'Carpel', 'Stamen', 'Pollen')
 
-        fname <- sprintf('%s.jpg', paste("lnc_total_tree_length", coefficient, expr_estimation, sep="_"))
+        fname <- sprintf('%s.jpg', paste("Brass", transcripttype, "total_tree_length", coefficient, expr_estimation, sep="_"))
             
         p <- ggplot(data=data, aes(x=factor(organ, level=level_order), y=tree_length, group=organ)) + 
         stat_boxplot(geom ='errorbar', width = 0.35, size=1.25, color="black") + 
