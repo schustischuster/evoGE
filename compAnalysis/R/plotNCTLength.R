@@ -53,19 +53,19 @@ plotNCTLength <- function() {
     }
 
     Brass_nc_bs_tree_length_SD <- getSTD(Brass_nc_bs_tree_length)
-    Brass_nc_bs_sd_tree_length <- cbind(Brass_nc_bs_tree_length, Brass_nc_bs_tree_length_SD)
+    Brass_nc_bs_tree_length <- cbind(Brass_nc_bs_tree_length, Brass_nc_bs_tree_length_SD)
 
     Brass_cd_bs_tree_length_SD <- getSTD(Brass_cd_bs_tree_length)
-    Brass_cd_bs_sd_tree_length <- cbind(Brass_cd_bs_tree_length, Brass_cd_bs_tree_length_SD)
+    Brass_cd_bs_tree_length <- cbind(Brass_cd_bs_tree_length, Brass_cd_bs_tree_length_SD)
 
 
 
     # Prepare data for ggplot2
-    Brass_nc_bs_sd_tree_length$organ <- factor(Brass_nc_bs_sd_tree_length$organ, levels = unique(Brass_nc_bs_sd_tree_length$organ))
+    Brass_nc_bs_tree_length$organ <- factor(Brass_nc_bs_tree_length$organ, levels = unique(Brass_nc_bs_tree_length$organ))
 
     # Separate pollen samples of Brassicaceae coding gene table
-    Brass_cd_bs_tree_length_wo_pollen <- dplyr::filter(Brass_cd_bs_sd_tree_length, !grepl('Pollen', organ))
-    Brass_cd_bs_tree_length_w_pollen <- dplyr::filter(Brass_cd_bs_sd_tree_length, grepl('Stamen|Pollen', organ))
+    Brass_cd_bs_tree_length_wo_pollen <- dplyr::filter(Brass_cd_bs_tree_length, !grepl('Pollen', organ))
+    Brass_cd_bs_tree_length_w_pollen <- dplyr::filter(Brass_cd_bs_tree_length, grepl('Stamen|Pollen', organ))
 
     Brass_cd_bs_tree_length_wo_pollen$organ <- factor(Brass_cd_bs_tree_length_wo_pollen$organ, 
         levels = unique(Brass_cd_bs_tree_length_wo_pollen$organ))
@@ -88,7 +88,7 @@ plotNCTLength <- function() {
             org_labels <- c("Root" = "Root", "Hypocotyl" = "Hypocotyl", "Leaf" = "Leaf", 
                 "veg_apex" = "Apex veg", "inf_apex" = "Apex inf", "Flower" = "Flower", 
                 "Carpel" = "Carpel", "Stamen" = "Stamen", "Pollen" = "Pollen")
-            plt_margin <- unit(c(1.5, 2.0, 1.31, 1.5), "cm")
+            plt_margin <- unit(c(1.5, 0.82, 1.31, 0.8), "cm")
             y_exp <- c(0.005, 0)
             x_exp <- c(0.035, 0)
             txt_x_mar <- margin(t = -38, b = 42.5)
@@ -102,8 +102,8 @@ plotNCTLength <- function() {
             org_labels <- c("Root" = "Root", "Hypocotyl" = "Hypocotyl", "Leaf" = "Leaf", 
                 "veg_apex" = "Apex veg", "inf_apex" = "Apex inf", "Flower" = "Flower", 
                 "Carpel" = "Carpel", "Stamen" = "Stamen")
-            plt_margin <- unit(c(1.5, 2.0, 1.31, 3.0), "cm")
-            y_exp <- c(0.005, 0)
+            plt_margin <- unit(c(1.5, 1.0, 1.31, 2.32), "cm")
+            y_exp <- c(0.05, 0)
             x_exp <- c(0.04, 0)
             txt_x_mar <- margin(t = -38, b = 42.5)
 
@@ -112,9 +112,9 @@ plotNCTLength <- function() {
             level_order <- c('Stamen', 'Pollen')
             org_colors <- c('#ed311c', '#a63126')
             org_labels <- c("Stamen" = "Stamen", "Pollen" = "Pollen")
-            plt_margin <- unit(c(1.5, 2.0, 1.62, 12.5), "cm")
-            y_exp <- c(0.005, 0)
-            x_exp <- c(0.035, 0)
+            plt_margin <- unit(c(1.5, 2.0, 1.62, 10.0), "cm")
+            y_exp <- c(0.035, 0)
+            x_exp <- c(0.085, 0)
             txt_x_mar <- margin(t = -29.5, b = 42.5)
 
         }
