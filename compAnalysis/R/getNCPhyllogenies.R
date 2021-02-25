@@ -249,8 +249,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     # Generate enhanced phylo trees using ggtree
     # Set ladderize = TRUE to display ladderized tree
     # ladderize = FALSE is the default in plot.phylo()
-    # bootstrap colors: < 0.95 = yellow; < 0.9 = #ffaa0f (vivid orange); 
-    # < 0.7 = red2; < 0.5 = #4e0000 (very dark red)
+    # bootstrap colors: < 0.95 = yellow; < 0.9 = #ffbc00 (orange); 
+    # < 0.7 = red; < 0.5 = #7e0000
 
     # Make phyloplots
     if ((coefficient == "spearman") && (expr_estimation ==  "counts") && (transcripttype == "non-coding")) {
@@ -259,15 +259,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_root_tr.png"))
     p <- ggtree(root_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) +
-    geom_point2(aes(subset=(node==17)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='#4e0000', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) +
+    geom_point2(aes(subset=(node==17)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.85, fill='#7e0000', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     p2 <- flip(p, 19, 21)
@@ -278,15 +278,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_hypo_tr.png"))
     p <- ggtree(hypo_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==19)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) +
-    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='#4e0000', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='#4e0000', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==19)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) +
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.85, fill='#7e0000', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.85, fill='#7e0000', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
@@ -297,15 +297,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_leaf_tr.png"))
     p <- ggtree(leaf_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='yellow', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='yellow', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='#4e0000', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==17)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.85, fill='yellow', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.85, fill='yellow', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.85, fill='#7e0000', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==17)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
@@ -318,15 +318,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_apex_v_tr.png"))
     p <- ggtree(apex_v_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==19)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==19)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     # Rotate nodes
@@ -337,15 +337,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_apex_i_tr.png"))
     p <- ggtree(apex_i_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='#4e0000', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.85, fill='#7e0000', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     plot(p)
@@ -355,15 +355,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_flower_tr.png"))
     p <- ggtree(flower_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     plot(p)
@@ -373,14 +373,14 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_stamen_tr.png"))
     p <- ggtree(stamen_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==19)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==21)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==19)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==21)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     plot(p)
@@ -390,15 +390,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_carpel_tr.png"))
     p <- ggtree(carpel_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==14)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==16)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==19)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='red4', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==14)), shape=21, size=2.85, fill='#7e0000', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==16)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==19)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.85, fill='#7e0000', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     plot(p)
@@ -408,15 +408,15 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
     png(height = 1150, width = 1100, pointsize = 100, res = 325, file = file.path(out_dir, "output", "plots", "lnc_pollen_tr.png"))
     p <- ggtree(pollen_tr, ladderize = FALSE, size=0.55) + 
     geom_tiplab() + 
-    geom_nodepoint(shape=21, size=2.7, fill='white', alpha=1, stroke=0.55) + 
-    geom_point2(aes(subset=(node==15)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==17)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==18)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==20)), shape=21, size=2.75, fill='#ffaa0f', alpha=1, stroke=0.1) + 
-    geom_point2(aes(subset=(node==22)), shape=21, size=2.75, fill='red2', alpha=1, stroke=0.1) + 
+    geom_nodepoint(shape=21, size=2.8, fill='white', alpha=1, stroke=0.55) + 
+    geom_point2(aes(subset=(node==15)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==17)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==18)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==20)), shape=21, size=2.85, fill='#ffbc00', alpha=1, stroke=0.1) + 
+    geom_point2(aes(subset=(node==22)), shape=21, size=2.85, fill='red', alpha=1, stroke=0.1) + 
     geom_treescale(color="white", y = 0.75) + 
     # geom_text(aes(label=node), hjust=-.3) + 
-    xlim(-0.005, 0.56) + 
+    xlim(-0.005, 0.565) + 
     theme_tree2(plot.margin=margin(5, 5, 20, 5), text = element_text(size = 11.75), 
         line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
     p2 <- rotate(p, 15) %>% rotate(14)
