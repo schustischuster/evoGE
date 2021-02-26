@@ -88,7 +88,7 @@ plotNCTLength <- function() {
             org_labels <- c("Root" = "Root", "Hypocotyl" = "Hypocotyl", "Leaf" = "Leaf", 
                 "veg_apex" = "Apex veg", "inf_apex" = "Apex inf", "Flower" = "Flower", 
                 "Carpel" = "Carpel", "Stamen" = "Stamen", "Pollen" = "Pollen")
-            plt_margin <- unit(c(1.5, 0.82, 1.31, 0.8), "cm")
+            plt_margin <- unit(c(1.5, 0.82, 1.31, 0.63), "cm")
             y_exp <- c(0.005, 0)
             x_exp <- c(0.035, 0)
             txt_x_mar <- margin(t = -38, b = 42.5)
@@ -102,7 +102,7 @@ plotNCTLength <- function() {
             org_labels <- c("Root" = "Root", "Hypocotyl" = "Hypocotyl", "Leaf" = "Leaf", 
                 "veg_apex" = "Apex veg", "inf_apex" = "Apex inf", "Flower" = "Flower", 
                 "Carpel" = "Carpel", "Stamen" = "Stamen")
-            plt_margin <- unit(c(1.5, 1.0, 1.31, 2.32), "cm")
+            plt_margin <- unit(c(1.5, 1.0, 1.31, 2.131), "cm")
             y_exp <- c(0.05, 0)
             x_exp <- c(0.04, 0)
             txt_x_mar <- margin(t = -38, b = 42.5)
