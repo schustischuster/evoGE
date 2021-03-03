@@ -2,24 +2,34 @@ This folder contains files with the expression data. The columns of the files ar
 
 ### Sample description
 
-| <sub> File name  </sub>                                             | <sub> Data set </sub>  | <sub>Query species</sub>|<sub> Normalization </sub> | <sub> Metric </sub> |
-| :------------------------------------------------------------------ | :----------------------------------------| :---- | :------------------------- | :-------------- |
-| <sub> AT_brass_inter_count_mat_vsd_sample_names.csv </sub>          |<sub> DevSeq Brassicaceae </sub>          |<sub>AT<sub>|<sub>DESeq inter-organ</sub>|<sub>VST counts</sub>| 
-| <sub> AT_brass_inter_tpm_mat_deseq_sample_names.csv </sub>          |<sub> DevSeq Brassicaceae </sub>          |<sub>AT<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
-| <sub> AT_brass_intra_count_mat_vsd_sample_names.csv </sub>          |<sub> DevSeq Brassicaceae </sub>          |<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
-| <sub> AT_brass_intra_tpm_mat_deseq_sample_names.csv </sub>          |<sub> DevSeq Brassicaceae </sub>          |<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
-| <sub> AT_core_inter_count_mat_vsd_sample_names.csv  </sub>          |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq inter-organ</sub>|<sub>VST counts</sub>| 
-| <sub> AT_core_inter_tpm_mat_deseq_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
-| <sub> AT_core_intra_count_mat_vsd_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
-| <sub> AT_core_intra_tpm_mat_deseq_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AT<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
-| <sub> AL_core_inter_count_mat_vsd_sample_names.csv  </sub>          |<sub> DevSeq Angiosperm </sub>            |<sub>AL<sub>|<sub>DESeq inter-organ</sub>|<sub>VST counts</sub>| 
-| <sub> AL_core_inter_tpm_mat_deseq_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AL<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
-| <sub> AL_core_intra_count_mat_vsd_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AL<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
-| <sub> AT_core_intra_tpm_mat_deseq_sample_names.csv </sub>           |<sub> DevSeq Angiosperm </sub>            |<sub>AL<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
-|<sub>Brawand_inter_tpm_mat_deseq_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>hsa<sub>|<sub>DESeq inter-organ</sub>|<sub>TPM</sub>| 
-|<sub>Brawand_intra_tpm_mat_deseq_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>hsa<sub>|<sub>DESeq intra-organ</sub>|<sub>TPM</sub>| 
-|<sub>Brawand_inter_count_mat_vsd_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>hsa<sub>|<sub>DESeq inter-organ</sub>|<sub>VST counts</sub>| 
-|<sub>Brawand_intra_count_mat_vsd_sample_names_0_5_threshold.csv</sub>|<sub>Brawand mammalian (re-analyzed)</sub>|<sub>hsa<sub>|<sub>DESeq intra-organ</sub>|<sub>VST counts</sub>| 
+| <sub> File name  </sub>                                       | <sub> Species </sub> | <sub> Expression estimation </sub> | <sub> Normalization </sub> | <sub> Metric </sub>    |
+| :------------------------------------------------------------ | :------------------- | :--------------------------------- | :------------------------- | :--------------------- |
+| <sub> AL_genes_complete_table_tpm_with_circRNA_sample_names.csv </sub>      | <sub> AL </sub>| <sub> Gene-level </sub> | <sub> none </sub>             | <sub> TPM </sub>       | 
+| <sub> AL_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> AL </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> AL_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> AL </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> AT_genes_complete_table_tpm_with_circRNA_sample_names.csv </sub>      | <sub> AT </sub>| <sub> Gene-level </sub>      | <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> AT_genes_inter_norm_count_mat_vsd_sample_names.csv </sub>             | <sub> AT </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> VST counts </sub>| 
+| <sub> AT_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> AT </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> AT_genes_intra_norm_count_mat_vsd_sample_names.csv </sub>             | <sub> AT </sub>|<sub> Transcript-level </sub>|<sub> DESeq intra-organ</sub>|<sub> VST counts</sub>| 
+| <sub> AT_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> AT </sub>|<sub> Transcript-level </sub> | <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> AT_transcripts_inter_norm_count_mat_vsd_sample_names.csv </sub>       | <sub> AT </sub>|<sub> Transcript-level </sub>|<sub> DESeq inter-organ</sub>|<sub> VST counts</sub>| 
+| <sub> AT_transcripts_intra_norm_count_mat_vsd_sample_names.csv </sub>       | <sub> AT </sub>|<sub> Transcript-level </sub>|<sub> DESeq intra-organ</sub>|<sub> VST counts</sub>| 
+| <sub> BD_genes_complete_table_tpm_with_circRNA_sample_names.csv </sub>      | <sub> BD </sub>| <sub> Gene-level </sub> | <sub> none </sub>             | <sub> TPM </sub>       | 
+| <sub> BD_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> BD </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> BD_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> BD </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> CR_genes_complete_table_tpm_with_circRNA_sample_names.csv </sub>      | <sub> CR </sub>| <sub> Gene-level </sub> | <sub> none </sub>             | <sub> TPM </sub>       | 
+| <sub> CR_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> CR </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> CR_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> CR </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> ES_genes_complete_table_tpm_with_circRNA_sample_names.csv </sub>      | <sub> ES </sub>| <sub> Gene-level </sub> | <sub> none </sub>             | <sub> TPM </sub>       | 
+| <sub> ES_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> ES </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> ES_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> ES </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> MT_genes_complete_table_tpm_with_circRNA_sample_names.csv </sub>      | <sub> MT </sub>| <sub> Gene-level </sub> | <sub> none </sub>             | <sub> TPM </sub>       | 
+| <sub> MT_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> MT </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> MT_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> MT </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> TH_genes_complete_table_tpm_with_circRNA_sample_names.csv </sub>      | <sub> TH </sub>| <sub> Gene-level </sub> | <sub> none </sub>             | <sub> TPM </sub>       | 
+| <sub> TH_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> TH </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> TH_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> TH </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
+
 
 <br/>
 
