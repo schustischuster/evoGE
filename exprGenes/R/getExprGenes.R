@@ -1,30 +1,16 @@
 # Find expressed genes in each sample replicate using ERCC spike-in information
-# Thresholds: 0 (no ERCC threshold-everything above 0 TPM), 0.01 (weakest expressed spike-in), 
+# Thresholds: 0 (no ERCC threshold-everything above 0.5 TPM), 0.01 (weakest expressed spike-in), 
 # 0.05 (lowest 5% of expressed spike-ins), 0.1 (lowest 10% of expressed spike-ins)
 # Data input: 1) Expression_data WITH spike-in information
 # Analysis can be performed on both whole single species datasets (ATH: 132 samples; AL: 36 samples)
 # OR on comparative data sets (27 samples)
 # Input sample tables should have the following format:
-# id / biotype / source / DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species)
+# id / biotype / source / info / DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species)
 
 
 
 
 #------------------- Load packages, set directories and read sample tables ---------------------
-
-
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(data.table)) install.packages('data.table')
-library(data.table)
-
-
-# Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes/data"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes"
-
-
 
 
 # Define function to get expressed genes
@@ -91,38 +77,38 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	# Set GTF input gtf file
     if (is.element("ATH", species)) {
-        genesTPM = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_tpm_sample_names.csv")
-        genesCounts = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_counts_sample_names.csv")
+        genesTPM = file.path(in_dir, "Expression_data", "AT_genes_complete_table_tpm_with_circRNA_sample_names.csv")
+        genesCounts = file.path(in_dir, "Expression_data", "AT_genes_intra_norm_count_mat_vsd_sample_names.csv")
         species_id <- "ATH"
 
     } else if (is.element("AL", species)) {
-		genesTPM = file.path(in_dir, "Expression_data", "AL_no_TE_genes_tpm_sample_names.csv")
-		genesCounts = file.path(in_dir, "Expression_data", "AL_no_TE_genes_counts_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "AL_genes_complete_table_tpm_with_circRNA_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "AL_genes_intra_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "AL"
 
     } else if (is.element("CR", species)) {
-		genesTPM = file.path(in_dir, "Expression_data", "CR_no_TE_genes_tpm_sample_names.csv")
-		genesCounts = file.path(in_dir, "Expression_data", "CR_no_TE_genes_counts_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "CR_genes_complete_table_tpm_with_circRNA_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "CR_genes_intra_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "CR"
 
     } else if (is.element("ES", species)) {
-		genesTPM = file.path(in_dir, "Expression_data", "ES_no_TE_genes_tpm_sample_names.csv")
-		genesCounts = file.path(in_dir, "Expression_data", "ES_no_TE_genes_counts_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "ES_genes_complete_table_tpm_with_circRNA_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "ES_genes_intra_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "ES"
 
     } else if (is.element("TH", species)) {
-		genesTPM = file.path(in_dir, "Expression_data", "TH_no_TE_genes_tpm_sample_names.csv")
-		genesCounts = file.path(in_dir, "Expression_data", "TH_no_TE_genes_counts_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "TH_genes_complete_table_tpm_with_circRNA_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "TH_genes_intra_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "TH"
 
     } else if (is.element("MT", species)) {
-		genesTPM = file.path(in_dir, "Expression_data", "MT_no_TE_genes_tpm_sample_names.csv")
-		genesCounts = file.path(in_dir, "Expression_data", "MT_no_TE_genes_counts_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "MT_genes_complete_table_tpm_with_circRNA_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "MT_genes_intra_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "MT"
 
     } else if (is.element("BD", species)) {
-		genesTPM = file.path(in_dir, "Expression_data", "BD_no_TE_genes_tpm_sample_names.csv")
-		genesCounts = file.path(in_dir, "Expression_data", "BD_no_TE_genes_counts_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "BD_genes_complete_table_tpm_with_circRNA_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "BD_genes_intra_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "BD"
     }
 
@@ -137,45 +123,40 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	all_genes_tpm <- read.table(genesTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 	colnames(all_genes_tpm)[1] <- "gene_id"
 	all_genes_counts <- read.table(genesCounts, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
-	colnames(all_genes_counts)[1] <- "gene_id"
 
 
 	# Format expression data and rename pollen samples
     if ((is.element("ATH", species)) && (is.element("comparative", experiment))) {
 
 		all_genes_tpm <- dplyr::select(all_genes_tpm, c(
-			gene_id, biotype, source, 
-			root_whole_root_5d_1,
-			root_whole_root_5d_2,
-			root_whole_root_5d_3,
-			hypocotyl_10d_1,
-			hypocotyl_10d_2,
-			hypocotyl_10d_3,
-			leaf_1.2_7d_1,
-			leaf_1.2_7d_2,
-			leaf_1.2_7d_3,
-			apex_vegetative_7d_1,
-			apex_vegetative_7d_2,
-			apex_vegetative_7d_3,
-			apex_inflorescence_21d_1,
-			apex_inflorescence_21d_2,
-			apex_inflorescence_21d_3,
-			flower_stg12_21d._1,
-			flower_stg12_21d._2,
-			flower_stg12_21d._3,
-			flower_stg12_stamens_21d._1,
-			flower_stg12_stamens_21d._2,
-			flower_stg12_stamens_21d._3,
-			flowers_mature_pollen_28d_1,
-			flowers_mature_pollen_28d_2,
-			flowers_mature_pollen_28d_3,
-			flower_early_stg12_carpels_21d._1,
-			flower_early_stg12_carpels_21d._2,
-			flower_early_stg12_carpels_21d._3)) #tibble w/o pollen samles
-
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_3'] <- 'flowers_mature_pollen_3'
+			gene_id, biotype, source, info, 
+			root_whole_root_5d_.1.,
+			root_whole_root_5d_.2.,
+			root_whole_root_5d_.3.,
+			hypocotyl_10d_.1.,
+			hypocotyl_10d_.2.,
+			hypocotyl_10d_.3.,
+			leaf_1.2_7d_.1.,
+			leaf_1.2_7d_.2.,
+			leaf_1.2_7d_.3.,
+			apex_vegetative_7d_.1.,
+			apex_vegetative_7d_.2.,
+			apex_vegetative_7d_.3.,
+			apex_inflorescence_21d_.1.,
+			apex_inflorescence_21d_.2.,
+			apex_inflorescence_21d_.3.,
+			flower_stg12_21d._.1.,
+			flower_stg12_21d._.2.,
+			flower_stg12_21d._.3.,
+			flower_stg12_stamens_21d._.1.,
+			flower_stg12_stamens_21d._.2.,
+			flower_stg12_stamens_21d._.3.,
+			flowers_mature_pollen_28d_.1.,
+			flowers_mature_pollen_28d_.2.,
+			flowers_mature_pollen_28d_.3.,
+			flower_early_stg12_carpels_21d._.1.,
+			flower_early_stg12_carpels_21d._.2.,
+			flower_early_stg12_carpels_21d._.3.)) #tibble w/o pollen samles
 
 		species_id <- "ATH_comparative_samples"
 
@@ -183,66 +164,16 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     } else if ((is.element("AL", species)) && (is.element("comparative", experiment))) {
 
 		all_genes_tpm <- dplyr::select(all_genes_tpm, -c(
-			flower_stg11_stamens_8w.10w.25d_1, 
-			flower_stg11_stamens_8w.10w.25d_2, 
-			flower_stg11_stamens_8w.10w.25d_3,
-			flower_early_stg12_stamens_8w.10w.23d_1,
-			flower_early_stg12_stamens_8w.10w.23d_2,
-			flower_early_stg12_stamens_8w.10w.23d_3,
-			flower_late_stg12_stamens_8w.10w.21d_1,
-			flower_late_stg12_stamens_8w.10w.21d_2,
-			flower_late_stg12_stamens_8w.10w.21d_3)) #tibble w/o pollen samles
+			flower_stg11_stamens_8w.10w.25d_.1., 
+			flower_stg11_stamens_8w.10w.25d_.2., 
+			flower_stg11_stamens_8w.10w.25d_.3.,
+			flower_early_stg12_stamens_8w.10w.23d_.1.,
+			flower_early_stg12_stamens_8w.10w.23d_.2.,
+			flower_early_stg12_stamens_8w.10w.23d_.3.,
+			flower_late_stg12_stamens_8w.10w.21d_.1.,
+			flower_late_stg12_stamens_8w.10w.21d_.2.,
+			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samles
 
-		all_genes_counts <- dplyr::select(all_genes_counts, -c(
-			flower_stg11_stamens_8w.10w.25d_1, 
-			flower_stg11_stamens_8w.10w.25d_2, 
-			flower_stg11_stamens_8w.10w.25d_3,
-			flower_early_stg12_stamens_8w.10w.23d_1,
-			flower_early_stg12_stamens_8w.10w.23d_2,
-			flower_early_stg12_stamens_8w.10w.23d_3,
-			flower_late_stg12_stamens_8w.10w.21d_1,
-			flower_late_stg12_stamens_8w.10w.21d_2,
-			flower_late_stg12_stamens_8w.10w.21d_3)) #tibble w/o pollen samles
-
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_3'] <- 'flowers_mature_pollen_3'
-
-
-    } else if (is.element("ATH", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("AL", species)) {
-    	colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("CR", species)) {
-    	colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("ES", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w.8w.17d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w.8w.17d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w.8w.17d_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("TH", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_11w_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_11w_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_11w_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("MT", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("BD", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_32d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_32d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_32d_3'] <- 'flowers_mature_pollen_3'
     }
 
 
@@ -262,6 +193,10 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     # Show message
     message("Starting analysis...")
 
+
+    # Remove info column
+    all_genes_tpm <- dplyr::select(all_genes_tpm, -c(info))
+    
 
 	# Extract ERCC data
 	ERCC <- all_genes_tpm[all_genes_tpm$gene_id %like% "ERCC", ]
