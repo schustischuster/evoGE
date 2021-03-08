@@ -156,7 +156,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 			flowers_mature_pollen_28d_.3.,
 			flower_early_stg12_carpels_21d._.1.,
 			flower_early_stg12_carpels_21d._.2.,
-			flower_early_stg12_carpels_21d._.3.)) #tibble w/o pollen samles
+			flower_early_stg12_carpels_21d._.3.)) #tibble w/o pollen samples
 
 		species_id <- "ATH_comparative_samples"
 
@@ -172,7 +172,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 			flower_early_stg12_stamens_8w.10w.23d_.3.,
 			flower_late_stg12_stamens_8w.10w.21d_.1.,
 			flower_late_stg12_stamens_8w.10w.21d_.2.,
-			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samles
+			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samples
 
     }
 
@@ -223,7 +223,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		   data.frame(gene_id="TPM_cutoff"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
 		   as.data.frame(t(
 			   data.frame(TPM_cutoff = sapply(ERCC_threshold[,4:ncol(ERCC_threshold)], function(x) {
-				   sort(x[1:nrow(ERCC_threshold)-1], partial=x[nrow(ERCC_threshold)])[x[nrow(ERCC_threshold)]]
+				   sort(x[1:nrow(ERCC_threshold)-1])[x[nrow(ERCC_threshold)]]
 				   }
 			   ))
 		   ))
@@ -265,7 +265,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 		# Add keys to data frame
 		key <- seq(1, nrow(express_df), 1)
-		express_df <- cbind(as.data.frame(key),express_df)
+		express_kdf <- cbind(as.data.frame(key),express_df)
 
 		# Replace all values with "0" that are below sample threshold (either 0 or ERCC)
 		getSampleTH <- function(df) {
@@ -286,7 +286,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 			return(th_replicates)
 		}
 
-		df <- getSampleTH(express_df)
+		df_exp <- getSampleTH(express_kdf)
 
 		# Define threshold function
 		# This function will remove all rows that do not show expression in at least two of three
@@ -313,12 +313,12 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		}
 
 		# Apply threshold to data and extract keys ("key")
-		keys_data_repl <- getThreshold(df)
+		keys_data_repl <- getThreshold(df_exp)
 		keys_data <- keys_data_repl[,1:2]
 		names(keys_data) <- c("key","ID")
 
 		# Generate thresholded data frame based on keys
-		th_df <- merge(keys_data, express_df, by="key")
+		th_df <- merge(keys_data, express_kdf, by="key")
 		th_df <- th_df[order(th_df$key),]
 		th_df <- th_df[-1:-2]
 		keys_data_repl <- keys_data_repl[-1]
