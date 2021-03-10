@@ -204,33 +204,16 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	if (threshold > 0) {
 
-	   # Get lowest ERCC spike-in after applying threshold
-	   ERCC_threshold <- rbind(ERCC, cbind(
-		   data.frame(gene_id="ERCC_threshold"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
-		   as.data.frame(t(
-			   data.frame(ERCC_threshold = sapply(ERCC[,4:ncol(ERCC)], function(x) {
-				   ERCC_cutoff <- floor(sum(x>0) - (threshold * sum(x>0))) 
-				   # use ceiling() instead floor() to round up if neccessary
-				   ERCC_cutoff_low <- nrow(ERCC) - ERCC_cutoff
-				   return(ERCC_cutoff_low)
-				   }
-			   ))
-		   ))
-	   ))
-
 	   # Get sample-specific TPM threshold
-	   ERCC_cutoff <- rbind(ERCC_threshold, cbind(
+	   ERCC_cutoff <- cbind(
 		   data.frame(gene_id="TPM_cutoff"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
-		   as.data.frame(t(
-			   data.frame(TPM_cutoff = sapply(ERCC_threshold[,4:ncol(ERCC_threshold)], function(x) {
-				   sort(x[1:nrow(ERCC_threshold)-1])[x[nrow(ERCC_threshold)]]
-				   }
-			   ))
+		   as.data.frame(t(data.frame(
+			 TPM_cutoff = apply(ERCC[4:ncol(ERCC)], 2, function(i)quantile(i[i>0], threshold)))
 		   ))
-	   ))
+	   )
 
 	   # Bind sample-specific threshold to expression table
-	   all_genes_tpm_cutoff <- rbind(all_genes_tpm,ERCC_cutoff[nrow(ERCC_cutoff),])
+	   all_genes_tpm_cutoff <- rbind(all_genes_tpm, ERCC_cutoff)
 	}
 
 
@@ -368,25 +351,24 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	express_data_th_avg <- calculateAvgExpr(express_data_th_replicates)
 
+	
+	# Set replicate colnames
 	repl_names <- unique(substr(names(express_data_th_replicates[-1:-3]), 1, nchar(names(express_data_th_replicates[-1:-3]))-2))
-	repl_names <- substring(repl_names, 3)
-
-	if ((is.element("ATH", species_id)) && (is.element("single-species", experiment))) { 
-
-		repl_names[-1:-9] <- substring(repl_names[-1:-9], 2)
-		repl_names[-1:-23] <- substr(repl_names[-1:-23],1,nchar(repl_names[-1:-23])-1)
-		repl_names[10] <- substr(repl_names[10],1,nchar(repl_names[10])-1)
-		repl_names <- gsub("apex_inflorescence_28", "apex_inflorescence_28d", repl_names)
-		repl_names <- gsub("flowers_mature_polle", "flowers_mature_pollen", repl_names)
-	}
+	repl_names <- gsub("^[^.]*.", "", repl_names)
+	repl_names <- substr(repl_names, 1, nchar(repl_names)-2)
+	repl_names <- gsub('^\\.|\\.$', '', repl_names)
 
 	colnames(express_data_th_avg) <- c("gene_id", "biotype", "source", repl_names)
 
+
+	# Check which biotypes are in df
+	biotypes[!(duplicated(express_data_th_avg$biotype))]
 
 	# Get number of genes expressed in each sample type
 	protein_coding_subset <- subset(express_data_th_avg, biotype=="protein_coding")
 	lnc_intergenic_subset <- subset(express_data_th_avg, biotype=="lnc_intergenic")
 	lnc_antisense_subset <- express_data_th_avg[express_data_th_avg$biotype %like% "antisense", ]
+	circRNA_subset <- subset(express_data_th_avg, biotype=="circRNA")
 
 	
 	# Remove chloroplast and mito genes from coding gene list
