@@ -208,7 +208,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   ERCC_cutoff <- cbind(
 		   data.frame(gene_id="TPM_cutoff"), data.frame(biotype="<NA>"), data.frame(source="<NA>"), 
 		   as.data.frame(t(data.frame(
-			 TPM_cutoff = apply(ERCC[4:ncol(ERCC)], 2, function(i)quantile(i[i>0], threshold)))
+			TPM_cutoff = apply(ERCC[,4:ncol(ERCC)], 2, function(i)quantile(i[i>0], threshold)))
 		   ))
 	   )
 
