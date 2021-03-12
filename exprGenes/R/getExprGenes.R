@@ -79,36 +79,43 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
     if (is.element("ATH", species)) {
         genesTPM = file.path(in_dir, "Expression_data", "AT_genes_complete_table_tpm_with_circRNA_sample_names.csv")
         genesCounts = file.path(in_dir, "Expression_data", "AT_genes_intra_norm_count_mat_vsd_sample_names.csv")
+        genesPtMt = file.path(in_dir, "Expression_data", "AT_Pt_Mt_Orthologs.csv")
         species_id <- "ATH"
 
     } else if (is.element("AL", species)) {
 		genesTPM = file.path(in_dir, "Expression_data", "AL_genes_complete_table_tpm_with_circRNA_sample_names.csv")
 		genesCounts = file.path(in_dir, "Expression_data", "AL_genes_intra_norm_count_mat_vsd_sample_names.csv")
+		genesPtMt = file.path(in_dir, "Expression_data", "AL_Pt_Mt_Orthologs.csv")
 		species_id <- "AL"
 
     } else if (is.element("CR", species)) {
 		genesTPM = file.path(in_dir, "Expression_data", "CR_genes_complete_table_tpm_with_circRNA_sample_names.csv")
 		genesCounts = file.path(in_dir, "Expression_data", "CR_genes_intra_norm_count_mat_vsd_sample_names.csv")
+		genesPtMt = file.path(in_dir, "Expression_data", "CR_Pt_Mt_Orthologs.csv")
 		species_id <- "CR"
 
     } else if (is.element("ES", species)) {
 		genesTPM = file.path(in_dir, "Expression_data", "ES_genes_complete_table_tpm_with_circRNA_sample_names.csv")
 		genesCounts = file.path(in_dir, "Expression_data", "ES_genes_intra_norm_count_mat_vsd_sample_names.csv")
+		genesPtMt = file.path(in_dir, "Expression_data", "ES_Pt_Mt_Orthologs.csv")
 		species_id <- "ES"
 
     } else if (is.element("TH", species)) {
 		genesTPM = file.path(in_dir, "Expression_data", "TH_genes_complete_table_tpm_with_circRNA_sample_names.csv")
 		genesCounts = file.path(in_dir, "Expression_data", "TH_genes_intra_norm_count_mat_vsd_sample_names.csv")
+		genesPtMt = file.path(in_dir, "Expression_data", "TH_Pt_Mt_Orthologs.csv")
 		species_id <- "TH"
 
     } else if (is.element("MT", species)) {
 		genesTPM = file.path(in_dir, "Expression_data", "MT_genes_complete_table_tpm_with_circRNA_sample_names.csv")
 		genesCounts = file.path(in_dir, "Expression_data", "MT_genes_intra_norm_count_mat_vsd_sample_names.csv")
+		genesPtMt = file.path(in_dir, "Expression_data", "MT_Pt_Mt_Orthologs.csv")
 		species_id <- "MT"
 
     } else if (is.element("BD", species)) {
 		genesTPM = file.path(in_dir, "Expression_data", "BD_genes_complete_table_tpm_with_circRNA_sample_names.csv")
 		genesCounts = file.path(in_dir, "Expression_data", "BD_genes_intra_norm_count_mat_vsd_sample_names.csv")
+		genesPtMt = file.path(in_dir, "Expression_data", "BD_Pt_Mt_Orthologs.csv")
 		species_id <- "BD"
     }
 
@@ -123,6 +130,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	all_genes_tpm <- read.table(genesTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 	colnames(all_genes_tpm)[1] <- "gene_id"
 	all_genes_counts <- read.table(genesCounts, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+	genes_ptmt <- read.table(genesPtMt, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
 	# Format expression data and rename pollen samples
@@ -179,7 +187,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
     # Stop function here to allow specific analysis of a single species
-    # return_list <- list("species_id" = species_id, "experiment" = experiment, "all_genes_tpm" = all_genes_tpm, "all_genes_counts" = all_genes_counts, "threshold" = threshold)
+    # return_list <- list("species_id" = species_id, "experiment" = experiment, "all_genes_tpm" = all_genes_tpm, "all_genes_counts" = all_genes_counts, "threshold" = threshold, "genes_ptmt" = genes_ptmt)
     # return(return_list)
     # }
     # return_objects <- getExprGenes(species="ATH", experiment="single-species", 0.05) # read in GTF and expression data for A.thaliana
@@ -362,7 +370,12 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Check which biotypes are in df
-	biotypes[!(duplicated(express_data_th_avg$biotype))]
+	express_data_th_avg$biotype[!(duplicated(express_data_th_avg$biotype))]
+
+	
+	# Remove Pt and Mt genes
+	express_data_th_avg <- express_data_th_avg[!(express_data_th_avg$gene_id %in% genes_ptmt$gene_id),]
+
 
 	# Get number of genes expressed in each sample type
 	protein_coding_subset <- subset(express_data_th_avg, biotype=="protein_coding")
@@ -371,7 +384,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	circRNA_subset <- subset(express_data_th_avg, biotype=="circRNA")
 
 	
-	# Remove chloroplast and mito genes from coding gene list
+	# Double-check that no chloroplast and mito genes from coding gene list
 	`%nlike%` = Negate(`%like%`)
 
 	if ((is.element("ATH", species_id))) { 
@@ -384,13 +397,14 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	expr_protein_coding <- colSums(protein_coding_subset > 0)
 	expr_lnc_antisense <- colSums(lnc_antisense_subset > 0)
 	expr_lnc_intergenic <- colSums(lnc_intergenic_subset > 0)
+	expr_circRNA <- colSums(circRNA_subset > 0)
 
 
 	# Create final list of expressed genes per organ/ sample type
-	expressed_genes_th_avg <- rbind(expr_protein_coding, expr_lnc_antisense, expr_lnc_intergenic)
+	expressed_genes_th_avg <- rbind(expr_protein_coding, expr_lnc_antisense, expr_lnc_intergenic, expr_circRNA)
 	expressed_genes_th_avg <- subset(expressed_genes_th_avg, select = -c(biotype, source))
 	colnames(expressed_genes_th_avg)[1] <- "total_expressed"
-	biotype <- c("protein_coding", "lnc_antisense", "lnc_intergenic")
+	biotype <- substring(rownames(expressed_genes_th_avg), 6)
 	expressed_genes_th_avg <- as.data.frame(cbind(biotype, expressed_genes_th_avg))
 
 
