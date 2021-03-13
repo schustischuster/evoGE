@@ -35,6 +35,13 @@ This folder contains files with the expression data. The columns of the files ar
 | <sub> TH_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> TH </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
 | <sub> TH_genes_intra_norm_count_mat_vsd_sample_names.csv </sub>             | <sub> TH </sub>| <sub> Gene-level </sub> | <sub> DESeq intra-organ </sub>| <sub> VST counts </sub>| 
 | <sub> TH_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> TH </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> MT_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> MT </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> MT_genes_intra_norm_count_mat_vsd_sample_names.csv </sub>             | <sub> MT </sub>| <sub> Gene-level </sub> | <sub> DESeq intra-organ </sub>| <sub> VST counts </sub>| 
+| <sub> MT_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> MT </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
+| <sub> TH_genes_complete_table_tpm_with_circRNA_sample_names.csv </sub>      | <sub> TH </sub>| <sub> Gene-level </sub> | <sub> none </sub>             | <sub> TPM </sub>       | 
+| <sub> TH_genes_inter_norm_tpm_mat_deseq_sample_names.csv </sub>             | <sub> TH </sub>| <sub> Gene-level </sub> | <sub> DESeq inter-organ </sub>| <sub> TPM </sub>       | 
+| <sub> TH_genes_intra_norm_count_mat_vsd_sample_names.csv </sub>             | <sub> TH </sub>| <sub> Gene-level </sub> | <sub> DESeq intra-organ </sub>| <sub> VST counts </sub>| 
+| <sub> TH_transcripts_complete_table_tpm_with_circRNA_sample_names.csv </sub>| <sub> TH </sub>| <sub> Transcript-level </sub>| <sub> none </sub>        | <sub> TPM </sub>       | 
 
 
 <br/>
