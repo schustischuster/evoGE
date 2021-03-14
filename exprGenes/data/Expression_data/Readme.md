@@ -48,4 +48,4 @@ This folder contains files with the expression data. The columns of the files ar
 
 `inter-organ` indicates that data was normalized between organs, whereas `intra-organ` indicates that data was only normalized within the same organ type (developmental stages and replicates).
 
-Query species: `AT` = *Arabidopsis thaliana*; `AL` = *Arabidopsis lyrata*; `CR` = *Capsella rubella*; `ES` = *Eutrema salsugineum*; `TH` = *Tarenaya hassleriana*; `MT` = *Medicago truncatula*; `BD` = *Brachypodium distachyon*; 
+Species: `AT` = *Arabidopsis thaliana*; `AL` = *Arabidopsis lyrata*; `CR` = *Capsella rubella*; `ES` = *Eutrema salsugineum*; `TH` = *Tarenaya hassleriana*; `MT` = *Medicago truncatula*; `BD` = *Brachypodium distachyon*; 
