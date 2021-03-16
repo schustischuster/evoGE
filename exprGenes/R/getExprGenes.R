@@ -413,19 +413,16 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 #----------- Calculate spearman correlation for biological replicates of each sample -----------
 
 
-	# Get rlog count thresholded expression table based on TPM cutoff
-	express_data_th_counts <- subset(all_genes_counts, gene_id %in% express_data_th$gene_id)
+	# Remove ERCC spike-ins from VST count thresholded expression table
+	`%nlike%` = Negate(`%like%`)
+	express_data_th_counts <- all_genes_counts[rownames(all_genes_counts) %nlike% "ERCC", ]
 
 
 	# Get replicate correlation
-	replCorr <- function(df, coefficient=c("spearman", "pearson"), expr_est=c("tpm", "counts")) {
+	replCorr <- function(df, coefficient=c("spearman", "pearson")) {
 
-		if (is.element("pearson", coefficient) && is.element("tpm", expr_est)) {
-			df[,4:ncol(df)] <- log2(df[,4:ncol(df)] + 1)
-		}
-
-		replicate_corr <- do.call(cbind, lapply(split.default(df[4:ncol(df)], #adjust columns
-								rep(seq_along(df), each = 3, length.out = ncol(df)-3)), #adjust columns
+		replicate_corr <- do.call(cbind, lapply(split.default(df[1:ncol(df)], #adjust columns
+								rep(seq_along(df), each = 3, length.out = ncol(df))), #adjust columns
 									function(x) {
 									repl_corr <- data.frame(cbind(
 										cor(x[,1],x[,2],method=coefficient),
@@ -438,14 +435,10 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		return(replicate_corr)
 	}
 
-	
-	# Get replicate correlations based on TPM values
-	repl_corr_df_tpm <- replCorr(express_data_th, coefficient="pearson", expr_est="tpm")
-	colnames(repl_corr_df_tpm) <- rep(repl_names,each=3)
 
-	# Get replicate correlations based on normalized rlog counts
-	repl_corr_df_counts <- replCorr(express_data_th_counts, coefficient="pearson", expr_est="counts")
-	colnames(repl_corr_df_counts) <- rep(repl_names,each=3)
+	# Get replicate correlations based on normalized VST counts
+	repl_corr_df_counts <- replCorr(express_data_th_counts, coefficient="pearson")
+	colnames(repl_corr_df_counts) <- colnames(express_data_th_counts)
 
 
 
@@ -453,19 +446,13 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 #-------- Generate replicate expression lists with thresholded genes for each biotype ---------
 
 
-	# For ERCC-thresholded rlog count data
-	protein_coding_th_repl_counts <- subset(all_genes_counts, gene_id %in% protein_coding_subset$gene_id)
-	lnc_antisense_th_repl_counts <- subset(all_genes_counts, gene_id %in% lnc_antisense_subset$gene_id)
-	lnc_intergenic_th_repl_counts <- subset(all_genes_counts, gene_id %in% lnc_intergenic_subset$gene_id)
-	th_genes_counts <- rbind(protein_coding_th_repl_counts, lnc_antisense_th_repl_counts, lnc_intergenic_th_repl_counts)
-
-	# For ERCC-thresholded tpm data - first log2 transform data
-	all_genes_tpm_log <- all_genes_tpm
-	all_genes_tpm_log[,4:ncol(all_genes_tpm_log)] <- log2(all_genes_tpm_log[,4:ncol(all_genes_tpm_log)] + 1)
-	protein_coding_th_repl_tpm <- subset(all_genes_tpm_log, gene_id %in% protein_coding_subset$gene_id)
-	lnc_antisense_th_repl_tpm <- subset(all_genes_tpm_log, gene_id %in% lnc_antisense_subset$gene_id)
-	lnc_intergenic_th_repl_tpm <- subset(all_genes_tpm_log, gene_id %in% lnc_intergenic_subset$gene_id)
-	th_genes_tpm <- rbind(protein_coding_th_repl_tpm, lnc_antisense_th_repl_tpm, lnc_intergenic_th_repl_tpm)
+	# For ERCC-thresholded VST count data
+	protein_coding_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% protein_coding_subset$gene_id)
+	lnc_antisense_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% lnc_antisense_subset$gene_id)
+	lnc_intergenic_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% lnc_intergenic_subset$gene_id)
+	circRNA_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% circRNA_subset$gene_id)
+	th_genes_counts <- rbind(protein_coding_th_repl_counts, lnc_antisense_th_repl_counts, lnc_intergenic_th_repl_counts, 
+		circRNA_th_repl_counts)
 
 
 
@@ -479,9 +466,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	# Set filename
     fname_expr_genes <- sprintf('%s.csv', paste(species_id, "expr_genes", threshold, sep="_"))
-    fname_repl_corr_tpm <- sprintf('%s.csv', paste(species_id, "repl_corr_tpm", threshold, sep="_"))
     fname_repl_corr_counts <- sprintf('%s.csv', paste(species_id, "repl_corr_counts", threshold, sep="_"))
-    fname_th_genes_repl_tpm <- sprintf('%s.csv', paste(species_id, "th_genes_repl_tpm", threshold, sep="_"))
     fname_th_genes_repl_counts <- sprintf('%s.csv', paste(species_id, "th_genes_repl_counts", threshold, sep="_"))
 
 
@@ -491,15 +476,11 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	write.table(expressed_genes_th_avg, file=file.path(out_dir, "output", "expr_genes", fname_expr_genes), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
-	write.table(repl_corr_df_tpm, file=file.path(out_dir, "output", "expr_genes", fname_repl_corr_tpm), 
-		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 	write.table(repl_corr_df_counts, file=file.path(out_dir, "output", "expr_genes", fname_repl_corr_counts), 
 		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 
 	# Only write thresholded expression tables for 0.05 ERCC threshold to file
 	if (threshold == 0.05) {
-		write.table(th_genes_tpm, file=file.path(out_dir, "output", "expr_genes", fname_th_genes_repl_tpm), 
-			sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 		write.table(th_genes_counts, file=file.path(out_dir, "output", "expr_genes", fname_th_genes_repl_counts), 
 			sep=";", dec=".", row.names=FALSE, col.names=TRUE)
 	}
@@ -508,10 +489,11 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
-thresholds <- list(0, 0.01, 0.05, 0.1) # ERCC threshold values are 0 (a fixed TPM threshold of 0.05)
+thresholds <- list(0, 0.01, 0.05, 0.1) # ERCC threshold values are 0 (a fixed TPM threshold of 0.5)
 # or perc of expressed spike-ins for 0.01/0.05/0.1
 
 lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
+lapply(thresholds, getExprGenes, species = "AL", experiment = "single-species")
 lapply(thresholds, getExprGenes, species = "AL", experiment = "comparative")
 lapply(thresholds, getExprGenes, species = "CR", experiment = "comparative")
 lapply(thresholds, getExprGenes, species = "ES", experiment = "comparative")
