@@ -482,7 +482,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	# Only write thresholded expression tables for 0.05 ERCC threshold to file
 	if (threshold == 0.05) {
 		write.table(th_genes_counts, file=file.path(out_dir, "output", "expr_genes", fname_th_genes_repl_counts), 
-			sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+			sep=";", dec=".", row.names=TRUE, col.names=TRUE)
 	}
 
 }
