@@ -410,7 +410,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
-#----------- Calculate spearman correlation for biological replicates of each sample -----------
+#--------------- Calculate correlation for biological replicates of each sample ----------------
 
 
 	# Remove ERCC spike-ins from VST count thresholded expression table
