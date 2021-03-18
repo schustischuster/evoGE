@@ -493,7 +493,6 @@ thresholds <- list(0, 0.01, 0.05, 0.1) # ERCC threshold values are 0 (a fixed TP
 # or perc of expressed spike-ins for 0.01/0.05/0.1
 
 lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
-lapply(thresholds, getExprGenes, species = "AL", experiment = "single-species")
 lapply(thresholds, getExprGenes, species = "AL", experiment = "comparative")
 lapply(thresholds, getExprGenes, species = "CR", experiment = "comparative")
 lapply(thresholds, getExprGenes, species = "ES", experiment = "comparative")
