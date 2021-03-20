@@ -48,6 +48,7 @@ out_dir <- file.path("evoGE", "exprGenes")
 
 source(file.path("evoGE", "exprGenes", "R", "getStats.R"))
 source(file.path("evoGE", "exprGenes", "R", "getExprGenes.R"))
+source(file.path("evoGE", "exprGenes", "R", "getExprIsoforms.R"))
 
 ```
 ---
