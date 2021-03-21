@@ -93,7 +93,7 @@ getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-thresholds <- list(0, 0.01, 0.05, 0.1)  # ERCC threshold values are 0 (TPM threshold of 0.05)
+thresholds <- list(0, 0.01, 0.05, 0.1)  # ERCC threshold values are 0 (static TPM threshold of 0.5)
                                         # or percent of expressed spike-ins for 0.01/0.05/0.1
 
 lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
