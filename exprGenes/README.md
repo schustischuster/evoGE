@@ -94,7 +94,7 @@ To reproduce the results of this study, execute the following function calls:
 
 ```R
 thresholds <- list(0, 0.01, 0.05, 0.1)  # ERCC threshold values are 0 (static TPM threshold of 0.5)
-                                        # or percent of expressed spike-ins for 0.01/0.05/0.1
+                                        # or the 0.01/0.05/0.1 percentile of detected spike-ins
 
 lapply(thresholds, getExprGenes, species = "ATH", experiment = "single-species")
 lapply(thresholds, getExprGenes, species = "AL", experiment = "comparative")
