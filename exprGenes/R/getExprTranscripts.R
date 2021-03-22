@@ -390,7 +390,9 @@ getExprTranscripts <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", 
 	expr_protein_coding_wo_bt <- expr_protein_coding[names(expr_protein_coding) %nlike% "biotype"]
 	expressed_transcripts_th_avg <- expr_protein_coding_wo_bt[names(expr_protein_coding_wo_bt) %nlike% "source"]
 	names(expressed_transcripts_th_avg)[1] <- "total_expressed"
-	expressed_transcripts_th_avg<-as.data.frame(t(expressed_transcripts_th_avg))
+	biotype_df <- data.frame(biotype = "coding_transcripts")
+	expressed_transcripts_th_avg <- as.data.frame(t(expressed_transcripts_th_avg))
+	expressed_transcripts_th_avg <- cbind(biotype_df, expressed_transcripts_th_avg)
 
 
 
