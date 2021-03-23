@@ -1,6 +1,6 @@
 # Find expressed transcripts in each sample replicate using ERCC spike-in information
-# Thresholds: 0 (no ERCC threshold-everything above 0.5 TPM) OR
-# 0.01, 0.05, 0.1 ERCC (percentiles of detected spike-ins)
+# Thresholds: 0 (static 0.5 TPM threshold) OR
+# 0.01, 0.05, 0.1 ERCC (percentile of detected spike-ins)
 # Data input: Expression_data WITH spike-in information
 # Analysis can be performed on both whole single species datasets (ATH: 132 samples; AL: 36 samples)
 # OR on comparative data sets (27 samples)
@@ -328,7 +328,7 @@ getExprTranscripts <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", 
 
 
 
-#----------- Merge replicates and retrieve number of expressed genes for each sample -----------
+#----------- Merge replicates and retrieve number of expressed transcripts for each sample -----------
 
 
     calculateAvgExpr <- function(df) {
@@ -369,11 +369,11 @@ getExprTranscripts <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", 
 	express_data_th_avg <- express_data_th_avg[!(express_data_th_avg$transcript_id %in% transcripts_ptmt$transcript_id),]
 
 
-	# Get number of transcripts expressed in each sample type
+	# Get number of genes expressed in each sample type
 	protein_coding_subset <- subset(express_data_th_avg, biotype=="protein_coding")
 
 	
-	# Double-check that no chloroplast and mito genes from coding transcripts list
+	# Double-check that no chloroplast and mito transcripts from coding transcript list
 	`%nlike%` = Negate(`%like%`)
 
 	if ((is.element("ATH", species_id))) { 
@@ -387,12 +387,11 @@ getExprTranscripts <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", 
 
 
 	# Create final list of expressed genes per organ/ sample type
-	expr_protein_coding_wo_bt <- expr_protein_coding[names(expr_protein_coding) %nlike% "biotype"]
-	expressed_transcripts_th_avg <- expr_protein_coding_wo_bt[names(expr_protein_coding_wo_bt) %nlike% "source"]
-	names(expressed_transcripts_th_avg)[1] <- "total_expressed"
+	expr_protein_coding_wo_bt <- expr_protein_coding[names(expr_protein_coding) %nlike% biotype]
+	expressed_transcripts_th_avg <- expr_protein_coding_wo_bt[names(expr_protein_coding_wo_bt) %nlike% source]
+	colnames(expressed_transcripts_th_avg)[1] <- "total_expressed"
 	biotype_df <- data.frame(biotype = "coding_transcripts")
-	expressed_transcripts_th_avg <- as.data.frame(t(expressed_transcripts_th_avg))
-	expressed_transcripts_th_avg <- cbind(biotype_df, expressed_transcripts_th_avg)
+	expressed_transcripts_th_avg <- as.data.frame(cbind(biotype_df, as.data.frame(t(expressed_transcripts_th_avg))))
 
 
 
@@ -405,7 +404,7 @@ getExprTranscripts <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", 
 
 
 	# Set filename
-    fname_expr_transcripts <- sprintf('%s.csv', paste(species_id, "expr_coding_transcripts", threshold, sep="_"))
+    fname_expr_transcripts <- sprintf('%s.csv', paste(species_id, "expr_coding_genes", threshold, sep="_"))
 
 
 	# Write final data tables to csv files and store them in /out_dir/output/data_tables
