@@ -3,34 +3,7 @@
 # single-species expression figures
 
 
-#------------------- Load packages, set directories and read sample tables ---------------------
-
-
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(ggplot2)) install.packages('ggplot2')
-library(ggplot2)
-if (!require(data.table)) install.packages('data.table')
-library(data.table)
-if (!require(mgcv)) install.packages('mgcv')
-library(mgcv)
-if (!require(grid)) install.packages('grid')
-library(grid)
-if (!require(gtable)) install.packages('gtable')
-library(gtable)
-if (!require(scales)) install.packages('scales')
-library(scales)
-if (!require(factoextra)) install.packages('factoextra')
-library(factoextra)
-if (!require(dendextend)) install.packages('dendextend')
-library(dendextend)
-
-
-# Set file path and input files
-in_dir_stats <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes/output/mapping_statistics"
-in_dir_expr_genes <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes/output/expr_genes"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes"
+#------------------------------------ Read sample tables ------------------------------------
 
 
 # Read all csv files in input file path
@@ -39,14 +12,14 @@ readTable <- function(path, pattern = "*.csv") {
     lapply(files, function(x) read.table(x, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE))
 }
 
-stats_tables <- readTable(in_dir_stats)
-expr_genes_tables <- readTable(in_dir_expr_genes)
+stats_tables <- readTable(file.path(out_dir, "output", "mapping_statistics"))
+expr_genes_tables <- readTable(file.path(out_dir, "output", "expr_genes"))
 
 
 # Get file names and save them in character vector
-stats_table_list <- as.character(list.files(in_dir_stats, pattern = "*.csv"))
+stats_table_list <- as.character(list.files(file.path(out_dir, "output", "mapping_statistics"), pattern = "*.csv"))
 stats_table_names <- gsub('\\.csv$', '', stats_table_list)
-expr_genes_table_list <- as.character(list.files(in_dir_expr_genes, pattern = "*.csv"))
+expr_genes_table_list <- as.character(list.files(file.path(out_dir, "output", "expr_genes"), pattern = "*.csv"))
 expr_genes_table_names <- gsub('\\.csv$', '', expr_genes_table_list)
 
 
@@ -241,8 +214,8 @@ plotDedupReads <- function(data, plot_title) {
 	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
-	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.5) + 
-  	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.25) + 
+	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.7) + 
+  	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.5) + 
   	scale_y_continuous(limits = c(0,7.4e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
@@ -295,7 +268,7 @@ plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
 
 
 # Prepare data for ggplot
-prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA", "circRNA"), th_0_01, th_0_05, 
+prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA", "circRNA", "transcripts"), th_0_01, th_0_05, 
 	th_0_1, th_0) {
 
 	df_names <- c("Detailed_name" , "Sample" , "Threshold", "Expressed")
@@ -306,10 +279,10 @@ prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA", "circRNA"),
 		data <- cbind(th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)], th_0[2,3:ncol(th_0)])
 	} else  if (is.element("lincRNA", biotype)) {
 		data <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0[3,3:ncol(th_0)])
-	# Add linc data as dummy data for circRNAs
-	# Change this once real data is available!
     } else  if (is.element("circRNA", biotype)) {
-		data <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0[3,3:ncol(th_0)])
+		data <- cbind(th_0_01[4,3:ncol(th_0_01)], th_0_05[4,3:ncol(th_0_05)], th_0_1[4,3:ncol(th_0_1)], th_0[4,3:ncol(th_0)])
+	} else  if (is.element("transcripts", biotype)) {
+		data <- cbind(th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)], th_0[1,3:ncol(th_0)])
 	}
 
 	colnames(data) <- NULL
@@ -346,43 +319,57 @@ expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0_01 = ATH_expr_ge
 	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
 expr_circRNAs_ATH <- prepareExprGenes(biotype = "circRNA", th_0_01 = ATH_expr_genes_0.01, 
 	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
+expr_transcripts_ATH <- prepareExprGenes(biotype = "transcripts", th_0_01 = ATH_expr_coding_transcripts_0.01, 
+	th_0_05 = ATH_expr_coding_transcripts_0.05, th_0_1 = ATH_expr_coding_transcripts_0.1, th_0 = ATH_expr_coding_transcripts_0)
 
 
 
 # Plot number of expressed genes at different thresholds for ATH
-plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), texpr) {
+plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","circ","iso"), texpr) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
 	total_expr <- paste("total:", texpr, "at 0.05" , sep=" ")
 
 	if (is.element("coding", biotype)) {
-		breaksY <- c(1.5e4,2e4,2.5e4)
-		pltymin <- 1.0e4
-		pltymax <- 2.78e4
+		breaksY <- c(1e4,1.5e4,2e4,2.5e4)
+		pltymin <- 0.53e4
+		pltymax <- 2.875e4
 		xtepos <- 20.35
 		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 0)
+		y_lab <- "Number of Genes"
 
 	} else if (is.element("NAT", biotype)) {
-		breaksY <- c(1e3,2e3,3e3)
-		pltymin <- 2.0e2
-		pltymax <- 3.68e3
+		breaksY <- c(0,1e3,2e3,3e3)
+		pltymin <- -50
+		pltymax <- 3.11e3
 		xtepos <- 32.15
 		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 10.5)
+		y_lab <- "Number of NATs"
 
 	} else if (is.element("linc", biotype)) {
-		breaksY <- c(5e2,1e3,1.5e3)
-		pltymin <- 0.35e2
-		pltymax <- 1.585e3
+		breaksY <- c(0,5e2,1e3,1.5e3)
+		pltymin <- -10
+		pltymax <- 1.2125e3
 		xtepos <- 32.15
 		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
+		y_lab <- "Number of lincRNAs"
 
 	} else if (is.element("circ", biotype)) {
-		breaksY <- c(5e2,1e3,1.5e3)
-		pltymin <- 0.35e2
-		pltymax <- 1.585e3
+		breaksY <- c(0,5e2,1e3,1.5e3)
+		pltymin <- -150
+		pltymax <- 0.725e3
 		xtepos <- 32.15
 		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
+		y_lab <- "Number of circRNAs"
+	
+	} else if (is.element("iso", biotype)) {
+		breaksY <- c(1.5e4,2.5e4,3.5e4,4.5e4)
+		pltymin <- 1.2075e4
+		pltymax <- 4.715e4
+		xtepos <- 20.35
+		y_margin <- margin(t = 0, r = 8.25, b = 0, l = 0)
+		y_lab <- "Number of Transcripts"
 	}
 
 	level_order <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
@@ -396,7 +383,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
 
-	geom_line(aes(x = factor(Sample, level= level_order)), size=1.7) + 
+	geom_line(aes(x = factor(Sample, level= level_order)), size=1.85) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
@@ -419,7 +406,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
   	annotate("text", x = 40.4, y = Inf, hjust = 0, vjust = 2.4, size= 7.25, label = "fruit") + 
   	labs(color="")
 
-	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of Genes") + 
+	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab(y_lab) + 
 	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dca207")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(text=element_text(size=23.5), 
@@ -457,50 +444,58 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed protein-coding genes in A.thaliana", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
 plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in A.thaliana", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
 plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thaliana", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
-# For circRNAs: change value for texpr to ATH_expr_genes_0.05[4,2]!
-plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thaliana", biotype = "circ", texpr=ATH_expr_genes_0.05[3,2])
+plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thaliana", biotype = "circ", texpr=ATH_expr_genes_0.05[4,2])
+plotExprGenes(data=expr_transcripts_ATH, plot_title="Expressed protein-coding transcripts in A.thaliana", biotype = "iso", texpr=ATH_expr_coding_transcripts_0.05[1,2])
 
 
 
 # Plot number of expressed genes at different thresholds for ATH
 # This plotting function generates plots without individual sample labels
-plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), texpr) {
+plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","circ","iso"), texpr) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), "domain", sep="_"))
 
 	total_expr <- paste("Total:", texpr, "at 0.05" , sep=" ")
 
 	if (is.element("coding", biotype)) {
-		breaksY <- c(1.0e4,1.5e4,2e4,2.5e4)
-		pltymin <- 0.9e4
-		pltymax <- 2.6e4
+		breaksY <- c(1e4,1.5e4,2e4,2.5e4)
+		pltymin <- 0.53e4
+		pltymax <- 2.875e4
 		xtepos <- 30.7
 		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 0)
 		y_axs_title <- "Number of Genes"
 
 	} else if (is.element("NAT", biotype)) {
-		breaksY <- c(1e3,2e3,3e3)
-		pltymin <- 1.0e2
-		pltymax <- 3.32e3
+		breaksY <- c(0,1e3,2e3,3e3)
+		pltymin <- -50
+		pltymax <- 3.11e3
 		xtepos <- 31.42
 		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 10.5)
 		y_axs_title <- "Number of NATs"
 
 	} else if (is.element("linc", biotype)) {
 		breaksY <- c(0,5e2,1e3,1.5e3)
-		pltymin <- 0
-		pltymax <- 1.43e3
+		pltymin <- -10
+		pltymax <- 1.2125e3
 		xtepos <- 31.45
 		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
 		y_axs_title <- "Number of lincRNAs"
 
 	} else if (is.element("circ", biotype)) {
-		breaksY <- c(5e2,1e3,1.5e3)
-		pltymin <- 0.35e2
-		pltymax <- 1.585e3
+		breaksY <- c(0,5e2,1e3,1.5e3)
+		pltymin <- -150
+		pltymax <- 0.725e3
 		xtepos <- 31.45
 		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
 		y_axs_title <- "Number of circRNAs"
+	
+	} else if (is.element("iso", biotype)) {
+		breaksY <- c(1.5e4,2.5e4,3.5e4,4.5e4)
+		pltymin <- 1.2075e4
+		pltymax <- 4.715e4
+		xtepos <- 20.35
+		y_margin <- margin(t = 0, r = 8.25, b = 0, l = 0)
+		y_axs_title <- "Number of Transcripts"
 	}
 
 	level_order <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
@@ -514,7 +509,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
 
-	geom_line(aes(x = factor(Sample, level= level_order)), size=1.8) + 
+	geom_line(aes(x = factor(Sample, level= level_order)), size=1.95) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
@@ -577,8 +572,8 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc"), 
 plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed genes in A.thaliana", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
 plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in A.thaliana", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
 plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thaliana", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
-# For circRNAs: change value for texpr to ATH_expr_genes_0.05[4,2]!
-plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thaliana", biotype = "circ", texpr=ATH_expr_genes_0.05[3,2])
+plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thaliana", biotype = "circ", texpr=ATH_expr_genes_0.05[4,2])
+plotExprGenes(data=expr_transcripts_ATH, plot_title="Expressed protein-coding transcripts in A.thaliana", biotype = "iso", texpr=ATH_expr_coding_transcripts_0.05[1,2])
 
 
 
