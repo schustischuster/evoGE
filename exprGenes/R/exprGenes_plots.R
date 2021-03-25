@@ -1,5 +1,5 @@
 # This script loads and analysis the data statistics and expression tables for protein-coding 
-# genes, isoforms, lncRNAs and circRNAs and generates the plots for the DevSeq transcriptome  
+# genes, coding isoforms, lncRNAs and circRNAs and generates the plots for the DevSeq transcriptome  
 # single-species expression figures
 
 
