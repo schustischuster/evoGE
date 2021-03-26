@@ -459,24 +459,24 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 
 	if (is.element("coding", biotype)) {
 		breaksY <- c(1e4,1.5e4,2e4,2.5e4)
-		pltymin <- 0.53e4
-		pltymax <- 2.875e4
-		xtepos <- 30.7
+		pltymin <- 0.62e4
+		pltymax <- 2.65e4
+		xtepos <- 21.75
 		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 0)
 		y_axs_title <- "Number of Genes"
 
 	} else if (is.element("NAT", biotype)) {
 		breaksY <- c(0,1e3,2e3,3e3)
 		pltymin <- -50
-		pltymax <- 3.11e3
+		pltymax <- 3.0e3
 		xtepos <- 31.42
 		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 10.5)
 		y_axs_title <- "Number of NATs"
 
 	} else if (is.element("linc", biotype)) {
 		breaksY <- c(0,5e2,1e3,1.5e3)
-		pltymin <- -10
-		pltymax <- 1.2125e3
+		pltymin <- -20
+		pltymax <- 1.1e3
 		xtepos <- 31.45
 		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
 		y_axs_title <- "Number of lincRNAs"
@@ -484,16 +484,16 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 	} else if (is.element("circ", biotype)) {
 		breaksY <- c(0,5e2,1e3,1.5e3)
 		pltymin <- -150
-		pltymax <- 0.725e3
+		pltymax <- 0.68e3
 		xtepos <- 31.45
 		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
 		y_axs_title <- "Number of circRNAs"
 	
 	} else if (is.element("iso", biotype)) {
 		breaksY <- c(1.5e4,2.5e4,3.5e4,4.5e4)
-		pltymin <- 1.2075e4
-		pltymax <- 4.715e4
-		xtepos <- 20.35
+		pltymin <- 1.325e4
+		pltymax <- 4.53e4
+		xtepos <- 21.75
 		y_margin <- margin(t = 0, r = 8.25, b = 0, l = 0)
 		y_axs_title <- "Number of Transcripts"
 	}
@@ -523,13 +523,13 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
   	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
   	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.9, size=7.01, label = total_expr) + 
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
-  	annotate("text", x = 2.1, y = Inf, hjust = 0, vjust = 25.55, size=7.25, label = "root") + 
-  	annotate("text", x = 6.95, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "stem") + 
-  	annotate("text", x = 13.8, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "leaf") + 
-  	annotate("text", x = 20.9, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "apex") + 
-  	annotate("text", x = 26.15, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "flow.") + 
-  	annotate("text", x = 30.5, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "floral organ") + 
-  	annotate("text", x = 40.35, y = Inf, hjust = 0, vjust = 25.55, size= 7.25, label = "fruit") + 
+  	annotate("text", x = 2.1, y = Inf, hjust = 0, vjust = 25.37, size=7.25, label = "root") + 
+  	annotate("text", x = 6.95, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "stem") + 
+  	annotate("text", x = 13.8, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "leaf") + 
+  	annotate("text", x = 20.9, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "apex") + 
+  	annotate("text", x = 26.15, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "flow.") + 
+  	annotate("text", x = 30.5, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "floral organ") + 
+  	annotate("text", x = 40.35, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "fruit") + 
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Organ") + ylab(y_axs_title) + 
@@ -543,12 +543,12 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7),
   		axis.title.x = element_text(colour = "black", size=21.5, 
-  			margin = margin(t = 42, r = 0, b = 40.25, l = 0)),  
+  			margin = margin(t = 37, r = 0, b = 45.25, l = 0)),  
   		axis.title.y = element_text(colour = "black", size=21.5, 
   			margin = y_margin), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=23.5, 
-  			margin = margin(t = 34, r = 0, b = 16, l = 0), hjust = 0.5), 
+  			margin = margin(t = 35, r = 0, b = 15, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 22, 0, 1), "points"),
 		legend.position = c(0.22, 0.108),
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
@@ -569,7 +569,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 }
 
 
-plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed genes in A.thaliana", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
+plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed protein-coding genes in A.thaliana", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
 plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in A.thaliana", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
 plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thaliana", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
 plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thaliana", biotype = "circ", texpr=ATH_expr_genes_0.05[4,2])
