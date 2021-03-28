@@ -457,6 +457,15 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 
 	total_expr <- paste("Total:", texpr, "at 0.05" , sep=" ")
 
+	yLabelsK = function(l) { 
+		 		ifelse(l==0, 0, paste0(round(l/1e3,1),"K"))
+		 	}
+
+	yLabelsB = function(l) return(l)
+
+	y_tick_pos <- data.frame(x=c(6.345,10.345,19.345,25.345,29.345,38.345))
+	y_depl_pos <- data.frame(x=c(5, 9, 18, 24, 28, 37))
+
 	if (is.element("coding", biotype)) {
 		breaksY <- c(1e4,1.5e4,2e4,2.5e4)
 		pltymin <- 0.62e4
@@ -464,30 +473,34 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 		xtepos <- 21.75
 		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 0)
 		y_axs_title <- "Number of Genes"
+		y_labels <- yLabelsK
 
 	} else if (is.element("NAT", biotype)) {
-		breaksY <- c(0,1e3,2e3,3e3)
-		pltymin <- -50
-		pltymax <- 3.0e3
+		breaksY <- c(0,0.5e3,1e3,1.5e3,2e3,2.5e3)
+		pltymin <- -50.75
+		pltymax <- 2.825e3
 		xtepos <- 31.42
-		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 10.5)
+		y_margin <- margin(t = 0, r = 5.28, b = 0, l = 0)
 		y_axs_title <- "Number of NATs"
+		y_labels <- yLabelsK
 
 	} else if (is.element("linc", biotype)) {
 		breaksY <- c(0,5e2,1e3,1.5e3)
 		pltymin <- -20
-		pltymax <- 1.1e3
+		pltymax <- 1.102e3
 		xtepos <- 31.45
-		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 5.28, b = 0, l = 0)
 		y_axs_title <- "Number of lincRNAs"
+		y_labels <- yLabelsK
 
 	} else if (is.element("circ", biotype)) {
-		breaksY <- c(0,5e2,1e3,1.5e3)
+		breaksY <- c(0,2e2,4e2,6e2,8e2)
 		pltymin <- -150
 		pltymax <- 0.68e3
 		xtepos <- 31.45
-		y_margin <- margin(t = 0, r = 5.35, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 12.6, b = 0, l = 0)
 		y_axs_title <- "Number of circRNAs"
+		y_labels <- yLabelsB
 	
 	} else if (is.element("iso", biotype)) {
 		breaksY <- c(1.5e4,2.5e4,3.5e4,4.5e4)
@@ -496,6 +509,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 		xtepos <- 21.75
 		y_margin <- margin(t = 0, r = 8.25, b = 0, l = 0)
 		y_axs_title <- "Number of Transcripts"
+		y_labels <- yLabelsK
 	}
 
 	level_order <- c("root tip 5d", "root m.zone", "whole root 5", "whole root 7", "whole rt.14d", 
@@ -511,9 +525,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 
 	geom_line(aes(x = factor(Sample, level= level_order)), size=1.95) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
-		 	labels = function(l) { 
-		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
-		 	}) +
+		 	labels = y_labels) +
   	annotate("rect", xmin=0.25, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="white", alpha=0, 
 		 	color="black", size=0.7) + 
   	annotate("rect", xmin=0.25, xmax=6.5, ymin=pltymin, ymax=pltymax, fill="#747474", alpha=0.34) + 
@@ -523,6 +535,8 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
   	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
   	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.9, size=7.01, label = total_expr) + 
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
+  	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 30.7, size=5.75, label = "I", col="gray15") + 
+  	annotate("text", x = y_depl_pos$x, y = Inf, hjust = 0, vjust = 8.6, size=20, label = "_", col="white", fontface = 2) + 
   	annotate("text", x = 2.1, y = Inf, hjust = 0, vjust = 25.37, size=7.25, label = "root") + 
   	annotate("text", x = 6.95, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "stem") + 
   	annotate("text", x = 13.8, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "leaf") + 
