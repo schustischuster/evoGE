@@ -474,9 +474,9 @@ plotExprGenes(data=expr_transcripts_ATH, plot_title="Expressed protein-coding tr
 # Prepare data for ggplot
 prepareReplStats <- function(ATH,AL,CR,ES,TH,MT,BD) {
 
-	number_values_ATH <- (ncol(ATH))
-	number_values_AL <- (ncol(AL))
-	number_values_other <- (ncol(CR))
+	number_values_ATH <- ncol(ATH)
+	number_values_AL <- ncol(AL)
+	number_values_other <- ncol(CR)
 
 	class_ATH_key = as.data.frame(rep(c("AT"), times = number_values_ATH))
 	names(class_ATH_key) <- "Species"
@@ -511,9 +511,9 @@ prepareReplStats <- function(ATH,AL,CR,ES,TH,MT,BD) {
 	return(repStats)
 }
 
-all_spec_repl_df <- prepareReplStats(ATH=ATH_repl_corr_tpm_0.05, AL=AL_repl_corr_tpm_0.05, 
-	CR=CR_repl_corr_tpm_0.05, ES=ES_repl_corr_tpm_0.05, TH=TH_repl_corr_tpm_0.05, 
-	MT=MT_repl_corr_tpm_0.05, BD=BD_repl_corr_tpm_0.05)
+all_spec_repl_df <- prepareReplStats(ATH=ATH_repl_corr_counts_0.05, AL=AL_repl_corr_counts_0.05, 
+	CR=CR_repl_corr_counts_0.05, ES=ES_repl_corr_counts_0.05, TH=TH_repl_corr_counts_0.05, 
+	MT=MT_repl_corr_counts_0.05, BD=BD_repl_corr_counts_0.05)
 
 
 
@@ -526,36 +526,40 @@ makePlotReplCorr <- function(data, plot_title) {
 	     stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
 		 geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
 		 	outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
-		 scale_y_continuous(limits = c(0.9655,1.0005), expand = c(0, 0)) + 
-		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9655, ymax=1.0005, fill="white", alpha=0,  
+		 scale_y_continuous(limits = c(0.9695, 1.0005), expand = c(0, 0)) + 
+		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9695, ymax=1.0005, fill="white", alpha=0,  
 		 	color="black", size=1.35)
 
 	q <- p + scale_fill_manual(values=c("#b2b2b2","#dea80c","#46ae12","#069870","#0770ab","#4fb6f0","#ea6965")) + 
 	# Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
 	theme_minimal() + 
 	xlab("Species") + ylab("Pearson's r") + ggtitle(plot_title) + 
-	theme(legend.position = "none", 
-		text=element_text(size=20.75), 
-  		axis.ticks.length = unit(.3, "cm"),
-  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.x = element_text(colour = "black", size=20, 
-  			margin = margin(t = 18.0, r = 0, b = -1, l = 0)), 
-  		axis.title.y = element_text(colour = "black", size=20, 
-  			margin = margin(t = 0, r = 11.0, b = 0, l = 2)), 
-  		axis.text.x = element_text(colour = "black", size=18.5, angle=0, 
-  			margin = margin(t = 6.5, r = 0, b = 0.5, l = 0), hjust = 0.5, vjust = 0.5),
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 1)),
-  		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 21.0, r = 0, b = 14.0, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 0.5, 69.75, 0), "points"))
+	theme(text = element_text(size=23.5), 
+  		panel.grid.major = element_line(colour = "white"), 
+  		panel.grid.minor = element_line(colour = "white"),  
+  		axis.ticks.length = unit(.27, "cm"),
+  		axis.ticks = element_line(colour = "gray15", size = 0.7),
+  		axis.title.x = element_text(colour = "black", size=21.5, 
+  			margin = margin(t = 19.25, r = 0, b = 45.25, l = 0)),  
+  		axis.title.y = element_text(colour = "black", size=21.5, 
+  			margin = margin(t = 0, r = 7.5, b = 0, l = 0)), 
+  		axis.text.x = element_text(colour = "black", margin = margin(t = 4.5, r = 0, b = 0, l = 0)), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
+  		plot.title = element_text(colour = "black", size=23.5, 
+  			margin = margin(t = 35, r = 0, b = 14.35, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 21.25, 0, 1), "points"),
+		legend.position = "none",
+		legend.title = element_text(colour = "black", size=20, face ="bold"),
+		legend.text = element_text(size=20), 
+		legend.background = element_rect(fill = NA),
+  		panel.border = element_rect(colour = "gray15", fill=NA, size=0.5))
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 9.16, height = 7.09, units = c("in"), 
+		scale = 1, width = 10.25, height = 7.3, units = c("in"), 
 		dpi = 600, limitsize = FALSE)
 }
 
 makePlotReplCorr(data=all_spec_repl_df, plot_title="Replicate correlations") 
-# 1 data point for trimmed raw reads above lim_y
 
 
 
