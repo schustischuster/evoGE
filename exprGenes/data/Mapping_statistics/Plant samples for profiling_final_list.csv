@@ -89,14 +89,14 @@ Sample_ID;DevSeq_ID;Species;Tissue;Detailed_description;Comparative_Sample;Age_d
 88;217-219;M.truncatula;apex;inflorescence meristem including I1, I2 and F, Br, L and Stp primordia;apex_infl;7w;soil;continuous light;3;30
 89;220-222;M.truncatula;flowers;Medicago flower stage 8 (before anther dehiscence);flower;7w;soil;continuous light;3;45/25
 90;223-225;M.truncatula;floral organs;mature pollen;pollen;7w;soil;continuous light;3;pollen from 20 plants
-91;259-261;M.truncatula;floral organs;carpels Medicago flower stage 8 ("inflected carpel");carpel;7w;soil;continuous light;3;50/25
+91;259-261;M.truncatula;floral organs;carpels Medicago flower stage 8 (inflected carpel);carpel;7w;soil;continuous light;3;50/25
 92;277-279;M.truncatula;floral organs;stamen Medicago flower stage 8 (before anther dehiscence);stamen;7w;soil;continuous light;3;200/20
 93;226-228;B.distachyon;root;root, whole root (3mm piece including root tip);root;4d;1/2MS agar;continuous light;3;25
 94;229-231;B.distachyon;hypocotyl;mesocotyl;hypocotyl;7d;soil;continuous light;3;35
 95;232-234;B.distachyon;leaf;leaf 1;leaf;4d;soil;continuous light;3;30
 96;235-237;B.distachyon;apex;apex, vegetative;apex_veg;5d;soil;continuous light;3;35
-97;238-240;B.distachyon;apex;lateral spiklet meristem ("naked-stage" to "awn initiation" stage meristem);apex_infl;18-20d;soil;continuous light;3;35
+97;238-240;B.distachyon;apex;lateral spiklet meristem (naked-stage to awn initiation stage meristem);apex_infl;18-20d;soil;continuous light;3;35
 98;241-243;B.distachyon;flowers;floret with anthers immediatly before dehiscence from basal lateral spiklet;flower;32d;soil;continuous light;3;60
 99;244-246;B.distachyon;floral organs;mature pollen from basal lateral spiklet;pollen;32d;soil;continuous light;3;pollen from 250 stamen/40 plants
-100;262-264;B.distachyon;floral organs;carpels "stage 12 equivalent" from basal lateral spiklet;carpel;32d;soil;continuous light;3;75/25
-101;280-282;B.distachyon;floral organs;stamen "stage 12 equivalent" from basal lateral spiklet;stamen;32d;soil;continuous light;3;100/25
+100;262-264;B.distachyon;floral organs;carpels stage 12 equivalent from basal lateral spiklet;carpel;32d;soil;continuous light;3;75/25
+101;280-282;B.distachyon;floral organs;stamen stage 12 equivalent from basal lateral spiklet;stamen;32d;soil;continuous light;3;100/25
