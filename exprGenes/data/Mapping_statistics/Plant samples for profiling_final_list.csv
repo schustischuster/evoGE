@@ -34,7 +34,7 @@ Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_d
 33,91-93,A.thaliana,floral organs,petals stage 15,NA,21d+,soil,continuous light,3,100/25
 34,82-84,A.thaliana,floral organs,stamens stage 12,stamen,21d+,soil,continuous light,3,200/35
 35,94-96,A.thaliana,floral organs,stamens stage 15,NA,21d+,soil,continuous light,3,150/25
-36,109-111,A.thaliana,pollen,mature pollen,28d,soil,continuous light,3,pollen from 50 plants
+36,109-111,A.thaliana,pollen,mature pollen,pollen,28d,soil,continuous light,3,pollen from 50 plants
 37,283-285,A.thaliana,floral organs,carpels stage 12 (mid-stage),carpel,21d+,soil,continuous light,3,80/30
 38,85-87,A.thaliana,floral organs,carpels stage 12 (late-stage),NA,21d+,soil,continuous light,3,50/25
 39,97-99,A.thaliana,floral organs,carpels stage 15 (w/ seeds - pre-globular stage embryo),NA,21d+,soil,continuous light,3,45/45
