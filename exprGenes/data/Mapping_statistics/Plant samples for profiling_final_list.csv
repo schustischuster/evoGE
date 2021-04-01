@@ -20,7 +20,7 @@ Sample_ID;DevSeq_ID;Species;Tissue;Detailed_description;Comparative_Sample;Age_d
 19;118-120;A.thaliana;leaf;cauline leaves;NA;24d;soil;continuous light;3;30
 20;115-117;A.thaliana;apex;apex vegetative;apex_veg;7d;soil;continuous light;3;40
 21;49-51;A.thaliana;apex;apex vegetative;NA;10d;soil;continuous light;3;40
-22;52-54;A.thaliana;apex;apex vegetative, before bolting;NA;14d;soil;continuous light;3;35
+22;52-54;A.thaliana;apex;apex vegetative before bolting;NA;14d;soil;continuous light;3;35
 23;55-57;A.thaliana;apex;apex inflorescence (dissected up to stage 4/5 flower);apex_infl;21d;soil;continuous light;3;30
 24;58-60;A.thaliana;apex;apex inflorescence - clv1-8 (dissected as above);NA;21d+;soil;continuous light;3;30
 25;61-63;A.thaliana;apex;apex inflorescence (dissected as above);NA;28d;soil;continuous light;3;30
