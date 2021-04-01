@@ -61,7 +61,7 @@ Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_d
 60,151-153,C.rubella,apex,apex vegetative,apex_veg,7d,soil,continuous light,3,35
 61,154-156,C.rubella,apex,apex inflorescence (dissected up to stage 4/5 flower),apex_infl,6w/7w/17d,soil,continuous light,3,30
 62,157-159,C.rubella,flowers,flower stage 12 (mid-stage),flower,6w/7w/20d,soil,continuous light,3,75/25
-63,160-162,C.rubella,floral organs,mature pollen,pollen,6w/7w/22d,soil,continuous light,3,pollen from 50 plants
+63,160-162,C.rubella,pollen,mature pollen,pollen,6w/7w/22d,soil,continuous light,3,pollen from 50 plants
 64,250-252,C.rubella,floral organs,carpels stage 12 (mid-stage),carpel,6w/7w/21d,soil,continuous light,3,65/25
 65,268-270,C.rubella,floral organs,stamen stage 12 (mid-stage),stamen,6w/7w/20d,soil,continuous light,3,220/25
 66,163-165,E.salsugineum,root,whole root (3mm piece including root tip),root,6d,1/2MS agar,continuous light,3,100
@@ -70,7 +70,7 @@ Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_d
 69,172-174,E.salsugineum,apex,apex vegetative,apex_veg,9d,soil,continuous light,3,40
 70,175-177,E.salsugineum,apex,apex inflorescence (dissected up to stage 4/5 flower),apex_infl,7w/8w/12d,soil,continuous light,3,30
 71,178-180,E.salsugineum,flowers,flower stage 12 (mid-stage),flower,7w/8w/15d,soil,continuous light,3,75/25
-72,181-183,E.salsugineum,floral organs,mature pollen,pollen,7w/8w/17d,soil,continuous light,3,pollen from 50 plants
+72,181-183,E.salsugineum,pollen,mature pollen,pollen,7w/8w/17d,soil,continuous light,3,pollen from 50 plants
 73,253-255,E.salsugineum,floral organs,carpels stage 12 (mid-stage),carpel,7w/8w/18d,soil,continuous light,3,75/25
 74,271-273,E.salsugineum,floral organs,stamen stage 12 (mid-stage),stamen,7w/8w/17d,soil,continuous light,3,180/30
 75,184-186,T.hassleriana,root,whole root (3mm piece including root tip),root,5d,1/2MS filter paper,continuous light,3,30
@@ -79,7 +79,7 @@ Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_d
 78,193-195,T.hassleriana,apex,apex vegetative,apex_veg,11d,soil,continuous light,3,30
 79,196-198,T.hassleriana,apex,apex inflorescence,apex_infl,11w,soil,continuous light,3,20
 80,199-201,T.hassleriana,flowers,flower stage 12 equivalent,flower,11w,soil,continuous light,3,75/25
-81,202-204,T.hassleriana,floral organs,mature pollen,pollen,11w,soil,continuous light,3,pollen from 25 plants
+81,202-204,T.hassleriana,pollen,mature pollen,pollen,11w,soil,continuous light,3,pollen from 25 plants
 82,256-258,T.hassleriana,floral organs,carpels stage 12 equivalent,carpel,11w,soil,continuous light,3,75/25
 83,274-276,T.hassleriana,floral organs,stamen stage 12 equivalent,stamen,11w,soil,continuous light,3,150/25
 84,205-207,M.truncatula,root,whole root (3mm piece including root tip),root,4d,1/2MS agar,continuous light,3,40
@@ -88,7 +88,7 @@ Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_d
 87,214-216,M.truncatula,apex,apex vegetative,apex_veg,6d,soil,continuous light,3,30
 88,217-219,M.truncatula,apex,inflorescence meristem including I1/ I2 and F/ Br/ L and Stp primordia,apex_infl,7w,soil,continuous light,3,30
 89,220-222,M.truncatula,flowers,Medicago flower stage 8 (before anther dehiscence),flower,7w,soil,continuous light,3,45/25
-90,223-225,M.truncatula,floral organs,mature pollen,pollen,7w,soil,continuous light,3,pollen from 20 plants
+90,223-225,M.truncatula,pollen,mature pollen,pollen,7w,soil,continuous light,3,pollen from 20 plants
 91,259-261,M.truncatula,floral organs,carpels Medicago flower stage 8 (inflected carpel),carpel,7w,soil,continuous light,3,50/25
 92,277-279,M.truncatula,floral organs,stamen Medicago flower stage 8 (before anther dehiscence),stamen,7w,soil,continuous light,3,200/20
 93,226-228,B.distachyon,root,whole root (3mm piece including root tip),root,4d,1/2MS agar,continuous light,3,25
@@ -97,6 +97,6 @@ Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_d
 96,235-237,B.distachyon,apex,apex vegetative,apex_veg,5d,soil,continuous light,3,35
 97,238-240,B.distachyon,apex,lateral spiklet meristem (naked-stage to awn initiation stage meristem),apex_infl,18-20d,soil,continuous light,3,35
 98,241-243,B.distachyon,flowers,floret with anthers immediatly before dehiscence from basal lateral spiklet,flower,32d,soil,continuous light,3,60
-99,244-246,B.distachyon,floral organs,mature pollen from basal lateral spiklet,pollen,32d,soil,continuous light,3,pollen from 250 stamen/40 plants
+99,244-246,B.distachyon,pollen,mature pollen from basal lateral spiklet,pollen,32d,soil,continuous light,3,pollen from 250 stamen/40 plants
 100,262-264,B.distachyon,floral organs,carpels stage 12 equivalent from basal lateral spiklet,carpel,32d,soil,continuous light,3,75/25
 101,280-282,B.distachyon,floral organs,stamen stage 12 equivalent from basal lateral spiklet,stamen,32d,soil,continuous light,3,100/25
