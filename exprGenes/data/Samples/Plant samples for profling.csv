@@ -1,4 +1,4 @@
-Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_dag,Substrate,Photoperiod,Replicates,Sample_size
+Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_dag,Substrate,Photoperiod,Replicates,Sample_size (organs/plants)
 1,10-12,A.thaliana,root,root tip (top 0.5-1mm),NA,5d,1/2MS agar,continuous light,3,90
 2,13-15,A.thaliana,root,maturation zone (2-3mm piece above root tip),NA,5d,1/2MS agar,continuous light,3,90
 3,106-108,A.thaliana,root,whole root (3mm piece including root tip),root,5d,1/2MS agar,continuous light,3,45
@@ -97,6 +97,6 @@ Sample_ID,DevSeq_ID,Species,Tissue,Detailed_description,Comparative_Sample,Age_d
 96,235-237,B.distachyon,apex,apex vegetative,apex_veg,5d,soil,continuous light,3,35
 97,238-240,B.distachyon,apex,lateral spiklet meristem (naked-stage to awn initiation stage meristem),apex_infl,18-20d,soil,continuous light,3,35
 98,241-243,B.distachyon,flowers,floret with anthers immediatly before dehiscence from basal lateral spiklet,flower,32d,soil,continuous light,3,60
-99,244-246,B.distachyon,pollen,mature pollen from basal lateral spiklet,pollen,32d,soil,continuous light,3,pollen from 250 stamen/40 plants
+99,244-246,B.distachyon,pollen,mature pollen,pollen,32d,soil,continuous light,3,pollen from 250 stamen/40 plants
 100,262-264,B.distachyon,floral organs,carpels stage 12 equivalent from basal lateral spiklet,carpel,32d,soil,continuous light,3,75/25
 101,280-282,B.distachyon,floral organs,stamen stage 12 equivalent from basal lateral spiklet,stamen,32d,soil,continuous light,3,100/25
