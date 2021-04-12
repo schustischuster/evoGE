@@ -792,72 +792,77 @@ prepareExprGenesOS <- function(species=c("AL","CR","ES","TH","MT","BD"),
 	th_0 <- th_0[,c(1:8,10:11,9)]
 
 
-	threshold <- as.data.frame(rep(c("0.01", "0.05", "0.1", "0.5"), each=9))
-	colnames(threshold) <- "Threshold"
-
-	species <- as.data.frame(rep(c(species),144))
+	species <- as.data.frame(rep(c(species), 180))
 	colnames(species) <- "species"
 
 
-	coding <- cbind(th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)], th_0[1,3:ncol(th_0)])
-	colnames(coding) <- NULL
-	coding <- as.data.frame(t(coding))
-	colnames(coding) <- "expressed"
-	total_expressed <- c(th_0_01[1,2], th_0_05[1,2], th_0_1[1,2], th_0[1,2])
-	total_expressed <- as.data.frame(rep(c(total_expressed),each=9))
-	colnames(total_expressed) <- "total_expressed"
-	transcript_class <- as.data.frame(rep(c("Protein-coding"),36))
-	colnames(transcript_class) <- "class"
-	cd_value_class <- cbind(coding, total_expressed, threshold, transcript_class)
+	th_list <- list(th_0.01=th_0_01, th_0.05=th_0_05, th_0.1=th_0_1, th_0.5=th_0)
 
-	NAT <- cbind(th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)], th_0[2,3:ncol(th_0)])
-	colnames(NAT) <- NULL
-	NAT <- as.data.frame(t(NAT))
-	colnames(NAT) <- "expressed"
-	total_expressed <- c(th_0_01[2,2], th_0_05[2,2], th_0_1[2,2], th_0[2,2])
-	total_expressed <- as.data.frame(rep(c(total_expressed),each=9))
-	colnames(total_expressed) <- "total_expressed"
-	transcript_class <- as.data.frame(rep(c("NAT"),36))
-	colnames(transcript_class) <- "class"
-	NAT_value_class <- cbind(NAT, total_expressed, threshold, transcript_class)
-	
-	linc <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0[3,3:ncol(th_0)])
-	colnames(linc) <- NULL
-	linc <- as.data.frame(t(linc))
-	colnames(linc) <- "expressed"
-	total_expressed <- c(th_0_01[3,2], th_0_05[3,2], th_0_1[3,2], th_0[3,2])
-	total_expressed <- as.data.frame(rep(c(total_expressed),each=9))
-	colnames(total_expressed) <- "total_expressed"
-	transcript_class <- as.data.frame(rep(c("lincRNA"),36))
-	colnames(transcript_class) <- "class"
-	linc_value_class <- cbind(linc, total_expressed ,threshold, transcript_class)
-	
-	# Add linc data as dummy data for circRNAs
-	# Change this once real data is available!
-	circ <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0[3,3:ncol(th_0)])
-	colnames(circ) <- NULL
-	circ <- as.data.frame(t(circ))
-	colnames(circ) <- "expressed"
-	total_expressed <- c(th_0_01[3,2], th_0_05[3,2], th_0_1[3,2], th_0[3,2])
-	total_expressed <- as.data.frame(rep(c(total_expressed),each=9))
-	colnames(total_expressed) <- "total_expressed"
-	transcript_class <- as.data.frame(rep(c("circRNA"),36))
-	colnames(transcript_class) <- "class"
-	circ_value_class <- cbind(circ, total_expressed, threshold, transcript_class)
+	getNumExpr <- function(df, trans_type) {
+
+		if (trans_type == "Genes") {
+			sel_col <- 1
+		} else if (trans_type == "NATs") {
+			sel_col <- 2
+		} else if (trans_type == "lincRNAs") {
+			sel_col <- 3
+		} else if (trans_type == "circRNAs") {
+			sel_col <- 4
+		} else if (trans_type == "Transcripts") {
+			sel_col <- 5
+		}
+
+		n_expr <- df[sel_col, 3:ncol(df)]
+		colnames(n_expr) <- NULL
+		n_expr <- as.data.frame(t(n_expr))
+		colnames(n_expr) <- "expressed"
+		total_expressed <- df[sel_col, 2]
+		total_expressed <- as.data.frame(rep(c(total_expressed), 9))
+		colnames(total_expressed) <- "total_expressed"
+		transcript_class <- as.data.frame(rep(c(trans_type), 9))
+		colnames(transcript_class) <- "class"
+		biotype <- df[sel_col, 1]
+		biotype <- as.data.frame(rep(c(biotype), 9))
+		colnames(biotype) <- "biotype"
+		value_class <- cbind(n_expr, total_expressed, biotype, transcript_class)
+
+		return(value_class)
+
+	}
+
+	cd_value_class <- do.call(rbind, lapply(th_list, getNumExpr, trans_type = "Genes"))
+	threshold <- data.frame(Threshold=gsub(".*_","", sub(".[^.]+$", "", rownames(cd_value_class))))
+	cd_value_class <- data.frame(cd_value_class[,1:2], threshold, cd_value_class[,3:4])
+
+	NAT_value_class <- do.call(rbind, lapply(th_list, getNumExpr, trans_type = "NATs"))
+	threshold <- data.frame(Threshold=gsub(".*_","", sub(".[^.]+$", "", rownames(NAT_value_class))))
+	NAT_value_class <- data.frame(NAT_value_class[,1:2], threshold, NAT_value_class[,3:4])
+
+	linc_value_class <- do.call(rbind, lapply(th_list, getNumExpr, trans_type = "lincRNAs"))
+	threshold <- data.frame(Threshold=gsub(".*_","", sub(".[^.]+$", "", rownames(linc_value_class))))
+	linc_value_class <- data.frame(linc_value_class[,1:2], threshold, linc_value_class[,3:4])
+
+	circ_value_class <- do.call(rbind, lapply(th_list, getNumExpr, trans_type = "circRNAs"))
+	threshold <- data.frame(Threshold=gsub(".*_","", sub(".[^.]+$", "", rownames(circ_value_class))))
+	circ_value_class <- data.frame(circ_value_class[,1:2], threshold, circ_value_class[,3:4])
+
+	iso_value_class <- do.call(rbind, lapply(th_list, getNumExpr, trans_type = "Transcripts"))
+	threshold <- data.frame(Threshold=gsub(".*_","", sub(".[^.]+$", "", rownames(iso_value_class))))
+	iso_value_class <- data.frame(iso_value_class[,1:2], threshold, iso_value_class[,3:4])
 	
 
 	detailed_sample_name <- names(th_0)[3:ncol(th_0)]
-	detailed_sample_name <- as.data.frame(rep(detailed_sample_name, times=16))
+	detailed_sample_name <- as.data.frame(rep(detailed_sample_name, times = 20))
 	colnames(detailed_sample_name) <- "detailed_sample_name"
 
-	sample_names <- c("root", "hypocotyl", "leaf", "apex veg", "apex inf", 
-		"flower", "carpel", "stamen", "pollen")
+	sample_names <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", 
+		"Flower", "Carpel", "Stamen", "Pollen")
 
-	sample_names <- as.data.frame(rep(sample_names, times=16))
+	sample_names <- as.data.frame(rep(sample_names, times = 20))
 	colnames(sample_names) <- "sample_names"
 
 
-	expr_df <- rbind(cd_value_class, NAT_value_class, linc_value_class, circ_value_class) 
+	expr_df <- rbind(cd_value_class, iso_value_class, NAT_value_class, linc_value_class, circ_value_class) 
 	expr_df_ext <- cbind(expr_df, species, sample_names, detailed_sample_name)
 
 	return(expr_df_ext)
@@ -865,23 +870,29 @@ prepareExprGenesOS <- function(species=c("AL","CR","ES","TH","MT","BD"),
 
 
 # Get expressed genes for each species
-expr_genes_AL <- prepareExprGenesOS(species = "AL", th_0 = AL_expr_genes_0,
-	th_0_01 = AL_expr_genes_0.01, th_0_05 = AL_expr_genes_0.05, th_0_1 = AL_expr_genes_0.1)
+expr_genes_AL <- prepareExprGenesOS(species = "AL", th_0 = rbind(AL_expr_genes_0, AL_expr_coding_transcripts_0),
+	th_0_01 = rbind(AL_expr_genes_0.01, AL_expr_coding_transcripts_0.01), th_0_05 = rbind(AL_expr_genes_0.05, AL_expr_coding_transcripts_0.05), 
+	th_0_1 = rbind(AL_expr_genes_0.1, AL_expr_coding_transcripts_0.1))
 
-expr_genes_CR <- prepareExprGenesOS(species = "CR", th_0 = CR_expr_genes_0,
-	th_0_01 = CR_expr_genes_0.01, th_0_05 = CR_expr_genes_0.05, th_0_1 = CR_expr_genes_0.1)
+expr_genes_CR <- prepareExprGenesOS(species = "CR", th_0 = rbind(CR_expr_genes_0, CR_expr_coding_transcripts_0),
+	th_0_01 = rbind(CR_expr_genes_0.01, CR_expr_coding_transcripts_0.01), th_0_05 = rbind(CR_expr_genes_0.05, CR_expr_coding_transcripts_0.05), 
+	th_0_1 = rbind(CR_expr_genes_0.1, CR_expr_coding_transcripts_0.1))
 
-expr_genes_ES <- prepareExprGenesOS(species = "ES", th_0 = ES_expr_genes_0,
-	th_0_01 = ES_expr_genes_0.01, th_0_05 = ES_expr_genes_0.05, th_0_1 = ES_expr_genes_0.1)
+expr_genes_ES <- prepareExprGenesOS(species = "ES", th_0 = rbind(ES_expr_genes_0, ES_expr_coding_transcripts_0),
+	th_0_01 = rbind(ES_expr_genes_0.01, ES_expr_coding_transcripts_0.01), th_0_05 = rbind(ES_expr_genes_0.05, ES_expr_coding_transcripts_0.05), 
+	th_0_1 = rbind(ES_expr_genes_0.1, ES_expr_coding_transcripts_0.1))
 
-expr_genes_TH <- prepareExprGenesOS(species = "TH", th_0 = TH_expr_genes_0,
-	th_0_01 = TH_expr_genes_0.01, th_0_05 = TH_expr_genes_0.05, th_0_1 = TH_expr_genes_0.1)
+expr_genes_TH <- prepareExprGenesOS(species = "TH", th_0 = rbind(TH_expr_genes_0, TH_expr_coding_transcripts_0),
+	th_0_01 = rbind(TH_expr_genes_0.01, TH_expr_coding_transcripts_0.01), th_0_05 = rbind(TH_expr_genes_0.05, TH_expr_coding_transcripts_0.05), 
+	th_0_1 = rbind(TH_expr_genes_0.1, TH_expr_coding_transcripts_0.1))
 
-expr_genes_MT <- prepareExprGenesOS(species = "MT", th_0 = MT_expr_genes_0,
-	th_0_01 = MT_expr_genes_0.01, th_0_05 = MT_expr_genes_0.05, th_0_1 = MT_expr_genes_0.1)
+expr_genes_MT <- prepareExprGenesOS(species = "MT", th_0 = rbind(MT_expr_genes_0, MT_expr_coding_transcripts_0),
+	th_0_01 = rbind(MT_expr_genes_0.01, MT_expr_coding_transcripts_0.01), th_0_05 = rbind(MT_expr_genes_0.05, MT_expr_coding_transcripts_0.05), 
+	th_0_1 = rbind(MT_expr_genes_0.1, MT_expr_coding_transcripts_0.1))
 
-expr_genes_BD <- prepareExprGenesOS(species = "BD", th_0 = BD_expr_genes_0,
-	th_0_01 = BD_expr_genes_0.01, th_0_05 = BD_expr_genes_0.05, th_0_1 = BD_expr_genes_0.1)
+expr_genes_BD <- prepareExprGenesOS(species = "BD", th_0 = rbind(BD_expr_genes_0, BD_expr_coding_transcripts_0),
+	th_0_01 = rbind(BD_expr_genes_0.01, BD_expr_coding_transcripts_0.01), th_0_05 = rbind(BD_expr_genes_0.05, BD_expr_coding_transcripts_0.05), 
+	th_0_1 = rbind(BD_expr_genes_0.1, BD_expr_coding_transcripts_0.1))
 
 
 # Combine expr_genes data from all species
@@ -896,35 +907,37 @@ plotExprGenesOS <- function(data) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	level_order <- c("root", "hypocotyl", "leaf", "apex veg", "apex inf", 
-		"flower", "carpel", "stamen", "pollen")
+	level_order <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", 
+		"Flower", "Carpel", "Stamen", "Pollen")
+
+	y_label_form <- function(l) { 
+		ifelse(l<1000, l, paste0(round(l/1e3,1),"K"))
+	}
 
 
 	p <- ggplot(data, aes(x = factor(sample_names), y = expressed, color = Threshold, group = Threshold)) + 
-  	geom_line(aes(x = factor(sample_names, level= level_order)), size=0.55) + 
-	scale_y_continuous(expand = c(0.15, 0.15), breaks= pretty_breaks(), 
-		 	labels = function(l) { 
-		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
-		 	})
+  	geom_line(aes(x = factor(sample_names, level= level_order)), size=0.62) + 
+	scale_y_continuous(expand = c(0.14, 0.15), breaks= pretty_breaks(), 
+		 	labels = y_label_form)
 
 	q <- p + facet_wrap(class ~ species, scales='free_y', ncol = 6) + 
-	theme_bw() + xlab("Samples") + ylab("Number of Genes") + 
+	theme_bw() + xlab("Samples") + ylab("Number of Genes/ Transcripts/ non-coding RNAs") + 
 	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(
   		strip.text = element_blank(), 
   		strip.background = element_blank(),
-  		plot.margin = unit(c(15, 0, 0, 2), "points"),
+  		plot.margin = unit(c(15, -2, 0, 1), "points"),
   		axis.ticks.length = unit(.075, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
-  		panel.grid.major = element_line(size = 0.4), 
-  		panel.grid.minor = element_line(size = 0.25),  
+  		panel.grid.major = element_line(size = 0.4, colour = "gray95"), 
+  		panel.grid.minor = element_line(size = 0.25, colour = "gray95"),  
   		axis.title.x = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
+  			margin = margin(t = 4.75, r = 0, b = -16, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 0, r = 8, b = 0, l = 0.125)), 
-  		axis.text.x = element_text(colour = "black", size=5.5, angle=90, 
-  			margin = margin(t = 0.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
+  			margin = margin(t = 0, r = 7, b = 0, l = 0.05)), 
+  		axis.text.x = element_text(colour = "black", size=5.5, angle=45, 
+  			margin = margin(t = 0.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
 		legend.position = "bottom",
 		legend.title = element_text(colour = "black", size=6.15, face ="bold"),
@@ -937,31 +950,29 @@ plotExprGenesOS <- function(data) {
 
 
   	pg <- ggplot(data, aes(x = factor(sample_names), y = expressed, color = Threshold, group = Threshold)) + 
-  	geom_line(aes(x = factor(sample_names, level= level_order)), size=0.55) + 
-	scale_y_continuous(expand = c(0.15, 0.15), breaks= pretty_breaks(), 
-		 	labels = function(l) { 
-		 		ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
-		 	})
+  	geom_line(aes(x = factor(sample_names, level= level_order)), size=0.62) + 
+	scale_y_continuous(expand = c(0.14, 0.15), breaks= pretty_breaks(), 
+		 	labels = y_label_form)
 
 	qg <- pg + facet_grid(class ~ species, scales='free') + 
-	theme_bw() + xlab("Samples") + ylab("Number of Genes") + 
+	theme_bw() + xlab("Samples") + ylab("Number of Genes/ Transcripts/ non-coding RNAs") + 
 	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(
-  		strip.text.x = element_text(margin = margin(0.105, 0, 0.105, 0, "cm"), size = 5.5), 
-        strip.text.y = element_text(margin = margin(0, 0.105, 0, 0.105, "cm"), size = 5.5),
+  		strip.text.x = element_text(margin = margin(0.088, 0, 0.088, 0, "cm"), size = 5.5), 
+        strip.text.y = element_text(margin = margin(0, 0.088, 0, 0.088, "cm"), size = 5.5),
         strip.background = element_rect(colour="grey70", size=0.7), 
-  		plot.margin = unit(c(15, 0, 0, 2), "points"),
+  		plot.margin = unit(c(15, 0, 0, 1), "points"),
   		axis.ticks.length = unit(.075, "cm"),
-  		panel.grid.major = element_line(size = 0.4), 
-  		panel.grid.minor = element_line(size = 0.25),  
+  		panel.grid.major = element_line(size = 0.4, colour = "gray95"), 
+  		panel.grid.minor = element_line(size = 0.25, colour = "gray95"),  
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
   		axis.title.x = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
+  			margin = margin(t = 4.75, r = 0, b = -16, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 0, r = 8, b = 0, l = 0.125)), 
-  		axis.text.x = element_text(colour = "black", size=5.5, angle=90, 
-  			margin = margin(t = 0.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 0.5), 
+  			margin = margin(t = 0, r = 7, b = 0, l = 0.05)), 
+  		axis.text.x = element_text(colour = "black", size=5.5, angle=45, 
+  			margin = margin(t = 0.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
 		legend.position = "bottom",
 		legend.title = element_text(colour = "black", size=6.15, face ="bold"),
@@ -976,15 +987,16 @@ plotExprGenesOS <- function(data) {
 	gt1 = ggplot_gtable(ggplot_build(q))
 	gt2 = ggplot_gtable(ggplot_build(qg))
 
-	gt1 <- gtable_add_rows(gt1, heights = unit(0.151, 'cm'), pos = 2)
+	gt1 <- gtable_add_rows(gt1, heights = unit(0.125, 'cm'), pos = 2)
 	gt1 <- gtable_add_grob(gt1, grobs = gt2$grobs[grep('strip-t', gt2$layout$name)], t = 2, l = gt1$layout[grep('strip-t.+1$', gt1$layout$name),]$l)
 
     gt.side1 = gtable_filter(gt2, 'strip-r-1')
     gt.side2 = gtable_filter(gt2, 'strip-r-2')
     gt.side3 = gtable_filter(gt2, 'strip-r-3')
     gt.side4 = gtable_filter(gt2, 'strip-r-4')
+    gt.side5 = gtable_filter(gt2, 'strip-r-5')
 
-    gt1 = gtable_add_cols(gt1, widths = unit(0.3025, 'cm'), pos = -1)
+    gt1 = gtable_add_cols(gt1, widths = unit(0.4, 'cm'), pos = -1)
     gt1 = gtable_add_grob(gt1, zeroGrob(), t = 1, l = ncol(gt1), b=nrow(gt1))
 
     panel_id <- gt1$layout[grep('panel-.+1$', gt1$layout$name),]
@@ -992,12 +1004,13 @@ plotExprGenesOS <- function(data) {
     gt1 = gtable_add_grob(gt1, gt.side2, t = panel_id$t[2], l = ncol(gt1))
     gt1 = gtable_add_grob(gt1, gt.side3, t = panel_id$t[3], l = ncol(gt1))
     gt1 = gtable_add_grob(gt1, gt.side4, t = panel_id$t[4], l = ncol(gt1))
+    gt1 = gtable_add_grob(gt1, gt.side5, t = panel_id$t[5], l = ncol(gt1))
 
 
   	png("NUL")
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = gt1,
-		scale = 1, width = 6.2, height = 4.5, units = c("in"), 
+		scale = 1, width = 6.65, height = 5.57, units = c("in"), 
 		dpi = 800, limitsize = FALSE)
 }
 
@@ -1015,24 +1028,27 @@ plotExprGenesOS(data = expr_genes_OS)
 df_blank <- data.frame()
 
 AT_total_cod <- paste("Total:", expr_genes_OS[10,2], sep=" ")
-CR_total_cod <- paste("Total:", expr_genes_OS[154,2], sep=" ")
-ES_total_cod <- paste("Total:", expr_genes_OS[298,2], sep=" ")
-TH_total_cod <- paste("Total:", expr_genes_OS[442,2], sep=" ")
-MT_total_cod <- paste("Total:", expr_genes_OS[586,2], sep=" ")
-BD_total_cod <- paste("Total:", expr_genes_OS[730,2], sep=" ")
+CR_total_cod <- paste("Total:", expr_genes_OS[190,2], sep=" ")
+ES_total_cod <- paste("Total:", expr_genes_OS[370,2], sep=" ")
+TH_total_cod <- paste("Total:", expr_genes_OS[550,2], sep=" ")
+MT_total_cod <- paste("Total:", expr_genes_OS[730,2], sep=" ")
+BD_total_cod <- paste("Total:", expr_genes_OS[910,2], sep=" ")
 
 
 dat_text <- data.frame(
     label = c(AT_total_cod, CR_total_cod, ES_total_cod, TH_total_cod, MT_total_cod, BD_total_cod, 
-    	expr_genes_OS[46,2], expr_genes_OS[190,2], expr_genes_OS[334,2], expr_genes_OS[478,2], 
-    	expr_genes_OS[622,2], expr_genes_OS[766,2], expr_genes_OS[82,2], expr_genes_OS[226,2], 
-    	expr_genes_OS[370,2], expr_genes_OS[514,2], expr_genes_OS[658,2], expr_genes_OS[802,2], 
-    	expr_genes_OS[118,2], expr_genes_OS[262,2], expr_genes_OS[406,2], expr_genes_OS[550,2], 
-    	expr_genes_OS[694,2], expr_genes_OS[838,2]),
-    x = c(0.314, 1.376, 2.438, 3.5, 4.562, 5.625, 0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 
-    	0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 0.189, 1.251, 2.313, 3.375, 4.437, 5.5),
-    y = c(32.4, 32.4, 32.4, 32.4, 32.4, 32.4, 29.94, 29.94, 29.94, 29.94, 29.94, 29.94, 
-    	21.29, 21.29, 21.29, 21.29, 21.29, 21.29, 12.67, 12.67, 12.67, 12.67, 12.67, 12.67)
+    	expr_genes_OS[46,2], expr_genes_OS[226,2], expr_genes_OS[406,2], expr_genes_OS[586,2], 
+    	expr_genes_OS[766,2], expr_genes_OS[946,2], expr_genes_OS[82,2], expr_genes_OS[262,2], 
+    	expr_genes_OS[442,2], expr_genes_OS[622,2], expr_genes_OS[802,2], expr_genes_OS[982,2], 
+    	expr_genes_OS[118,2], expr_genes_OS[298,2], expr_genes_OS[478,2], expr_genes_OS[658,2], 
+    	expr_genes_OS[838,2], expr_genes_OS[1018,2], expr_genes_OS[154,2], expr_genes_OS[334,2], 
+    	expr_genes_OS[514,2], expr_genes_OS[694,2], expr_genes_OS[874,2], expr_genes_OS[1054,2]),
+    x = c(0.314, 1.376, 2.438, 3.5, 4.562, 5.625, 0.211, 1.273, 2.335, 3.397, 4.459, 5.522, 
+    	0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 
+    	0.189, 1.251, 2.313, 3.375, 4.925, 5.5),
+    y = c(33.91, 33.91, 33.91, 33.91, 33.91, 33.91, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 
+    	24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 
+    	9.575, 9.575, 9.575, 9.575, 9.575, 9.575)
     )
 
 p <- ggplot(df_blank) + geom_point() + xlim(0, 6) + ylim(0, 40) + theme_void() + 
@@ -1048,13 +1064,13 @@ theme(
 q <- p + geom_text(
     data = dat_text,
     mapping = aes(x = x, y = y, label = label), 
-    size=2
+    size=1.95
     )
 
 png("NUL")
 
 ggsave(file = file.path(out_dir, "output", "plots", "non-ATH_annotation_layer.png"), plot = q,
-	scale = 1, width = 6.2, height = 4.5, units = c("in"), dpi = 800, limitsize = FALSE, 
+	scale = 1, width = 6.65, height = 5.57, units = c("in"), dpi = 800, limitsize = FALSE, 
 	bg = "transparent")
 
 
