@@ -381,7 +381,7 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	protein_coding_subset <- subset(express_data_th_avg, biotype=="protein_coding")
 	lnc_intergenic_subset <- subset(express_data_th_avg, biotype=="lnc_intergenic")
 	lnc_antisense_subset <- express_data_th_avg[express_data_th_avg$biotype %like% "antisense", ]
-	circRNA_subset <- subset(express_data_th_avg, biotype=="circRNA")
+	LTR_subset <- subset(express_data_th_avg, biotype=="LTR_retrotransposon")
 
 	
 	# Double-check that no chloroplast and mito genes from coding gene list
@@ -397,11 +397,11 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	expr_protein_coding <- colSums(protein_coding_subset > 0)
 	expr_lnc_antisense <- colSums(lnc_antisense_subset > 0)
 	expr_lnc_intergenic <- colSums(lnc_intergenic_subset > 0)
-	expr_circRNA <- colSums(circRNA_subset > 0)
+	expr_LTR <- colSums(LTR_subset > 0)
 
 
 	# Create final list of expressed genes per organ/ sample type
-	expressed_genes_th_avg <- rbind(expr_protein_coding, expr_lnc_antisense, expr_lnc_intergenic, expr_circRNA)
+	expressed_genes_th_avg <- rbind(expr_protein_coding, expr_lnc_antisense, expr_lnc_intergenic, expr_LTR)
 	expressed_genes_th_avg <- subset(expressed_genes_th_avg, select = -c(biotype, source))
 	colnames(expressed_genes_th_avg)[1] <- "total_expressed"
 	biotype <- substring(rownames(expressed_genes_th_avg), 6)
