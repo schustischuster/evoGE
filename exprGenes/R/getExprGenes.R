@@ -450,9 +450,9 @@ getExprGenes <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	protein_coding_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% protein_coding_subset$gene_id)
 	lnc_antisense_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% lnc_antisense_subset$gene_id)
 	lnc_intergenic_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% lnc_intergenic_subset$gene_id)
-	circRNA_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% circRNA_subset$gene_id)
+	LTR_th_repl_counts <- subset(all_genes_counts, rownames(all_genes_counts) %in% LTR_subset$gene_id)
 	th_genes_counts <- rbind(protein_coding_th_repl_counts, lnc_antisense_th_repl_counts, lnc_intergenic_th_repl_counts, 
-		circRNA_th_repl_counts)
+		LTR_th_repl_counts)
 
 
 
