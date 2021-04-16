@@ -268,7 +268,7 @@ plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
 
 
 # Prepare data for ggplot
-prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA", "circRNA", "transcripts"), th_0_01, th_0_05, 
+prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA", "LTR", "transcripts"), th_0_01, th_0_05, 
 	th_0_1, th_0) {
 
 	df_names <- c("Detailed_name" , "Sample" , "Threshold", "Expressed")
@@ -279,7 +279,7 @@ prepareExprGenes <- function(biotype = c("coding", "NAT", "lincRNA", "circRNA", 
 		data <- cbind(th_0_01[2,3:ncol(th_0_01)], th_0_05[2,3:ncol(th_0_05)], th_0_1[2,3:ncol(th_0_1)], th_0[2,3:ncol(th_0)])
 	} else  if (is.element("lincRNA", biotype)) {
 		data <- cbind(th_0_01[3,3:ncol(th_0_01)], th_0_05[3,3:ncol(th_0_05)], th_0_1[3,3:ncol(th_0_1)], th_0[3,3:ncol(th_0)])
-    } else  if (is.element("circRNA", biotype)) {
+    } else  if (is.element("LTR", biotype)) {
 		data <- cbind(th_0_01[4,3:ncol(th_0_01)], th_0_05[4,3:ncol(th_0_05)], th_0_1[4,3:ncol(th_0_1)], th_0[4,3:ncol(th_0)])
 	} else  if (is.element("transcripts", biotype)) {
 		data <- cbind(th_0_01[1,3:ncol(th_0_01)], th_0_05[1,3:ncol(th_0_05)], th_0_1[1,3:ncol(th_0_1)], th_0[1,3:ncol(th_0)])
@@ -317,7 +317,7 @@ expr_NATs_ATH <- prepareExprGenes(biotype = "NAT", th_0_01 = ATH_expr_genes_0.01
 	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
 expr_lincRNAs_ATH <- prepareExprGenes(biotype = "lincRNA", th_0_01 = ATH_expr_genes_0.01, 
 	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
-expr_circRNAs_ATH <- prepareExprGenes(biotype = "circRNA", th_0_01 = ATH_expr_genes_0.01, 
+expr_LTRs_ATH <- prepareExprGenes(biotype = "LTR", th_0_01 = ATH_expr_genes_0.01, 
 	th_0_05 = ATH_expr_genes_0.05, th_0_1 = ATH_expr_genes_0.1, th_0 = ATH_expr_genes_0)
 expr_transcripts_ATH <- prepareExprGenes(biotype = "transcripts", th_0_01 = ATH_expr_coding_transcripts_0.01, 
 	th_0_05 = ATH_expr_coding_transcripts_0.05, th_0_1 = ATH_expr_coding_transcripts_0.1, th_0 = ATH_expr_coding_transcripts_0)
@@ -327,7 +327,7 @@ expr_transcripts_ATH <- prepareExprGenes(biotype = "transcripts", th_0_01 = ATH_
 
 # Plot number of expressed genes at different thresholds for ATH
 # This plotting function generates plots without individual sample labels
-plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","circ","iso"), texpr) {
+plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","LTR","iso"), texpr) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), "domain", sep="_"))
 
@@ -369,13 +369,13 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 		y_axs_title <- "Number of lincRNAs"
 		y_labels <- yLabelsK
 
-	} else if (is.element("circ", biotype)) {
-		breaksY <- c(0,2e2,4e2,6e2,8e2)
-		pltymin <- -150
-		pltymax <- 0.68e3
+	} else if (is.element("LTR", biotype)) {
+		breaksY <- c(0,1e2,2e2,3e2)
+		pltymin <- -80
+		pltymax <- 0.34e3
 		xtepos <- 31.45
 		y_margin <- margin(t = 0, r = 12.6, b = 0, l = 0)
-		y_axs_title <- "Number of circRNAs"
+		y_axs_title <- "Number of LTR TEs"
 		y_labels <- yLabelsB
 	
 	} else if (is.element("iso", biotype)) {
@@ -462,7 +462,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","c
 plotExprGenes(data=expr_coding_genes_ATH, plot_title="Expressed protein-coding genes in A.thaliana", biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
 plotExprGenes(data=expr_NATs_ATH, plot_title="Expressed NATs in A.thaliana", biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
 plotExprGenes(data=expr_lincRNAs_ATH, plot_title="Expressed lincRNAs in A.thaliana", biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
-plotExprGenes(data=expr_circRNAs_ATH, plot_title="Expressed circRNAs in A.thaliana", biotype = "circ", texpr=ATH_expr_genes_0.05[4,2])
+plotExprGenes(data=expr_LTRs_ATH, plot_title="Expressed LTR TEs in A.thaliana", biotype = "LTR", texpr=ATH_expr_genes_0.05[4,2])
 plotExprGenes(data=expr_transcripts_ATH, plot_title="Expressed protein-coding transcripts in A.thaliana", biotype = "iso", texpr=ATH_expr_coding_transcripts_0.05[1,2])
 
 
@@ -806,7 +806,7 @@ prepareExprGenesOS <- function(species=c("AL","CR","ES","TH","MT","BD"),
 			sel_col <- 2
 		} else if (trans_type == "lincRNAs") {
 			sel_col <- 3
-		} else if (trans_type == "circRNAs") {
+		} else if (trans_type == "LTR TEs") {
 			sel_col <- 4
 		} else if (trans_type == "Transcripts") {
 			sel_col <- 5
@@ -842,7 +842,7 @@ prepareExprGenesOS <- function(species=c("AL","CR","ES","TH","MT","BD"),
 	threshold <- data.frame(Threshold=gsub(".*_","", sub(".[^.]+$", "", rownames(linc_value_class))))
 	linc_value_class <- data.frame(linc_value_class[,1:2], threshold, linc_value_class[,3:4])
 
-	circ_value_class <- do.call(rbind, lapply(th_list, getNumExpr, trans_type = "circRNAs"))
+	circ_value_class <- do.call(rbind, lapply(th_list, getNumExpr, trans_type = "LTR TEs"))
 	threshold <- data.frame(Threshold=gsub(".*_","", sub(".[^.]+$", "", rownames(circ_value_class))))
 	circ_value_class <- data.frame(circ_value_class[,1:2], threshold, circ_value_class[,3:4])
 
@@ -1045,7 +1045,7 @@ dat_text <- data.frame(
     	expr_genes_OS[514,2], expr_genes_OS[694,2], expr_genes_OS[874,2], expr_genes_OS[1054,2]),
     x = c(0.314, 1.376, 2.438, 3.5, 4.562, 5.625, 0.211, 1.273, 2.335, 3.397, 4.459, 5.522, 
     	0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 
-    	0.189, 1.251, 2.313, 3.375, 4.925, 5.5),
+    	0.189, 1.251, 2.313, 3.375, 4.437, 5.5),
     y = c(33.91, 33.91, 33.91, 33.91, 33.91, 33.91, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 
     	24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 
     	9.575, 9.575, 9.575, 9.575, 9.575, 9.575)
