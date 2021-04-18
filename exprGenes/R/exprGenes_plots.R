@@ -373,7 +373,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		breaksY <- c(0,1e2,2e2,3e2)
 		pltymin <- -80
 		pltymax <- 0.34e3
-		xtepos <- 31.45
+		xtepos <- 32.18
 		y_margin <- margin(t = 0, r = 12.6, b = 0, l = 0)
 		y_axs_title <- "Number of LTR TEs"
 		y_labels <- yLabelsB
