@@ -111,6 +111,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       ES <- 27
       TH <- 51
       MT <- 108
+      time_labels <- c(6, "", 27, 51, 108, 152)
 
     } else if (is.element("Estimated", div_times)) {
 
@@ -120,6 +121,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       ES <- 26
       TH <- 46
       MT <- 106
+      time_labels <- c(7, "", 26, 46, 106, 160)
     }
 
     dat_circle <- data.frame(
@@ -144,7 +146,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
 
     p <- ggplot(data, aes(x = div_time, y = expressed)) + 
     geom_line(aes(x = div_time), size = 1.0) + expand_limits(y=0) + 
-    scale_x_continuous(breaks = species_time) + 
+    scale_x_continuous(breaks = species_time, labels = time_labels) + 
     scale_y_continuous(expand = c(0.05, 0.15), breaks= pretty_breaks(), labels = y_labels) + 
     geom_text(aes(y = expressed * 1.077, label = "")) + 
     geom_segment(x = AL, xend = AL, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
