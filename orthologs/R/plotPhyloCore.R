@@ -155,7 +155,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
     geom_hline(yintercept = 0, colour = "grey95", size = 0.5) + 
     geom_point(data = dat_circle, mapping = aes(x = x, y = y), shape = 21, colour = "black", 
       fill = "red", size = 3.0, stroke = 0.75) + 
-    geom_text(data = dat_text, mapping = aes(x = x, y = y, label=label), color = "red", size = 3.8) + 
+    geom_text(data = dat_text, mapping = aes(x = x, y = y, label=label), color = "red", size = 3.8)
 
     q <- p + facet_wrap( ~ class, scales='free', ncol = 1) + 
     theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of orthologs AT vs X") + 
