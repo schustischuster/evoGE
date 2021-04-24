@@ -173,7 +173,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       panel.background = element_rect(fill = "transparent"), 
       plot.background = element_rect(fill = "transparent", color = NA), 
       strip.background = element_rect(colour="grey55", size=1), 
-      strip.text.x = element_text(size=12, margin = margin(t = 0.185,r = 0,b = 0.155,l = 0,"cm")),
+      strip.text.x = element_text(size=12, margin = margin(t = 0.1875,r = 0,b = 0.1525,l = 0,"cm")),
       plot.margin = unit(c(1, 2, 0.5, 0.25), "points"),
       axis.ticks.length = unit(0.15, "cm"),
       axis.ticks = element_line(colour = "gray15", size = 0.45), 
