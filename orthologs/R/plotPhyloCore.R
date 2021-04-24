@@ -66,7 +66,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
   # Reshape data for ggplot2
   species <- rep(c(pairwise_ortholog$species[1:6]), times = 2)
 
-  class <- rep(c("coding", "lncRNA"), each = 6)
+  class <- rep(c("Protein-coding", "lncRNA"), each = 6)
 
   # divergence times are estimated taxon pair times from TimeTree
   # http://www.timetree.org/
@@ -125,14 +125,14 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
     }
 
     dat_circle <- data.frame(
-      class   = c("coding", "lncRNA"),
+      class   = c("Protein-coding", "lncRNA"),
       x       = c(156, 156),
       y       = c(core_orthologs[1], core_orthologs[2])
       )
 
     dat_text <- data.frame(
       label = c(core_orthologs[1], core_orthologs[2]),
-      class = c("coding", "lncRNA"),
+      class = c("Protein-coding", "lncRNA"),
       x     = c(138.5, 147.25),
       y     = c(core_orthologs[1], core_orthologs[2] + 20)
       )
@@ -141,10 +141,16 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       ifelse(l==0, paste0(round(l/1e3,1)),paste0(round(l/1e3,1),"K"))
     }
 
-    title_y_rmg <- 1
+    spec_label <- data.frame(
+      label = c("Brass.", "TH", "MT", "BD",  "Brass.", "TH", "MT"),
+      class   = c("Protein-coding", "Protein-coding", "Protein-coding", "Protein-coding", "lncRNA", "lncRNA", "lncRNA"),
+      x     = c(18.5, 46, 106, 157, 18.5, 46, 106),
+      y     = c(1200, 1200, 1200, 1200, 85.4, 85.4, 85.4)
+      )
 
 
-    p <- ggplot(data, aes(x = div_time, y = expressed)) + 
+    p <- ggplot(transform(data, class=factor(class, levels=c("Protein-coding", "lncRNA"))), 
+      aes(x = div_time, y = expressed)) + 
     geom_line(aes(x = div_time), size = 1.0) + expand_limits(y=0) + 
     scale_x_continuous(breaks = species_time, labels = time_labels) + 
     scale_y_continuous(expand = c(0.05, 0.15), breaks= pretty_breaks(), labels = y_labels) + 
@@ -160,27 +166,29 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
     geom_text(data = dat_text, mapping = aes(x = x, y = y, label=label), color = "red", size = 3.8)
 
     q <- p + facet_wrap( ~ class, scales='free', ncol = 1) + 
-    theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of orthologs AT vs X") + 
+    theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of pairwise orthologs w/ A.thaliana") + 
     scale_color_manual(values = "gray35") + 
+    geom_text(data = spec_label, mapping = aes(x = x, y = y, label = label), size=3.75) + 
     theme(
       panel.background = element_rect(fill = "transparent"), 
       plot.background = element_rect(fill = "transparent", color = NA), 
-      strip.background = element_rect(colour = "black", size = 0.7), 
-      plot.margin = unit(c(15, 2, 0, 2), "points"),
+      strip.background = element_rect(colour="grey55", size=1), 
+      strip.text.x = element_text(size=12, margin = margin(t = 0.185,r = 0,b = 0.155,l = 0,"cm")),
+      plot.margin = unit(c(1, 2, 0.5, 0.25), "points"),
       axis.ticks.length = unit(0.15, "cm"),
       axis.ticks = element_line(colour = "gray15", size = 0.45), 
       panel.grid.major = element_line(size = 0.5, colour = "grey95"), 
       panel.grid.minor = element_blank(), 
-      panel.spacing = unit(-0.4, "lines"), 
+      panel.spacing = unit(0.125, "lines"), 
       panel.grid.minor.y = element_line(size = 0.3, colour = "grey95"), 
       axis.title.x = element_text(colour = "black", size=12, 
-        margin = margin(t = 4.75, r = 0, b = -14, l = 0)), 
+        margin = margin(t = 1.0, r = 0, b = 10.75, l = 0)), 
       axis.title.y = element_text(colour = "black", size=12, 
-        margin = margin(t = 0, r = title_y_rmg, b = 0, l = 0.125)), 
+        margin = margin(t = 0, r = 3.125, b = 0, l = 0)), 
       axis.text.x = element_text(colour = "black", size=10.75, 
-        margin = margin(t = 2, r = 0, b = 12.5, l = 0), vjust = 0.5), 
+        margin = margin(t = 2, r = 0, b = 5.0, l = 0), vjust = 0.5), 
       axis.text.y = element_text(colour = "black", size=10.75, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
-      panel.border = element_rect(colour = "grey70", fill=NA, size=1))
+      panel.border = element_rect(colour = "grey55", fill=NA, size=1))
 
 
     ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
