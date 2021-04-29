@@ -454,8 +454,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             revC = F,
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
-            distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
-            hclustfun = function(x) hclust(x_dist, method = "average"), 
             # Order dendrogram in a way that it starts with distant species BD, MT, TH
             Rowv = dend_order, 
             Colv = "Rowv"
@@ -485,8 +483,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             offsetCol = 1,
             key.xlab = NA,
             key.title = NULL,
-            distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
-            hclustfun = function(x) hclust(x_dist, method = "average"), 
             # Order dendrogram in a way that it starts with distant species BD, MT, TH
             Rowv = dend_order, 
             Colv = "Rowv"
@@ -514,8 +510,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             revC = F,
             ColSideColors = col_cols, 
             RowSideColors = row_cols,
-            distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
-            hclustfun = function(x) hclust(x_dist, method = "average"),
             Rowv = dend_order, 
             Colv = "Rowv")
 
@@ -544,9 +538,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             offsetRow = 1,
             offsetCol = 1,
             key.xlab = NA,
-            key.title = NULL,
-            distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
-            hclustfun = function(x) hclust(x_dist, method = "average"))
+            key.title = NULL)
         dev.off()
 
         # Save colorbar
