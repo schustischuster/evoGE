@@ -265,8 +265,6 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
         revC = F,
         ColSideColors = col_cols, 
         RowSideColors = row_cols,
-        distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
-        hclustfun = function(x) hclust(x_dist, method = "average"), 
         # Order dendrogram in a way that it starts with distant species BD, MT, TH
         Rowv = dend_order, 
         Colv = "Rowv"
@@ -296,8 +294,6 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
         offsetCol = 1,
         key.xlab = NA,
         key.title = NULL,
-        distfun = function(c) as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = coefficient)))), 
-        hclustfun = function(x) hclust(x_dist, method = "average"), 
         # Order dendrogram in a way that it starts with distant species BD, MT, TH
         Rowv = dend_order, 
         Colv = "Rowv"
