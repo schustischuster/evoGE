@@ -102,12 +102,12 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 10, b = 0, l = 0)), 
-  		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
-  			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5),
+  		axis.text.x = element_text(colour = "black", size=18.5, angle=45, 
+  			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 1),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 23, 14.1, 5.1), "points"))
+  		plot.margin = unit(c(7.0, 23, 22.9, 5.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -158,12 +158,12 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 10, b = 0, l = 0)), 
-  		axis.text.x = element_text(colour = "black", size=18.5, angle=90, 
-  			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.text.x = element_text(colour = "black", size=18.5, angle=45, 
+  			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 2, 14.1, 26.1), "points"))
+  		plot.margin = unit(c(7.0, 2, 22.9, 26.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -235,12 +235,12 @@ plotDedupReads <- function(data, plot_title) {
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20.5, 
   			margin = margin(t = 0, r = 10.5, b = 0, l = 21)), 
-  		axis.text.x = element_text(colour = "black", size=18, angle=90, 
-  			margin = margin(t = 2.0, r = 0, b = 1, l = 0), hjust = 1, vjust = 0.5), 
+  		axis.text.x = element_text(colour = "black", size=18, angle=45, 
+  			margin = margin(t = 1, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 18, r = 0, b = 14.95, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(5.5, 2, 3, 4.5), "points"),
+  		plot.margin = unit(c(5.5, 2, 22, 4.5), "points"),
 		legend.position = c(0.334, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
@@ -688,7 +688,7 @@ expr_genes_OS <- rbind(expr_genes_AL, expr_genes_CR, expr_genes_ES, expr_genes_T
 
 
 
-# Plot number of deduplicated reads for each species
+# Plot number of expressed genes for each species
 plotExprGenesOS <- function(data) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
@@ -707,7 +707,7 @@ plotExprGenesOS <- function(data) {
 		 	labels = y_label_form)
 
 	q <- p + facet_wrap(class ~ species, scales='free_y', ncol = 6) + 
-	theme_bw() + xlab("Samples") + ylab("Number of Genes/ Transcripts/ non-coding RNAs") + 
+	theme_bw() + xlab("") + ylab("Number of Genes/ Transcripts/ non-coding RNAs") + 
 	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(
@@ -716,16 +716,17 @@ plotExprGenesOS <- function(data) {
   		plot.margin = unit(c(15, -2, 0, 1), "points"),
   		axis.ticks.length = unit(.075, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
-  		panel.grid.major = element_line(size = 0.4, colour = "gray95"), 
-  		panel.grid.minor = element_line(size = 0.25, colour = "gray95"),  
+  		panel.grid.major = element_line(size = 0.4, colour = "#f3f3f3"), 
+  		panel.grid.minor = element_line(size = 0.25, colour = "white"),  
   		axis.title.x = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 4.75, r = 0, b = -16, l = 0)), 
+  			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
   			margin = margin(t = 0, r = 7, b = 0, l = 0.05)), 
   		axis.text.x = element_text(colour = "black", size=5.5, angle=45, 
   			margin = margin(t = 0.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
 		legend.position = "bottom",
+		legend.margin = margin(6, 0, 16.32, 0), 
 		legend.title = element_text(colour = "black", size=6.15, face ="bold"),
 		legend.text = element_text(size=6.1), 
 		legend.key.size = unit(0.5, "cm"),
@@ -741,7 +742,7 @@ plotExprGenesOS <- function(data) {
 		 	labels = y_label_form)
 
 	qg <- pg + facet_grid(class ~ species, scales='free') + 
-	theme_bw() + xlab("Samples") + ylab("Number of Genes/ Transcripts/ non-coding RNAs") + 
+	theme_bw() + xlab("") + ylab("Number of Genes/ Transcripts/ non-coding RNAs") + 
 	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(
@@ -750,17 +751,18 @@ plotExprGenesOS <- function(data) {
         strip.background = element_rect(colour="grey70", size=0.7), 
   		plot.margin = unit(c(15, 0, 0, 1), "points"),
   		axis.ticks.length = unit(.075, "cm"),
-  		panel.grid.major = element_line(size = 0.4, colour = "gray95"), 
-  		panel.grid.minor = element_line(size = 0.25, colour = "gray95"),  
+  		panel.grid.major = element_line(size = 0.4, colour = "#f3f3f3"), 
+  		panel.grid.minor = element_line(size = 0.25, colour = "white"),  
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
   		axis.title.x = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 4.75, r = 0, b = -16, l = 0)), 
+  			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
   			margin = margin(t = 0, r = 7, b = 0, l = 0.05)), 
   		axis.text.x = element_text(colour = "black", size=5.5, angle=45, 
   			margin = margin(t = 0.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
 		legend.position = "bottom",
+		legend.margin = margin(6, 0, 16.32, 0), 
 		legend.title = element_text(colour = "black", size=6.15, face ="bold"),
 		legend.text = element_text(size=6.1), 
 		legend.key.size = unit(0.5, "cm"),
@@ -893,7 +895,7 @@ label_col <- c(roo="#52428c", hyp="#808dc2", int="#0c703d", lea="#00994f", cot="
 # apex color for Fig1
 # ape="#f4dc28"
 
-# color setting for comparative heatamp and PCA: 
+# color setting for comparative heatmap and PCA: 
 # split apex samles => apex veg="#95b73a", apex inf="#fad819" 
 # hypocotyl slightly lighter hyp="#8591c7" root lighter roo="#5850a3"
 
