@@ -69,8 +69,6 @@ plotPhyloCore(div_times = "Estimated")
 
 ```
 
-This will generate the panels for the following figures:
-
 
 ---
 ## Session info
