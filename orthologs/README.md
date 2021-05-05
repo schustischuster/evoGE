@@ -61,10 +61,9 @@ plotPhyloCore(div_times = c("Median", "Estimated"))
 
 </br>
 
-To reproduce the results of this study, execute the following function calls:
+To reproduce the results of this study, execute the following function call:
 
 ```R
-plotPhyloCore(div_times = "Median")
 plotPhyloCore(div_times = "Estimated")
 
 ```
