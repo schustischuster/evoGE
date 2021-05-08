@@ -89,6 +89,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
+		 scale_x_discrete(labels = c("dedupl." = "mapped\n+dedupl.")) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35) + 
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
@@ -101,13 +102,13 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
-  			margin = margin(t = 0, r = 10, b = 0, l = 0)), 
+  			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=45, 
-  			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 1),
+  			margin = margin(t = 3.0, r = 0, b = 1.5, l = 0), hjust = 1, vjust = 1),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 18, r = 0, b = 16.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 23, 22.9, 5.1), "points"))
+  			margin = margin(t = 20, r = 0, b = 14.5, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(7.0, 17, 5.5, 16.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -145,25 +146,26 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
+		 scale_x_discrete(labels = c("dedupl." = "mapped\n+dedupl.")) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35) + 
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
 
 	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
-	xlab("") + ylab("PE reads") + ggtitle(plot_title) + 
+	xlab("") + ylab("Number of PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
 		text=element_text(size=20.75), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
-  			margin = margin(t = 0, r = 10, b = 0, l = 0)), 
+  			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size=18.5, angle=45, 
-  			margin = margin(t = 3.5, r = 0, b = 1, l = 0), hjust = 1, vjust = 1), 
+  			margin = margin(t = 3.0, r = 0, b = 1.5, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
   		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 18, r = 0, b = 14.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 2, 22.9, 26.1), "points"))
+  			margin = margin(t = 20, r = 0, b = 12.25, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(7.0, 7.0, 5.5, 26.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -214,8 +216,8 @@ plotDedupReads <- function(data, plot_title) {
 	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
-	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.7) + 
-  	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.5) + 
+	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.825) + 
+  	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.75) + 
   	scale_y_continuous(limits = c(0,7.4e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
@@ -233,14 +235,14 @@ plotDedupReads <- function(data, plot_title) {
   		theme(text=element_text(size=21), 
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
-  		axis.title.y = element_text(colour = "black", size=20.5, 
-  			margin = margin(t = 0, r = 10.5, b = 0, l = 21)), 
+  		axis.title.y = element_text(colour = "black", size=20, 
+  			margin = margin(t = 0, r = 6.2, b = 0, l = 25.3)), 
   		axis.text.x = element_text(colour = "black", size=18, angle=45, 
   			margin = margin(t = 1, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 18, r = 0, b = 14.95, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(5.5, 2, 22, 4.5), "points"),
+  			margin = margin(t = 20, r = 0, b = 12.95, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(5.5, 2, 22, 0), "points"),
 		legend.position = c(0.334, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
@@ -347,7 +349,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		pltymin <- 0.62e4
 		pltymax <- 2.65e4
 		xtepos <- 21.75
-		y_margin <- margin(t = 0, r = 10.5, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 9, b = 0, l = 1.5)
 		y_axs_title <- "Number of Genes"
 		y_labels <- yLabelsK
 
@@ -356,7 +358,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		pltymin <- -50.75
 		pltymax <- 2.825e3
 		xtepos <- 31.42
-		y_margin <- margin(t = 0, r = 5.28, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 3.8, b = 0, l = 1.55)
 		y_axs_title <- "Number of NATs"
 		y_labels <- yLabelsK
 
@@ -365,7 +367,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		pltymin <- -20
 		pltymax <- 1.102e3
 		xtepos <- 31.45
-		y_margin <- margin(t = 0, r = 5.28, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 3.8, b = 0, l = 1.55)
 		y_axs_title <- "Number of lincRNAs"
 		y_labels <- yLabelsK
 
@@ -374,7 +376,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		pltymin <- -80
 		pltymax <- 0.34e3
 		xtepos <- 32.18
-		y_margin <- margin(t = 0, r = 12.6, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 11.0, b = 0, l = 1.55)
 		y_axs_title <- "Number of LTR TEs"
 		y_labels <- yLabelsB
 	
@@ -383,7 +385,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		pltymin <- 1.325e4
 		pltymax <- 4.53e4
 		xtepos <- 21.75
-		y_margin <- margin(t = 0, r = 8.25, b = 0, l = 0)
+		y_margin <- margin(t = 0, r = 6.65, b = 0, l = 1.35)
 		y_axs_title <- "Number of Transcripts"
 		y_labels <- yLabelsK
 	}
@@ -411,15 +413,15 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
   	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
   	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.9, size=7.01, label = total_expr) + 
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
-  	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 30.7, size=5.75, label = "I", col="gray15") + 
-  	annotate("text", x = y_depl_pos$x, y = Inf, hjust = 0, vjust = 8.6, size=20, label = "_", col="white", fontface = 2) + 
-  	annotate("text", x = 2.1, y = Inf, hjust = 0, vjust = 25.37, size=7.25, label = "root") + 
-  	annotate("text", x = 6.95, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "stem") + 
-  	annotate("text", x = 13.8, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "leaf") + 
-  	annotate("text", x = 20.9, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "apex") + 
-  	annotate("text", x = 26.15, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "flow.") + 
-  	annotate("text", x = 30.5, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "floral organ") + 
-  	annotate("text", x = 40.35, y = Inf, hjust = 0, vjust = 25.37, size= 7.25, label = "fruit") + 
+  	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 30.9, size=5.75, label = "I", col="gray15") + 
+  	annotate("text", x = y_depl_pos$x, y = Inf, hjust = 0, vjust = 8.65, size=20, label = "_", col="white", fontface = 2) + 
+  	annotate("text", x = 2.1, y = Inf, hjust = 0, vjust = 25.525, size=7.2, label = "root") + 
+  	annotate("text", x = 6.95, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "stem") + 
+  	annotate("text", x = 13.8, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "leaf") + 
+  	annotate("text", x = 20.9, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "apex") + 
+  	annotate("text", x = 26.15, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "flow.") + 
+  	annotate("text", x = 30.5, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "floral organ") + 
+  	annotate("text", x = 40.35, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "fruit") + 
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Organ") + ylab(y_axs_title) + 
@@ -433,13 +435,13 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
   		axis.ticks.length = unit(.3, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7),
   		axis.title.x = element_text(colour = "black", size=21.5, 
-  			margin = margin(t = 37, r = 0, b = 45.25, l = 0)),  
+  			margin = margin(t = 30.25, r = 0, b = 50, l = 0)),  
   		axis.title.y = element_text(colour = "black", size=21.5, 
   			margin = y_margin), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
+  		axis.text.y = element_text(colour = "black", size=18.5, margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=23.5, 
-  			margin = margin(t = 35, r = 0, b = 15, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 22, 0, 1), "points"),
+  			margin = margin(t = 35.8, r = 0, b = 14.2, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 15, 0, 1), "points"),
 		legend.position = c(0.22, 0.108),
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
 		legend.text = element_text(size=20), 
