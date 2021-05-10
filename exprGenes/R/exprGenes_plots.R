@@ -1,5 +1,5 @@
 # This script loads and analysis the data statistics and expression tables for protein-coding 
-# genes, coding isoforms, lncRNAs and circRNAs and generates the plots for the DevSeq transcriptome  
+# genes, coding isoforms, lncRNAs and LTRs and generates the plots for the DevSeq transcriptome  
 # single-species expression figures
 
 
@@ -328,7 +328,7 @@ expr_transcripts_ATH <- prepareExprGenes(biotype = "transcripts", th_0_01 = ATH_
 
 
 # Plot number of expressed genes at different thresholds for ATH
-# This plotting function generates plots without individual sample labels
+# This plotting function generates plots with organ instead of individual sample labels
 plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","LTR","iso"), texpr) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), "domain", sep="_"))
