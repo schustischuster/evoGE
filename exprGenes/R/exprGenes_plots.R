@@ -45,17 +45,17 @@ prepareStats <- function(x) {
 
 	number_values <- (nrow(x))
 
-	classT_name = as.data.frame(rep(c("trimmed"), times = number_values))
+	classT_name = as.data.frame(rep(c("Trimmed"), times = number_values))
 	names(classT_name) <- "class"
 	trimmed <- cbind(classT_name, select(x, Trimmed))
 	names(trimmed)[2] <- "reads"
 
-	classM_name = as.data.frame(rep(c("mapped"), times = number_values))
+	classM_name = as.data.frame(rep(c("Mapped"), times = number_values))
 	names(classM_name) <- "class"
 	mapped <- cbind(classM_name, select(x, Mapped))
 	names(mapped)[2] <- "reads"
 
-	classD_name = as.data.frame(rep(c("dedupl."), times = number_values))
+	classD_name = as.data.frame(rep(c("Dedupl."), times = number_values))
 	names(classD_name) <- "class"
 	deduplicated <- cbind(classD_name, select(x, Deduplicated))
 	names(deduplicated)[2] <- "reads"
@@ -74,7 +74,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	dedupl <- subset(data, class=="dedupl.")
+	dedupl <- subset(data, class=="Dedupl.")
 	n_dedupl <- paste("n=", nrow(dedupl), sep="")
 	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
 	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
@@ -89,7 +89,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
-		 scale_x_discrete(labels = c("dedupl." = "mapped\n+dedupl.")) + 
+		 scale_x_discrete(labels = c("Dedupl." = "Mapped\n+dedupl.")) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35) + 
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
@@ -126,7 +126,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	dedupl <- subset(data, class=="dedupl.")
+	dedupl <- subset(data, class=="Dedupl.")
 	n_dedupl <- paste("n=", nrow(dedupl), sep="")
 	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
 	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
@@ -146,7 +146,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
-		 scale_x_discrete(labels = c("dedupl." = "mapped\n+dedupl.")) + 
+		 scale_x_discrete(labels = c("Dedupl." = "Mapped\n+dedupl.")) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35) + 
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
@@ -181,15 +181,15 @@ makePlotStatsOS(data=non_ATH_stats_df, lim_y=226000000, medw = 0.415, plot_title
 # Make Deduplicated Read Replicates
 makeRepl <- function(x) {
 
-	repl_names_ATH <- data.frame(c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2",
-		"hypocotyl.3","leaf.1","leaf.2","leaf.3","apex.veg.1","apex.veg.2","apex.veg.3",
-		"apex.infl.1","apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","stamen.1",
-		"stamen.2","stamen.3","pollen.1","pollen.2","pollen.3","carpel.1","carpel.2","carpel.3"))
+	repl_names_ATH <- data.frame(c("Root.1","Root.2","Root.3","Hypocotyl.1","Hypocotyl.2",
+		"Hypocotyl.3","Leaf.1","Leaf.2","Leaf.3","Apex.veg.1","Apex.veg.2","Apex.veg.3",
+		"Apex.infl.1","Apex.infl.2","Apex.infl.3","Flower.1","Flower.2","Flower.3","Stamen.1",
+		"Stamen.2","Stamen.3","Pollen.1","Pollen.2","Pollen.3","Carpel.1","Carpel.2","Carpel.3"))
 	names(repl_names_ATH) <- "Sample_repl"
-	repl_names_non_ATH <- c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2","hypocotyl.3",
-		"leaf.1","leaf.2","leaf.3","apex.veg.1","apex.veg.2","apex.veg.3","apex.infl.1",
-		"apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","pollen.1","pollen.2",
-		"pollen.3","carpel.1","carpel.2","carpel.3","stamen.1","stamen.2","stamen.3")
+	repl_names_non_ATH <- c("Root.1","Root.2","Root.3","Hypocotyl.1","Hypocotyl.2","Hypocotyl.3",
+		"Leaf.1","Leaf.2","Leaf.3","Apex.veg.1","Apex.veg.2","Apex.veg.3","Apex.infl.1",
+		"Apex.infl.2","Apex.infl.3","Flower.1","Flower.2","Flower.3","Pollen.1","Pollen.2",
+		"Pollen.3","Carpel.1","Carpel.2","Carpel.3","Stamen.1","Stamen.2","Stamen.3")
 
 	repl_names_non_ATH <- as.data.frame(rep(repl_names_non_ATH, times = 6))
 	names(repl_names_non_ATH) <- "Sample_repl"
@@ -208,10 +208,10 @@ plotDedupReads <- function(data, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
-	level_order <- c("root.1","root.2","root.3","hypocotyl.1","hypocotyl.2","hypocotyl.3",
-		"leaf.1","leaf.2","leaf.3","apex.veg.1","apex.veg.2","apex.veg.3","apex.infl.1",
-		"apex.infl.2","apex.infl.3","flower.1","flower.2","flower.3","carpel.1","carpel.2",
-		"carpel.3","stamen.1","stamen.2","stamen.3","pollen.1","pollen.2","pollen.3")
+	level_order <- c("Root.1","Root.2","Root.3","Hypocotyl.1","Hypocotyl.2","Hypocotyl.3",
+		"Leaf.1","Leaf.2","Leaf.3","Apex.veg.1","Apex.veg.2","Apex.veg.3","Apex.infl.1",
+		"Apex.infl.2","Apex.infl.3","Flower.1","Flower.2","Flower.3","Carpel.1","Carpel.2",
+		"Carpel.3","Stamen.1","Stamen.2","Stamen.3","Pollen.1","Pollen.2","Pollen.3")
 
 	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
 
@@ -237,8 +237,8 @@ plotDedupReads <- function(data, plot_title) {
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 6.2, b = 0, l = 25.3)), 
-  		axis.text.x = element_text(colour = "black", size=18, angle=45, 
-  			margin = margin(t = 1, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
+  		axis.text.x = element_text(colour = "black", size=17.5, angle=45, 
+  			margin = margin(t = 0.5, r = 0, b = 0.5, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 20, r = 0, b = 12.95, l = 0), hjust = 0.5), 
@@ -415,13 +415,13 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
   	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 30.9, size=5.75, label = "I", col="gray15") + 
   	annotate("text", x = y_depl_pos$x, y = Inf, hjust = 0, vjust = 8.65, size=20, label = "_", col="white", fontface = 2) + 
-  	annotate("text", x = 2.1, y = Inf, hjust = 0, vjust = 25.525, size=7.2, label = "root") + 
-  	annotate("text", x = 6.95, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "stem") + 
-  	annotate("text", x = 13.8, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "leaf") + 
-  	annotate("text", x = 20.9, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "apex") + 
-  	annotate("text", x = 26.15, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "flow.") + 
-  	annotate("text", x = 30.5, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "floral organ") + 
-  	annotate("text", x = 40.35, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "fruit") + 
+  	annotate("text", x = 1.85, y = Inf, hjust = 0, vjust = 25.525, size=7.2, label = "Root") + 
+  	annotate("text", x = 6.85, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Stem") + 
+  	annotate("text", x = 13.57, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Leaf") + 
+  	annotate("text", x = 20.88, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Apex") + 
+  	annotate("text", x = 25.95, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Flow.") + 
+  	annotate("text", x = 30.29, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Floral organ") + 
+  	annotate("text", x = 40.2, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Fruit") + 
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Organ") + ylab(y_axs_title) + 
