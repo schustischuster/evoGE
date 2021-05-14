@@ -103,12 +103,12 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
-  		axis.text.x = element_text(colour = "black", size=18.5, angle=45, 
-  			margin = margin(t = 3.0, r = 0, b = 1.5, l = 0), hjust = 1, vjust = 1),
+  		axis.text.x = element_text(colour = "black", size=18.0, angle=45, 
+  			margin = margin(t = 2.5, r = 0, b = 2.0, l = 0), hjust = 1, vjust = 1),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 20, r = 0, b = 14.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 17, 5.5, 16.1), "points"))
+  		plot.margin = unit(c(7.0, 17, 7.5, 16.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -160,12 +160,12 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
-  		axis.text.x = element_text(colour = "black", size=18.5, angle=45, 
-  			margin = margin(t = 3.0, r = 0, b = 1.5, l = 0), hjust = 1, vjust = 1), 
+  		axis.text.x = element_text(colour = "black", size=18.0, angle=45, 
+  			margin = margin(t = 2.5, r = 0, b = 2.0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 20, r = 0, b = 12.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 7.0, 5.5, 26.1), "points"))
+  		plot.margin = unit(c(7.0, 7.0, 7.5, 26.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -237,12 +237,12 @@ plotDedupReads <- function(data, plot_title) {
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 6.2, b = 0, l = 25.3)), 
-  		axis.text.x = element_text(colour = "black", size=17.5, angle=45, 
+  		axis.text.x = element_text(colour = "black", size=16.5, angle=45, 
   			margin = margin(t = 0.5, r = 0, b = 0.5, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 20, r = 0, b = 12.95, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(5.5, 2, 22, 0), "points"),
+  		plot.margin = unit(c(5.5, 2, 26.25, 0), "points"),
 		legend.position = c(0.334, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
