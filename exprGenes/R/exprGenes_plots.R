@@ -99,16 +99,16 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
 		text=element_text(size=20.75), 
-  		axis.ticks.length = unit(.3, "cm"),
+  		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size=18.0, angle=45, 
-  			margin = margin(t = 2.5, r = 0, b = 2.0, l = 0), hjust = 1, vjust = 1),
+  			margin = margin(t = 1.5, r = 0, b = 3.0, l = 0), hjust = 1, vjust = 1),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 20, r = 0, b = 14.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 17, 7.5, 16.1), "points"))
+  		plot.margin = unit(c(7.0, 17, 10.35, 16.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -156,16 +156,16 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
 		text=element_text(size=20.75), 
-  		axis.ticks.length = unit(.3, "cm"),
+  		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size=18.0, angle=45, 
-  			margin = margin(t = 2.5, r = 0, b = 2.0, l = 0), hjust = 1, vjust = 1), 
+  			margin = margin(t = 1.5, r = 0, b = 3.0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 20, r = 0, b = 12.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 7.0, 7.5, 26.1), "points"))
+  		plot.margin = unit(c(7.0, 7.0, 10.35, 26.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -233,16 +233,17 @@ plotDedupReads <- function(data, plot_title) {
 		breaks=species_order) + 
 		guides(colour = guide_legend(nrow = 1)) +  
   		theme(text=element_text(size=21), 
-  		axis.ticks.length = unit(.3, "cm"),
+  		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7), 
+  		panel.grid = element_blank(), 
   		axis.title.y = element_text(colour = "black", size=20, 
-  			margin = margin(t = 0, r = 6.2, b = 0, l = 25.3)), 
+  			margin = margin(t = 0, r = 5.85, b = 0, l = 28.5)), 
   		axis.text.x = element_text(colour = "black", size=16.5, angle=45, 
-  			margin = margin(t = 0.5, r = 0, b = 0.5, l = 0), hjust = 1, vjust = 1), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 4, b = 0, l = 2)), 
+  			margin = margin(t = 0.25, r = 0, b = 0.75, l = 0), hjust = 1, vjust = 1), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.95, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 20, r = 0, b = 12.95, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(5.5, 2, 26.25, 0), "points"),
+  		plot.margin = unit(c(5.5, 2, 29.1, 0), "points"),
 		legend.position = c(0.334, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
@@ -385,7 +386,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		pltymin <- 1.325e4
 		pltymax <- 4.53e4
 		xtepos <- 21.75
-		y_margin <- margin(t = 0, r = 6.65, b = 0, l = 1.35)
+		y_margin <- margin(t = 0, r = 6.65, b = 0, l = 1.55)
 		y_axs_title <- "Number of Transcripts"
 		y_labels <- yLabelsK
 	}
@@ -401,7 +402,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
 
-	geom_line(aes(x = factor(Sample, level= level_order)), size=1.95) + 
+	geom_line(aes(x = factor(Sample, level= level_order)), size=2) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = y_labels) +
   	annotate("rect", xmin=0.25, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="white", alpha=0, 
@@ -415,13 +416,13 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
   	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 30.9, size=5.75, label = "I", col="gray15") + 
   	annotate("text", x = y_depl_pos$x, y = Inf, hjust = 0, vjust = 8.65, size=20, label = "_", col="white", fontface = 2) + 
-  	annotate("text", x = 1.85, y = Inf, hjust = 0, vjust = 25.525, size=7.2, label = "Root") + 
-  	annotate("text", x = 6.85, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Stem") + 
-  	annotate("text", x = 13.57, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Leaf") + 
-  	annotate("text", x = 20.88, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Apex") + 
-  	annotate("text", x = 25.95, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Flow.") + 
-  	annotate("text", x = 30.29, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Floral organ") + 
-  	annotate("text", x = 40.2, y = Inf, hjust = 0, vjust = 25.525, size= 7.2, label = "Fruit") + 
+  	annotate("text", x = 1.85, y = Inf, hjust = 0, vjust = 25.55, size=7.2, label = "Root") + 
+  	annotate("text", x = 6.85, y = Inf, hjust = 0, vjust = 25.55, size= 7.2, label = "Stem") + 
+  	annotate("text", x = 13.57, y = Inf, hjust = 0, vjust = 25.55, size= 7.2, label = "Leaf") + 
+  	annotate("text", x = 20.88, y = Inf, hjust = 0, vjust = 25.55, size= 7.2, label = "Apex") + 
+  	annotate("text", x = 25.95, y = Inf, hjust = 0, vjust = 25.55, size= 7.2, label = "Flow.") + 
+  	annotate("text", x = 30.29, y = Inf, hjust = 0, vjust = 25.55, size= 7.2, label = "Floral organ") + 
+  	annotate("text", x = 40.2, y = Inf, hjust = 0, vjust = 25.55, size= 7.2, label = "Fruit") + 
   	labs(color="")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("Organ") + ylab(y_axs_title) + 
@@ -539,17 +540,17 @@ makePlotReplCorr <- function(data, plot_title) {
 	theme(text = element_text(size=23.5), 
   		panel.grid.major = element_line(colour = "white"), 
   		panel.grid.minor = element_line(colour = "white"),  
-  		axis.ticks.length = unit(.27, "cm"),
+  		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.7),
-  		axis.title.x = element_text(colour = "black", size=21.5, 
-  			margin = margin(t = 19.25, r = 0, b = 45.25, l = 0)),  
+  		axis.title.x = element_text(colour = "black", size=21.55, 
+  			margin = margin(t = 12.5, r = 0, b = 50.2, l = 0)),  
   		axis.title.y = element_text(colour = "black", size=21.5, 
-  			margin = margin(t = 0, r = 7.5, b = 0, l = 0)), 
-  		axis.text.x = element_text(colour = "black", margin = margin(t = 4.5, r = 0, b = 0, l = 0)), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
+  			margin = margin(t = 0, r = 5.8, b = 0, l = 1.5)), 
+  		axis.text.x = element_text(colour = "black", margin = margin(t = 3.5, r = 0, b = 1.6, l = 0), size=20.5), 
+  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.25, b = 0, l = 4), size=18.55), 
   		plot.title = element_text(colour = "black", size=23.5, 
-  			margin = margin(t = 35, r = 0, b = 14.35, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 21.25, 0, 1), "points"),
+  			margin = margin(t = 35.8, r = 0, b = 13.55, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 14.3, 0, 1), "points"),
 		legend.position = "none",
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
 		legend.text = element_text(size=20), 
@@ -561,7 +562,7 @@ makePlotReplCorr <- function(data, plot_title) {
 		dpi = 600, limitsize = FALSE)
 }
 
-makePlotReplCorr(data=all_spec_repl_df, plot_title="Replicate correlations") 
+makePlotReplCorr(data=all_spec_repl_df, plot_title="Replicate correlations")
 
 
 
