@@ -253,7 +253,6 @@ plotDedupReads <- function(data, plot_title) {
 		legend.key.size = unit(0.775, "cm"),
   		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
-  	png("NUL")
 	r <- ggplotGrob(q)
 	r$layout$clip[r$layout$name=="panel"] <- "off"
 
@@ -452,7 +451,6 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		legend.key = element_rect(fill = NA),
   		panel.border = element_rect(colour = "gray15", fill=NA, size=0.5))
 
-  	png("NUL")
 	r <- ggplotGrob(q)
 	r$layout$clip[r$layout$name=="panel"] <- "off"
 
@@ -716,17 +714,17 @@ plotExprGenesOS <- function(data) {
   		theme(
   		strip.text = element_blank(), 
   		strip.background = element_blank(),
-  		plot.margin = unit(c(15, -2, 0, 1), "points"),
-  		axis.ticks.length = unit(.075, "cm"),
+  		plot.margin = unit(c(15, -6.25, 0, 1), "points"),
+  		axis.ticks.length = unit(.059, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
-  		panel.grid.major = element_line(size = 0.4, colour = "#f3f3f3"), 
+  		panel.grid.major = element_line(size = 0.25, colour = "#ededed"), 
   		panel.grid.minor = element_line(size = 0.25, colour = "white"),  
   		axis.title.x = element_text(colour = "black", size=6.55, 
   			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 0, r = 7, b = 0, l = 0.05)), 
-  		axis.text.x = element_text(colour = "black", size=5.5, angle=45, 
-  			margin = margin(t = 0.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
+  			margin = margin(t = 0, r = 7, b = 0, l = 0.5)), 
+  		axis.text.x = element_text(colour = "black", size=5.3, angle=45, 
+  			margin = margin(t = 0.4, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
 		legend.position = "bottom",
 		legend.margin = margin(6, 0, 16.32, 0), 
@@ -753,16 +751,16 @@ plotExprGenesOS <- function(data) {
         strip.text.y = element_text(margin = margin(0, 0.088, 0, 0.088, "cm"), size = 5.5),
         strip.background = element_rect(colour="grey70", size=0.7), 
   		plot.margin = unit(c(15, 0, 0, 1), "points"),
-  		axis.ticks.length = unit(.075, "cm"),
-  		panel.grid.major = element_line(size = 0.4, colour = "#f3f3f3"), 
+  		axis.ticks.length = unit(.059, "cm"),
+  		panel.grid.major = element_line(size = 0.25, colour = "#ededed"), 
   		panel.grid.minor = element_line(size = 0.25, colour = "white"),  
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
   		axis.title.x = element_text(colour = "black", size=6.55, 
   			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 0, r = 7, b = 0, l = 0.05)), 
-  		axis.text.x = element_text(colour = "black", size=5.5, angle=45, 
-  			margin = margin(t = 0.5, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
+  			margin = margin(t = 0, r = 7, b = 0, l = 0.5)), 
+  		axis.text.x = element_text(colour = "black", size=5.3, angle=45, 
+  			margin = margin(t = 0.4, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
 		legend.position = "bottom",
 		legend.margin = margin(6, 0, 16.32, 0), 
@@ -787,7 +785,7 @@ plotExprGenesOS <- function(data) {
     gt.side4 = gtable_filter(gt2, 'strip-r-4')
     gt.side5 = gtable_filter(gt2, 'strip-r-5')
 
-    gt1 = gtable_add_cols(gt1, widths = unit(0.4, 'cm'), pos = -1)
+    gt1 = gtable_add_cols(gt1, widths = unit(0.7, 'cm'), pos = -1)
     gt1 = gtable_add_grob(gt1, zeroGrob(), t = 1, l = ncol(gt1), b=nrow(gt1))
 
     panel_id <- gt1$layout[grep('panel-.+1$', gt1$layout$name),]
@@ -797,8 +795,6 @@ plotExprGenesOS <- function(data) {
     gt1 = gtable_add_grob(gt1, gt.side4, t = panel_id$t[4], l = ncol(gt1))
     gt1 = gtable_add_grob(gt1, gt.side5, t = panel_id$t[5], l = ncol(gt1))
 
-
-  	png("NUL")
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = gt1,
 		scale = 1, width = 6.65, height = 5.57, units = c("in"), 
@@ -834,12 +830,12 @@ dat_text <- data.frame(
     	expr_genes_OS[118,2], expr_genes_OS[298,2], expr_genes_OS[478,2], expr_genes_OS[658,2], 
     	expr_genes_OS[838,2], expr_genes_OS[1018,2], expr_genes_OS[154,2], expr_genes_OS[334,2], 
     	expr_genes_OS[514,2], expr_genes_OS[694,2], expr_genes_OS[874,2], expr_genes_OS[1054,2]),
-    x = c(0.314, 1.376, 2.438, 3.5, 4.562, 5.625, 0.211, 1.273, 2.335, 3.397, 4.459, 5.522, 
-    	0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 0.189, 1.251, 2.313, 3.375, 4.437, 5.5, 
-    	0.189, 1.251, 2.313, 3.375, 4.437, 5.5),
-    y = c(33.91, 33.91, 33.91, 33.91, 33.91, 33.91, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 
-    	24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 
-    	9.575, 9.575, 9.575, 9.575, 9.575, 9.575)
+    x = c(0.312, 1.364, 2.415, 3.466, 4.517, 5.568, 0.209, 1.261, 2.312, 3.363, 4.414, 5.465, 
+    	0.187, 1.239, 2.29, 3.341, 4.392, 5.443, 0.187, 1.239, 2.29, 3.341, 4.392, 5.443, 
+    	0.167, 1.219, 2.272, 3.320, 4.39, 5.425),
+    y = c(33.89, 33.89, 33.89, 33.89, 33.89, 33.89, 26.44, 26.44, 26.44, 26.44, 26.44, 26.44, 
+    	24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 16.95, 16.95, 16.95, 16.95, 16.95, 16.95, 
+    	9.528, 9.528, 9.528, 9.528, 9.528, 9.528)
     )
 
 p <- ggplot(df_blank) + geom_point() + xlim(0, 6) + ylim(0, 40) + theme_void() + 
@@ -857,8 +853,6 @@ q <- p + geom_text(
     mapping = aes(x = x, y = y, label = label), 
     size=1.95
     )
-
-png("NUL")
 
 ggsave(file = file.path(out_dir, "output", "plots", "non-ATH_annotation_layer.png"), plot = q,
 	scale = 1, width = 6.65, height = 5.57, units = c("in"), dpi = 800, limitsize = FALSE, 
