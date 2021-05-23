@@ -25,7 +25,7 @@ Install and load the following R packages before running the reproducible script
 ```R
 
 # Create list of required packages
-lib_List <- c("dplyr", "ggplot2", "data.table", "mgcv", "grid", "gtable", "scales", "factoextra", "dendextend")
+lib_List <- c("dplyr", "ggplot2", "data.table", "grid", "gtable", "scales", "factoextra", "dendextend")
 
 loadLibrary <- function(x) { 
     if (!require(x, character.only = T)) {
