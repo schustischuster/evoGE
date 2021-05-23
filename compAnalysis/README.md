@@ -21,7 +21,7 @@ Install and load the following R packages before running the reproducible script
 
 ```R
 # Load the required packages
-lib_List <- c("dplyr", "gplots", "ggplot2", "factoextra", "dendextend", "ggbeeswarm", "mblm", "lsmeans", "rcompanion", "scales", 
+lib_List <- c("dplyr", "gplots", "ggplot2", "factoextra", "dendextend", "ggbeeswarm", "lsmeans", "rcompanion", "scales", 
 "matrixStats", "ape", "ggtree")
 
 loadLibrary <- function(x) { 
