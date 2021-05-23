@@ -20,7 +20,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-# Load the required packages
+# List of required packages
 lib_List <- c("dplyr", "gplots", "ggplot2", "factoextra", "dendextend", "ggbeeswarm", "lsmeans", "rcompanion", "scales", 
 "matrixStats", "ape", "ggtree")
 
