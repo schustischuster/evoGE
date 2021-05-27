@@ -2,16 +2,6 @@
 # Data input: mapping statistics of all samples and species
 
 
-# Install and load packages
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-
-
-# Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes/data/Mapping_statistics"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200401_CS_exprGenes"
-
-
 # Format data statistic tables
 getStats <- function() {
 
@@ -21,8 +11,8 @@ getStats <- function() {
     lapply(files, function(x) read.table(x, sep="\t", dec=".", header = TRUE, stringsAsFactors = FALSE))
 	}
 
-	stats_tables <- readTable(in_dir)
-	stats_table_list <- as.character(list.files(in_dir, pattern = "*.tsv"))
+	stats_tables <- readTable(file.path(in_dir, "Mapping_statistics"))
+	stats_table_list <- as.character(list.files(file.path(in_dir, "Mapping_statistics"), pattern = "*.tsv"))
 	stats_table_names <- gsub('\\_mapping_stats.tsv$', '', stats_table_list)
 
 	# Change data frame names in list
@@ -30,8 +20,8 @@ getStats <- function() {
 	list2env(stats_tables, envir = .GlobalEnv)
 
 	# Load sample information
-	samples <- read.table(file=file.path(in_dir, "Plant samples for profiling_final_list.csv"), 
-	sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
+	samples <- read.table(file=file.path(in_dir, "Mapping_statistics", "Plant samples for profiling_final_list.csv"), 
+		sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 	samples_repl <- samples[rep(row.names(samples), samples$Replicates), 1:10]
 	comp_sample_names <- as.data.frame(samples_repl[277:303,6])
 	names(comp_sample_names) <- "Comparative_Sample"
