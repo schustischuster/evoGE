@@ -198,10 +198,7 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
 
     # Set filename
     dfname <- deparse(substitute(x))
-    coefficient_tag <- match.arg(coefficient)
-    fname <- file.path(out_dir, "output", "plots",
-              sprintf('%s.png', paste(dfname, coefficient_tag, sep="_"))
-              )
+    fname <- sprintf('%s.png', paste(dfname, coefficient, sep="_"))
 
     # Define column and row colors for color bars based on sample names and experiment
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
@@ -212,16 +209,16 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
     exp_col <- c(GE="navajowhite2", eq="maroon4") # last two letters of experiment string
 
     x[is.na(x)] <- 0 # replaces NAs by 0
-    df_t <- t(x[, 2:ncol(x)]) # transposes data frame
+    x_df <- x # transposes data frame
 
     # Compute correlation and build distance matrix
     if (is.element(coefficient, c("pearson"))) {
-        x <- cor(x[, 2:ncol(x)], method = "pearson")
-        df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "pearson")
+        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
+        df_t_dist.mat <- as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = "pearson"))))
 
     } else if (is.element(coefficient, c("spearman"))) {
-        x <- cor(x[, 2:ncol(x)], method = "spearman")
-        df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "spearman")
+        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "spearman")
+        df_t_dist.mat <- as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = "spearman"))))
     }   
 
     df_clust.res <- hclust(df_t_dist.mat, method = "average") # agglomerate clustering
@@ -252,28 +249,74 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
 
     row_labels <- get_leaves_branches_col(row_dend) # get branch colors
     row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
-  
+
+
+    # Re-order the colors of the colorbar where possible to make them more distinguishable 
+    if (is.element("pearson", coefficient)) {
+
+      dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:2,13:23,3:12,24:31,32,34,33,47,46,48:52,35:45))
+
+    } else if (is.element("spearman", coefficient)) {
+
+      dend_order = as.dendrogram(df_clust.res)
+
+    } else dend_order = as.dendrogram(df_clust.res)
+
+
     # Make corrplots
-    png(height = 5000, width = 5000, pointsize = 20, file = fname)
-    par(lwd = 15) # dendrogram line width
-    heatmap.2(x,
-         density.info = "none",
-         trace = "none",
-         col = pal(800),
-         ColSideColors = col_cols, 
-         RowSideColors = row_cols,
-         cexRow = 4.5,
-         cexCol = 4.5,
-         margins = c(60, 60),
-         key.par = list(cex = 2.75),
-         lwid = c(0.5,4,17.5), # column width
-         lhei = c(0.5,4,17.5), # column height
-         offsetRow = 1,
-         offsetCol = 1,
-         key.xlab = NA,
-         key.title = NULL,
-         hclustfun = function(x) hclust(x, method="average"))
-    dev.off()
+        png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
+        par(lwd = 18.5) # dendrogram line width
+        getRowOrder = heatmap.2(x_cor,
+            revC = F,
+            ColSideColors = col_cols, 
+            RowSideColors = row_cols,
+            distfun = function(c) as.dist(sqrt(1/2*(1-c))), 
+            Rowv = dend_order, 
+            Colv = "Rowv"
+            )
+
+        # Get order of rows and rearrange "row_cols" vector
+        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
+        ordinary_order = getRowOrder$rowInd
+        reversal = cbind(ordinary_order, rev(ordinary_order))
+        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+
+        # Create heatmap with reversed RowSideColors
+        heatmap.2(x_cor, 
+            revC = T,
+            ColSideColors = col_cols, 
+            RowSideColors = rev_col, 
+            density.info = "none",
+            trace = "none",
+            col = pal(800),
+            cexRow = 2,
+            cexCol = 2,
+            margins = c(28,28),
+            key = FALSE,
+            lwid = c(0.2,2.3,28.5), # column width
+            lhei = c(0.2,2.3,28.5), # column height
+            offsetRow = 1,
+            offsetCol = 1,
+            key.xlab = NA,
+            key.title = NULL,
+            distfun = function(c) as.dist(sqrt(1/2*(1-c))), 
+            Rowv = dend_order, 
+            Colv = "Rowv"
+            )
+
+        dev.off()
+
+        # Save colorbar
+        png(height = 1000, width = 850, pointsize = 20, file = file.path(out_dir, "output", "plots", "DevSeq_comp_colorbar.png"))
+        par(cex = 7, mar = c(1,2.75,1,1), cex.lab = 1.25)
+        x_c = 1
+        y_c = seq(0,1,len = 100)
+        z_c = matrix(1:100, nrow = 1)
+        ylabel <- seq(0, 1, by = 0.5)
+        image(x_c,y_c,z_c,col = pal(800), axes = FALSE, xlab = "", ylab = "", cex=10)
+        axis(2, at = ylabel, las = 1, lwd = 15)
+        dev.off()
+
 }
 
 
