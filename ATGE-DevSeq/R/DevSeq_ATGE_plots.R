@@ -150,7 +150,8 @@ plot_Sample_Corr <- function(data1, data2, data3) {
 
 
 # Generate correlation heatmap of merged ATGE_DevSeq data
-makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
+makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"), 
+    clustm = c("average", "complete")) {
 
     # Show error message if no scaling is chosen
     if (missing(coefficient))
@@ -158,6 +159,15 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
        stop(
            "Please choose one of the following coefficients: 
            'pearson', 'spearman'",
+           call. = TRUE
+        )
+
+    # Show error message if no scaling is chosen
+    if (missing(clustm))
+   
+       stop(
+           "Please choose one of the following hclust algorithms: 
+           'average', 'complete'",
            call. = TRUE
         )
 
@@ -193,11 +203,11 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#600303", "#a80606", "#d20808", "yellow", "lightgoldenrodyellow")
+    steps <- c("#730404", "#a80606", "#d20808", "yellow", "#fcfce4")
     pal <- color.palette(steps, c(20, 20, 33, 4), space = "rgb")
 
     # Set filename
-    dfname <- deparse(substitute(x))
+    dfname <- deparse(substitute(exp_data))
     fname <- sprintf('%s.png', paste(dfname, coefficient, sep="_"))
 
     # Define column and row colors for color bars based on sample names and experiment
@@ -208,20 +218,14 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
     
     exp_col <- c(GE="navajowhite2", eq="maroon4") # last two letters of experiment string
 
-    x[is.na(x)] <- 0 # replaces NAs by 0
-    x_df <- x # transposes data frame
+    exp_data[is.na(exp_data)] <- 0 # replaces NAs by 0
+    x_df <- exp_data
 
     # Compute correlation and build distance matrix
-    if (is.element(coefficient, c("pearson"))) {
-        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "pearson")
-        df_t_dist.mat <- as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = "pearson"))))
+    x_cor <- cor(x_df[, 2:ncol(x_df)], method = coefficient)
+    df_t_dist.mat <- as.dist(sqrt(1/2*(1-x_cor)))
 
-    } else if (is.element(coefficient, c("spearman"))) {
-        x_cor <- cor(x_df[, 2:ncol(x_df)], method = "spearman")
-        df_t_dist.mat <- as.dist(sqrt(1/2*(1-cor(x_df[, 2:ncol(x_df)], method = "spearman"))))
-    }   
-
-    df_clust.res <- hclust(df_t_dist.mat, method = "average") # agglomerate clustering
+    df_clust.res <- hclust(df_t_dist.mat, method = clustm) # agglomerate clustering
 
     # Get dendrogram w/ species colors
     col_dend <- dendrapply(as.dendrogram(df_clust.res), function(y){
@@ -252,13 +256,13 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
 
 
     # Re-order the colors of the colorbar where possible to make them more distinguishable 
-    if (is.element("pearson", coefficient)) {
+    if (is.element("pearson", coefficient) && is.element("average", clustm)) {
 
-      dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:2,13:23,3:12,24:31,32,34,33,47,46,48:52,35:45))
+      dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:2,13:23,3:12,24:32,34,33,47,46,48:52,35:45))
 
-    } else if (is.element("spearman", coefficient)) {
+    } else if (is.element("pearson", coefficient) && is.element("complete", clustm)) {
 
-      dend_order = as.dendrogram(df_clust.res)
+      dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:8,13:15,10:12,9,16:52))
 
     } else dend_order = as.dendrogram(df_clust.res)
 
@@ -289,9 +293,9 @@ makeCorrplot <- function(x, coefficient = c("pearson", "spearman")) {
             density.info = "none",
             trace = "none",
             col = pal(800),
-            cexRow = 2,
-            cexCol = 2,
-            margins = c(28,28),
+            cexRow = 1.4,
+            cexCol = 1.4,
+            margins = c(20,20),
             key = FALSE,
             lwid = c(0.2,2.3,28.5), # column width
             lhei = c(0.2,2.3,28.5), # column height
@@ -383,4 +387,19 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
     axis(side = 2, lwd = 3.5)
     dev.off()
 }
+
+
+
+# Boxplot showing pairwise ATGE-DevSeq gene correlations 
+plot_Gene_Corr(spearman_RE, pearson_RE, pearson_log2_RE)
+
+# Boxplot showing ATGE-DevSeq sample correlations
+plot_Sample_Corr(atge_devseq_spearman, atge_devseq_pearson, atge_devseq_log_pearson)
+
+# Correlation heatmap of merged ATGE-DevSeq data
+makeCorrplot(exp_data=atge_devseq_re_log, coefficient="pearson", clustm="complete")
+
+# hclust dendrogram of ATGE and DevSeq data
+makeDendrogram(atge_re, coefficient = "pearson")
+makeDendrogram(devseq_re, coefficient = "pearson")
 
