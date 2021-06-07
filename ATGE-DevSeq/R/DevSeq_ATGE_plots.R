@@ -59,9 +59,10 @@ names(devseq_log2_re) <- devseq_names
 
 
 # Get pairwise gene correlation values
-spearman_RE <- atge_re[, 5]
-pearson_RE <- atge_re[, 6]
-pearson_log2_RE <- atge_log2_re[, 6]
+gene_cor <- rbind(data.frame(Cor_value=atge_log2_re$Pearson), data.frame(Cor_value=atge_log2_re$Spearman))
+cor_g_method <- data.frame(Method = rep(c("Pearson", "Spearman"), each=nrow(atge_log2_re)))
+cor_g_type <- data.frame(Cor_type = rep(c("Genes"), nrow(gene_cor)))
+gene_cor <- cbind(cor_g_type, cor_g_method, gene_cor)
 
 
 # Merge ATGE and DevSeq data frames and compute ATGE-DevSeq sample correlations
@@ -71,9 +72,13 @@ atge_devseq_re_log <- merge(
 
 
 # Compute correlations between ATGE and DevSeq samples
-atge_devseq_pearson <- diag(cor(atge_re[-1:-6], devseq_re[-1:-6], method="pearson"))
 atge_devseq_log_pearson <- diag(cor(atge_log2_re[-1:-6], devseq_log2_re[-1:-6], method="pearson"))
-atge_devseq_spearman <- diag(cor(atge_re[-1:-6], devseq_re[-1:-6], method="spearman"))
+atge_devseq_log_spearman <- diag(cor(atge_log2_re[-1:-6], devseq_log2_re[-1:-6], method="spearman"))
+sample_cor <- rbind(data.frame(Cor_value=atge_devseq_log_pearson), data.frame(Cor_value=atge_devseq_log_spearman))
+cor_s_method <- data.frame(Method = rep(c("Pearson", "Spearman"), each=length(atge_devseq_log_pearson)))
+cor_stype <- data.frame(Cor_type = rep(c("Samples"), nrow(sample_cor)))
+sample_cor <- cbind(cor_stype, cor_s_method, sample_cor)
+gene_sample_cor <- rbind(gene_cor, sample_cor)
 
 
 # Store results in /out_dir/output/plots
@@ -87,65 +92,56 @@ message("Storing plots in: ", file.path("output", "plots"))
 #-------------------------------------- Generate plots -----------------------------------------
 
 
-# Boxplot of pairwise ATGE-DevSeq gene correlations
-plot_Gene_Corr <- function(data1, data2, data3) {
-
-  png(file = file.path(out_dir, "output", "plots", "atge_devseq_gene_corr.png"), 
-    width = 4250, height = 3620, res = 825)
-  par(mar = c(4.5, 5, 3, 1.5))
-  boxplot(data1, data2, data3, 
-    ylim = c(-1, 1),
-    names = c("Spearman", "Pearson", "Pearson_log"), 
-    yaxt='n', 
-    cex.lab = 1.2, 
-    las = 1,
-    cex.axis = 1.2, #adapt size of axis labels
-    ylab = "Correlation coefficient", 
-    col = c("#d8a900", "#00bc1f", "#00c094"), 
-    boxwex = 0.71, 
-    lwd = 1.4, 
-    whisklty = 1, 
-    at = c(1,2,3), 
-    pars = list(outcol = "gray50"),
-    notch = FALSE
-    )
-    title("Pairwise gene correlation", adj = 0.5, line = 1.4, font.main = 1, cex.main = 1.3)
-    box(lwd = 1.4)
-    axis(side=2, lwd = 1.4, las = 2)
-    par(xpd=TRUE)
-  dev.off()
-}
+# Reorder factors for correct facet order
+gene_sample_cor$Cor_type <- factor(gene_sample_cor$Cor_type, levels = unique(
+    gene_sample_cor$Cor_type))
+gene_sample_cor$Method <- factor(gene_sample_cor$Method, levels = unique(
+    gene_sample_cor$Method))
 
 
+# Boxplot of pairwise ATGE-DevSeq gene and sample correlations
+plotCor <- function(data) {
 
-# Boxplot of ATGE-DevSeq sample correlations
-plot_Sample_Corr <- function(data1, data2, data3) {
+    x_labels <- c("Pearson" = "Pearson", "Spearman" = "Spearman")
 
-  png(file = file.path(out_dir, "output", "plots", "atge_devseq_sample_corr.png"), 
-    width = 4250, height = 3620, res = 825)
-  par(mar = c(4.5, 5, 3, 1.5))
-  boxplot(data1, data2, data3, 
-    ylim = c(0, 1),
-    names = c("Spearman", "Pearson", "Pearson_log"), 
-    yaxt='n', 
-    cex.lab = 1.2, 
-    las = 1,
-    cex.axis = 1.2, #adapt size of axis labels
-    ylab = "Correlation coefficient", 
-    col = c("#d8a900", "#00bc1f", "#00c094"), 
-    boxwex = 0.71, 
-    lwd = 1.4, 
-    whisklty = 1, 
-    at = c(1,2,3), 
-    pars = list(outcol = "gray50"),
-    notch = FALSE
-    )
-    title("Pairwise sample correlation", adj = 0.5, line = 1.4, font.main = 1, cex.main = 1.3)
-    box(lwd = 1.4)
-    axis(side=2, lwd = 1.4, las = 2)
-    par(xpd=TRUE)
-  dev.off()
-}
+    fname <- sprintf('%s.jpg', paste("Parwise correlations"))
+
+    p <- ggplot(data=data, aes(x=Method, y=Cor_value)) + 
+    stat_boxplot(geom ='errorbar', width = 0, size=1.125, color="black") + 
+    geom_boxplot(width = 0.75, size=1.125, fatten = 2.8, color="black", outlier.shape = 19, 
+        outlier.size = 1.5, outlier.color = "gray50", alpha = 1.0,
+        fill=c("#d8a900", "#00bc1f", "#d8a900", "#00bc1f")) + 
+    scale_y_continuous(expand = c(0.059, 0)) + 
+    scale_x_discrete(labels = x_labels)
+
+    q <- p + theme_classic() + xlab("Coefficient") + ylab("Pairwise correlation") + 
+    theme(text=element_text(size = 16), 
+            strip.text = element_text(size = 18.5), 
+            strip.text.x = element_text(margin = margin(0.37, 0, 0.37, 0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.0), 
+            axis.ticks.length = unit(0.325, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 0.9), 
+            axis.line = element_line(colour = 'black', size = 0.9), 
+            plot.margin = unit(c(0.55, 0.75, 1, 2.25),"cm"), 
+            axis.title.y = element_text(size=20.0, margin = margin(t = 0, r = 8, b = 0, l = 10), colour="black", 
+                face = "plain"), 
+            axis.title.x = element_text(size=20.0, margin = margin(t = 8, r = 0, b = 0, l = 0), colour="black", 
+                face = "plain"), 
+            axis.text.x = element_text(size=17.25, angle=0, margin = margin(t = 3.5, b = 0), colour="grey5"), 
+            axis.text.y = element_text(size=16.75, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
+            panel.spacing = unit(0.55, "cm"), 
+            panel.grid.major = element_blank(),
+            panel.grid.minor.x = element_blank(), 
+            panel.grid.minor.y = element_blank()) 
+
+        q <- q + facet_wrap(~ Cor_type, scales = "free_y", nrow = 1)
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+            width = 10.0, height = 7.0, dpi = 300, units = c("in"), limitsize = FALSE) 
+    }
+
+    plotCor(data = gene_sample_cor)
+
 
 
 
@@ -219,10 +215,10 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     exp_col <- c(GE="navajowhite2", eq="maroon4") # last two letters of experiment string
 
     exp_data[is.na(exp_data)] <- 0 # replaces NAs by 0
-    x_df <- exp_data
+    x_df <- exp_data[, 2:ncol(exp_data)]
 
     # Compute correlation and build distance matrix
-    x_cor <- cor(x_df[, 2:ncol(x_df)], method = coefficient)
+    x_cor <- cor(x_df, method = coefficient)
     df_t_dist.mat <- as.dist(sqrt(1/2*(1-x_cor)))
 
     df_clust.res <- hclust(df_t_dist.mat, method = clustm) # agglomerate clustering
