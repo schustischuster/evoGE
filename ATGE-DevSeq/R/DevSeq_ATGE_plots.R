@@ -108,28 +108,28 @@ plotCor <- function(data) {
 
     p <- ggplot(data=data, aes(x=Method, y=Cor_value)) + 
     stat_boxplot(geom ='errorbar', width = 0, size=1.125, color="black") + 
-    geom_boxplot(width = 0.75, size=1.125, fatten = 2.8, color="black", outlier.shape = 19, 
-        outlier.size = 1.5, outlier.color = "gray50", alpha = 1.0,
+    geom_boxplot(width = 0.75, size=1.125, fatten = 2.8, color="black", outlier.shape = 1, 
+        outlier.size = 2, outlier.stroke = 1.5, outlier.color = "gray55", alpha = 1.0,
         fill=c("#d8a900", "#00bc1f", "#d8a900", "#00bc1f")) + 
     scale_y_continuous(expand = c(0.059, 0)) + 
     scale_x_discrete(labels = x_labels)
 
-    q <- p + theme_classic() + xlab("Coefficient") + ylab("Pairwise correlation") + 
+    q <- p + theme_classic() + xlab("") + ylab("Pairwise correlation") + 
     theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 18.5), 
-            strip.text.x = element_text(margin = margin(0.37, 0, 0.37, 0, "cm")), 
+            strip.text = element_text(size = 18.45), 
+            strip.text.x = element_text(margin = margin(0.359, 0, 0.359, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 2.0), 
-            axis.ticks.length = unit(0.325, "cm"), 
+            axis.ticks.length = unit(0.4, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.9), 
             axis.line = element_line(colour = 'black', size = 0.9), 
-            plot.margin = unit(c(0.55, 0.75, 1, 2.25),"cm"), 
-            axis.title.y = element_text(size=20.0, margin = margin(t = 0, r = 8, b = 0, l = 10), colour="black", 
+            plot.margin = unit(c(0.55, 0.75, 0.925, 2.425),"cm"), 
+            axis.title.y = element_text(size=19.5, margin = margin(t = 0, r = 7, b = 0, l = 11), colour="black", 
                 face = "plain"), 
-            axis.title.x = element_text(size=20.0, margin = margin(t = 8, r = 0, b = 0, l = 0), colour="black", 
+            axis.title.x = element_text(size=19.5, margin = margin(t = 7, r = 0, b = 0, l = 0), colour="black", 
                 face = "plain"), 
-            axis.text.x = element_text(size=17.25, angle=0, margin = margin(t = 3.5, b = 0), colour="grey5"), 
+            axis.text.x = element_text(size=19.5, angle=0, margin = margin(t = 3.5, b = 0), colour="grey5"), 
             axis.text.y = element_text(size=16.75, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
-            panel.spacing = unit(0.55, "cm"), 
+            panel.spacing = unit(0.5, "cm"), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank()) 
