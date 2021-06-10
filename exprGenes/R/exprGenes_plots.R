@@ -89,7 +89,7 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
-		 scale_x_discrete(labels = c("Dedupl." = "Mapped\n+dedupl.")) + 
+		 scale_x_discrete(labels = c("Dedupl." = "Mapped\n+dedupl")) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35) + 
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
@@ -107,8 +107,8 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
   			margin = margin(t = 1.5, r = 0, b = 3.0, l = 0), hjust = 1, vjust = 1),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 20, r = 0, b = 14.5, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 17, 10.35, 16.1), "points"))
+  			margin = margin(t = 20, r = 0, b = 12.5, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(7.0, 15, 13.55, 16.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -146,7 +146,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
-		 scale_x_discrete(labels = c("Dedupl." = "Mapped\n+dedupl.")) + 
+		 scale_x_discrete(labels = c("Dedupl." = "Mapped\n+dedupl")) + 
 		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
 		 	color="black", size=1.35) + 
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
@@ -164,8 +164,8 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
   			margin = margin(t = 1.5, r = 0, b = 3.0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
   		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 20, r = 0, b = 12.25, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(7.0, 7.0, 10.35, 26.1), "points"))
+  			margin = margin(t = 20, r = 0, b = 10.25, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(7.0, 5.0, 13.55, 26.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
@@ -213,6 +213,11 @@ plotDedupReads <- function(data, plot_title) {
 		"Apex.infl.2","Apex.infl.3","Flower.1","Flower.2","Flower.3","Carpel.1","Carpel.2",
 		"Carpel.3","Stamen.1","Stamen.2","Stamen.3","Pollen.1","Pollen.2","Pollen.3")
 
+	samplelabs <- c("Root.1",".2",".3","Hypocotyl.1",".2",".3",
+		"Leaf.1",".2",".3","Apex.veg.1",".2",".3","Apex.infl.1",
+		".2",".3","Flower.1",".2",".3","Carpel.1",".2",
+		".3","Stamen.1",".2",".3","Pollen.1",".2",".3")
+
 	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
@@ -222,6 +227,7 @@ plotDedupReads <- function(data, plot_title) {
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
+  	scale_x_discrete(labels = samplelabs) + 
   	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=7.4e7, fill="white", alpha=0, 
 		 	color="black", size=0.7) + 
   	labs(color="Species")
@@ -242,9 +248,9 @@ plotDedupReads <- function(data, plot_title) {
   			margin = margin(t = 0.25, r = 0, b = 0.75, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.95, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 20, r = 0, b = 12.95, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(5.5, 2, 29.1, 0), "points"),
-		legend.position = c(0.334, 0.115),
+  			margin = margin(t = 20, r = 0, b = 11, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(5.5, -3.5, 29.1, 0), "points"),
+		legend.position = c(0.331, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
 		legend.title = element_text(colour = "black", size=19.5, face ="bold"),
@@ -527,8 +533,8 @@ makePlotReplCorr <- function(data, plot_title) {
 	     stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
 		 geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
 		 	outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
-		 scale_y_continuous(limits = c(0.9695, 1.0005), expand = c(0, 0)) + 
-		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9695, ymax=1.0005, fill="white", alpha=0,  
+		 scale_y_continuous(limits = c(0.9695, 1.0007), expand = c(0, 0)) + 
+		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9695, ymax=1.0007, fill="white", alpha=0,  
 		 	color="black", size=1.35)
 
 	q <- p + scale_fill_manual(values=c("#b2b2b2","#dea80c","#46ae12","#069870","#0770ab","#4fb6f0","#ea6965")) + 
@@ -547,8 +553,8 @@ makePlotReplCorr <- function(data, plot_title) {
   		axis.text.x = element_text(colour = "black", margin = margin(t = 3.5, r = 0, b = 1.6, l = 0), size=20.5), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.25, b = 0, l = 4), size=18.55), 
   		plot.title = element_text(colour = "black", size=23.5, 
-  			margin = margin(t = 35.8, r = 0, b = 13.55, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 14.3, 0, 1), "points"),
+  			margin = margin(t = 35.8, r = 0, b = 11.5, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 0.5, 0, 1), "points"),
 		legend.position = "none",
 		legend.title = element_text(colour = "black", size=20, face ="bold"),
 		legend.text = element_text(size=20), 
