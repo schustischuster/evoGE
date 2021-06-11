@@ -223,12 +223,12 @@ plotDedupReads <- function(data, plot_title) {
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
 	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.825) + 
   	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.75) + 
-  	scale_y_continuous(limits = c(0,7.4e7), expand = c(0, 0), 
+  	scale_y_continuous(limits = c(0,7.07e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
   	scale_x_discrete(labels = samplelabs) + 
-  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=7.4e7, fill="white", alpha=0, 
+  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=7.07e7, fill="white", alpha=0, 
 		 	color="black", size=0.7) + 
   	labs(color="Species")
 
@@ -248,7 +248,7 @@ plotDedupReads <- function(data, plot_title) {
   			margin = margin(t = 0.25, r = 0, b = 0.75, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.95, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 20, r = 0, b = 11, l = 0), hjust = 0.5), 
+  			margin = margin(t = 20, r = 0, b = 10.95, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(5.5, -3.5, 29.1, 0), "points"),
 		legend.position = c(0.331, 0.115),
 		legend.background = element_rect(fill = NA),
@@ -410,13 +410,13 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 	geom_line(aes(x = factor(Sample, level= level_order)), size=2) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = y_labels) +
-  	annotate("rect", xmin=0.25, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="white", alpha=0, 
+  	annotate("rect", xmin=0.25, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="white", alpha=1, 
 		 	color="black", size=0.7) + 
-  	annotate("rect", xmin=0.25, xmax=6.5, ymin=pltymin, ymax=pltymax, fill="#747474", alpha=0.34) + 
-  	annotate("rect", xmin=10.5, xmax=19.5, ymin=pltymin, ymax=pltymax, fill="#0fc94d", alpha=0.34) + 
-  	annotate("rect", xmin=25.5, xmax=29.5, ymin=pltymin, ymax=pltymax, fill="#747474", alpha=0.34) + 
-  	annotate("rect", xmin=38.5, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="#db4a10", alpha=0.34) +
-  	geom_line(aes(x = factor(Sample, level= level_order)), size=1.55) + 
+  	annotate("rect", xmin=0.25, xmax=6.5, ymin=pltymin, ymax=pltymax, fill="#d4d4d4", alpha=1) + 
+  	annotate("rect", xmin=10.5, xmax=19.5, ymin=pltymin, ymax=pltymax, fill="#cee5c3", alpha=1) + 
+  	annotate("rect", xmin=25.5, xmax=29.5, ymin=pltymin, ymax=pltymax, fill="#d4d4d4", alpha=1) + 
+  	annotate("rect", xmin=38.5, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="#f2c9b8", alpha=1) +
+  	geom_line(aes(x = factor(Sample, level= level_order)), size=2) + 
   	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.9, size=7.01, label = total_expr) + 
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
   	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 30.9, size=5.75, label = "I", col="gray15") + 
