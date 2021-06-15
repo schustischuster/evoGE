@@ -721,7 +721,7 @@ plotExprGenesOS <- function(data) {
   		strip.text = element_blank(), 
   		strip.background = element_blank(),
   		plot.margin = unit(c(15, -6.25, 0, 1), "points"),
-  		axis.ticks.length = unit(.055, "cm"),
+  		axis.ticks.length = unit(.053, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
   		panel.grid.major = element_line(size = 0.25, colour = "white"), 
   		panel.grid.minor = element_line(size = 0.25, colour = "white"),  
@@ -757,7 +757,7 @@ plotExprGenesOS <- function(data) {
         strip.text.y = element_text(margin = margin(0, 0.088, 0, 0.088, "cm"), size = 5.5),
         strip.background = element_rect(colour="grey70", size=0.7), 
   		plot.margin = unit(c(15, 0, 0, 1), "points"),
-  		axis.ticks.length = unit(.055, "cm"),
+  		axis.ticks.length = unit(.053, "cm"),
   		panel.grid.major = element_line(size = 0.25, colour = "white"), 
   		panel.grid.minor = element_line(size = 0.25, colour = "white"),  
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
@@ -856,7 +856,7 @@ theme(
 
 q <- p + geom_text(
     data = dat_text,
-    colour = "gray5",
+    colour = "black",
     mapping = aes(x = x, y = y, label = label), 
     size=1.95
     )
