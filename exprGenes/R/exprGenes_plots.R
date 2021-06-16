@@ -714,7 +714,7 @@ plotExprGenesOS <- function(data) {
 		 	labels = y_label_form)
 
 	q <- p + facet_wrap(class ~ species, scales='free_y', ncol = 6) + 
-	theme_bw() + xlab("") + ylab("Number of Genes/ Transcripts/ non-coding RNAs") + 
+	theme_bw() + xlab("") + ylab("Count") + 
 	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(
@@ -728,7 +728,7 @@ plotExprGenesOS <- function(data) {
   		axis.title.x = element_text(colour = "black", size=6.55, 
   			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 0, r = 7, b = 0, l = 0.5)), 
+  			margin = margin(t = 0, r = 7, b = 0, l = 2.9)), 
   		axis.text.x = element_text(colour = "black", size=5.3, angle=45, 
   			margin = margin(t = 0.59, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
@@ -749,7 +749,7 @@ plotExprGenesOS <- function(data) {
 		 	labels = y_label_form)
 
 	qg <- pg + facet_grid(class ~ species, scales='free') + 
-	theme_bw() + xlab("") + ylab("Number of Genes/ Transcripts/ non-coding RNAs") + 
+	theme_bw() + xlab("") + ylab("Count") + 
 	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(
@@ -764,7 +764,7 @@ plotExprGenesOS <- function(data) {
   		axis.title.x = element_text(colour = "black", size=6.55, 
   			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 0, r = 7, b = 0, l = 0.5)), 
+  			margin = margin(t = 0, r = 7, b = 0, l = 2.9)), 
   		axis.text.x = element_text(colour = "black", size=5.3, angle=45, 
   			margin = margin(t = 0.59, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
