@@ -199,8 +199,8 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#730404", "#a80606", "#d20808", "yellow", "#fcfce4")
-    pal <- color.palette(steps, c(20, 20, 33, 4), space = "rgb")
+    steps <- c("#730404", "#a80606", "#db0808", "yellow", "#fcfce4")
+    pal <- color.palette(steps, c(10, 24, 38, 5), space = "rgb")
 
     # Set filename
     dfname <- deparse(substitute(exp_data))
@@ -209,10 +209,10 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     # Define column and row colors for color bars based on sample names and experiment
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
 
-    species_col <- c(se="palegreen4", fi="palegreen4", ap="orange2", hy="darkorchid4", fl="gold1", ro="orchid4", 
-      le="olivedrab3", co="olivedrab3", ca="olivedrab3")
+    species_col <- c(se="#4a7b4a", fi="#4a7b4a", ap="#ff7024", hy="#2e3578", fl="#e40000", ro="#4b6bb3", 
+      le="#00d100", co="#00d100", ca="#00d100")
     
-    exp_col <- c(GE="navajowhite2", eq="maroon4") # last two letters of experiment string
+    exp_col <- c(GE="#e5b000", eq="#a0287d") # last two letters of experiment string
 
     exp_data[is.na(exp_data)] <- 0 # replaces NAs by 0
     x_df <- exp_data[, 2:ncol(exp_data)]
@@ -251,7 +251,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
 
 
-    # Re-order the colors of the colorbar where possible to make them more distinguishable 
+    # Re-order (rotate) some of the clusters to make the colorbar colors more distinguishable 
     if (is.element("pearson", coefficient) && is.element("average", clustm)) {
 
       dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:2,13:23,3:12,24:32,34,33,47,46,48:52,35:45))
@@ -265,7 +265,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
     # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
-        par(lwd = 18.5) # dendrogram line width
+        par(lwd = 17.5) # dendrogram line width
         getRowOrder = heatmap.2(x_cor,
             revC = F,
             ColSideColors = col_cols, 
