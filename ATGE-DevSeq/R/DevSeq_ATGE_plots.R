@@ -7,26 +7,26 @@
 
 
 # Set input files
-devseq_re_vs_atge_re_input <- "DevSeq_RE_vs_ATGE_RE.csv"
+devseq_vs_atge_input <- "devseq_vs_atge.csv"
 devseq_log2_re_vs_atge_log2_re_input <- "DevSeq_log2_RE_vs_ATGE_log2_RE.csv"
 
 
 # Read data tables
 message("Reading ATGE-DevSeq cor data tables")
-devseq_re_vs_atge_re <- read.table(file=file.path(in_dir, devseq_re_vs_atge_re_input), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
+devseq_vs_atge <- read.table(file=file.path(in_dir, devseq_vs_atge_input), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 devseq_log2_re_vs_atge_log2_re <- read.table(file=file.path(in_dir, devseq_log2_re_vs_atge_log2_re_input), sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
 
 
 # Prepare data
 # Add experiment information to data tables
-experiment <- gsub(".*_","",devseq_re_vs_atge_re[,3])
-devseq_re_vs_atge_re <- cbind(as.data.frame(experiment),devseq_re_vs_atge_re)
+experiment <- gsub(".*_","",devseq_vs_atge[,3])
+devseq_vs_atge <- cbind(as.data.frame(experiment),devseq_vs_atge)
 experiment_log <- gsub(".*_","",devseq_log2_re_vs_atge_log2_re[,3])
 devseq_log2_re_vs_atge_log2_re <- cbind(as.data.frame(experiment),devseq_log2_re_vs_atge_log2_re)
 
 # Seperate ATGE and DevSeq data
-atge_re <- subset(devseq_re_vs_atge_re, experiment == "ATGE")
-devseq_re <- subset(devseq_re_vs_atge_re, experiment == "DevSeq")
+atge <- subset(devseq_vs_atge, experiment == "ATGE")
+devseq <- subset(devseq_vs_atge, experiment == "DevSeq")
 atge_log2_re <- subset(devseq_log2_re_vs_atge_log2_re, experiment_log == "ATGE")
 devseq_log2_re <- subset(devseq_log2_re_vs_atge_log2_re, experiment_log == "DevSeq")
 
@@ -52,10 +52,14 @@ devseq_names <- c('experiment','gene_id','symbol','gene_id_exp','Spearman','Pear
       'flower_stg12_stamens_DevSeq','flower_stg15_stamens_DevSeq','flower_stg12_carpels_DevSeq',
       'flower_stg15_carpels_DevSeq','flower_stg16_siliques_DevSeq')
 
-names(atge_re) <- atge_names
-names(devseq_re) <- devseq_names
+names(atge) <- atge_names
+names(devseq) <- devseq_names
 names(atge_log2_re) <- atge_names
 names(devseq_log2_re) <- devseq_names
+
+# log2-transform devseq TPM and ATGE gcRMA data
+devseq[,7:ncol(devseq)] <- log2(devseq[,7:ncol(devseq)] + 1)
+atge[,7:ncol(atge)] <- log2(atge[,7:ncol(atge)] + 1)
 
 
 # Get pairwise gene correlation values
@@ -65,8 +69,7 @@ cor_g_type <- data.frame(Cor_type = rep(c("Genes"), nrow(gene_cor)))
 gene_cor <- cbind(cor_g_type, cor_g_method, gene_cor)
 
 
-# Merge ATGE and DevSeq data frames and compute ATGE-DevSeq sample correlations
-atge_devseq_re <- merge(atge_re[, c(2,7:ncol(atge_re))], devseq_re[, c(2,7:ncol(devseq_re))], by="gene_id")
+# Merge ATGE_log2_RE and DevSeq_log2_RE data frames for correlation heatmap
 atge_devseq_re_log <- merge(
     atge_log2_re[, c(2,7:ncol(atge_log2_re))], devseq_log2_re[, c(2,7:ncol(devseq_log2_re))], by="gene_id")
 
@@ -149,7 +152,7 @@ plotCor <- function(data) {
 makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"), 
     clustm = c("average", "complete")) {
 
-    # Show error message if no scaling is chosen
+    # Show error message if no coefficient is chosen
     if (missing(coefficient))
    
        stop(
@@ -158,7 +161,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
            call. = TRUE
         )
 
-    # Show error message if no scaling is chosen
+    # Show error message if no clustering method is chosen
     if (missing(clustm))
    
        stop(
@@ -322,9 +325,10 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
 
 # Generate hclust dendrogram using relative expression data
-makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
+makeDendrogram <- function(x, coefficient = c("pearson", "spearman"), 
+    clustm = c("average", "complete")) {
 
-    # Show error message if no scaling is chosen
+    # Show error message if no coefficient is chosen
     if (missing(coefficient))
    
        stop(
@@ -333,29 +337,33 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
            call. = TRUE
         )
 
-    df_t <- t(x[, 7:ncol(x)]) # transposes data frame so rows become columns and vice versa
-    df_t[is.na(df_t)] <- 0 # replaces NAs by 0
+    # Show error message if no clustering method is chosen
+    if (missing(clustm))
+   
+       stop(
+           "Please choose one of the following hclust algorithms: 
+           'average', 'complete'",
+           call. = TRUE
+        )
 
     # Set filename
     dfname <- deparse(substitute(x))
-    coefficient_tag <- match.arg(coefficient)
     fname <- file.path(out_dir, "output", "plots",
-              sprintf('%s_dend.png', paste(dfname, coefficient_tag, sep="_"))
+              sprintf('%s_dend.png', paste(dfname, coefficient, sep="_"))
               )
 
     # Define colors based on sample name
     label_col <- c(se="gray10", fi="gray10", ap="blue", hy="purple", fl="#e40000", ro="gray47", le="green3", 
       co="green3", ca="green3")
 
-    # Build distance matrix
-    if (is.element(coefficient, c("pearson"))) {
-        df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "pearson")
+    x_df <- x[, 7:ncol(x)]
+    x_df[is.na(x_df)] <- 0 # replaces NAs by 0
 
-    } else if (is.element(coefficient, c("spearman"))) {
-      df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "spearman")
-    } 
+    # Compute correlation and build distance matrix
+    x_cor <- cor(x_df, method = coefficient)
+    df_t_dist.mat <- as.dist(sqrt(1/2*(1-x_cor)))
 
-    df_clust.res <- hclust(df_t_dist.mat, method = "average") # agglomerate clustering using average linkage
+    df_clust.res <- hclust(df_t_dist.mat, method = clustm) # agglomerate clustering
   
     df_dend <- dendrapply(as.dendrogram(df_clust.res), function(n){
     
@@ -375,10 +383,10 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
     png(height = 1195, width = 1200, pointsize = 10.94, file = fname)
     par(mar = c(14.5, 4, 4, 1.5), lwd = 8.5, cex = 3, cex.axis = 1)
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
-    if (dfname == "atge_re") {
-      df_dend <- flip_leaves(df_dend, c(10), c(5))
-      df_dend <- flip_leaves(df_dend, c(23), c(17))
-    }
+    #if (dfname == "atge_re") {
+    #  df_dend <- flip_leaves(df_dend, c(10), c(5))
+    #  df_dend <- flip_leaves(df_dend, c(23), c(17))
+    #}
     plot(df_dend)
     axis(side = 2, lwd = 3.5)
     dev.off()
@@ -386,16 +394,10 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman")) {
 
 
 
-# Boxplot showing pairwise ATGE-DevSeq gene correlations 
-plot_Gene_Corr(spearman_RE, pearson_RE, pearson_log2_RE)
-
-# Boxplot showing ATGE-DevSeq sample correlations
-plot_Sample_Corr(atge_devseq_spearman, atge_devseq_pearson, atge_devseq_log_pearson)
-
 # Correlation heatmap of merged ATGE-DevSeq data
 makeCorrplot(exp_data=atge_devseq_re_log, coefficient="pearson", clustm="complete")
 
 # hclust dendrogram of ATGE and DevSeq data
-makeDendrogram(atge_re, coefficient = "pearson")
-makeDendrogram(devseq_re, coefficient = "pearson")
+makeDendrogram(atge, coefficient = "pearson", clustm="complete")
+makeDendrogram(devseq, coefficient = "pearson", clustm="complete")
 
