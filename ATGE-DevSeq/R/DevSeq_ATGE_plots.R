@@ -126,7 +126,7 @@ plotCor <- function(data) {
             axis.ticks = element_line(colour = "black", size = 0.9), 
             axis.line = element_line(colour = 'black', size = 0.9), 
             plot.margin = unit(c(0.55, 0.75, 0.925, 2.425),"cm"), 
-            axis.title.y = element_text(size=19.5, margin = margin(t = 0, r = 7, b = 0, l = 11), colour="black", 
+            axis.title.y = element_text(size=19.5, margin = margin(t = 0, r = 5.5, b = 0, l = 12.5), colour="black", 
                 face = "plain"), 
             axis.title.x = element_text(size=19.5, margin = margin(t = 7, r = 0, b = 0, l = 0), colour="black", 
                 face = "plain"), 
