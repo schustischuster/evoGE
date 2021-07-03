@@ -113,7 +113,7 @@ plotCor <- function(data) {
     stat_boxplot(geom ='errorbar', width = 0, size=1.125, color="black") + 
     geom_boxplot(width = 0.75, size=1.125, fatten = 2.8, color="black", outlier.shape = 1, 
         outlier.size = 2, outlier.stroke = 1.5, outlier.color = "gray55", alpha = 1.0,
-        fill=c("#d8a900", "#00bc1f", "#d8a900", "#00bc1f")) + 
+        fill=c("goldenrod2", "#00bc1f", "goldenrod2", "#00bc1f")) + 
     scale_y_continuous(expand = c(0.059, 0)) + 
     scale_x_discrete(labels = x_labels)
 
@@ -212,10 +212,10 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     # Define column and row colors for color bars based on sample names and experiment
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
 
-    species_col <- c(se="#4a7b4a", fi="#4a7b4a", ap="#ff7024", hy="#2e3578", fl="#e40000", ro="#4b6bb3", 
-      le="#00d100", co="#00d100", ca="#00d100")
+    species_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#202553", fl="#e40000", ro="#3d62b4", 
+      le="#00d200", co="#00d200", ca="#00d200")
     
-    exp_col <- c(GE="#e5b000", eq="#a0287d") # last two letters of experiment string
+    exp_col <- c(GE="#d9b800", eq="#b42d8d") # last two letters of experiment string
 
     exp_data[is.na(exp_data)] <- 0 # replaces NAs by 0
     x_df <- exp_data[, 2:ncol(exp_data)]
@@ -353,8 +353,8 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
               )
 
     # Define colors based on sample name
-    label_col <- c(se="gray10", fi="gray10", ap="blue", hy="purple", fl="#e40000", ro="gray47", le="green3", 
-      co="green3", ca="green3")
+    label_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#202553", fl="#e40000", ro="#3d62b4", 
+      le="#00d200", co="#00d200", ca="#00d200")
 
     x_df <- x[, 7:ncol(x)]
     x_df[is.na(x_df)] <- 0 # replaces NAs by 0
@@ -364,8 +364,19 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     df_t_dist.mat <- as.dist(sqrt(1/2*(1-x_cor)))
 
     df_clust.res <- hclust(df_t_dist.mat, method = clustm) # agglomerate clustering
+
+    # Re-order (rotate) some of the clusters to make the colors more distinguishable 
+    if (dfname == "atge") {
+
+      df_dend = dendextend::rotate(as.dendrogram(df_clust.res),c(1,3,2,5,4,6:11,14:15,12:13,16:24,26,25))
+
+    } else if (dfname == "devseq") {
+
+      df_dend = dendextend::rotate(as.dendrogram(df_clust.res),c(1:5,7,6,8:24,26,25))
+
+    } else df_dend = as.dendrogram(df_clust.res)
   
-    df_dend <- dendrapply(as.dendrogram(df_clust.res), function(n){
+    df_dend <- dendrapply(df_dend, function(n){
     
     if (is.leaf(n)){
       dend_col <- label_col[substr(attr(n,"label"),1,2)]
@@ -381,12 +392,8 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     brc_col <- factor(brc_col, unique(brc_col))
 
     png(height = 1195, width = 1200, pointsize = 10.94, file = fname)
-    par(mar = c(14.5, 4, 4, 1.5), lwd = 8.5, cex = 3, cex.axis = 1)
+    par(mar = c(17.0, 4, 4, 1.5), mgp = c(3, 0.525, 0), lwd = 8.8, cex = 3, cex.axis = 0.85)
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
-    #if (dfname == "atge_re") {
-    #  df_dend <- flip_leaves(df_dend, c(10), c(5))
-    #  df_dend <- flip_leaves(df_dend, c(23), c(17))
-    #}
     plot(df_dend)
     axis(side = 2, lwd = 3.5)
     dev.off()
