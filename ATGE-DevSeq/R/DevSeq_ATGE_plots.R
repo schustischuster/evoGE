@@ -401,6 +401,118 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
 
 
 
+# Make facet plots of RE values for some example genes
+# List of genes for plotting
+genelist <- c("WUS", "REV", "AP1", "AG", "LFY", "PLT1", "FLC", "PIN1")
+
+
+plotRE <- function(exp_data, genelist) {
+
+    data <- exp_data[exp_data$symbol %in% genelist,]
+
+    fname <- sprintf('%s.jpg', paste("pairwise_re_values", sep = "_"))
+
+    samples <- data.frame(samples=rep(colnames(data[7:ncol(data)]), nrow(data)))
+    experiment <- data.frame(experiment=rep(rep(data$experiment[1:2], 
+        each=length(7:ncol(data))), nrow(data)/2))
+    symbol <- data.frame(symbol=rep(data$symbol, each=length(7:ncol(data))))
+    gene_id <- data.frame(gene_id=rep(data$gene_id, each=length(7:ncol(data))))
+    Pearson <- data.frame(Pearson=rep(data$Pearson, each=length(7:ncol(data))))
+    RE <- data.frame(RE=as.vector(t(data[,7:ncol(data)])))
+
+    exp_df <- cbind(symbol, gene_id, experiment, samples, RE, Pearson)
+    exp_df$samples <- factor(exp_df$samples, levels=unique(exp_df$samples))
+    exp_df_ATGE <- subset(exp_df, experiment == "ATGE")
+    exp_df_DevSeq <- subset(exp_df, experiment == "DevSeq")
+
+    x_labels <- c("root_whole_root_7d" = "rt", "root_whole_root_14d.17d" = "", 
+        "root_whole_root_21d" = "", "hypocotyl_10d.7d" = "", "X1st_internode_24d.28d" = "st", 
+        "cotyledons_7d" = "", "leaf_1_2_7d" = "", "leaf_1_2_petiole_10d.17d" = "lf", 
+        "leaf_5_6_17d" = "", "leaves_senescing_35d" = "", "apex_vegetative_7d" = "", 
+        "apex_vegetative_14d" = "ap", "apex_inflorescence_21d" = "", "flower_stg9_21d." = "", 
+        "flower_stg10_11_21d." = "fl", "flower_stg12_21d." = "", "flower_stg15_21d." = "", 
+        "flower_stg12_sepals_21d." = "", "flower_stg15_sepals_21d." = "flo", "flower_stg12_petals_21d." = "", 
+        "flower_stg15_petals_21d." = "", "flower_stg12_stamens_21d." = "", "flower_stg15_stamens_21d." = "", 
+        "flower_stg12_carpels_21d." = "", "flower_stg15_carpels_21d." = "ft", "fruit_stg16_siliques_28d." = "")
+
+    line_df <- data.frame(
+        x = c(0.5, 3.5, 4.5, 5.5, 10.5, 13.5, 24.5),
+        y = -0.135,
+        xend = c(3.5, 4.5, 5.5, 10.5, 13.5, 24.5, 26.5),
+        yend = -0.135,
+        colour = c("#3d62b4", "#243968", "#009700", "#00d200", "#ff9100", "#e40000", "#b10000")
+        )
+
+    peacor = unique(data$Pearson)
+    tlabel <- paste0("r = ", round(peacor, 2))
+
+    if (length(tlabel) == 8) {
+        xcoor <- c(4.5, 4.5, 4.5, 6.5, 4.5, 22.0, 4.5, 4.5)
+        ycoor <- c(0.975, 0.975, 0.975, 0.975, 0.975, 0.975, 0.975, 0.975)
+    } else {
+        xcoor <- c(rep(4.5, length(tlabel)))
+        ycoor <- c(rep(0.975, length(tlabel)))
+    }
+
+    dat_text <- data.frame(
+        label = tlabel,
+        symbol   = unique(data$symbol),
+        x     = xcoor,
+        y     = ycoor
+        )
+
+
+    p <- ggplot() + 
+        geom_point(data=exp_df_ATGE, aes(x=samples, y=RE), shape=17, color="#ccad00", stroke=3.25) + 
+        geom_line(data=exp_df_ATGE, aes(x=samples, y=RE, group=1), color="#ccad00", linetype="solid", lwd=1.25) + 
+        geom_point(data=exp_df_DevSeq, aes(x=samples, y=RE), shape=16, color="#b42d8d", stroke=3.25) + 
+        geom_line(data=exp_df_DevSeq, aes(x=samples, y=RE, group=1), color="#b42d8d", linetype="21", lwd=1.25) + 
+        scale_y_continuous(expand = c(0.075, 0), limits=c(-0.16, 1)) + 
+        scale_x_discrete(expand = c(0.025, 0), labels = x_labels) + 
+        geom_segment(data = line_df, mapping = aes(x=x, y=y, xend=xend, yend=yend, color=colour), size=5, inherit.aes = FALSE) + 
+        scale_colour_identity() + 
+        geom_text(data = dat_text,
+            mapping = aes(x = x, y = y, label = label), size=6.2) + 
+        guides(shape = guide_legend(override.aes = list(stroke=1.5)))
+        
+
+        q <- p + theme_classic() + xlab("Organ samples") + ylab("Relative expression") + 
+        theme(text=element_text(size = 16), 
+            strip.text = element_text(size = 17.5), 
+            strip.text.x = element_text(margin = margin(0.35, 0, 0.35, 0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.4), 
+            axis.ticks.length = unit(0.2, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 0.9), 
+            axis.line = element_line(colour = 'black', size = 0.9), 
+            plot.margin = unit(c(0.55, 0.2, 0.4, 0.4),"cm"), 
+            axis.title.y = element_text(size=19.0, margin = margin(t = 0, r = 5.5, b = 0, l = 10.8), colour="black", 
+                face = "bold"), 
+            axis.title.x = element_text(size=19.0, margin = margin(t = 5.5, r = 0, b = 0, l = 0), colour="black", 
+                face = "bold"), 
+            axis.text.x = element_text(size=19.0, angle=0, margin = margin(t = 2.5, b = 4), colour="grey5"), 
+            axis.text.y = element_text(size=16.5, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
+            panel.spacing = unit(0.4, "cm"), 
+            panel.grid.major = element_blank(),
+            panel.grid.minor.x = element_blank(), 
+            panel.grid.minor.y = element_blank(), 
+            legend.position = "bottom", 
+            legend.title = element_blank(), 
+            legend.text = element_text(size = 22), 
+            legend.spacing.x = unit(0.5, 'cm'), 
+            legend.key.size = unit(0.95, "cm"), 
+            legend.background=element_blank()) 
+
+        q <- q + facet_wrap(~ symbol, scales = "free_x", nrow = 2)
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+            width = 17.0, height = 8.5, dpi = 300, units = c("in"), limitsize = FALSE) 
+    }
+
+
+
+# Pairwise correlation plots (facets)
+plotRE(exp_data = devseq_log2_re_vs_atge_log2_re, genelist = genelist)
+
 # Correlation heatmap of merged ATGE-DevSeq data
 makeCorrplot(exp_data=atge_devseq_re_log, coefficient="pearson", clustm="complete")
 
