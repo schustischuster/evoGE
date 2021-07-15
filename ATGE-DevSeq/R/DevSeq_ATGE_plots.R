@@ -411,8 +411,8 @@ plotRE <- function(exp_data, genelist) {
     data <- exp_data[exp_data$symbol %in% genelist,]
 
     # get cor p value
-    pwdata <- split(data[,7:ncol(data)], rep(1:8, each = 2))
-    lst <- setNames(vector('list', 8), 1:8)
+    pwdata <- split(data[,7:ncol(data)], rep(1:(nrow(data)/2), each = 2))
+    lst <- setNames(vector('list', length(pwdata)), 1:length(pwdata))
     for(i in 1:length(pwdata)) {
         lst[[i]] <- cor.test(as.numeric(as.character(unlist(pwdata[[i]][1,]))), 
             as.numeric(as.character(unlist(pwdata[[i]][2,]))), method = "pearson")$p.value
@@ -476,8 +476,8 @@ plotRE <- function(exp_data, genelist) {
         xpcoor <- c(5.2, 5.2, 5.2, 7.0, 5.2, 21.7, 5.2, 5.2)
         ypcoor <- c(0.86, -0.02, 0.86, 0.86, 0.86, 0.86, -0.02, 0.86)
     } else {
-        xpcoor <- c(rep(4.5, length(plabel)))
-        ypcoor <- c(rep(0.975, length(plabel)))
+        xpcoor <- c(rep(5.2, length(plabel)))
+        ypcoor <- c(rep(0.86, length(plabel)))
     }
 
     pdat_text <- data.frame(
