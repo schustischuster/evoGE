@@ -212,10 +212,10 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     # Define column and row colors for color bars based on sample names and experiment
     # Build distance matrix & dendrogram then get dendrogram leaf colors to create color vector
 
-    species_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#202553", fl="#e40000", ro="#3d62b4", 
+    species_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#1d2f55", fl="#e40000", ro="#3d62b4", 
       le="#00d200", co="#00d200", ca="#00d200")
     
-    exp_col <- c(GE="#d9b800", eq="#b42d8d") # last two letters of experiment string
+    exp_col <- c(GE="#d9b800", eq="#b82e90") # last two letters of experiment string
 
     exp_data[is.na(exp_data)] <- 0 # replaces NAs by 0
     x_df <- exp_data[, 2:ncol(exp_data)]
@@ -353,7 +353,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
               )
 
     # Define colors based on sample name
-    label_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#202553", fl="#e40000", ro="#3d62b4", 
+    label_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#1d2f55", fl="#e40000", ro="#3d62b4", 
       le="#00d200", co="#00d200", ca="#00d200")
 
     x_df <- x[, 7:ncol(x)]
@@ -392,7 +392,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     brc_col <- factor(brc_col, unique(brc_col))
 
     png(height = 1195, width = 1200, pointsize = 10.94, file = fname)
-    par(mar = c(17.0, 4, 4, 1.5), mgp = c(3, 0.525, 0), lwd = 8.8, cex = 3, cex.axis = 0.85)
+    par(mar = c(17.31, 4, 4, 1.5), mgp = c(3, 0.525, 0), lwd = 8.8, cex = 3, cex.axis = 0.85)
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
     plot(df_dend)
     axis(side = 2, lwd = 3.5)
@@ -409,6 +409,15 @@ genelist <- c("WUS", "REV", "AP1", "AG", "LFY", "PLT1", "FLC", "PIN1")
 plotRE <- function(exp_data, genelist) {
 
     data <- exp_data[exp_data$symbol %in% genelist,]
+
+    # get cor p value
+    pwdata <- split(data[,7:ncol(data)], rep(1:8, each = 2))
+    lst <- setNames(vector('list', 8), 1:8)
+    for(i in 1:length(pwdata)) {
+        lst[[i]] <- cor.test(as.numeric(as.character(unlist(pwdata[[i]][1,]))), 
+            as.numeric(as.character(unlist(pwdata[[i]][2,]))), method = "pearson")$p.value
+    }
+    p_value <- c(do.call(rbind, lst))
 
     fname <- sprintf('%s.jpg', paste("pairwise_re_values", sep = "_"))
 
@@ -443,12 +452,12 @@ plotRE <- function(exp_data, genelist) {
         colour = c("#3d62b4", "#243968", "#009700", "#00d200", "#ff9100", "#e40000", "#b10000")
         )
 
-    peacor = unique(data$Pearson)
+    peacor = unique(data$Pearson) #cor value label
     tlabel <- paste0("r = ", round(peacor, 2))
 
     if (length(tlabel) == 8) {
-        xcoor <- c(4.5, 4.5, 4.5, 6.5, 4.5, 22.0, 4.5, 4.5)
-        ycoor <- c(0.975, 0.975, 0.975, 0.975, 0.975, 0.975, 0.975, 0.975)
+        xcoor <- c(4.5, 4.5, 4.5, 6.5, 4.5, 22.5, 4.5, 4.5)
+        ycoor <- c(0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98)
     } else {
         xcoor <- c(rep(4.5, length(tlabel)))
         ycoor <- c(rep(0.975, length(tlabel)))
@@ -461,37 +470,56 @@ plotRE <- function(exp_data, genelist) {
         y     = ycoor
         )
 
+    plabel <- paste0("italic('P =')~", formatC(p_value, format="e", digits=0)) #p-value of cor test label
+
+    if (length(plabel) == 8) {
+        xpcoor <- c(5.2, 5.2, 5.2, 7.0, 5.2, 21.7, 5.2, 5.2)
+        ypcoor <- c(0.86, -0.02, 0.86, 0.86, 0.86, 0.86, -0.02, 0.86)
+    } else {
+        xpcoor <- c(rep(4.5, length(plabel)))
+        ypcoor <- c(rep(0.975, length(plabel)))
+    }
+
+    pdat_text <- data.frame(
+        label = plabel,
+        symbol   = unique(data$symbol),
+        x     = xpcoor,
+        y     = ypcoor
+        )
+
 
     p <- ggplot() + 
-        geom_point(data=exp_df_ATGE, aes(x=samples, y=RE), shape=17, color="#ccad00", stroke=3.25) + 
-        geom_line(data=exp_df_ATGE, aes(x=samples, y=RE, group=1), color="#ccad00", linetype="solid", lwd=1.25) + 
-        geom_point(data=exp_df_DevSeq, aes(x=samples, y=RE), shape=16, color="#b42d8d", stroke=3.25) + 
-        geom_line(data=exp_df_DevSeq, aes(x=samples, y=RE, group=1), color="#b42d8d", linetype="21", lwd=1.25) + 
-        scale_y_continuous(expand = c(0.075, 0), limits=c(-0.16, 1)) + 
+        geom_point(data=exp_df_ATGE, aes(x=samples, y=RE), shape=17, color="#ccad00", stroke=3.5) + 
+        geom_line(data=exp_df_ATGE, aes(x=samples, y=RE, group=1), color="#ccad00", linetype="solid", lwd=1.4) + 
+        geom_point(data=exp_df_DevSeq, aes(x=samples, y=RE), shape=16, color="#b82e90", stroke=3.5) + 
+        geom_line(data=exp_df_DevSeq, aes(x=samples, y=RE, group=1), color="#b82e90", linetype="21", lwd=1.4) + 
+        scale_y_continuous(expand = c(0.075, 0), limits=c(-0.16, 1.01), breaks = seq(0, 1, len = 6)) + 
         scale_x_discrete(expand = c(0.025, 0), labels = x_labels) + 
         geom_segment(data = line_df, mapping = aes(x=x, y=y, xend=xend, yend=yend, color=colour), size=5, inherit.aes = FALSE) + 
         scale_colour_identity() + 
         geom_text(data = dat_text,
             mapping = aes(x = x, y = y, label = label), size=6.2) + 
+        geom_text(data = pdat_text,
+            mapping = aes(x = x, y = y, label = format(label, scientific=TRUE)), size=6.2, parse=TRUE) + 
         guides(shape = guide_legend(override.aes = list(stroke=1.5)))
         
 
         q <- p + theme_classic() + xlab("Organ samples") + ylab("Relative expression") + 
         theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 17.5), 
-            strip.text.x = element_text(margin = margin(0.35, 0, 0.35, 0, "cm")), 
-            strip.background = element_rect(colour = 'black', fill = NA, size = 2.4), 
+            strip.text = element_text(size = 17.85), 
+            strip.text.x = element_text(margin = margin(0.3485, 0, 0.3485, 0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 1.95), 
             axis.ticks.length = unit(0.2, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.9), 
             axis.line = element_line(colour = 'black', size = 0.9), 
-            plot.margin = unit(c(0.55, 0.2, 0.4, 0.4),"cm"), 
-            axis.title.y = element_text(size=19.0, margin = margin(t = 0, r = 5.5, b = 0, l = 10.8), colour="black", 
-                face = "bold"), 
-            axis.title.x = element_text(size=19.0, margin = margin(t = 5.5, r = 0, b = 0, l = 0), colour="black", 
-                face = "bold"), 
-            axis.text.x = element_text(size=19.0, angle=0, margin = margin(t = 2.5, b = 4), colour="grey5"), 
-            axis.text.y = element_text(size=16.5, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
-            panel.spacing = unit(0.4, "cm"), 
+            plot.margin = unit(c(0.4, 0.2, 0.2, 0.4),"cm"), 
+            axis.title.y = element_text(size=18.9, margin = margin(t = 0, r = 5.5, b = 0, l = 11.5), colour="black", 
+                face = "plain"), 
+            axis.title.x = element_text(size=18.9, margin = margin(t = 4.5, r = 0, b = 0, l = 0), colour="black", 
+                face = "plain"), 
+            axis.text.x = element_text(size=17.0, angle=0, margin = margin(t = 2.5, b = 4), colour="grey5"), 
+            axis.text.y = element_text(size=16.2, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
+            panel.spacing = unit(0.45, "cm"), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
             panel.grid.minor.y = element_blank(), 
