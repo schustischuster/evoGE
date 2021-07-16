@@ -213,8 +213,8 @@ plotDedupReads <- function(data, plot_title) {
 		"Apex.infl.2","Apex.infl.3","Flower.1","Flower.2","Flower.3","Carpel.1","Carpel.2",
 		"Carpel.3","Stamen.1","Stamen.2","Stamen.3","Pollen.1","Pollen.2","Pollen.3")
 
-	samplelabs <- c("Root.1",".2",".3","Hypocotyl.1",".2",".3",
-		"Leaf.1",".2",".3","Apex.veg.1",".2",".3","Apex.infl.1",
+	samplelabs <- c("Root.1",".2",".3","Hypocot.1",".2",".3",
+		"Leaf.1",".2",".3","Apex.v.1",".2",".3","Apex.i.1",
 		".2",".3","Flower.1",".2",".3","Carpel.1",".2",
 		".3","Stamen.1",".2",".3","Pollen.1",".2",".3")
 
@@ -249,7 +249,7 @@ plotDedupReads <- function(data, plot_title) {
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.95, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size=22, 
   			margin = margin(t = 20, r = 0, b = 10.95, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(5.5, -3.5, 29.1, 0), "points"),
+  		plot.margin = unit(c(5.5, -3.5, 37.55, 0), "points"),
 		legend.position = c(0.331, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
@@ -723,8 +723,8 @@ plotExprGenesOS <- function(data) {
   		plot.margin = unit(c(15, -6.25, 0, 1), "points"),
   		axis.ticks.length = unit(.053, "cm"),
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
-  		panel.grid.major = element_line(size = 0.25, colour = "white"), 
-  		panel.grid.minor = element_line(size = 0.25, colour = "white"),  
+  		panel.grid.major = element_line(size = 0.2, colour = "grey95"), 
+  		panel.grid.minor = element_line(size = 0.15, colour = "white"),  
   		axis.title.x = element_text(colour = "black", size=6.55, 
   			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
   		axis.title.y = element_text(colour = "black", size=6.55, 
@@ -740,7 +740,7 @@ plotExprGenesOS <- function(data) {
 		legend.key.height = unit(0.4, "cm"),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
-  		panel.border = element_rect(colour = "grey70", fill=NA, size=0.7))
+  		panel.border = element_rect(colour = "grey68", fill=NA, size=0.7))
 
 
   	pg <- ggplot(data, aes(x = factor(sample_names), y = expressed, color = Threshold, group = Threshold)) + 
@@ -755,11 +755,11 @@ plotExprGenesOS <- function(data) {
   		theme(
   		strip.text.x = element_text(margin = margin(0.088, 0, 0.088, 0, "cm"), size = 5.5), 
         strip.text.y = element_text(margin = margin(0, 0.088, 0, 0.088, "cm"), size = 5.5),
-        strip.background = element_rect(colour="grey70", size=0.7), 
+        strip.background = element_rect(colour="grey68", size=0.7), 
   		plot.margin = unit(c(15, 0, 0, 1), "points"),
   		axis.ticks.length = unit(.053, "cm"),
-  		panel.grid.major = element_line(size = 0.25, colour = "white"), 
-  		panel.grid.minor = element_line(size = 0.25, colour = "white"),  
+  		panel.grid.major = element_line(size = 0.2, colour = "grey95"), 
+  		panel.grid.minor = element_line(size = 0.15, colour = "white"),  
   		axis.ticks = element_line(colour = "gray15", size = 0.2), 
   		axis.title.x = element_text(colour = "black", size=6.55, 
   			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
@@ -776,7 +776,7 @@ plotExprGenesOS <- function(data) {
 		legend.key.height = unit(0.4, "cm"),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
-  		panel.border = element_rect(colour = "grey70", fill=NA, size=0.7))
+  		panel.border = element_rect(colour = "grey68", fill=NA, size=0.7))
 
 
 	gt1 = ggplot_gtable(ggplot_build(q))
