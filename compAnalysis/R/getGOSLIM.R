@@ -1,7 +1,8 @@
 # Extract GOslim terms with aspect of interest (biological process, molecular function) 
 # from TAIR list downloaded on 19th April 2021
-# GOSLIM table contains the GOslim terms for 28834 A.thaliana genes with "AT" identifier
+# GOSLIM table contains the GOslim terms for 28553 A.thaliana genes with "AT" identifier
 # Create GOSLIM lists of 7003 angiosperm orthologous genes
+# Gene Ontology Enrichment Analysis has been carried out using ShinyGO v0.66
 
 
 getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sample_size) {
@@ -26,16 +27,29 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 	GOSLIM = file.path(in_dir, "Functional_groups", "ATH_GO_GOSLIM.txt")
 	GOCAT = file.path(in_dir, "Functional_groups", "TAIR_GO_slim_categories.txt")
 	orthoTPM = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+	goP = file.path(in_dir, "Functional_groups", "AT_core_orthologs_GO_enrichment_P.csv")
+	goF = file.path(in_dir, "Functional_groups", "AT_core_orthologs_GO_enrichment_F.csv")
 
 	GOSLIM <- read.table(GOSLIM, sep="\t", dec=".", quote = "", header=FALSE, skip=4, fill = TRUE, stringsAsFactors=FALSE)
 	GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
 	orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
+	if (aspect == "biological_process") {
+
+		goEnr <- read.table(goP, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+	
+	} else if (aspect == "molecular_function") {
+
+		goEnr <- read.table(goF, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+	}
+
+	goEnr <- goEnr[,c(1,4)]
+
 
     # return_list <- list("orthoTPM" = orthoTPM, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "sample_size" = sample_size)
     # return(return_list)
     # }
-    # return_objects <- getGOSLIM(aspect = "biological_process", sample_size = 250)
+    # return_objects <- getGOSLIM(aspect = "biological_process", sample_size = 150)
     # list2env(return_objects, envir = .GlobalEnv)
 
     if (aspect == "biological_process") {
@@ -72,8 +86,39 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     stats_ortho_genes_df <- data.frame(ortho_genes = matrix(unlist(stats_ortho_genes), byrow=TRUE), stringsAsFactors=FALSE)
     goslim_northo_stats <- cbind(stats_all_genes_df, stats_ortho_genes_df)
     goslim_northo_stats$goslim_term <- names(slim_ortho_ls)
-    goslim_northo_stats$perc_cons <- round((goslim_northo_stats$ortho_genes/goslim_northo_stats$all_genes)*100, 1)
-    goslim_northo_stats <- goslim_northo_stats[c("goslim_term", "all_genes", "ortho_genes", "perc_cons")]
+    goslim_northo_stats$expected <- (7003/28553)*goslim_northo_stats$all_genes
+    goslim_northo_stats$fold_enrichment <- goslim_northo_stats$ortho_genes/goslim_northo_stats$expected
+    goslim_northo_stats <- goslim_northo_stats[c("goslim_term", "all_genes", "ortho_genes", "expected", "fold_enrichment")]
+
+    # Combine stats table with GO enrichment data
+    goEnrP <- merge(goslim_northo_stats, goEnr, by.x=c("goslim_term"), by.y=c("Functional.Category"))
+    goslim_northo_stats_ne <- anti_join(goslim_northo_stats, goEnrP, by="goslim_term")
+    ns_enr <- data.frame(Enrichment.FDR = c(rep("ns", nrow(goslim_northo_stats_ne))))
+    goslim_northo_stats_ne <- cbind(goslim_northo_stats_ne, ns_enr)
+    goslim_northo_stats_p <- rbind(goEnrP, goslim_northo_stats_ne)
+
+
+
+    # Compute GO enrichment p value and FDR corrected p value
+
+pwdata <- split(goslim_northo_stats, rep(1:(nrow(goslim_northo_stats)), each = 1))
+lst <- setNames(vector('list', length(pwdata)), 1:length(pwdata))
+
+for (i in 1:length(pwdata)) {
+       allg <- as.numeric(as.character(unlist(pwdata[[i]][,2])))
+       ortg <- as.numeric(as.character(unlist(pwdata[[i]][,3])))
+       probabilities <- dhyper(c(0:allg), allg, (28553-allg), 7003, log = FALSE)
+       pvalue <- 2*(sum(probabilities[(ortg+1):(allg+1)]))
+       lst[[i]] <- pvalue
+    }
+
+p_value <- c(do.call(rbind, lst))
+padj<- data.frame(p_value=p.adjust(p_value, method = "fdr", n = length(p_value))) # FDR correction
+goslim_northo_stats_ownP <- cbind(goslim_northo_stats, padj)
+
+
+
+
 
     # Remove all ortholog GOslim lists wth fewer entries than defines sample_size
     slim_ortho_ls <- Filter(function(dt) nrow(dt) >= sample_size, slim_ortho_ls)
