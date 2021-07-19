@@ -91,7 +91,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
     p_value <- c(do.call(rbind, lst))
     padj<- data.frame(p_value=p.adjust(p_value, method = "fdr", n = length(p_value))) # FDR correction
-    goslim_northo_stats_ownP <- cbind(goslim_northo_stats, padj)
+    goslim_northo_enrich_stats <- cbind(goslim_northo_stats, padj)
 
 
     # Remove all ortholog GOslim lists wth fewer entries than defines sample_size
