@@ -3,6 +3,8 @@
 # GOSLIM table contains the GOslim terms for 28553 A.thaliana genes with "AT" identifier
 # Create GOSLIM lists of 7003 angiosperm orthologous genes
 
+library(dplyr)
+library(MatchIt)
 
 getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sample_size) {
 
@@ -96,6 +98,109 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
     # Remove all ortholog GOslim lists wth fewer entries than defines sample_size
     slim_ortho_ls <- Filter(function(dt) nrow(dt) >= sample_size, slim_ortho_ls)
+
+
+    # Prepare angiosperm ortholog data
+    orthoExpr <- data.frame(gene_id=sub("\\:.*", "", orthoTPM[,1]),orthoTPM[,2:ncol(orthoTPM)])
+    orthoExpr[,2:ncol(orthoExpr)] <- log2(orthoExpr[,2:ncol(orthoExpr)] + 1)
+    orthoExpr <- orthoExpr[!grepl("ERCC", orthoExpr$gene_id),]
+
+    calculateAvgExpr <- function(df) {
+
+            # Split data frame by sample replicates into a list
+            # then get rowMeans for each subset and bind averaged data to gene_id column
+
+            averaged_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
+                rep(seq_along(df), 
+                each = 3, 
+                length.out=ncol(df)-1)
+                ), rowMeans)
+              )
+
+            averaged_replicates <- cbind(df[1], averaged_replicates)
+        
+            return(averaged_replicates)
+        }
+
+        x_avg <- calculateAvgExpr(orthoExpr)
+
+        DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", "Flower", 
+            "Stamen", "Carpel", "Pollen"), each=7)
+        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), times=9)
+        repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
+
+        colnames(x_avg)[2:ncol(x_avg)] <- repl_names
+
+        x_avg <- x_avg %>% select (-c(Pollen_AT, Pollen_AL, Pollen_CR, Pollen_ES, Pollen_TH, 
+            Pollen_MT, Pollen_BD))
+
+
+        # Compute average expression for each species
+        calculateSpAvg <- function(xdf) {
+
+            df <- xdf
+
+            # Re-oder columns to allow easier splitting of species
+            avg_names <- colnames(df[2:ncol(df)])
+            spec_names <- gsub(".*_","", avg_names)
+            avg_names <- paste(spec_names, avg_names, sep="_")
+            avg_names <- gsub('.{3}$', '', avg_names)
+            colnames(df)[2:ncol(df)] <- avg_names
+            df <- df[,order(colnames(df))]
+            df <- select(df, "gene_id", everything())
+
+            # Split data frame by sample replicates into a list
+            # then get rowMeans for each subset and bind averaged data to gene_id column
+
+            averaged_spec <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
+                rep(seq_along(df), 
+                each = 8, 
+                length.out=ncol(df)-1)
+                ), rowMeans)
+              )
+
+            names_averaged_spec <- unique(sub("\\_.*", "", colnames(df)[2:ncol(df)]))
+            avg_names <- paste("avg", names_averaged_spec, sep="_")
+            colnames(averaged_spec) <- avg_names
+
+            averaged_spec <- cbind(xdf[1], averaged_spec)
+        
+            return(averaged_spec)
+        }
+
+        spec_avg <- calculateSpAvg(x_avg)
+
+        orthoExDf <- merge(spec_avg, x_avg)
+
+
+
+
+    # Match control genes to each ortholog GOslim class
+    getControls <- lapply(slim_ortho_ls, function(x){
+
+        x_df <- as.data.frame(x)
+        x_df <- data.frame(gene_id=x_df$V1, goslim=x_df$V9)
+        sign <- as.numeric(rep(c(1), nrow(x_df)))
+        x_df <- cbind(x_df, sign)
+        control <- data.frame(gene_id=subset(coreOrthologs[,1], coreOrthologs[,1] %!in% x_df[,1]))
+        control_df <- data.frame(goslim=rep(unique(x_df$goslim), nrow(control)), 
+            sign=as.numeric(rep(c(0), nrow(control))))
+        control_df <- cbind(control, control_df)
+        comb_df <- rbind(x_df, control_df)
+        comb_exdf <- merge(comb_df, orthoExDf)
+
+        # Create background gene set
+        background <- c()
+        match_res <- matchit(sign ~ avg_AT + avg_AL + avg_CR + avg_ES + avg_TH + avg_MT + avg_BD, 
+            comb_exdf, method="genetic", distance="mahalanobis", pop.size=1, replace=FALSE, 
+            ratio=1)
+        background <- c(background, match_res$match.matrix[,1]) 
+        out <- comb_exdf[background,]
+
+
+
+    })
+
 
 
 
