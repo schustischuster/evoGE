@@ -40,6 +40,14 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     # return_objects <- getGOSLIM(aspect = "biological_process", sample_size = 150)
     # list2env(return_objects, envir = .GlobalEnv)
 
+    # Show message
+    message("Starting analysis...")
+
+
+
+    #--------- Extract GOslim data for DevSeq core orthologs and check GO enrichment ----------
+
+
     if (aspect == "biological_process") {
 
     	selCAT <- dplyr::filter(GOCAT, grepl("biological process", ONTOLOGY.ASPECT))
@@ -62,6 +70,20 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     coreOrthologs <- sub("\\:.*", "", orthoTPM[,1]) # get AT orthologs
     coreOrthologs <- coreOrthologs[!grepl("ERCC", coreOrthologs)] # Rm spike-ins from ortholog list
     coreOrthologs <- as.data.frame(coreOrthologs)
+
+
+    # Clean up GOslim term list: Remove specific categories
+    # Remove "other" categories because not informative
+    # Remove "Response to light stimulus" because plants were grown at constant light
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other metabolic processes" = NULL)
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other cellular processes" = NULL)
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other biological processes" = NULL)
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("response to light stimulus" = NULL)
+    # Remove some remaining functional ontologies from list
+    slim_genes_uls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, !grepl("F", V8))})
+    # Delete "Cell Growth" GOslim term from "Growth" category
+    slim_genes_uls[["growth"]] <- dplyr::filter(slim_genes_uls[["growth"]], !grepl("cell growth", V9))
+
 
     # Get list of orthologous genes that are associated with a GOSLIM term
     slim_ortho_ls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, (V1 %in% coreOrthologs[,1]))})
@@ -100,10 +122,19 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     slim_ortho_ls <- Filter(function(dt) nrow(dt) >= sample_size, slim_ortho_ls)
 
 
+
+    #------------ Combine DevSeq core ortholog expression tables with GOslim data -------------
+
+
     # Prepare angiosperm ortholog data
     orthoExpr <- data.frame(gene_id=sub("\\:.*", "", orthoTPM[,1]),orthoTPM[,2:ncol(orthoTPM)])
     orthoExpr[,2:ncol(orthoExpr)] <- log2(orthoExpr[,2:ncol(orthoExpr)] + 1)
     orthoExpr <- orthoExpr[!grepl("ERCC", orthoExpr$gene_id),]
+
+
+    # Negate dplyr %in%
+    `%!in%` = Negate(`%in%`)
+
 
     calculateAvgExpr <- function(df) {
 
@@ -135,35 +166,34 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             Pollen_MT, Pollen_BD))
 
 
-        # Compute average expression for each species
-        calculateSpAvg <- function(xdf) {
-
-            df <- xdf
-
-            # Re-oder columns to allow easier splitting of species
-            avg_names <- colnames(df[2:ncol(df)])
-            spec_names <- gsub(".*_","", avg_names)
-            avg_names <- paste(spec_names, avg_names, sep="_")
-            avg_names <- gsub('.{3}$', '', avg_names)
-            colnames(df)[2:ncol(df)] <- avg_names
-            df <- df[,order(colnames(df))]
-            df <- select(df, "gene_id", everything())
-
-            # Split data frame by sample replicates into a list
-            # then get rowMeans for each subset and bind averaged data to gene_id column
+        # Compute average expression and sd for each organ
+        calculateSpAvg <- function(df) {
 
             averaged_spec <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
                 rep(seq_along(df), 
-                each = 8, 
+                each = 7, 
                 length.out=ncol(df)-1)
                 ), rowMeans)
+              )
+
+            RowSD <- function(x) {
+                sqrt(rowSums((x - rowMeans(x))^2)/(dim(x)[2] - 1))
+            }
+
+            averaged_sd <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
+                rep(seq_along(df), 
+                each = 7, 
+                length.out=ncol(df)-1)
+                ), RowSD)
               )
 
             names_averaged_spec <- unique(sub("\\_.*", "", colnames(df)[2:ncol(df)]))
             avg_names <- paste("avg", names_averaged_spec, sep="_")
             colnames(averaged_spec) <- avg_names
+            sd_names <- paste("sd", names_averaged_spec, sep="_")
+            colnames(averaged_sd) <- sd_names
 
-            averaged_spec <- cbind(xdf[1], averaged_spec)
+            averaged_spec <- cbind(df[1], averaged_spec, averaged_sd)
         
             return(averaged_spec)
         }
@@ -173,6 +203,8 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         orthoExDf <- merge(spec_avg, x_avg)
 
 
+
+    #--------- Preprocess control data for GOslim term analysis by 1:1/2:1 matching -----------
 
 
     # Match control genes to each ortholog GOslim class
@@ -191,9 +223,10 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
         # Create background gene set
         background <- c()
-        match_res <- matchit(sign ~ avg_AT + avg_AL + avg_CR + avg_ES + avg_TH + avg_MT + avg_BD, 
-            comb_exdf, method="genetic", distance="mahalanobis", pop.size=1, replace=FALSE, 
-            ratio=1)
+        match_res <- matchit(sign ~ avg_Root + avg_Hypocotyl + avg_Leaf + avg_veg + avg_inf + 
+            avg_Flower + avg_Stamen + avg_Carpel + sd_Root + sd_Hypocotyl + sd_Leaf + sd_veg + 
+            sd_inf + sd_Flower + sd_Stamen + sd_Carpel, comb_exdf, 
+            method="genetic", distance="mahalanobis", pop.size=1, replace=FALSE, ratio=1)
         background <- c(background, match_res$match.matrix[,1]) 
         out <- comb_exdf[background,]
 
