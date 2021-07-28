@@ -73,16 +73,22 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
 
     # Clean up GOslim term list: Remove specific categories
-    # Remove "other" categories because not informative
-    # Remove "Response to light stimulus" because plants were grown at constant light
-    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other metabolic processes" = NULL)
-    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other cellular processes" = NULL)
-    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other biological processes" = NULL)
-    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("response to light stimulus" = NULL)
-    # Remove some remaining functional ontologies from list
-    slim_genes_uls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, !grepl("F", V8))})
-    # Delete "Cell Growth" GOslim term from "Growth" category
-    slim_genes_uls[["growth"]] <- dplyr::filter(slim_genes_uls[["growth"]], !grepl("cell growth", V9))
+    if (aspect == "biological_process") {
+        
+        # Remove "other" categories because not informative
+        # Remove "Response to light stimulus" because plants were grown at constant light
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other metabolic processes" = NULL)
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other cellular processes" = NULL)
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other biological processes" = NULL)
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("response to light stimulus" = NULL)
+        # Remove some remaining functional ontologies from list
+        slim_genes_uls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, !grepl("F", V8))})
+        # Delete "Cell Growth" GOslim term from "Growth" category
+        slim_genes_uls[["growth"]] <- dplyr::filter(slim_genes_uls[["growth"]], !grepl("cell growth", V9))
+    
+    } else if (aspect == "molecular_function") {
+
+    }
 
 
     # Get list of orthologous genes that are associated with a GOSLIM term
@@ -176,6 +182,8 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 ), rowMeans)
               )
 
+            averaged_all_samples <- rowMeans(df[2:ncol(df)])
+
             RowSD <- function(x) {
                 sqrt(rowSums((x - rowMeans(x))^2)/(dim(x)[2] - 1))
             }
@@ -190,10 +198,10 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             names_averaged_spec <- unique(sub("\\_.*", "", colnames(df)[2:ncol(df)]))
             avg_names <- paste("avg", names_averaged_spec, sep="_")
             colnames(averaged_spec) <- avg_names
-            sd_names <- paste("sd", names_averaged_spec, sep="_")
-            colnames(averaged_sd) <- sd_names
+            # sd_names <- paste("sd", names_averaged_spec, sep="_")
+            # colnames(averaged_sd) <- sd_names
 
-            averaged_spec <- cbind(df[1], averaged_spec, averaged_sd)
+            averaged_spec <- cbind(df[1], averaged_spec, averaged_all_samples)
         
             return(averaged_spec)
         }
@@ -223,9 +231,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
         # Create background gene set
         background <- c()
-        match_res <- matchit(sign ~ avg_Root + avg_Hypocotyl + avg_Leaf + avg_veg + avg_inf + 
-            avg_Flower + avg_Stamen + avg_Carpel + sd_Root + sd_Hypocotyl + sd_Leaf + sd_veg + 
-            sd_inf + sd_Flower + sd_Stamen + sd_Carpel, comb_exdf, 
+        match_res <- matchit(sign ~ averaged_all_samples, comb_exdf, 
             method="genetic", distance="mahalanobis", pop.size=1, replace=FALSE, ratio=1)
         background <- c(background, match_res$match.matrix[,1]) 
         out <- comb_exdf[background,]
