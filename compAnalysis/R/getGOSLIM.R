@@ -182,7 +182,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 ), rowMeans)
               )
 
-            averaged_all_samples <- rowMeans(df[2:ncol(df)])
+            base_averaged <- rowMeans(df[2:ncol(df)])
 
             RowSD <- function(x) {
                 sqrt(rowSums((x - rowMeans(x))^2)/(dim(x)[2] - 1))
@@ -201,7 +201,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             # sd_names <- paste("sd", names_averaged_spec, sep="_")
             # colnames(averaged_sd) <- sd_names
 
-            averaged_spec <- cbind(df[1], averaged_spec, averaged_all_samples)
+            averaged_spec <- cbind(df[1], averaged_spec, base_averaged)
         
             return(averaged_spec)
         }
@@ -212,7 +212,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
 
 
-    #--------- Preprocess control data for GOslim term analysis by 1:1/2:1 matching -----------
+    #--------- Preprocess control data for GOslim term analysis by 1:1/k:1 matching -----------
 
 
     # Match control genes to each ortholog GOslim class
@@ -229,12 +229,35 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         comb_df <- rbind(x_df, control_df)
         comb_exdf <- merge(comb_df, orthoExDf)
 
+        # Set ratio for control:treatment
+        ntreat <- nrow(x_df)
+
+        if (ntreat <= 1000 & ntreat >= 500) {
+            cratio <- 2
+        } else if (ntreat <= 500 & ntreat >= 350) {
+            cratio <- 3
+        } else if (ntreat <= 350 & ntreat >= 250) {
+            cratio <- 4
+        } else if (ntreat <= 250 & ntreat >= 175) {
+            cratio <- 5
+        } else if (ntreat <= 175) {
+            cratio <- 6
+        } else cratio <- 1
+
         # Create background gene set
         background <- c()
-        match_res <- matchit(sign ~ averaged_all_samples, comb_exdf, 
-            method="genetic", distance="mahalanobis", pop.size=1, replace=FALSE, ratio=1)
-        background <- c(background, match_res$match.matrix[,1]) 
-        out <- comb_exdf[background,]
+        match_res <- matchit(sign ~ base_averaged, comb_exdf, 
+            method="nearest", distance="mahalanobis", replace=FALSE, ratio=cratio)
+        background <- c(background, match_res$match.matrix[,]) 
+        control_out <- comb_exdf[background,]
+
+        control_out <- control_out %>% select (-c(avg_Root, avg_Hypocotyl, avg_Leaf, avg_veg, 
+            avg_inf, avg_Flower, avg_Stamen, avg_Carpel, base_averaged, min_exp, max_exp))
+
+        goslim_out <- merge(x_df, orthoExDf)
+
+        goslim_out <- goslim_out %>% select (-c(avg_Root, avg_Hypocotyl, avg_Leaf, avg_veg, 
+            avg_inf, avg_Flower, avg_Stamen, avg_Carpel, base_averaged, min_exp, max_exp))
 
 
 
