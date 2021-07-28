@@ -232,13 +232,13 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         # Set ratio for control:treatment
         ntreat <- nrow(x_df)
 
-        if (ntreat <= 1000 & ntreat >= 500) {
+        if (ntreat <= 1000 & ntreat >= 501) {
             cratio <- 2
-        } else if (ntreat <= 500 & ntreat >= 350) {
+        } else if (ntreat <= 500 & ntreat >= 351) {
             cratio <- 3
-        } else if (ntreat <= 350 & ntreat >= 250) {
+        } else if (ntreat <= 350 & ntreat >= 251) {
             cratio <- 4
-        } else if (ntreat <= 250 & ntreat >= 175) {
+        } else if (ntreat <= 250 & ntreat >= 176) {
             cratio <- 5
         } else if (ntreat <= 175) {
             cratio <- 6
@@ -248,7 +248,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         background <- c()
         match_res <- matchit(sign ~ base_averaged, comb_exdf, 
             method="nearest", distance="mahalanobis", replace=FALSE, ratio=cratio)
-        background <- c(background, match_res$match.matrix[,]) 
+        background <- c(background, match_res$match.matrix) 
         control_out <- comb_exdf[background,]
 
         control_out <- control_out %>% select (-c(avg_Root, avg_Hypocotyl, avg_Leaf, avg_veg, 
