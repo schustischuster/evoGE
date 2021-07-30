@@ -216,7 +216,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
 
     # Match control genes to each ortholog GOslim class
-    getControls <- lapply(slim_ortho_ls, function(x){
+    getGoslimStats <- as.data.frame(do.call(rbind, lapply(slim_ortho_ls, function(x){
 
         x_df <- as.data.frame(x)
         x_df <- data.frame(gene_id=x_df$V1, goslim=x_df$V9)
@@ -252,16 +252,164 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         control_out <- comb_exdf[background,]
 
         control_out <- control_out %>% select (-c(avg_Root, avg_Hypocotyl, avg_Leaf, avg_veg, 
-            avg_inf, avg_Flower, avg_Stamen, avg_Carpel, base_averaged, min_exp, max_exp))
+            avg_inf, avg_Flower, avg_Stamen, avg_Carpel, base_averaged))
 
         goslim_out <- merge(x_df, orthoExDf)
 
         goslim_out <- goslim_out %>% select (-c(avg_Root, avg_Hypocotyl, avg_Leaf, avg_veg, 
-            avg_inf, avg_Flower, avg_Stamen, avg_Carpel, base_averaged, min_exp, max_exp))
+            avg_inf, avg_Flower, avg_Stamen, avg_Carpel, base_averaged))
 
 
 
-    })
+
+        #---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
+
+
+        # Show message
+        message("Calculating expression distances...")
+
+
+        ortho_control <- merge(control_out, orthoExpr)
+        ortho_go <- merge(goslim_out, orthoExpr)
+
+        ortho_control <- ortho_control[-2:-59]
+        ortho_go <- ortho_go[-2:-59]
+
+
+        # Use pearson correlation, inter-organ normalization and TPM for ms
+
+        getDSOrganCor <- function(df, organ) {
+
+            df_cor <- sqrt(1/2*(1 - cor(df, method="pearson")))
+            df_cor <- df_cor[4:nrow(df_cor),]
+
+            sp1 <- mean(df_cor[1:3,1:3])
+            sp2 <- mean(df_cor[4:6,1:6])
+            sp3 <- mean(df_cor[7:9,1:9])
+            sp4 <- mean(df_cor[10:12,1:12])
+            sp5 <- mean(df_cor[13:15,1:15])
+            sp6 <- mean(df_cor[16:18,1:18])
+
+            # Get errors
+            df_cor <- as.data.frame(df_cor, stringsAsFactors=FALSE)
+
+            avgRepl <- function(x_df) {
+
+                getRepl <- function(x) {
+
+                    split.default(x, 
+                        rep(seq_along(x), 
+                            each = 3, 
+                            length.out=ncol(x)
+                            )
+                        )
+                }
+
+                repl_lst <- getRepl(x_df)
+                repl_sum <- lapply(repl_lst, sum)
+                repl_mean <- as.numeric(unlist(repl_sum))/9
+
+                return(repl_mean)
+            }
+
+            sp1_repl <- avgRepl(df_cor[1:3,1:3]) # AT-AL
+            sp2_repl <- avgRepl(df_cor[4:6,1:6]) # AT-CR AL-CR
+            sp3_repl <- avgRepl(df_cor[7:9,1:9]) # AT-ES AL-ES CR-ES
+            sp4_repl <- avgRepl(df_cor[10:12,1:12]) # AT-TH AL-TH CR-TH ES-TH
+            sp5_repl <- avgRepl(df_cor[13:15,1:15]) # AT-MT AL-MT CR-MT ES-MT TH-MT
+            sp6_repl <- avgRepl(df_cor[16:18,1:18]) # AT-BD AL-BD CR-BD ES-BD TH-BD MT-BD
+
+            getError <- function(cor_data) {
+                std <- sd(cor_data, na.rm=TRUE)
+                num <- length(cor_data)
+                error <- std/sqrt(num)
+                return(error)
+            } # Use this function to replace sd if reqired
+
+            df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp1_repl))),
+                    as.numeric(c(sd(sp2_repl))), as.numeric(c(sd(sp3_repl))), 
+                    as.numeric(c(sd(sp4_repl))), as.numeric(c(sd(sp5_repl))), 
+                    as.numeric(c(sd(sp6_repl)))))
+
+            df_cor_avg <- data.frame(correlation = c(sp1, sp2, sp3, sp4, sp5, sp6))
+            div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
+            organ_id <- data.frame(comp_organ = rep(organ, 6))
+            div_times <- data.frame(div_times = c(7.1, 9.4, 25.6, 46, 106, 160))
+            dataset <- data.frame(dataset = rep("Angiosperms ", 6))
+            df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_error, dataset)
+
+            return(df_cor_avg)
+
+        }
+
+        root_divc <- getDSOrganCor(df=ortho_control[,2:22], organ="Root")
+        hypocotyl_divc <- getDSOrganCor(df=ortho_control[,23:43], organ="Hypocotyl")
+        leaf_divc <- getDSOrganCor(df=ortho_control[,44:64], organ="Leaf")
+        veg_apex_divc <- getDSOrganCor(df=ortho_control[,65:85], organ="Apex veg")
+        inf_apex_divc <- getDSOrganCor(df=ortho_control[,86:106], organ="Apex inf")
+        flower_divc <- getDSOrganCor(df=ortho_control[,107:127], organ="Flower")
+        stamen_divc <- getDSOrganCor(df=ortho_control[,128:148], organ="Stamen")
+        carpel_divc <- getDSOrganCor(df=ortho_control[,149:169], organ="Carpel")
+
+        control_div_rates <- rbind(root_divc, hypocotyl_divc, leaf_divc, veg_apex_divc, inf_apex_divc, 
+            flower_divc, stamen_divc, carpel_divc)
+    
+
+        root_divg <- getDSOrganCor(df=ortho_go[,2:22], organ="Root")
+        hypocotyl_divg <- getDSOrganCor(df=ortho_go[,23:43], organ="Hypocotyl")
+        leaf_divg <- getDSOrganCor(df=ortho_go[,44:64], organ="Leaf")
+        veg_apex_divg <- getDSOrganCor(df=ortho_go[,65:85], organ="Apex veg")
+        inf_apex_divg <- getDSOrganCor(df=ortho_go[,86:106], organ="Apex inf")
+        flower_divg <- getDSOrganCor(df=ortho_go[,107:127], organ="Flower")
+        stamen_divg <- getDSOrganCor(df=ortho_go[,128:148], organ="Stamen")
+        carpel_divg <- getDSOrganCor(df=ortho_go[,149:169], organ="Carpel")
+
+        ortho_div_rates <- rbind(root_divg, hypocotyl_divg, leaf_divg, veg_apex_divg, inf_apex_divg, 
+            flower_divg, stamen_divg, carpel_divg)
+
+        # Set up lists containing metric pearson expression distances
+        control_organ_lst <- list(control_div_rates[1:6,], control_div_rates[7:12,], 
+            control_div_rates[13:18,], control_div_rates[19:24,], control_div_rates[25:30,], 
+            control_div_rates[31:36,], control_div_rates[37:42,], control_div_rates[43:48,])
+
+        ortho_organ_lst <- list(ortho_div_rates[1:6,], ortho_div_rates[7:12,], 
+            ortho_div_rates[13:18,], ortho_div_rates[19:24,], ortho_div_rates[25:30,], 
+            ortho_div_rates[31:36,], ortho_div_rates[37:42,], ortho_div_rates[43:48,])
+
+
+        getLOESS.Slopes <- function(organ_data) {
+
+            comp_organ <- unique(organ_data$comp_organ)
+
+            # Use quadratic polynomes for all organs
+            temp <- loess.smooth(organ_data$div_times, organ_data$correlation, span = 1, 
+                degree = 2, family="gaussian", evaluation = 200)
+
+            # Get slope values
+            slopes = diff(temp$y)/diff(temp$x)
+            slopes_avg <- mean(slopes)
+            slopes_avg <- as.numeric(as.data.frame(slopes_avg))
+
+            return(slopes_avg)
+        }
+
+        control_loess_slopes <- as.data.frame(do.call(rbind, lapply(control_organ_lst, getLOESS.Slopes)))
+        go_loess_slopes <- as.data.frame(do.call(rbind, lapply(ortho_organ_lst, getLOESS.Slopes)))
+
+        loess_out <- data.frame(
+
+            goslim = rep(unique(x_df$goslim), nrow(go_loess_slopes)*2),
+            group = c(rep("control", nrow(control_loess_slopes)), rep("functional", nrow(go_loess_slopes))),
+            slopes = c(control_loess_slopes[,1], go_loess_slopes[,1]),
+            p_value = rep(wilcox.test(as.numeric(control_loess_slopes[,1]), 
+                as.numeric(go_loess_slopes[,1]))$p.value, nrow(go_loess_slopes)*2)
+        )
+
+        return(loess_out)
+
+
+
+    })))
 
 
 
