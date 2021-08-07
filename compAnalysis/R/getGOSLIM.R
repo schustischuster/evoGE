@@ -232,27 +232,75 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         # Set ratio for control:treatment
         ntreat <- nrow(x_df)
 
-        if (ntreat <= 1000 & ntreat >= 501) {
+        if (ntreat <= 1000 & ntreat >= 751) {
             cratio <- 2
-        } else if (ntreat <= 500 & ntreat >= 351) {
-            cratio <- 3
-        } else if (ntreat <= 350 & ntreat >= 251) {
-            cratio <- 4
-        } else if (ntreat <= 250 & ntreat >= 176) {
-            cratio <- 5
-        } else if (ntreat <= 175) {
-            cratio <- 6
+        } else if (ntreat <= 750 & ntreat >= 651) {
+            cratio <- 7
+        } else if (ntreat <= 650 & ntreat >= 451) {
+            cratio <- 8
+        } else if (ntreat <= 450 & ntreat >= 351) {
+            cratio <- 12
+        } else if (ntreat <= 350 & ntreat >= 301) {
+            cratio <- 14
+        } else if (ntreat <= 300 & ntreat >= 251) {
+            cratio <- 14
+        } else if (ntreat <= 250 & ntreat >= 201) {
+            cratio <- 20
+        } else if (ntreat <= 200) {
+            cratio <- 24
         } else cratio <- 1
 
         # Create background gene set
-        background <- c()
         match_res <- matchit(sign ~ base_averaged, comb_exdf, 
-            method="nearest", distance="mahalanobis", replace=FALSE, ratio=cratio)
-        background <- c(background, match_res$match.matrix) 
-        control_out <- comb_exdf[background,]
+            method="nearest", distance="mahalanobis", replace=FALSE, m.order="data", ratio=cratio)
+        match_res_df <- match_res$match.matrix
 
-        control_out <- control_out %>% select (-c(avg_Root, avg_Hypocotyl, avg_Leaf, avg_veg, 
+        # Extract standard mean difference from matchIt summary data
+        comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
+        comp <- abs(comp[3])
+
+        # Redo matching control if standard mean difference is greater than 0.1
+        if ((comp > 0.05) && (ntreat <= 750 & ntreat >= 651)) {
+            cratio <- 6
+        } else if ((comp > 0.05) && (ntreat <= 650 & ntreat >= 451)) {
+            cratio <- 6
+        } else if ((comp > 0.05) && (ntreat <= 450 & ntreat >= 351)) {
+            cratio <- 10
+        } else if ((comp > 0.05) && (ntreat <= 350)) {
+            cratio <- 11
+        }
+
+        if (comp > 0.05) {
+
+            match_res <- matchit(sign ~ base_averaged, comb_exdf, 
+            method="nearest", distance="mahalanobis", replace=FALSE, m.order="data", ratio=cratio)
+            match_res_df <- match_res$match.matrix
+        }
+
+        # For very rary cases: do another round of matching controls
+        comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
+        comp <- abs(comp[3])
+
+        # Redo matching control if standard mean difference is greater than 0.1
+        if ((comp > 0.05) && (ntreat <= 300)) {
+            cratio <- 7
+        }
+
+        if (comp > 0.05) {
+
+            match_res <- matchit(sign ~ base_averaged, comb_exdf, 
+            method="nearest", distance="mahalanobis", replace=FALSE, m.order="data", ratio=cratio)
+            match_res_df <- match_res$match.matrix
+        }
+        
+        control_out <- apply(match_res_df, 2, function(x) {
+
+            control_out <- comb_exdf[x,]
+            control_out <- control_out %>% select (-c(avg_Root, avg_Hypocotyl, avg_Leaf, avg_veg, 
             avg_inf, avg_Flower, avg_Stamen, avg_Carpel, base_averaged))
+            return(control_out)
+
+        })
 
         goslim_out <- merge(x_df, orthoExDf)
 
@@ -269,10 +317,14 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         message("Calculating expression distances...")
 
 
-        ortho_control <- merge(control_out, orthoExpr)
-        ortho_go <- merge(goslim_out, orthoExpr)
+        ortho_control <- lapply(control_out, function(x) {
 
-        ortho_control <- ortho_control[-2:-59]
+            df <- merge(x, orthoExpr)
+            df <- df[-2:-59]
+            return(df)
+        })
+
+        ortho_go <- merge(goslim_out, orthoExpr)
         ortho_go <- ortho_go[-2:-59]
 
 
@@ -280,15 +332,34 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
         getDSOrganCor <- function(df, organ) {
 
-            df_cor <- sqrt(1/2*(1 - cor(df, method="pearson")))
-            df_cor <- df_cor[4:nrow(df_cor),]
+            # Select rows for each organ
+            if (organ == "Root"){
+                df <- df[,2:22]
+            } else if (organ == "Hypocotyl"){
+                df <- df[,23:43]
+            } else if (organ == "Leaf"){
+                df <- df[,44:64]
+            } else if (organ == "Apex_veg"){
+                df <- df[,65:85]
+            } else if (organ == "Apex_inf"){
+                df <- df[,86:106]
+            } else if (organ == "Flower"){
+                df <- df[,107:127]
+            } else if (organ == "Stamen"){
+                df <- df[,128:148]
+            } else if (organ == "Carpel"){
+                df <- df[,149:169]
+            }
 
-            sp1 <- mean(df_cor[1:3,1:3])
-            sp2 <- mean(df_cor[4:6,1:6])
-            sp3 <- mean(df_cor[7:9,1:9])
-            sp4 <- mean(df_cor[10:12,1:12])
-            sp5 <- mean(df_cor[13:15,1:15])
-            sp6 <- mean(df_cor[16:18,1:18])
+            df_cor <- sqrt(1/2*(1 - cor(df, method="pearson")))
+
+            sp0 <- mean(df_cor[1:3,1:3])
+            sp1 <- mean(df_cor[4:6,1:3])
+            sp2 <- mean(df_cor[7:9,1:6])
+            sp3 <- mean(df_cor[10:12,1:9])
+            sp4 <- mean(df_cor[13:15,1:12])
+            sp5 <- mean(df_cor[16:18,1:15])
+            sp6 <- mean(df_cor[19:21,1:18])
 
             # Get errors
             df_cor <- as.data.frame(df_cor, stringsAsFactors=FALSE)
@@ -312,12 +383,13 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 return(repl_mean)
             }
 
-            sp1_repl <- avgRepl(df_cor[1:3,1:3]) # AT-AL
-            sp2_repl <- avgRepl(df_cor[4:6,1:6]) # AT-CR AL-CR
-            sp3_repl <- avgRepl(df_cor[7:9,1:9]) # AT-ES AL-ES CR-ES
-            sp4_repl <- avgRepl(df_cor[10:12,1:12]) # AT-TH AL-TH CR-TH ES-TH
-            sp5_repl <- avgRepl(df_cor[13:15,1:15]) # AT-MT AL-MT CR-MT ES-MT TH-MT
-            sp6_repl <- avgRepl(df_cor[16:18,1:18]) # AT-BD AL-BD CR-BD ES-BD TH-BD MT-BD
+            sp0_repl <- avgRepl(df_cor[1:3,1:3]) # AT-AT
+            sp1_repl <- avgRepl(df_cor[4:6,1:3]) # AT-AL
+            sp2_repl <- avgRepl(df_cor[7:9,1:6]) # AT-CR AL-CR
+            sp3_repl <- avgRepl(df_cor[10:12,1:9]) # AT-ES AL-ES CR-ES
+            sp4_repl <- avgRepl(df_cor[13:15,1:12]) # AT-TH AL-TH CR-TH ES-TH
+            sp5_repl <- avgRepl(df_cor[16:18,1:15]) # AT-MT AL-MT CR-MT ES-MT TH-MT
+            sp6_repl <- avgRepl(df_cor[19:21,1:18]) # AT-BD AL-BD CR-BD ES-BD TH-BD MT-BD
 
             getError <- function(cor_data) {
                 std <- sd(cor_data, na.rm=TRUE)
@@ -326,55 +398,48 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 return(error)
             } # Use this function to replace sd if reqired
 
-            df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp1_repl))),
-                    as.numeric(c(sd(sp2_repl))), as.numeric(c(sd(sp3_repl))), 
-                    as.numeric(c(sd(sp4_repl))), as.numeric(c(sd(sp5_repl))), 
-                    as.numeric(c(sd(sp6_repl)))))
+            df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp0_repl))),
+                    as.numeric(c(sd(sp1_repl))), as.numeric(c(sd(sp2_repl))), 
+                    as.numeric(c(sd(sp3_repl))), as.numeric(c(sd(sp4_repl))), 
+                    as.numeric(c(sd(sp5_repl))), as.numeric(c(sd(sp6_repl)))))
 
-            df_cor_avg <- data.frame(correlation = c(sp1, sp2, sp3, sp4, sp5, sp6))
-            div_tag <- data.frame(clade = c("T1", "T2", "T3", "T4", "T5", "T6"))
-            organ_id <- data.frame(comp_organ = rep(organ, 6))
-            div_times <- data.frame(div_times = c(7.1, 9.4, 25.6, 46, 106, 160))
-            dataset <- data.frame(dataset = rep("Angiosperms ", 6))
+            df_cor_avg <- data.frame(correlation = c(sp0, sp1, sp2, sp3, sp4, sp5, sp6))
+            div_tag <- data.frame(clade = c("T0", "T1", "T2", "T3", "T4", "T5", "T6"))
+            organ_id <- data.frame(comp_organ = rep(organ, 7))
+            div_times <- data.frame(div_times = c(0, 7.1, 9.4, 25.6, 46, 106, 160))
+            dataset <- data.frame(dataset = rep("Angiosperms ", 7))
             df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_error, dataset)
 
             return(df_cor_avg)
 
         }
 
-        root_divc <- getDSOrganCor(df=ortho_control[,2:22], organ="Root")
-        hypocotyl_divc <- getDSOrganCor(df=ortho_control[,23:43], organ="Hypocotyl")
-        leaf_divc <- getDSOrganCor(df=ortho_control[,44:64], organ="Leaf")
-        veg_apex_divc <- getDSOrganCor(df=ortho_control[,65:85], organ="Apex veg")
-        inf_apex_divc <- getDSOrganCor(df=ortho_control[,86:106], organ="Apex inf")
-        flower_divc <- getDSOrganCor(df=ortho_control[,107:127], organ="Flower")
-        stamen_divc <- getDSOrganCor(df=ortho_control[,128:148], organ="Stamen")
-        carpel_divc <- getDSOrganCor(df=ortho_control[,149:169], organ="Carpel")
-
-        control_div_rates <- rbind(root_divc, hypocotyl_divc, leaf_divc, veg_apex_divc, inf_apex_divc, 
-            flower_divc, stamen_divc, carpel_divc)
+        root_divc <- lapply(ortho_control, getDSOrganCor, organ="Root")
+        hypocotyl_divc <- lapply(ortho_control, getDSOrganCor, organ="Hypocotyl")
+        leaf_divc <- lapply(ortho_control, getDSOrganCor, organ="Leaf")
+        veg_apex_divc <- lapply(ortho_control, getDSOrganCor, organ="Apex_veg")
+        inf_apex_divc <- lapply(ortho_control, getDSOrganCor, organ="Apex_inf")
+        flower_divc <- lapply(ortho_control, getDSOrganCor, organ="Flower")
+        stamen_divc <- lapply(ortho_control, getDSOrganCor, organ="Stamen")
+        carpel_divc <- lapply(ortho_control, getDSOrganCor, organ="Carpel")
     
 
-        root_divg <- getDSOrganCor(df=ortho_go[,2:22], organ="Root")
-        hypocotyl_divg <- getDSOrganCor(df=ortho_go[,23:43], organ="Hypocotyl")
-        leaf_divg <- getDSOrganCor(df=ortho_go[,44:64], organ="Leaf")
-        veg_apex_divg <- getDSOrganCor(df=ortho_go[,65:85], organ="Apex veg")
-        inf_apex_divg <- getDSOrganCor(df=ortho_go[,86:106], organ="Apex inf")
-        flower_divg <- getDSOrganCor(df=ortho_go[,107:127], organ="Flower")
-        stamen_divg <- getDSOrganCor(df=ortho_go[,128:148], organ="Stamen")
-        carpel_divg <- getDSOrganCor(df=ortho_go[,149:169], organ="Carpel")
+        root_divg <- getDSOrganCor(df=ortho_go, organ="Root")
+        hypocotyl_divg <- getDSOrganCor(df=ortho_go, organ="Hypocotyl")
+        leaf_divg <- getDSOrganCor(df=ortho_go, organ="Leaf")
+        veg_apex_divg <- getDSOrganCor(df=ortho_go, organ="Apex_veg")
+        inf_apex_divg <- getDSOrganCor(df=ortho_go, organ="Apex_inf")
+        flower_divg <- getDSOrganCor(df=ortho_go, organ="Flower")
+        stamen_divg <- getDSOrganCor(df=ortho_go, organ="Stamen")
+        carpel_divg <- getDSOrganCor(df=ortho_go, organ="Carpel")
 
         ortho_div_rates <- rbind(root_divg, hypocotyl_divg, leaf_divg, veg_apex_divg, inf_apex_divg, 
             flower_divg, stamen_divg, carpel_divg)
 
         # Set up lists containing metric pearson expression distances
-        control_organ_lst <- list(control_div_rates[1:6,], control_div_rates[7:12,], 
-            control_div_rates[13:18,], control_div_rates[19:24,], control_div_rates[25:30,], 
-            control_div_rates[31:36,], control_div_rates[37:42,], control_div_rates[43:48,])
-
-        ortho_organ_lst <- list(ortho_div_rates[1:6,], ortho_div_rates[7:12,], 
-            ortho_div_rates[13:18,], ortho_div_rates[19:24,], ortho_div_rates[25:30,], 
-            ortho_div_rates[31:36,], ortho_div_rates[37:42,], ortho_div_rates[43:48,])
+        ortho_organ_lst <- list(ortho_div_rates[1:7,], ortho_div_rates[8:14,], 
+            ortho_div_rates[15:21,], ortho_div_rates[22:28,], ortho_div_rates[29:35,], 
+            ortho_div_rates[36:42,], ortho_div_rates[43:49,], ortho_div_rates[50:56,])
 
 
         getLOESS.Slopes <- function(organ_data) {
@@ -388,13 +453,185 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             # Get slope values
             slopes = diff(temp$y)/diff(temp$x)
             slopes_avg <- mean(slopes)
-            slopes_avg <- as.numeric(as.data.frame(slopes_avg))
+            slopes_avg <- data.frame("loess_slope"=slopes_avg, "organ"=comp_organ)
 
             return(slopes_avg)
         }
 
-        control_loess_slopes <- as.data.frame(do.call(rbind, lapply(control_organ_lst, getLOESS.Slopes)))
-        go_loess_slopes <- as.data.frame(do.call(rbind, lapply(ortho_organ_lst, getLOESS.Slopes)))
+        # Get mean loess regression slopes for all goslim control sets
+        rtc_loess_slopes <- data.frame(do.call(rbind, lapply(root_divc, getLOESS.Slopes)))
+        hcc_loess_slopes <- data.frame(do.call(rbind, lapply(hypocotyl_divc, getLOESS.Slopes)))
+        lfc_loess_slopes <- data.frame(do.call(rbind, lapply(leaf_divc, getLOESS.Slopes)))
+        avc_loess_slopes <- data.frame(do.call(rbind, lapply(veg_apex_divc, getLOESS.Slopes)))
+        aic_loess_slopes <- data.frame(do.call(rbind, lapply(inf_apex_divc, getLOESS.Slopes)))
+        flc_loess_slopes <- data.frame(do.call(rbind, lapply(flower_divc, getLOESS.Slopes)))
+        stc_loess_slopes <- data.frame(do.call(rbind, lapply(stamen_divc, getLOESS.Slopes)))
+        clc_loess_slopes <- data.frame(do.call(rbind, lapply(carpel_divc, getLOESS.Slopes)))
+
+        # Set up list containing all organ goslim control sets
+        control_loess_slp_lst <- list(rtc_loess_slopes, hcc_loess_slopes, lfc_loess_slopes, 
+            avc_loess_slopes, aic_loess_slopes, flc_loess_slopes, stc_loess_slopes, clc_loess_slopes)
+
+        # Get loess mean and CI for control sets
+        getCLoessStats <- function(gset) {
+
+            cmean <- mean(gset$loess_slope)
+            csd <- sd(gset$loess_slope)
+            cse <- csd/sqrt(nrow(gset))
+            cqt <- qt(0.975, nrow(gset)-1)
+            cci <- cqt*cse
+            cui <- cmean+cci
+            cli <- cmean-cci
+            stats_df <- data.frame(organ=unique(gset$organ), mean_loess_control=cmean, 
+                lower_loess_control=cli, upper_loess_control=cui)
+
+            return(stats_df)
+        }
+
+        control_loess_slopes <- data.frame(do.call(rbind, lapply(control_loess_slp_lst, getCLoessStats)))
+        
+        # Get mean loess regression slopes for goslim category
+        go_loess_slopes <- data.frame(do.call(rbind, lapply(ortho_organ_lst, getLOESS.Slopes)))
+
+        # Wilcox rank sum test to compare goslim loess slopes with control slopes
+        loess_slope_df <- merge(go_loess_slopes, control_loess_slopes, sort=FALSE)
+
+        loess_slope_df <- data.frame(loess_slope_df, 
+            mean_p = rep(wilcox.test(
+                loess_slope_df$loess_slope, loess_slope_df$mean_loess_control)$p.value, 
+            nrow(loess_slope_df)), 
+            lower_bound_p = rep(wilcox.test(
+                loess_slope_df$loess_slope, loess_slope_df$lower_loess_control)$p.value, 
+            nrow(loess_slope_df)), 
+            upper_bound_p = rep(wilcox.test(
+                loess_slope_df$loess_slope, loess_slope_df$upper_loess_control)$p.value, 
+            nrow(loess_slope_df)))
+
+
+
+
+
+
+
+
+
+
+
+
+        #---- Apply non-linear regression to sOU and pearson dist expression data and compare slopes -----
+
+        # Non-linear regression using negative exponential law fit: pairwise expression differences
+        # between species saturate with evolutionary time in a power law relationship
+        # Fits assumption of OU model underlying stabilizing GE selection as a decelarated process
+
+        getNLEstimates <- function(corrdata) {
+
+            comp_organ <- unique(corrdata$comp_organ)
+
+
+            nl_model <- function(a, b, c, x){
+
+                y = a * exp(c * x) + b * (1 - exp(c * x))
+                return(y)
+            }
+            # a + b defines maximum y value
+            # a defines intercept
+
+
+            x_DS_grid <- seq(0, 160, length = 200)  ## prediction grid
+
+            cor_0 <- corrdata$correlation[corrdata$clade=="T0"]
+
+            # Compute data points for DevSeq_AL_pearson_dist based on model
+            # First try to manually find rough parameters, then use nls to fine tune
+            mcoeff <- nls(correlation ~ a * exp(div_times * c) + b * (1-(exp(div_times * c))), 
+                start = list(a = 0.01, b = 0.5, c = -0.01), data = corrdata, control = list(maxiter = 500))
+            coeff <- as.data.frame(summary(mcoeff)["coefficients"])
+
+            model_expr_dist <- data.frame(y = do.call(rbind, lapply(x_DS_grid, nl_model, 
+                a = coeff["a",1], b = coeff["b",1], c = coeff["c",1])))
+
+            model_coord <- data.frame(x = x_DS_grid, model_expr_dist)
+
+            # Get slope values
+            slopes = diff(model_coord$y)/diff(model_coord$x)
+            slopes_avg <- mean(slopes)
+
+            nlm_coord <- data.frame(model_coord, organ=rep(comp_organ, nrow(model_coord)), 
+                nlm_slope=rep(slopes_avg, nrow(model_coord)))
+
+            return(nlm_coord)
+
+        }
+
+
+        # Get mean loess regression slopes for goslim category
+        go_nlm_slopes <- data.frame(do.call(rbind, lapply(ortho_organ_lst, getNLEstimates)))
+        go_nlm_mean_slp <- data.frame(nlm_slope=unique(go_nlm_slopes$nlm_slope), organ=unique(go_nlm_slopes$organ))
+
+
+        # Get mean loess regression slopes for all goslim control sets
+        rtc_nlm_slopes <- data.frame(do.call(rbind, lapply(root_divc, getNLEstimates)))
+        hcc_nlm_slopes <- data.frame(do.call(rbind, lapply(hypocotyl_divc, getNLEstimates)))
+        lfc_nlm_slopes <- data.frame(do.call(rbind, lapply(leaf_divc, getNLEstimates)))
+        avc_nlm_slopes <- data.frame(do.call(rbind, lapply(veg_apex_divc, getNLEstimates)))
+        aic_nlm_slopes <- data.frame(do.call(rbind, lapply(inf_apex_divc, getNLEstimates)))
+        flc_nlm_slopes <- data.frame(do.call(rbind, lapply(flower_divc, getNLEstimates)))
+        stc_nlm_slopes <- data.frame(do.call(rbind, lapply(stamen_divc, getNLEstimates)))
+        clc_nlm_slopes <- data.frame(do.call(rbind, lapply(carpel_divc, getNLEstimates)))
+
+
+        # Set up list containing all organ goslim control sets
+        control_nlm_slp_lst <- list(rtc_nlm_slopes, hcc_nlm_slopes, lfc_nlm_slopes, 
+            avc_nlm_slopes, aic_nlm_slopes, flc_nlm_slopes, stc_nlm_slopes, clc_nlm_slopes)
+
+        # Get loess mean and CI for control sets
+        getCNLMStats <- function(cset) {
+
+            cslope <- data.frame(nlm_slope=unique(cset$nlm_slope))
+
+            gset <- data.frame(cslope, organ=unique(cset$organ, nrow(cslope)))
+
+            cmean <- mean(gset$nlm_slope)
+            csd <- sd(gset$nlm_slope)
+            cse <- csd/sqrt(nrow(gset))
+            cqt <- qt(0.975, nrow(gset)-1)
+            cci <- cqt*cse
+            cui <- cmean+cci
+            cli <- cmean-cci
+            stats_df <- data.frame(organ=unique(gset$organ), mean_nlm_control=cmean, 
+                lower_nlm_control=cli, upper_nlm_control=cui)
+
+            return(stats_df)
+        }
+
+        control_nlm_slopes <- data.frame(do.call(rbind, lapply(control_nlm_slp_lst, getCNLMStats)))
+
+
+
+        # Wilcox rank sum test to compare goslim loess slopes with control slopes
+        nlm_slope_df <- merge(go_nlm_mean_slp, control_nlm_slopes, sort=FALSE)
+
+        nlm_slope_df <- data.frame(nlm_slope_df, 
+            mean_p = rep(wilcox.test(
+                nlm_slope_df$nlm_slope, nlm_slope_df$mean_nlm_control)$p.value, 
+            nrow(loess_slope_df)), 
+            lower_bound_p = rep(wilcox.test(
+                nlm_slope_df$nlm_slope, nlm_slope_df$lower_nlm_control)$p.value, 
+            nrow(loess_slope_df)), 
+            upper_bound_p = rep(wilcox.test(
+                nlm_slope_df$nlm_slope, nlm_slope_df$upper_nlm_control)$p.value, 
+            nrow(nlm_slope_df)))
+
+
+
+
+
+
+    }
+
+
+
 
         loess_out <- data.frame(
 
