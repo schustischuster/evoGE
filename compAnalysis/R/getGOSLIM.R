@@ -259,7 +259,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
         comp <- abs(comp[3])
 
-        # Redo matching control if standard mean difference is greater than 0.1
+        # Redo matching control if standard mean difference is greater than 0.05
         if ((comp > 0.05) && (ntreat <= 750 & ntreat >= 651)) {
             cratio <- 6
         } else if ((comp > 0.05) && (ntreat <= 650 & ntreat >= 451)) {
@@ -281,7 +281,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
         comp <- abs(comp[3])
 
-        # Redo matching control if standard mean difference is greater than 0.1
+        # Redo matching control if standard mean difference is greater than 0.05
         if ((comp > 0.05) && (ntreat <= 300)) {
             cratio <- 7
         }
@@ -622,6 +622,82 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             upper_bound_p = rep(wilcox.test(
                 nlm_slope_df$nlm_slope, nlm_slope_df$upper_nlm_control)$p.value, 
             nrow(nlm_slope_df)))
+
+
+
+
+        #----------------- Prepare data and define color palette for corrplot -----------------
+
+        # Create "plots" folder in /out_dir/output/plots
+        if (!dir.exists(file.path(out_dir, "output", "plots"))) 
+            dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
+
+        # Show message
+        message("Starting analysis and generate plots...")
+
+
+        # Combine all goslim organ list elements to one data frame
+        ortho_organ_df <- do.call("rbind", ortho_organ_lst)
+        ortho_organ_df$group <- rep(unique(x_df$goslim))
+
+
+        # Compute mean corr distances if number of control sets is greater than 1
+        if (ntreat > 1) {
+
+            getMeanCorrSD <- function(lsel) {
+
+                comb_cor <- rowMeans(as.data.frame(cbind(sapply(lsel, `[[`, "correlation"))))
+                comb_sd <- rowMeans(as.data.frame(cbind(sapply(lsel, `[[`, "error"))))
+                clade_name <- lsel[[1]]$clade
+                organ_name <- lsel[[1]]$comp_organ
+                div_times_c <- lsel[[1]]$div_times
+                dataset_name <- lsel[[1]]$dataset
+                comb_data <- data.frame(clade = clade_name, comp_organ = organ_name, 
+                    div_times = div_times_c, correlation = comb_cor, error = comb_sd, 
+                    dataset = dataset_name, group = rep("control"))
+
+                return(comb_data)
+            }
+
+            root_divc_avg <- getMeanCorrSD(root_divc)
+            hypocotyl_divc_avg <- getMeanCorrSD(hypocotyl_divc)
+            leaf_divc_avg <- getMeanCorrSD(leaf_divc)
+            veg_apex_divc_avg <- getMeanCorrSD(veg_apex_divc)
+            inf_apex_divc_avg <- getMeanCorrSD(inf_apex_divc)
+            flower_divc_avg <- getMeanCorrSD(flower_divc)
+            stamen_divc_avg <- getMeanCorrSD(stamen_divc)
+            carpel_divc_avg <- getMeanCorrSD(carpel_divc)
+
+            control_organ_df <- rbind(root_divc_avg, hypocotyl_divc_avg, leaf_divc_avg, 
+                veg_apex_divc_avg, inf_apex_divc_avg, flower_divc_avg, stamen_divc_avg, 
+                carpel_divc_avg)
+
+        } else if (ntreat == 1) {
+            # Add data processing here
+        }
+
+
+        # Combine ortho and control corr data into final table for plotting
+        ortho_control_dist <- rbind(ortho_organ_df, control_organ_df)
+
+
+        # Change organ names for facet strip
+        formOrganNames <- function(dist_df) {
+
+            dist_df$comp_organ <- dist_df$comp_organ %<>% 
+            gsub("Apex_veg", "Apex veg", .) %>% 
+            gsub("Apex_inf", "Apex inf", .)
+
+            dist_df$comp_organ <- factor(dist_df$comp_organ, 
+                levels=c("Root","Hypocotyl","Leaf","Apex veg","Apex inf","Flower","Stamen","Carpel"))
+
+            return(dist_df)
+        }
+
+        ortho_control_dist <- formOrganNames(ortho_control_dist)
+
+
+
 
 
 
