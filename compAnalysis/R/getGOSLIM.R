@@ -269,7 +269,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 cratio <- cratio-1
 
                 # check for success
-                success <- ((stmdif < 0.01) && (varR > 1))
+                success <- ((stmdif <= 0.01) && (varR >= 1))
             }
 
             return(match_res_df)
