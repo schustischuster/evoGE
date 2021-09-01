@@ -5,6 +5,8 @@
 
 library(dplyr)
 library(MatchIt)
+library(ggplot2)
+library(scales)
 
 getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sample_size) {
 
@@ -76,17 +78,22 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     if (aspect == "biological_process") {
         
         # Remove "other" categories because not informative
-        # Remove "Response to light stimulus" because plants were grown at constant light
+        # Remove "response to light stimulus" because plants were grown at constant light
+        # Remove "cell cycle" because those genes have strong, cell-type specific expression that makes it impossible to match controls
         slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other metabolic processes" = NULL)
         slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other cellular processes" = NULL)
         slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other biological processes" = NULL)
         slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("response to light stimulus" = NULL)
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("cell cycle" = NULL)
         # Remove some remaining functional ontologies from list
         slim_genes_uls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, !grepl("F", V8))})
         # Delete "Cell Growth" GOslim term from "Growth" category
         slim_genes_uls[["growth"]] <- dplyr::filter(slim_genes_uls[["growth"]], !grepl("cell growth", V9))
     
     } else if (aspect == "molecular_function") {
+
+        # Correct GOslim term for class "RNA binding" (it contains another term called "translation factor activity, RNA binding")
+        slim_genes_uls[["RNA binding"]]$V9 <- rep("RNA binding", nrow(slim_genes_uls[["RNA binding"]]))
 
     }
 
@@ -141,6 +148,10 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     # Negate dplyr %in%
     `%!in%` = Negate(`%in%`)
 
+    # Remove pollen samples
+    orthoExpr <- orthoExpr %>% select (-c(
+        A.thaliana_flowers_mature_pollen_28d_.2.:B.distachyon_flowers_mature_pollen_32d_.1.))
+
 
     calculateAvgExpr <- function(df) {
 
@@ -162,14 +173,11 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         x_avg <- calculateAvgExpr(orthoExpr)
 
         DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", "Flower", 
-            "Stamen", "Carpel", "Pollen"), each=7)
-        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), times=9)
+            "Stamen", "Carpel"), each=7)
+        DevSeq_spec_names <- rep(c("_AT", "_AL", "_CR", "_ES", "_TH", "_MT", "_BD"), times=8)
         repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
 
         colnames(x_avg)[2:ncol(x_avg)] <- repl_names
-
-        x_avg <- x_avg %>% select (-c(Pollen_AT, Pollen_AL, Pollen_CR, Pollen_ES, Pollen_TH, 
-            Pollen_MT, Pollen_BD))
 
 
         # Compute average expression and sd for each organ
@@ -183,6 +191,10 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
               )
 
             base_averaged <- rowMeans(df[2:ncol(df)])
+            # base_min <- apply(df[2:ncol(df)], 1, FUN = min)
+            # base_max <- apply(df[2:ncol(df)], 1, FUN = max)
+            # quartiles <- as.data.frame(t(apply(df[2:ncol(df)], 1, quantile, c(0.25, 0.75))))
+            # names(quartiles) <- c("q25", "q75")
 
             RowSD <- function(x) {
                 sqrt(rowSums((x - rowMeans(x))^2)/(dim(x)[2] - 1))
@@ -232,66 +244,39 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         # Set ratio for control:treatment
         ntreat <- nrow(x_df)
 
-        if (ntreat <= 1000 & ntreat >= 751) {
-            cratio <- 2
-        } else if (ntreat <= 750 & ntreat >= 651) {
-            cratio <- 7
-        } else if (ntreat <= 650 & ntreat >= 451) {
-            cratio <- 8
-        } else if (ntreat <= 450 & ntreat >= 351) {
-            cratio <- 12
-        } else if (ntreat <= 350 & ntreat >= 301) {
-            cratio <- 14
-        } else if (ntreat <= 300 & ntreat >= 251) {
-            cratio <- 14
-        } else if (ntreat <= 250 & ntreat >= 201) {
-            cratio <- 20
-        } else if (ntreat <= 200) {
-            cratio <- 24
-        } else cratio <- 1
+        cratio <- round((nrow(control_df)*0.70)/ntreat)
+
+        # Create "plots" folder in /out_dir/output/plots
+        if (!dir.exists(file.path(out_dir, "output", "plots", "MatchIt"))) 
+            dir.create(file.path(out_dir, "output", "plots", "MatchIt"), recursive = TRUE)
 
         # Create background gene set
-        match_res <- matchit(sign ~ base_averaged, comb_exdf, 
-            method="nearest", distance="mahalanobis", replace=FALSE, m.order="data", ratio=cratio)
-        match_res_df <- match_res$match.matrix
+        matchSample <- function(x) {
 
-        # Extract standard mean difference from matchIt summary data
-        comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
-        comp <- abs(comp[3])
+            success <- FALSE
+            while (!success) {
 
-        # Redo matching control if standard mean difference is greater than 0.05
-        if ((comp > 0.05) && (ntreat <= 750 & ntreat >= 651)) {
-            cratio <- 6
-        } else if ((comp > 0.05) && (ntreat <= 650 & ntreat >= 451)) {
-            cratio <- 6
-        } else if ((comp > 0.05) && (ntreat <= 450 & ntreat >= 351)) {
-            cratio <- 10
-        } else if ((comp > 0.05) && (ntreat <= 350)) {
-            cratio <- 11
+                # Create background gene set
+                match_res <- matchit(sign ~ base_averaged, x, method="nearest", 
+                    distance="mahalanobis", replace=FALSE, m.order="data", ratio=cratio)
+                match_res_df <- match_res$match.matrix
+
+                # Extract standard mean difference from matchIt summary data
+                comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
+                stmdif <- abs(comp[1,3])
+                varR <- abs(comp[1,4])
+
+                cratio <- cratio-1
+
+                # check for success
+                success <- ((stmdif < 0.01) && (varR > 1))
+            }
+
+            return(match_res_df)
         }
 
-        if (comp > 0.05) {
+        match_res_df <- matchSample(comb_exdf)
 
-            match_res <- matchit(sign ~ base_averaged, comb_exdf, 
-            method="nearest", distance="mahalanobis", replace=FALSE, m.order="data", ratio=cratio)
-            match_res_df <- match_res$match.matrix
-        }
-
-        # For very rary cases: do another round of matching controls
-        comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
-        comp <- abs(comp[3])
-
-        # Redo matching control if standard mean difference is greater than 0.05
-        if ((comp > 0.05) && (ntreat <= 300)) {
-            cratio <- 7
-        }
-
-        if (comp > 0.05) {
-
-            match_res <- matchit(sign ~ base_averaged, comb_exdf, 
-            method="nearest", distance="mahalanobis", replace=FALSE, m.order="data", ratio=cratio)
-            match_res_df <- match_res$match.matrix
-        }
         
         control_out <- apply(match_res_df, 2, function(x) {
 
@@ -306,6 +291,42 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
         goslim_out <- goslim_out %>% select (-c(avg_Root, avg_Hypocotyl, avg_Leaf, avg_veg, 
             avg_inf, avg_Flower, avg_Stamen, avg_Carpel, base_averaged))
+
+        
+        # Plot results of k:1 matching
+        mplot <- data.frame(do.call(cbind, lapply(control_out, function(c) { 
+            tp <- unlist(c[-1:-3])
+            return(tp)
+        })))
+
+        colnames(mplot) <- paste0(rep("m", ncol(mplot)), 1:ncol(mplot))
+
+        mbplot <- data.frame(t=unlist(goslim_out[-1:-3]), mplot)
+        mbplotcat <- rep(colnames(mbplot), each=nrow(mbplot))
+        ggmbplot <- data.frame(exp=unlist(mbplot), class=mbplotcat)
+        allc <- data.frame(exp=unlist(subset(comb_exdf, sign==0)[-1:-12]))
+        allcc <- cbind(allc, data.frame(class=rep("c", nrow(allc))))
+        gg2mbplot <- rbind(ggmbplot, allcc)
+
+
+        plotMatchIt <- function(data) {
+
+            fname <- sprintf('%s.png', paste(unique(x_df$goslim), "matchIt", sep="_"))
+
+            data$class <- factor(data$class, levels = unique(data$class))
+
+            plt_title <- paste(unique(x_df$goslim), " (n=", ntreat, ")", sep="")
+
+            p <- ggplot(data=data, aes(x = class, y = exp)) + 
+            geom_boxplot(data = data, aes(x = class, y = exp)) + 
+            ggtitle(plt_title) + 
+            xlab("GOslim(t) + Matched_control(m) + All_control(c)") + ylab("Expression (log2[TPM+1])")
+
+            ggsave(file = file.path(out_dir, "output", "plots", "MatchIt", fname), plot = p, 
+                width = 5.9, height = 5.9, dpi = 300, units = c("in"), limitsize = FALSE) 
+        }
+
+        plotMatchIt(data = gg2mbplot)
 
 
 
@@ -353,16 +374,20 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
             df_cor <- sqrt(1/2*(1 - cor(df, method="pearson")))
 
-            sp0 <- mean(df_cor[1:3,1:3])
-            sp1 <- mean(df_cor[4:6,1:3])
-            sp2 <- mean(df_cor[7:9,1:6])
-            sp3 <- mean(df_cor[10:12,1:9])
-            sp4 <- mean(df_cor[13:15,1:12])
-            sp5 <- mean(df_cor[16:18,1:15])
-            sp6 <- mean(df_cor[19:21,1:18])
+            replcor <- function(xrepl){
 
-            # Get errors
+                xrepl <- c(xrepl)[xrepl>0][!(duplicated(c(xrepl)[xrepl>0]))]
+                return(xrepl)
+            }
+
+            sp0_repl <- c(mean(replcor(df_cor[1:3,1:3])), mean(replcor(df_cor[4:6,4:6])), 
+                mean(replcor(df_cor[7:9,7:9])), mean(replcor(df_cor[10:12,10:12])), 
+                mean(replcor(df_cor[13:15,13:15])), mean(replcor(df_cor[16:18,16:18])), 
+                mean(replcor(df_cor[19:21,19:21]))) # AT-AT
+
+            # Get mean
             df_cor <- as.data.frame(df_cor, stringsAsFactors=FALSE)
+
 
             avgRepl <- function(x_df) {
 
@@ -383,7 +408,6 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 return(repl_mean)
             }
 
-            sp0_repl <- avgRepl(df_cor[1:3,1:3]) # AT-AT
             sp1_repl <- avgRepl(df_cor[4:6,1:3]) # AT-AL
             sp2_repl <- avgRepl(df_cor[7:9,1:6]) # AT-CR AL-CR
             sp3_repl <- avgRepl(df_cor[10:12,1:9]) # AT-ES AL-ES CR-ES
@@ -398,16 +422,18 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 return(error)
             } # Use this function to replace sd if reqired
 
-            df_cor_error <- data.frame(error = c(as.numeric(c(sd(sp0_repl))),
-                    as.numeric(c(sd(sp1_repl))), as.numeric(c(sd(sp2_repl))), 
-                    as.numeric(c(sd(sp3_repl))), as.numeric(c(sd(sp4_repl))), 
-                    as.numeric(c(sd(sp5_repl))), as.numeric(c(sd(sp6_repl)))))
+            df_cor_error <- data.frame(error = c(rep(as.numeric(c(sd(sp0_repl))),length(sp0_repl)),
+                    as.numeric(c(sd(sp1_repl))), rep(as.numeric(c(sd(sp2_repl))),length(sp2_repl)), 
+                    rep(as.numeric(c(sd(sp3_repl))),length(sp3_repl)), rep(as.numeric(c(sd(sp4_repl))),length(sp4_repl)), 
+                    rep(as.numeric(c(sd(sp5_repl))),length(sp5_repl)), rep(as.numeric(c(sd(sp6_repl))),length(sp6_repl))))
 
-            df_cor_avg <- data.frame(correlation = c(sp0, sp1, sp2, sp3, sp4, sp5, sp6))
-            div_tag <- data.frame(clade = c("T0", "T1", "T2", "T3", "T4", "T5", "T6"))
-            organ_id <- data.frame(comp_organ = rep(organ, 7))
-            div_times <- data.frame(div_times = c(0, 7.1, 9.4, 25.6, 46, 106, 160))
-            dataset <- data.frame(dataset = rep("Angiosperms ", 7))
+            df_cor_avg <- data.frame(correlation = c(sp0_repl, sp1_repl, sp2_repl, sp3_repl, sp4_repl, sp5_repl, sp6_repl))
+            div_tag <- data.frame(clade = c(rep("T0", length(sp0_repl)), "T1", rep("T2", length(sp2_repl)), rep("T3", length(sp3_repl)), 
+                rep("T4", length(sp4_repl)), rep("T5", length(sp5_repl)), rep("T6", length(sp6_repl))))
+            organ_id <- data.frame(comp_organ = rep(organ, nrow(df_cor_avg)))
+            div_times <- data.frame(div_times = c(rep(0, length(sp0_repl)), 7.1, rep(9.4, length(sp2_repl)), rep(25.6, length(sp3_repl)), 
+                rep(46, length(sp4_repl)), rep(106, length(sp5_repl)), rep(160, length(sp6_repl))))
+            dataset <- data.frame(dataset = rep("Angiosperms ", nrow(df_cor_avg)))
             df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_error, dataset)
 
             return(df_cor_avg)
@@ -437,83 +463,9 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             flower_divg, stamen_divg, carpel_divg)
 
         # Set up lists containing metric pearson expression distances
-        ortho_organ_lst <- list(ortho_div_rates[1:7,], ortho_div_rates[8:14,], 
-            ortho_div_rates[15:21,], ortho_div_rates[22:28,], ortho_div_rates[29:35,], 
-            ortho_div_rates[36:42,], ortho_div_rates[43:49,], ortho_div_rates[50:56,])
-
-
-        getLOESS.Slopes <- function(organ_data) {
-
-            comp_organ <- unique(organ_data$comp_organ)
-
-            # Use quadratic polynomes for all organs
-            temp <- loess.smooth(organ_data$div_times, organ_data$correlation, span = 1, 
-                degree = 2, family="gaussian", evaluation = 200)
-
-            # Get slope values
-            slopes = diff(temp$y)/diff(temp$x)
-            slopes_avg <- mean(slopes)
-            slopes_avg <- data.frame("loess_slope"=slopes_avg, "organ"=comp_organ)
-
-            return(slopes_avg)
-        }
-
-        # Get mean loess regression slopes for all goslim control sets
-        rtc_loess_slopes <- data.frame(do.call(rbind, lapply(root_divc, getLOESS.Slopes)))
-        hcc_loess_slopes <- data.frame(do.call(rbind, lapply(hypocotyl_divc, getLOESS.Slopes)))
-        lfc_loess_slopes <- data.frame(do.call(rbind, lapply(leaf_divc, getLOESS.Slopes)))
-        avc_loess_slopes <- data.frame(do.call(rbind, lapply(veg_apex_divc, getLOESS.Slopes)))
-        aic_loess_slopes <- data.frame(do.call(rbind, lapply(inf_apex_divc, getLOESS.Slopes)))
-        flc_loess_slopes <- data.frame(do.call(rbind, lapply(flower_divc, getLOESS.Slopes)))
-        stc_loess_slopes <- data.frame(do.call(rbind, lapply(stamen_divc, getLOESS.Slopes)))
-        clc_loess_slopes <- data.frame(do.call(rbind, lapply(carpel_divc, getLOESS.Slopes)))
-
-        # Set up list containing all organ goslim control sets
-        control_loess_slp_lst <- list(rtc_loess_slopes, hcc_loess_slopes, lfc_loess_slopes, 
-            avc_loess_slopes, aic_loess_slopes, flc_loess_slopes, stc_loess_slopes, clc_loess_slopes)
-
-        # Get loess mean and CI for control sets
-        getCLoessStats <- function(gset) {
-
-            cmean <- mean(gset$loess_slope)
-            csd <- sd(gset$loess_slope)
-            cse <- csd/sqrt(nrow(gset))
-            cqt <- qt(0.975, nrow(gset)-1)
-            cci <- cqt*cse
-            cui <- cmean+cci
-            cli <- cmean-cci
-            stats_df <- data.frame(organ=unique(gset$organ), mean_loess_control=cmean, 
-                lower_loess_control=cli, upper_loess_control=cui)
-
-            return(stats_df)
-        }
-
-        control_loess_slopes <- data.frame(do.call(rbind, lapply(control_loess_slp_lst, getCLoessStats)))
-        
-        # Get mean loess regression slopes for goslim category
-        go_loess_slopes <- data.frame(do.call(rbind, lapply(ortho_organ_lst, getLOESS.Slopes)))
-
-        # Wilcox rank sum test to compare goslim loess slopes with control slopes
-        loess_slope_df <- merge(go_loess_slopes, control_loess_slopes, sort=FALSE)
-
-        loess_slope_df <- data.frame(loess_slope_df, 
-            mean_p = rep(wilcox.test(
-                loess_slope_df$loess_slope, loess_slope_df$mean_loess_control)$p.value, 
-            nrow(loess_slope_df)), 
-            lower_bound_p = rep(wilcox.test(
-                loess_slope_df$loess_slope, loess_slope_df$lower_loess_control)$p.value, 
-            nrow(loess_slope_df)), 
-            upper_bound_p = rep(wilcox.test(
-                loess_slope_df$loess_slope, loess_slope_df$upper_loess_control)$p.value, 
-            nrow(loess_slope_df)))
-
-
-
-
-
-
-
-
+        ortho_organ_lst <- list(ortho_div_rates[1:28,], ortho_div_rates[29:56,], 
+            ortho_div_rates[57:84,], ortho_div_rates[85:112,], ortho_div_rates[113:140,], 
+            ortho_div_rates[141:168,], ortho_div_rates[169:196,], ortho_div_rates[197:224,])
 
 
 
@@ -542,10 +494,13 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
             cor_0 <- corrdata$correlation[corrdata$clade=="T0"]
 
+            weights <- c(rep(3.5,7), 0.5, rep(1,2), rep(1.5,3), rep(2,4), rep(2.5,5), rep(3,6))
+
             # Compute data points for DevSeq_AL_pearson_dist based on model
             # First try to manually find rough parameters, then use nls to fine tune
             mcoeff <- nls(correlation ~ a * exp(div_times * c) + b * (1-(exp(div_times * c))), 
-                start = list(a = 0.01, b = 0.5, c = -0.01), data = corrdata, control = list(maxiter = 500))
+                start = list(a = 0.01, b = 0.5, c = -0.01), data = corrdata, control = list(maxiter = 500), 
+                weights=weights)
             coeff <- as.data.frame(summary(mcoeff)["coefficients"])
 
             model_expr_dist <- data.frame(y = do.call(rbind, lapply(x_DS_grid, nl_model, 
@@ -565,12 +520,12 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         }
 
 
-        # Get mean loess regression slopes for goslim category
+        # Get mean nlm regression slopes for goslim category
         go_nlm_slopes <- data.frame(do.call(rbind, lapply(ortho_organ_lst, getNLEstimates)))
         go_nlm_mean_slp <- data.frame(nlm_slope=unique(go_nlm_slopes$nlm_slope), organ=unique(go_nlm_slopes$organ))
 
 
-        # Get mean loess regression slopes for all goslim control sets
+        # Get mean nlm regression slopes for all goslim control sets
         rtc_nlm_slopes <- data.frame(do.call(rbind, lapply(root_divc, getNLEstimates)))
         hcc_nlm_slopes <- data.frame(do.call(rbind, lapply(hypocotyl_divc, getNLEstimates)))
         lfc_nlm_slopes <- data.frame(do.call(rbind, lapply(leaf_divc, getNLEstimates)))
@@ -588,40 +543,21 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         # Get loess mean and CI for control sets
         getCNLMStats <- function(cset) {
 
-            cslope <- data.frame(nlm_slope=unique(cset$nlm_slope))
+            cslope <- data.frame(nlm_slope_control=unique(cset$nlm_slope))
 
             gset <- data.frame(cslope, organ=unique(cset$organ, nrow(cslope)))
 
-            cmean <- mean(gset$nlm_slope)
-            csd <- sd(gset$nlm_slope)
-            cse <- csd/sqrt(nrow(gset))
-            cqt <- qt(0.975, nrow(gset)-1)
-            cci <- cqt*cse
-            cui <- cmean+cci
-            cli <- cmean-cci
-            stats_df <- data.frame(organ=unique(gset$organ), mean_nlm_control=cmean, 
-                lower_nlm_control=cli, upper_nlm_control=cui)
-
-            return(stats_df)
+            return(gset)
         }
 
         control_nlm_slopes <- data.frame(do.call(rbind, lapply(control_nlm_slp_lst, getCNLMStats)))
 
 
 
-        # Wilcox rank sum test to compare goslim loess slopes with control slopes
-        nlm_slope_df <- merge(go_nlm_mean_slp, control_nlm_slopes, sort=FALSE)
+        # Merge GOslim and control organ slope value tables 
+        nlm_slope_df <- merge(go_nlm_mean_slp, control_nlm_slopes, by="organ", sort=FALSE)
 
-        nlm_slope_df <- data.frame(nlm_slope_df, 
-            mean_p = rep(wilcox.test(
-                nlm_slope_df$nlm_slope, nlm_slope_df$mean_nlm_control)$p.value, 
-            nrow(loess_slope_df)), 
-            lower_bound_p = rep(wilcox.test(
-                nlm_slope_df$nlm_slope, nlm_slope_df$lower_nlm_control)$p.value, 
-            nrow(loess_slope_df)), 
-            upper_bound_p = rep(wilcox.test(
-                nlm_slope_df$nlm_slope, nlm_slope_df$upper_nlm_control)$p.value, 
-            nrow(nlm_slope_df)))
+        nlm_slope_df$goslim_term <- rep(unique(x_df$goslim), nrow(nlm_slope_df))
 
 
 
@@ -697,28 +633,186 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         ortho_control_dist <- formOrganNames(ortho_control_dist)
 
 
+        # Get organ slopes for averaged control sets
+        control_organ_lst <- list(root_divc_avg, hypocotyl_divc_avg, leaf_divc_avg, 
+                veg_apex_divc_avg, inf_apex_divc_avg, flower_divc_avg, stamen_divc_avg, 
+                carpel_divc_avg)
+
+        control_avg_nlm_slopes <- data.frame(do.call(rbind, lapply(control_organ_lst, getNLEstimates)))
+
+
+        # Add group label to goslim and control slope tables
+        go_nlm_slopes$group <- rep(unique(x_df$goslim))
+        control_avg_nlm_slopes$group <- rep("control")
+
+        # Combine ortho and control corr data into final table for plotting
+        ortho_control_slopes <- rbind(go_nlm_slopes, control_avg_nlm_slopes)
+        colnames(ortho_control_slopes)[which(names(ortho_control_slopes)=="x")] <- "div_times"
+        colnames(ortho_control_slopes)[which(names(ortho_control_slopes)=="y")] <- "correlation"
+        colnames(ortho_control_slopes)[which(names(ortho_control_slopes)=="organ")] <- "comp_organ"
+        ortho_control_slopes <- formOrganNames(ortho_control_slopes)
+
+
+        # Define specific notation
+        set_scientific <- function(l) {
+            # turn in to character string in scientific notation
+            l <- format(l, scientific = TRUE)
+            # quote the part before the exponent to keep all the digits
+            l <- gsub("^(.*)e", "'\\1'e", l)
+            # turn the 'e+' into plotmath format
+            l <- gsub("e", "%*%10^", l)
+            # return this as an expression
+            parse(text=l)
+        }
 
 
 
+        # Plot pea distances and slopes of goslim and control data
+        plotGOSLIM.pea.NLM <- function(data, data2) {
+
+            fname <- sprintf('%s.jpg', paste(unique(x_df$goslim), "nlm_regression_slopes", sep="_"))
+
+            # Define goslim colors for selected categories
+            gocat <- as.character(unique(x_df$goslim))
+
+            # Set plot title
+            tname <- paste(unique(x_df$goslim))
+            tltname <- paste(toupper(substr(tname, 1, 1)), substr(tname, 2, nchar(tname)), sep="")
+            tltname <- paste0(tltname, " (n = ", ntreat, ")")
+
+            # Get number of genes in GOslim category and number of control groups
+            if (ntreat >= 900) {
+                xpos <- 80
+            } else xpos <- 73
+
+            rt_data <- data2[data2$comp_organ == "Root",]
+            y1pos <- (max(rt_data$correlation)*1.05)/3.44
+            y2pos <- (max(rt_data$correlation)*1.05)/7
+            hc_data <- data2[data2$comp_organ == "Hypocotyl",]
+            y3pos <- (max(hc_data$correlation)*1.05)/7
+            lf_data <- data2[data2$comp_organ == "Leaf",]
+            y4pos <- (max(lf_data$correlation)*1.12)/7
+
+            if (gocat == "response to chemical") {
+
+                colscale <- c("#adadad", "#1e9ac7")
+                p.value <- c(paste("italic('P =')~", set_scientific(0.002)))
+                y3pos <- y3pos-0.001
+                y4pos <- y4pos-0.002
+
+            } else if (gocat == "embryo development") {
+
+                colscale <- c("#adadad", "#cb0000")
+                p.value <- c(paste("italic('P =')~", set_scientific(0.0004)))
+
+            } else if (gocat == "nucleobase-containing compound metabolic process") {
+
+                colscale <- c("#adadad", "#ee7500")
+                p.value <- c(paste("italic('P =')~", set_scientific(0.00004)))
+                y3pos <- y3pos-0.001
+                y4pos <- y4pos-0.0007
+
+            } else if (gocat == "DNA binding") {
+
+                colscale <- c("#adadad", "#08ac39")
+                p.value <- c(paste("italic('P =')~", set_scientific(0.005)))
+                y3pos <- y3pos-0.0025
+                y4pos <- y4pos-0.0055
+
+            } else if (gocat == "cellular component organization") {
+
+                colscale <- c("#adadad", "#835bba")
+                p.value <- c(paste("italic('P =')~", set_scientific(0.001)))
+                y3pos <- y3pos-0.0025
+                y4pos <- y4pos-0.0045
+
+            } else {
+                colscale <- c("#adadad", "black")
+                p.value <- c("")
+            }
+
+            corg <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel")
+
+            goslim_lb <- data.frame(x = 85, y = y1pos, label = c("GOterm","","","","","","",""), 
+                comp_organ = corg)
+            control_lb <- data.frame(x = 85, y = y2pos, label = c("Control","","","","","","",""), 
+                comp_organ = corg)
+            c_text <- data.frame(x = xpos, y = y3pos, label = c("",paste("cset =", length(root_divc)),"","","","","",""), 
+                comp_organ = corg)
+
+            p_text <- data.frame(x = 56, y = y4pos, label = c("","",p.value,"","","","",""), 
+                comp_organ = corg)
+
+            corgcat <- factor("Root", levels = c("Root", "Hypocotyl", "Leaf", 
+                    "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
+
+            go_line <- data.frame(x = 50, xend = 80, y = y1pos, yend = y1pos, 
+                comp_organ = corgcat)
+            cont_line <- data.frame(x = 50, xend = 80, y = y2pos, yend = y2pos, 
+                comp_organ = corgcat)
+
+            go_circ <- data.frame(x = 65, y = y1pos, comp_organ = corgcat)
+            cont_circ <- data.frame(x = 65, y = y2pos, comp_organ = corgcat)
+
+            data$group <- factor(data$group, c("control", paste(unique(x_df$goslim))))
+            data2$group <- factor(data2$group, c("control", paste(unique(x_df$goslim))))
+
+            p <- ggplot(data=data, color = group, aes(x=div_times, y=correlation)) + 
+            geom_point(data=data2, alpha = 0.5, aes(stroke = 0.5, size = 1.5, color = group, shape = group, fill = group)) + 
+            geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = group, color = group)) + 
+            scale_y_continuous(expand = c(0.1, 0), breaks = pretty_breaks()) + 
+            scale_x_continuous(expand = c(0.075, 0), breaks=c(0, 50, 100, 150)) + 
+            scale_shape_manual(values = c(21,21)) + 
+            scale_color_manual(values = colscale) + 
+            scale_fill_manual(values = colscale) + 
+            guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
+
+            q <- p + theme_classic() + xlab("Divergence time (Myr)") + ylab("Pearson distance") + 
+            labs(title = tltname) + 
+            geom_text(data = goslim_lb, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
+            geom_text(data = control_lb, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
+            geom_text(data = c_text, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
+            geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
+                parse=TRUE, size=7.5, hjust = 0) + 
+            geom_segment(data = go_line, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
+                colour = colscale[2], show.legend = FALSE, size = 2.5) + 
+            geom_point(data = go_circ, mapping = aes(x = x, y = y), size = 5, shape = 16, color = colscale[2]) + 
+            geom_segment(data = cont_line, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
+                colour = colscale[1], show.legend = FALSE, size = 2.5) + 
+            geom_point(data = cont_circ, mapping = aes(x = x, y = y), size = 5, shape = 16, color = colscale[1]) + 
+            theme(text=element_text(size = 16), 
+                strip.text = element_text(size = 23.75), 
+                strip.text.x = element_text(margin = margin(0.43, 0, 0.43, 0, "cm")), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+                axis.ticks.length = unit(0.29, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.25), 
+                axis.line = element_line(colour = 'black', size = 1.25), 
+                plot.margin = unit(c(1, 0.25, 3.125, 0),"cm"), 
+                axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
+                    colour="black", face = "bold"), 
+                axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
+                    colour="black", face = "bold"), 
+                axis.text.x = element_text(size=21.5, margin = margin(t = 2.5, b = 8), colour="grey20"), 
+                axis.text.y = element_text(size=21.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
+                plot.title = element_text(size=24.25, colour=colscale[2], margin = margin(t = 0, b = 15), face = "plain"), 
+                panel.spacing = unit(0.2, "cm"), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor.x = element_blank(), 
+                panel.grid.minor.y = element_blank(), 
+                legend.position = "none") 
+
+            q <- q + facet_wrap(~ comp_organ, nrow = 1, scales = "free")
+
+            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+                width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
+        }
+
+        plotGOSLIM.pea.NLM(data = ortho_control_slopes, data2 = ortho_control_dist)
 
 
 
+        return(nlm_slope_df)
 
-    }
-
-
-
-
-        loess_out <- data.frame(
-
-            goslim = rep(unique(x_df$goslim), nrow(go_loess_slopes)*2),
-            group = c(rep("control", nrow(control_loess_slopes)), rep("functional", nrow(go_loess_slopes))),
-            slopes = c(control_loess_slopes[,1], go_loess_slopes[,1]),
-            p_value = rep(wilcox.test(as.numeric(control_loess_slopes[,1]), 
-                as.numeric(go_loess_slopes[,1]))$p.value, nrow(go_loess_slopes)*2)
-        )
-
-        return(loess_out)
 
 
 
@@ -728,6 +822,37 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
 
 
+
+  getGoslimStats_lst <- split(getGoslimStats, getGoslimStats$goslim_term)
+  wilcox_stats <- do.call(rbind, lapply(getGoslimStats_lst, function(i) {
+
+    goslim_slope <- unique(i$nlm_slope)
+    control_slope <- i$nlm_slope_control
+    p_value <- wilcox.test(goslim_slope, control_slope)$p.value
+    teststat <- data.frame(goslim_term=unique(i$goslim_term), p_value=p_value)
+    return(teststat)
+
+  }))
+
+
+  wilcox_stats$p_value_FDR <- p.adjust(wilcox_stats$p_value, method = "fdr")
+
+
+
+  # Write goslim and control slope data and test statistics to file
+  # Show message
+  message("Writing data tables...")
+
+  # Create "data" folder in /out_dir/output
+  if (!dir.exists(file.path(out_dir, "output", "data"))) 
+    dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
+
+  goslim_out_list <- list(getGoslimStats = getGoslimStats, wilcox_stats = wilcox_stats)
+
+  for(i in names(goslim_out_list)){
+    write.table(goslim_out_list[[i]], file=file.path(out_dir, "output", "data", paste0(i, "_", aspect, ".txt")), 
+        sep="\t", col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
+  }
 
 
 
