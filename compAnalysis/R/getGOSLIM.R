@@ -422,7 +422,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 return(error)
             } # Use this function to replace sd if reqired
 
-            df_cor_df <- data.frame(error = c(rep(as.numeric(c(sd(sp0_repl))),length(sp0_repl)),
+            df_cor_sd <- data.frame(error = c(rep(as.numeric(c(sd(sp0_repl))),length(sp0_repl)),
                     as.numeric(c(sd(sp1_repl))), rep(as.numeric(c(sd(sp2_repl))),length(sp2_repl)), 
                     rep(as.numeric(c(sd(sp3_repl))),length(sp3_repl)), rep(as.numeric(c(sd(sp4_repl))),length(sp4_repl)), 
                     rep(as.numeric(c(sd(sp5_repl))),length(sp5_repl)), rep(as.numeric(c(sd(sp6_repl))),length(sp6_repl))))
@@ -434,7 +434,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             div_times <- data.frame(div_times = c(rep(0, length(sp0_repl)), 7.1, rep(9.4, length(sp2_repl)), rep(25.6, length(sp3_repl)), 
                 rep(46, length(sp4_repl)), rep(106, length(sp5_repl)), rep(160, length(sp6_repl))))
             dataset <- data.frame(dataset = rep("Angiosperms ", nrow(df_cor_avg)))
-            df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_df, dataset)
+            df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_sd, dataset)
 
             return(df_cor_avg)
 
@@ -842,33 +842,33 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
   perm_stats <- do.call(rbind, lapply(getGoslimStats_lst, function(z) {
 
-    message("Performing permutation test...")
+  	message("Performing permutation test...")
     treat <- unique(z$nlm_slope)
-    control <- z$nlm_slope_control
-    median_treat <- median(treat)
-    median_control <- median(control)
-    test_stat <- abs(median_treat-median_control)
+  	control <- z$nlm_slope_control
+  	median_treat <- median(treat)
+  	median_control <- median(control)
+  	test_stat <- abs(median_treat-median_control)
 
-    set.seed(1357) # Set seed for reproducibility
-    all_slope_data <- data.frame(slope_value = c(treat, control), 
-        goslim_term = c(rep("GO", length(treat)),rep("Control", length(control))))
-    n_perm <- 100000
-    n_data <- nrow(all_slope_data)
+  	set.seed(1357) # Set seed for reproducibility
+  	all_slope_data <- data.frame(slope_value = c(treat, control), 
+  		goslim_term = c(rep("GO", length(treat)),rep("Control", length(control))))
+  	n_perm <- 100000
+  	n_data <- nrow(all_slope_data)
 
-    perm_samples <- matrix(0, nrow = n_data, ncol = n_perm)
-    for (i in 1:n_perm) { 
-        perm_samples[,i] <- sample(all_slope_data$slope_value, size = n_data, replace = FALSE)
-    }
+  	perm_samples <- matrix(0, nrow = n_data, ncol = n_perm)
+  	for (i in 1:n_perm) { 
+  		perm_samples[,i] <- sample(all_slope_data$slope_value, size = n_data, replace = FALSE)
+  	}
 
-    perm_test <- rep(0, n_perm)
-    for (i in 1:n_perm) { 
-        perm_test[i] <-  abs(
-            median(perm_samples[all_slope_data$goslim_term == "GO", i]) - 
-            median(perm_samples[all_slope_data$goslim_term == "Control", i])) 
-    }
+  	perm_test <- rep(0, n_perm)
+  	for (i in 1:n_perm) { 
+  		perm_test[i] <-  abs(
+  			median(perm_samples[all_slope_data$goslim_term == "GO", i]) - 
+  			median(perm_samples[all_slope_data$goslim_term == "Control", i])) 
+  	}
 
-    perm_p <- sum(perm_test >= test_stat)/n_perm
-    permstat <- data.frame(goslim_term=unique(z$goslim_term), p_value=perm_p)
+  	perm_p <- sum(perm_test >= test_stat)/n_perm
+  	permstat <- data.frame(goslim_term=unique(z$goslim_term), p_value=perm_p)
     return(permstat)
 
   }))
@@ -943,7 +943,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
 
   goslim_out_list <- list(getGoslimStats = getGoslimStats, wilcox_stats = wilcox_stats, 
-    perm_stats = perm_stats)
+  	perm_stats = perm_stats)
 
   for(i in names(goslim_out_list)){
     write.table(goslim_out_list[[i]], file=file.path(out_dir, "output", "data", paste0(i, "_", aspect, ".txt")), 
