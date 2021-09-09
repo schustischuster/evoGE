@@ -259,7 +259,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 # Create background gene set
                 match_res <- matchit(sign ~ base_averaged, x, method="nearest", 
                     distance="mahalanobis", replace=FALSE, m.order="data", ratio=cratio)
-                match_res_df <- match_res$match.matrix
+                match_res_m <- match_res$match.matrix
 
                 # Extract standard mean difference from matchIt summary data
                 comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
@@ -272,7 +272,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 success <- ((stmdif <= 0.01) && (varR >= 1))
             }
 
-            return(match_res_df)
+            return(match_res_m)
         }
 
         match_res_df <- matchSample(comb_exdf)
@@ -422,7 +422,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 return(error)
             } # Use this function to replace sd if reqired
 
-            df_cor_error <- data.frame(error = c(rep(as.numeric(c(sd(sp0_repl))),length(sp0_repl)),
+            df_cor_df <- data.frame(error = c(rep(as.numeric(c(sd(sp0_repl))),length(sp0_repl)),
                     as.numeric(c(sd(sp1_repl))), rep(as.numeric(c(sd(sp2_repl))),length(sp2_repl)), 
                     rep(as.numeric(c(sd(sp3_repl))),length(sp3_repl)), rep(as.numeric(c(sd(sp4_repl))),length(sp4_repl)), 
                     rep(as.numeric(c(sd(sp5_repl))),length(sp5_repl)), rep(as.numeric(c(sd(sp6_repl))),length(sp6_repl))))
@@ -434,7 +434,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             div_times <- data.frame(div_times = c(rep(0, length(sp0_repl)), 7.1, rep(9.4, length(sp2_repl)), rep(25.6, length(sp3_repl)), 
                 rep(46, length(sp4_repl)), rep(106, length(sp5_repl)), rep(160, length(sp6_repl))))
             dataset <- data.frame(dataset = rep("Angiosperms ", nrow(df_cor_avg)))
-            df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_error, dataset)
+            df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_df, dataset)
 
             return(df_cor_avg)
 
@@ -838,6 +838,101 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
   wilcox_stats$p_value_FDR <- p.adjust(wilcox_stats$p_value, method = "fdr")
 
 
+  # Perform permutation test as alternative to Wilcox rank sum test
+
+  perm_stats <- do.call(rbind, lapply(getGoslimStats_lst, function(z) {
+
+    message("Performing permutation test...")
+    treat <- unique(z$nlm_slope)
+    control <- z$nlm_slope_control
+    median_treat <- median(treat)
+    median_control <- median(control)
+    test_stat <- abs(median_treat-median_control)
+
+    set.seed(1357) # Set seed for reproducibility
+    all_slope_data <- data.frame(slope_value = c(treat, control), 
+        goslim_term = c(rep("GO", length(treat)),rep("Control", length(control))))
+    n_perm <- 100000
+    n_data <- nrow(all_slope_data)
+
+    perm_samples <- matrix(0, nrow = n_data, ncol = n_perm)
+    for (i in 1:n_perm) { 
+        perm_samples[,i] <- sample(all_slope_data$slope_value, size = n_data, replace = FALSE)
+    }
+
+    perm_test <- rep(0, n_perm)
+    for (i in 1:n_perm) { 
+        perm_test[i] <-  abs(
+            median(perm_samples[all_slope_data$goslim_term == "GO", i]) - 
+            median(perm_samples[all_slope_data$goslim_term == "Control", i])) 
+    }
+
+    perm_p <- sum(perm_test >= test_stat)/n_perm
+    permstat <- data.frame(goslim_term=unique(z$goslim_term), p_value=perm_p)
+    return(permstat)
+
+  }))
+
+
+  perm_stats$p_value_FDR <- p.adjust(perm_stats$p_value, method = "fdr")
+
+
+  
+  # Make simple barplot of the results from Wilcoxon rank sum and permutation test
+  term <- c(rownames(perm_stats), rownames(wilcox_stats))
+  stat_summary_p <- c(round(perm_stats$p_value_FDR,4), round(wilcox_stats$p_value_FDR,4))
+  testclass <- rep(c(" Permutation test  ", " Wilcoxon rank-sum test  "), each=nrow(perm_stats))
+  statdata <- data.frame(term=term, data=stat_summary_p, test=testclass)
+
+
+  plotTestStats <- function(pdata) {
+
+    fname <- sprintf('%s.jpg', paste(aspect, "permutation_wilcox_p_values", sep="_"))
+
+    if (aspect == "biological_process") {
+
+        plt_w <- 25.5
+        mb <- 11
+        legpos <- c(0.5,0.95)
+        btmm <- 0.25
+
+    } else if (aspect == "molecular_function") {
+
+        plt_w <- 12
+        mb <- 17
+        legpos <- "none"
+        btmm <- 5.35
+    }
+    
+    p <- ggplot(pdata, aes(factor(term), data, fill = test)) + 
+    geom_bar(stat="identity", position = "dodge") + 
+    scale_fill_brewer(palette = "Set1") + 
+    scale_y_continuous(limits = c(0, 0.95)) + 
+    xlab("") + 
+    ylab("p value (FDR adjusted)") +  
+    ggtitle(paste("GO", aspect, sep=" ")) +
+    geom_text(aes(label=data), position=position_dodge(width=0.9), vjust=0.5, hjust=-0.25, angle=90, size=8.5) + 
+    theme(axis.title = element_text(size=26),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=26), 
+        axis.text.y = element_text(size=26, margin=margin(0,2,0,7)),
+        legend.title = element_text(size=0),
+        legend.text = element_text(size=26),
+        legend.position = legpos,
+        legend.direction = "horizontal",
+        legend.key.size = unit(0.7, "cm"),
+        axis.ticks.length = unit(0.2, "cm"),
+        axis.ticks = element_line(colour = "black", size = 1),
+        plot.title = element_text(size=28, margin=margin(20,20,mb,20)),
+        plot.margin=unit(c(0.25,0.75,btmm,0.5), "cm"))
+
+    ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
+                width = plt_w, height = 23.25, dpi = 300, units = c("in"), limitsize = FALSE)
+    }
+
+    plotTestStats(pdata = statdata)
+
+
+
 
   # Write goslim and control slope data and test statistics to file
   # Show message
@@ -847,7 +942,8 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
   if (!dir.exists(file.path(out_dir, "output", "data"))) 
     dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
 
-  goslim_out_list <- list(getGoslimStats = getGoslimStats, wilcox_stats = wilcox_stats)
+  goslim_out_list <- list(getGoslimStats = getGoslimStats, wilcox_stats = wilcox_stats, 
+    perm_stats = perm_stats)
 
   for(i in names(goslim_out_list)){
     write.table(goslim_out_list[[i]], file=file.path(out_dir, "output", "data", paste0(i, "_", aspect, ".txt")), 
