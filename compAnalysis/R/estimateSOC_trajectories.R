@@ -197,15 +197,17 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
         c07d <- cor_bsv[((max_size*2)+1):(max_size*3),]
         c08d <- cor_bsv[((max_size*3)+1):(max_size*4),]
 
-        getColPOS <- function(df, corc){
+        getColPOS <- function(df){
 
-            if (corc == "05"){
+            corc <- unique(gsub("\\..*","", rownames(df)))
+
+            if (corc == "c05"){
                 cth  <- cos[cos$cor == 0.498, ] 
-            } else if (corc == "06"){
+            } else if (corc == "c06"){
                 cth  <- cos[cos$cor == 0.598, ]
-            } else if (corc == "07"){
+            } else if (corc == "c07"){
                 cth  <- cos[cos$cor == 0.697, ]
-            } else if (corc == "08"){
+            } else if (corc == "c08"){
                 cth  <- cos[cos$cor == 0.794, ]
             }
 
@@ -232,10 +234,10 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
             return(value)
         }
 
-        pos05 <- getColPOS(df=c05d, corc="05")
-        pos06 <- getColPOS(df=c06d, corc="06")
-        pos07 <- getColPOS(df=c07d, corc="07")
-        pos08 <- getColPOS(df=c08d, corc="08")
+        pos05 <- getColPOS(df=c05d)
+        pos06 <- getColPOS(df=c06d)
+        pos07 <- getColPOS(df=c07d)
+        pos08 <- getColPOS(df=c08d)
 
         pos_df <- data.frame(pos05=pos05, pos06=pos06, pos07=pos07, pos08=pos08)
 
@@ -243,6 +245,70 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
     }
 
     cor_pos <- getPOS(cor_bsv)
+
+
+
+    # Plot trajectories
+    prepTrajectories <- function(x){
+
+        value <- unlist(x)
+        size <- rep(sample_size_ls, times=ncol(x))
+        trajectory <- rep(colnames(x), each=nrow(x))
+
+        table <- data.frame(trajectory=trajectory , size=size , value=value)
+
+        return(table)
+    }
+
+    traject05_df <- prepTrajectories(cor_bsv[1:max_size,])
+    traject06_df <- prepTrajectories(cor_bsv[(max_size+1):(max_size*2),])
+    traject07_df <- prepTrajectories(cor_bsv[((max_size*2)+1):(max_size*3),])
+    traject08_df <- prepTrajectories(cor_bsv[((max_size*3)+1):(max_size*4),])
+
+
+    plotTrajectories <- function(df, loc) {
+
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), "COS", sep="_"))
+
+        if (deparse(substitute(df)) == "traject05_df"){
+            ui <- cos[cos$cor == 0.498, 2]
+            li <- cos[cos$cor == 0.498, 3]
+            th <- quantile(cor_pos$pos05, probs = loc)
+
+        } else if (deparse(substitute(df)) == "traject06_df"){
+            ui <- cos[cos$cor == 0.598, 2]
+            li <- cos[cos$cor == 0.598, 3]
+            th <- quantile(cor_pos$pos06, probs = loc)
+
+        } else if (deparse(substitute(df)) == "traject07_df"){
+            ui <- cos[cos$cor == 0.697, 2]
+            li <- cos[cos$cor == 0.697, 3]
+            th <- quantile(cor_pos$pos07, probs = loc)
+
+        } else if (deparse(substitute(df)) == "traject08_df"){
+            ui <- cos[cos$cor == 0.794, 2]
+            li <- cos[cos$cor == 0.794, 3]
+            th <- quantile(cor_pos$pos08, probs = loc)
+        }
+
+        p <- ggplot(df, aes(size, value, group = trajectory)) +
+        geom_line(data = df, aes(size, value),
+            color = "firebrick1", alpha = 0.80, size = 0.2) + 
+        geom_hline(yintercept = ui) + 
+        geom_hline(yintercept = li) + 
+        geom_vline(xintercept = th) + 
+        labs(x = "Sample size", y = "Correlation") +
+        theme_bw()
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
+               width = 14, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+
+    }
+
+    plotTrajectories(traject05_df, loc=0.9)
+    plotTrajectories(traject06_df, loc=0.9)
+    plotTrajectories(traject07_df, loc=0.9)
+    plotTrajectories(traject08_df, loc=0.9)
 
 
 
