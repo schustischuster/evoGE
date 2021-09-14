@@ -96,10 +96,10 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
 
 
     # Real correlations
-    rr08 <- round(cor(x_avg[,2:ncol(x_avg)])[c("Flower_AL"), c("Flower_ES")], 3) # r=0.8
-    rr07 <- round(cor(x_avg[,2:ncol(x_avg)])[c("veg_apex_TH"), c("veg_apex_CR")], 3) # r=0.7
-    rr06 <- round(cor(x_avg[,2:ncol(x_avg)])[c("Carpel_BD"), c("Carpel_TH")], 3) # r=0.6
-    rr05 <- round(cor(x_avg[,2:ncol(x_avg)])[c("Flower_AT"), c("Hypocotyl_BD")], 3) # r=0.5
+    rr08 <- round(cor(x_avg[,2:ncol(x_avg)])[c("Flower_AL"), c("Flower_ES")], 2) # r=0.8
+    rr07 <- round(cor(x_avg[,2:ncol(x_avg)])[c("veg_apex_TH"), c("veg_apex_CR")], 2) # r=0.7
+    rr06 <- round(cor(x_avg[,2:ncol(x_avg)])[c("Carpel_BD"), c("Carpel_TH")], 2) # r=0.6
+    rr05 <- round(cor(x_avg[,2:ncol(x_avg)])[c("Flower_AT"), c("Hypocotyl_BD")], 2) # r=0.5
 
     x_avg_sel <- x_avg %>% select(c(Hypocotyl_BD, veg_apex_CR, veg_apex_TH, Flower_AT, Flower_AL, 
         Flower_ES, Carpel_TH, Carpel_BD))
@@ -202,13 +202,13 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
             corc <- unique(gsub("\\..*","", rownames(df)))
 
             if (corc == "c05"){
-                cth  <- cos[cos$cor == 0.498, ] 
+                cth  <- cos[cos$cor == 0.5, ] 
             } else if (corc == "c06"){
-                cth  <- cos[cos$cor == 0.598, ]
+                cth  <- cos[cos$cor == 0.6, ]
             } else if (corc == "c07"){
-                cth  <- cos[cos$cor == 0.697, ]
+                cth  <- cos[cos$cor == 0.7, ]
             } else if (corc == "c08"){
-                cth  <- cos[cos$cor == 0.794, ]
+                cth  <- cos[cos$cor == 0.79, ]
             }
 
             value <- suppressWarnings(apply(df, 2, function(i) {
@@ -260,10 +260,12 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
         return(table)
     }
 
-    traject05_df <- prepTrajectories(cor_bsv[1:max_size,])
-    traject06_df <- prepTrajectories(cor_bsv[(max_size+1):(max_size*2),])
-    traject07_df <- prepTrajectories(cor_bsv[((max_size*2)+1):(max_size*3),])
-    traject08_df <- prepTrajectories(cor_bsv[((max_size*3)+1):(max_size*4),])
+    maxs_size <- nrow(cor_bsv)/4
+
+    traject05_df <- prepTrajectories(cor_bsv[1:maxs_size,])
+    traject06_df <- prepTrajectories(cor_bsv[(maxs_size+1):(maxs_size*2),])
+    traject07_df <- prepTrajectories(cor_bsv[((maxs_size*2)+1):(maxs_size*3),])
+    traject08_df <- prepTrajectories(cor_bsv[((maxs_size*3)+1):(maxs_size*4),])
 
 
     plotTrajectories <- function(df, loc) {
@@ -271,44 +273,62 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
         fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), "COS", sep="_"))
 
         if (deparse(substitute(df)) == "traject05_df"){
-            ui <- cos[cos$cor == 0.498, 2]
-            li <- cos[cos$cor == 0.498, 3]
+            ui <- cos[cos$cor == 0.5, 2]
+            li <- cos[cos$cor == 0.5, 3]
+            tc <- 0.5
             th <- quantile(cor_pos$pos05, probs = loc)
 
         } else if (deparse(substitute(df)) == "traject06_df"){
-            ui <- cos[cos$cor == 0.598, 2]
-            li <- cos[cos$cor == 0.598, 3]
+            ui <- cos[cos$cor == 0.6, 2]
+            li <- cos[cos$cor == 0.6, 3]
+            tc <- 0.6
             th <- quantile(cor_pos$pos06, probs = loc)
 
         } else if (deparse(substitute(df)) == "traject07_df"){
-            ui <- cos[cos$cor == 0.697, 2]
-            li <- cos[cos$cor == 0.697, 3]
+            ui <- cos[cos$cor == 0.7, 2]
+            li <- cos[cos$cor == 0.7, 3]
+            tc <- 0.7
             th <- quantile(cor_pos$pos07, probs = loc)
 
         } else if (deparse(substitute(df)) == "traject08_df"){
-            ui <- cos[cos$cor == 0.794, 2]
-            li <- cos[cos$cor == 0.794, 3]
+            ui <- cos[cos$cor == 0.79, 2]
+            li <- cos[cos$cor == 0.79, 3]
+            tc <- 0.79
             th <- quantile(cor_pos$pos08, probs = loc)
         }
 
         p <- ggplot(df, aes(size, value, group = trajectory)) +
         geom_line(data = df, aes(size, value),
-            color = "firebrick1", alpha = 0.80, size = 0.2) + 
-        geom_hline(yintercept = ui) + 
-        geom_hline(yintercept = li) + 
-        geom_vline(xintercept = th) + 
+            color = "#e26887", alpha = 0.50, size = 0.25) + 
+        scale_x_continuous(limits = c(0, 820), breaks = c(0, 200, 400, 600, 800), expand = c(0.007, 0)) + 
+        scale_y_continuous(limits = c(-0.15, 0.99), breaks = c(0, 0.2, 0.4, 0.6, 0.8), expand = c(0, 0)) + 
+        geom_hline(yintercept = ui, linetype = 2, size = 1.125) + 
+        geom_hline(yintercept = li, linetype = 2, size = 1.125) + 
+        geom_hline(yintercept = tc, size = 1.125) + 
+        geom_vline(xintercept = th, col="grey44", size = 1.25) + 
+        annotate("text", x=320, y=0.2, label= "POS") + 
+        geom_segment(aes(x=500, xend=550, y=0, yend=0), colour = "black", show.legend = FALSE, 
+            size = 2.5) + 
         labs(x = "Sample size", y = "Correlation") +
-        theme_bw()
+        theme(panel.background = element_blank(), 
+            axis.ticks.length = unit(0.29, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.25), 
+            axis.line = element_line(colour = 'black', size = 1.25), 
+            plot.margin = unit(c(1, 1.35, 3.125, 0),"cm"), 
+            axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
+                colour="black", face = "bold"), 
+            axis.title.x = element_text(size=24.6, margin = margin(t = 5.25, r = 0, b = 0, l = 0), 
+                colour="black", face = "bold"), 
+            axis.text.x = element_text(size=21.5, margin = margin(t = 2.85, b = 8), colour="grey20"), 
+            axis.text.y = element_text(size=21.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20")
+        )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
-               width = 14, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+               width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
 
     }
 
-    plotTrajectories(traject05_df, loc=0.9)
-    plotTrajectories(traject06_df, loc=0.9)
-    plotTrajectories(traject07_df, loc=0.9)
-    plotTrajectories(traject08_df, loc=0.9)
+    plotTrajectories(traject06_df, loc=0.95)
 
 
 
@@ -419,10 +439,10 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
     if (!dir.exists(file.path(out_dir, "output", "data"))) 
         dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
 
-    mcs_out_list <- list(cor_bsv = cor_bsv)
+    mcs_out_list <- list(cor_bsv_traject_ = cor_bsv)
 
     for(i in names(mcs_out_list)){
-        write.table(mcs_out_list[[i]], file=file.path(out_dir, "output", "data", paste0(i, ".txt")), 
+        write.table(mcs_out_list[[i]], file=file.path(out_dir, "output", "data", paste0(i, nbootstrap, ".txt")), 
             sep="\t", col.names=TRUE, row.names=TRUE, dec=".", quote = FALSE)
     }
 
