@@ -6,7 +6,7 @@ library(MatchIt)
 library(ggplot2)
 library(scales)
 
-estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
+estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
 
 
 	# Show error message if no sample size for nbootstrap is chosen
@@ -40,7 +40,7 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
     # return_list <- list("orthoexp" = orthoexp, "nbootstrap" = nbootstrap, "coswidth" = coswidth, "bss" = bss)
     # return(return_list)
     # }
-    # return_objects <- estimateSOC(nbootstrap = 10, coswidth = 0.15, bss = 0.8)
+    # return_objects <- estimateSOC(nbootstrap = 10, coswidth = 0.15, bss = 0.95)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -358,7 +358,7 @@ estimateSOC <- function(nbootstrap, coswidth, bss, ...) {
 
 }
 
-estimateSOC(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
+estimatePOS(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
 
 
 
