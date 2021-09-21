@@ -8,13 +8,13 @@ library(MatchIt)
 library(ggplot2)
 library(scales)
 
-getStrExprCons <- function(nquart, ...) {
+getStrExprCons <- function(nquant, ...) {
 
 
     # Show error message if no quartile number is chosen
-    if ((missing(nquart)) || (nquart < 1))
+    if ((missing(nquant)) || (nquant < 1))
 
-        stop("Please choose a nquart value greater 1",
+        stop("Please choose a nquant value greater 1",
             call. = TRUE
             )
 
@@ -24,10 +24,10 @@ getStrExprCons <- function(nquart, ...) {
 	orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("orthoTPM" = orthoTPM, "nquart" = nquart)
+    # return_list <- list("orthoTPM" = orthoTPM, "nquant" = nquant)
     # return(return_list)
     # }
-    # return_objects <- getStrExprCons(nquart = 280)
+    # return_objects <- getStrExprCons(nquant = 350)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -52,7 +52,7 @@ getStrExprCons <- function(nquart, ...) {
         A.thaliana_flowers_mature_pollen_28d_.2.:B.distachyon_flowers_mature_pollen_32d_.1.))
 
     # Get quartiles
-    quant_num <- round(nrow(orthoExpr)/nquart)
+    quant_num <- round(nrow(orthoExpr)/nquant)
 
 
     orthoExpr$base_averaged <- rowMeans(orthoExpr[2:ncol(orthoExpr)])
@@ -234,323 +234,28 @@ getStrExprCons <- function(nquart, ...) {
         clc_nlm_slopes <- data.frame(do.call(rbind, lapply(carpel_divc, getNLEstimates)))
 
 
+        # Check if 1st and last quantile evolve at significant different rate than the rest
+        p.qrt1 <- wilcox.test(c(unique(rtc_nlm_slopes[,4])[1], unique(hcc_nlm_slopes[,4])[1], unique(lfc_nlm_slopes[,4])[1],
+            unique(avc_nlm_slopes[,4])[1], unique(aic_nlm_slopes[,4])[1], unique(flc_nlm_slopes[,4])[1],
+            unique(stc_nlm_slopes[,4])[1], unique(clc_nlm_slopes[,4])[1]), 
+            c(unique(rtc_nlm_slopes[,4])[2:19], unique(hcc_nlm_slopes[,4])[2:19], unique(lfc_nlm_slopes[,4])[2:19],
+            unique(avc_nlm_slopes[,4])[2:19], unique(aic_nlm_slopes[,4])[2:19], unique(flc_nlm_slopes[,4])[2:19],
+            unique(stc_nlm_slopes[,4])[2:19], unique(clc_nlm_slopes[,4])[2:19]))$p.value
+        # p = 0.0006853317
+
+        p.qrt20 <- wilcox.test(c(unique(rtc_nlm_slopes[,4])[20], unique(hcc_nlm_slopes[,4])[20], unique(lfc_nlm_slopes[,4])[20],
+            unique(avc_nlm_slopes[,4])[20], unique(aic_nlm_slopes[,4])[20], unique(flc_nlm_slopes[,4])[20],
+            unique(stc_nlm_slopes[,4])[20], unique(clc_nlm_slopes[,4])[20]), 
+            c(unique(rtc_nlm_slopes[,4])[2:19], unique(hcc_nlm_slopes[,4])[2:19], unique(lfc_nlm_slopes[,4])[2:19],
+            unique(avc_nlm_slopes[,4])[2:19], unique(aic_nlm_slopes[,4])[2:19], unique(flc_nlm_slopes[,4])[2:19],
+            unique(stc_nlm_slopes[,4])[2:19], unique(clc_nlm_slopes[,4])[2:19]))$p.value
+        # p = 0.04540067
+
+
+
         # Set up list containing all organ goslim control sets
         control_nlm_slp_lst <- list(rtc_nlm_slopes, hcc_nlm_slopes, lfc_nlm_slopes, 
             avc_nlm_slopes, aic_nlm_slopes, flc_nlm_slopes, stc_nlm_slopes, clc_nlm_slopes)
-
-        # Get loess mean and CI for control sets
-        getCNLMStats <- function(cset) {
-
-            cslope <- data.frame(nlm_slope_control=unique(cset$nlm_slope))
-
-            gset <- data.frame(cslope, organ=unique(cset$organ, nrow(cslope)))
-
-            return(gset)
-        }
-
-        control_nlm_slopes <- data.frame(do.call(rbind, lapply(control_nlm_slp_lst, getCNLMStats)))
-
-
-
-        # Merge GOslim and control organ slope value tables 
-        nlm_slope_df <- merge(go_nlm_mean_slp, control_nlm_slopes, by="organ", sort=FALSE)
-
-        nlm_slope_df$goslim_term <- rep(unique(x_df$goslim), nrow(nlm_slope_df))
-
-
-
-
-        #----------------- Prepare data and define color palette for corrplot -----------------
-
-        # Create "plots" folder in /out_dir/output/plots
-        if (!dir.exists(file.path(out_dir, "output", "plots"))) 
-            dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
-
-        # Show message
-        message("Starting analysis and generate plots...")
-
-
-        # Combine all goslim organ list elements to one data frame
-        ortho_organ_df <- do.call("rbind", ortho_organ_lst)
-        ortho_organ_df$group <- rep(unique(x_df$goslim))
-
-
-        # Compute mean corr distances if number of control sets is greater than 1
-        if (ntreat > 1) {
-
-            getMeanCorrSD <- function(lsel) {
-
-                comb_cor <- rowMeans(as.data.frame(cbind(sapply(lsel, `[[`, "correlation"))))
-                comb_sd <- rowMeans(as.data.frame(cbind(sapply(lsel, `[[`, "error"))))
-                clade_name <- lsel[[1]]$clade
-                organ_name <- lsel[[1]]$comp_organ
-                div_times_c <- lsel[[1]]$div_times
-                dataset_name <- lsel[[1]]$dataset
-                comb_data <- data.frame(clade = clade_name, comp_organ = organ_name, 
-                    div_times = div_times_c, correlation = comb_cor, error = comb_sd, 
-                    dataset = dataset_name, group = rep("control"))
-
-                return(comb_data)
-            }
-
-            root_divc_avg <- getMeanCorrSD(root_divc)
-            hypocotyl_divc_avg <- getMeanCorrSD(hypocotyl_divc)
-            leaf_divc_avg <- getMeanCorrSD(leaf_divc)
-            veg_apex_divc_avg <- getMeanCorrSD(veg_apex_divc)
-            inf_apex_divc_avg <- getMeanCorrSD(inf_apex_divc)
-            flower_divc_avg <- getMeanCorrSD(flower_divc)
-            stamen_divc_avg <- getMeanCorrSD(stamen_divc)
-            carpel_divc_avg <- getMeanCorrSD(carpel_divc)
-
-            control_organ_df <- rbind(root_divc_avg, hypocotyl_divc_avg, leaf_divc_avg, 
-                veg_apex_divc_avg, inf_apex_divc_avg, flower_divc_avg, stamen_divc_avg, 
-                carpel_divc_avg)
-
-        } else if (ntreat == 1) {
-            # Add data processing here
-        }
-
-
-        # Combine ortho and control corr data into final table for plotting
-        ortho_control_dist <- rbind(ortho_organ_df, control_organ_df)
-
-
-        # Change organ names for facet strip
-        formOrganNames <- function(dist_df) {
-
-            dist_df$comp_organ <- dist_df$comp_organ %<>% 
-            gsub("Apex_veg", "Apex veg", .) %>% 
-            gsub("Apex_inf", "Apex inf", .)
-
-            dist_df$comp_organ <- factor(dist_df$comp_organ, 
-                levels=c("Root","Hypocotyl","Leaf","Apex veg","Apex inf","Flower","Stamen","Carpel"))
-
-            return(dist_df)
-        }
-
-        ortho_control_dist <- formOrganNames(ortho_control_dist)
-
-
-        # Get organ slopes for averaged control sets
-        control_organ_lst <- list(root_divc_avg, hypocotyl_divc_avg, leaf_divc_avg, 
-                veg_apex_divc_avg, inf_apex_divc_avg, flower_divc_avg, stamen_divc_avg, 
-                carpel_divc_avg)
-
-        control_avg_nlm_slopes <- data.frame(do.call(rbind, lapply(control_organ_lst, getNLEstimates)))
-
-
-        # Add group label to goslim and control slope tables
-        go_nlm_slopes$group <- rep(unique(x_df$goslim))
-        control_avg_nlm_slopes$group <- rep("control")
-
-        # Combine ortho and control corr data into final table for plotting
-        ortho_control_slopes <- rbind(go_nlm_slopes, control_avg_nlm_slopes)
-        colnames(ortho_control_slopes)[which(names(ortho_control_slopes)=="x")] <- "div_times"
-        colnames(ortho_control_slopes)[which(names(ortho_control_slopes)=="y")] <- "correlation"
-        colnames(ortho_control_slopes)[which(names(ortho_control_slopes)=="organ")] <- "comp_organ"
-        ortho_control_slopes <- formOrganNames(ortho_control_slopes)
-
-
-        # Define specific notation
-        set_scientific <- function(l) {
-            # turn in to character string in scientific notation
-            l <- format(l, scientific = TRUE)
-            # quote the part before the exponent to keep all the digits
-            l <- gsub("^(.*)e", "'\\1'e", l)
-            # turn the 'e+' into plotmath format
-            l <- gsub("e", "%*%10^", l)
-            # return this as an expression
-            parse(text=l)
-        }
-
-
-
-        # Plot pea distances and slopes of goslim and control data
-        plotGOSLIM.pea.NLM <- function(data, data2) {
-
-            fname <- sprintf('%s.jpg', paste(unique(x_df$goslim), "nlm_regression_slopes", sep="_"))
-
-            # Define goslim colors for selected categories
-            gocat <- as.character(unique(x_df$goslim))
-
-            # Set plot title
-            tname <- paste(unique(x_df$goslim))
-            tltname <- paste(toupper(substr(tname, 1, 1)), substr(tname, 2, nchar(tname)), sep="")
-            tltname <- paste0(tltname, " (n = ", ntreat, ")")
-
-            # Get number of genes in GOslim category and number of control groups
-            if (ntreat >= 900) {
-                xpos <- 80
-            } else xpos <- 73
-
-            rt_data <- data2[data2$comp_organ == "Root",]
-            y1pos <- (max(rt_data$correlation)*1.05)/3.44
-            y2pos <- (max(rt_data$correlation)*1.05)/7
-            hc_data <- data2[data2$comp_organ == "Hypocotyl",]
-            y3pos <- (max(hc_data$correlation)*1.05)/7
-            lf_data <- data2[data2$comp_organ == "Leaf",]
-            y4pos <- (max(lf_data$correlation)*1.12)/7
-
-            if (gocat == "response to chemical") {
-
-                colscale <- c("#adadad", "#1e9ac7")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.002)))
-                y3pos <- y3pos-0.001
-                y4pos <- y4pos-0.002
-
-            } else if (gocat == "embryo development") {
-
-                colscale <- c("#adadad", "#cb0000")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.0004)))
-
-            } else if (gocat == "nucleobase-containing compound metabolic process") {
-
-                colscale <- c("#adadad", "#ee7500")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.00004)))
-                y3pos <- y3pos-0.001
-                y4pos <- y4pos-0.0007
-
-            } else if (gocat == "DNA binding") {
-
-                colscale <- c("#adadad", "#08ac39")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.005)))
-                y3pos <- y3pos-0.0025
-                y4pos <- y4pos-0.0055
-
-            } else if (gocat == "cellular component organization") {
-
-                colscale <- c("#adadad", "#835bba")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.001)))
-                y3pos <- y3pos-0.0025
-                y4pos <- y4pos-0.0045
-
-            } else {
-                colscale <- c("#adadad", "black")
-                p.value <- c("")
-            }
-
-            corg <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel")
-
-            goslim_lb <- data.frame(x = 85, y = y1pos, label = c("GOterm","","","","","","",""), 
-                comp_organ = corg)
-            control_lb <- data.frame(x = 85, y = y2pos, label = c("Control","","","","","","",""), 
-                comp_organ = corg)
-            c_text <- data.frame(x = xpos, y = y3pos, label = c("",paste("cset =", length(root_divc)),"","","","","",""), 
-                comp_organ = corg)
-
-            p_text <- data.frame(x = 56, y = y4pos, label = c("","",p.value,"","","","",""), 
-                comp_organ = corg)
-
-            corgcat <- factor("Root", levels = c("Root", "Hypocotyl", "Leaf", 
-                    "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
-
-            go_line <- data.frame(x = 50, xend = 80, y = y1pos, yend = y1pos, 
-                comp_organ = corgcat)
-            cont_line <- data.frame(x = 50, xend = 80, y = y2pos, yend = y2pos, 
-                comp_organ = corgcat)
-
-            go_circ <- data.frame(x = 65, y = y1pos, comp_organ = corgcat)
-            cont_circ <- data.frame(x = 65, y = y2pos, comp_organ = corgcat)
-
-            data$group <- factor(data$group, c("control", paste(unique(x_df$goslim))))
-            data2$group <- factor(data2$group, c("control", paste(unique(x_df$goslim))))
-
-            p <- ggplot(data=data, color = group, aes(x=div_times, y=correlation)) + 
-            geom_point(data=data2, alpha = 0.5, aes(stroke = 0.5, size = 1.5, color = group, shape = group, fill = group)) + 
-            geom_line(size = 2.5, data = data, aes(x = div_times, y = correlation, group = group, color = group)) + 
-            scale_y_continuous(expand = c(0.1, 0), breaks = pretty_breaks()) + 
-            scale_x_continuous(expand = c(0.075, 0), breaks=c(0, 50, 100, 150)) + 
-            scale_shape_manual(values = c(21,21)) + 
-            scale_color_manual(values = colscale) + 
-            scale_fill_manual(values = colscale) + 
-            guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
-
-            q <- p + theme_classic() + xlab("Divergence time (Myr)") + ylab("Pearson distance") + 
-            labs(title = tltname) + 
-            geom_text(data = goslim_lb, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
-            geom_text(data = control_lb, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
-            geom_text(data = c_text, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
-            geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
-                parse=TRUE, size=7.5, hjust = 0) + 
-            geom_segment(data = go_line, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
-                colour = colscale[2], show.legend = FALSE, size = 2.5) + 
-            geom_point(data = go_circ, mapping = aes(x = x, y = y), size = 5, shape = 16, color = colscale[2]) + 
-            geom_segment(data = cont_line, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
-                colour = colscale[1], show.legend = FALSE, size = 2.5) + 
-            geom_point(data = cont_circ, mapping = aes(x = x, y = y), size = 5, shape = 16, color = colscale[1]) + 
-            theme(text=element_text(size = 16), 
-                strip.text = element_text(size = 23.75), 
-                strip.text.x = element_text(margin = margin(0.43, 0, 0.43, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
-                axis.ticks.length = unit(0.29, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.25), 
-                axis.line = element_line(colour = 'black', size = 1.25), 
-                plot.margin = unit(c(1, 0.25, 3.125, 0),"cm"), 
-                axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
-                    colour="black", face = "bold"), 
-                axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
-                    colour="black", face = "bold"), 
-                axis.text.x = element_text(size=21.5, margin = margin(t = 2.5, b = 8), colour="grey20"), 
-                axis.text.y = element_text(size=21.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
-                plot.title = element_text(size=24.25, colour=colscale[2], margin = margin(t = 0, b = 15), face = "plain"), 
-                panel.spacing = unit(0.2, "cm"), 
-                panel.grid.major = element_blank(),
-                panel.grid.minor.x = element_blank(), 
-                panel.grid.minor.y = element_blank(), 
-                legend.position = "none") 
-
-            q <- q + facet_wrap(~ comp_organ, nrow = 1, scales = "free")
-
-            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-                width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
-        }
-
-        plotGOSLIM.pea.NLM(data = ortho_control_slopes, data2 = ortho_control_dist)
-
-
-
-        return(nlm_slope_df)
-
-
-
-
-    })))
-
-
-
-
-
-
-  getGoslimStats_lst <- split(getGoslimStats, getGoslimStats$goslim_term)
-  wilcox_stats <- do.call(rbind, lapply(getGoslimStats_lst, function(i) {
-
-    goslim_slope <- unique(i$nlm_slope)
-    control_slope <- i$nlm_slope_control
-    p_value <- wilcox.test(goslim_slope, control_slope)$p.value
-    teststat <- data.frame(goslim_term=unique(i$goslim_term), p_value=p_value)
-    return(teststat)
-
-  }))
-
-
-  wilcox_stats$p_value_FDR <- p.adjust(wilcox_stats$p_value, method = "fdr")
-
-
-
-  # Write goslim and control slope data and test statistics to file
-  # Show message
-  message("Writing data tables...")
-
-  # Create "data" folder in /out_dir/output
-  if (!dir.exists(file.path(out_dir, "output", "data"))) 
-    dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
-
-  goslim_out_list <- list(getGoslimStats = getGoslimStats, wilcox_stats = wilcox_stats)
-
-  for(i in names(goslim_out_list)){
-    write.table(goslim_out_list[[i]], file=file.path(out_dir, "output", "data", paste0(i, "_", aspect, ".txt")), 
-        sep="\t", col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
-  }
 
 
 
