@@ -1,10 +1,6 @@
 # Estimate the stability of Pearson expression correlations using Monte Carlo simulations 
 # Similar procedure as in Schönbrodt et al., 2013
 
-library(dplyr)
-library(MatchIt)
-library(ggplot2)
-library(scales)
 
 estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
 
@@ -32,7 +28,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
 
 
 	# Set file path for input files
-	orthoexp = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+	orthoexp = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
 	orthoexp <- read.table(orthoexp, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
@@ -40,7 +36,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
     # return_list <- list("orthoexp" = orthoexp, "nbootstrap" = nbootstrap, "coswidth" = coswidth, "bss" = bss)
     # return(return_list)
     # }
-    # return_objects <- estimateSOC(nbootstrap = 10, coswidth = 0.15, bss = 0.95)
+    # return_objects <- estimatePOS(nbootstrap = 10, coswidth = 0.15, bss = 0.95)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -151,7 +147,11 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
 
 
     # Repeat bootstrapping function n times
-    # set.seed(123)
+    set.seed(326) 
+    # Note: Seed will give different results in R versions < 3.6.0 because algorithm for 
+    # random-number generator underlying sample() function was changed. See post on SO 
+    # https://stackoverflow.com/questions/47199415/is-set-seed-consistent-over-different-versions-of-r-and-ubuntu/56381613#56381613
+    # and GitHub https://github.com/wch/r-source/blob/7f6cc784523dfa69087958633f7deb309d9c8718/doc/NEWS.Rd#L150-L161:
     cor_bsv_ls <- replicate(nbootstrap, getCorBsv(x_avg_sel), simplify = FALSE)
     cor_bsv <- as.data.frame(do.call("cbind", cor_bsv_ls))
 
@@ -298,6 +298,8 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
             th <- quantile(cor_pos$pos08, probs = loc)
         }
 
+        pos_txt <- paste0("POS (n=", round(quantile(cor_pos$pos06, probs = 0.95)), ")")
+
         p <- ggplot(df, aes(size, value, group = trajectory)) +
         geom_line(data = df, aes(size, value),
             color = "#e26887", alpha = 0.50, size = 0.25) + 
@@ -307,7 +309,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
         geom_hline(yintercept = li, linetype = 2, size = 1.125) + 
         geom_hline(yintercept = tc, size = 1.125) + 
         geom_vline(xintercept = th, col="grey44", size = 1.25) + 
-        annotate("text", x=420, y=0.28, label= "POS (n=290)", size=8.5, col="grey44") + 
+        annotate("text", x=420, y=0.28, label=pos_txt, size=8.5, col="grey44") + 
         geom_segment(aes(x = 331, y = 0.28, xend = 304, yend = 0.28), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="grey44") + 
         geom_segment(aes(x=503, xend=514, y=0.0125, yend=0.0125), colour = "black", show.legend = FALSE, size = 1.1) + 
@@ -322,7 +324,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
             axis.ticks.length = unit(0.29, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(1, 1.35, 3.08, 0),"cm"), 
+            plot.margin = unit(c(0.5, 1.35, 0.5, 0),"cm"), 
             axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
                 colour="black", face = "bold"), 
             axis.title.x = element_text(size=24.6, margin = margin(t = 6.5, r = 0, b = 0, l = 0), 
