@@ -3,7 +3,7 @@
 # Input data: TPM expression values of 7003 core orthologs 
 
 
-getStrExprCons <- function(nquant, ...) {
+getExprCons <- function(nquant, ...) {
 
 
     # Show error message if no quartile number is chosen
@@ -22,7 +22,7 @@ getStrExprCons <- function(nquant, ...) {
     # return_list <- list("orthoTPM" = orthoTPM, "nquant" = nquant)
     # return(return_list)
     # }
-    # return_objects <- getStrExprCons(nquant = 500)
+    # return_objects <- getExprCons(nquant = 500)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -233,18 +233,18 @@ getStrExprCons <- function(nquant, ...) {
         p.qrt1 <- wilcox.test(c(unique(rtc_nlm_slopes[,4])[1], unique(hcc_nlm_slopes[,4])[1], unique(lfc_nlm_slopes[,4])[1],
             unique(avc_nlm_slopes[,4])[1], unique(aic_nlm_slopes[,4])[1], unique(flc_nlm_slopes[,4])[1],
             unique(stc_nlm_slopes[,4])[1], unique(clc_nlm_slopes[,4])[1]), 
-            c(unique(rtc_nlm_slopes[,4])[2:19], unique(hcc_nlm_slopes[,4])[2:19], unique(lfc_nlm_slopes[,4])[2:19],
-            unique(avc_nlm_slopes[,4])[2:19], unique(aic_nlm_slopes[,4])[2:19], unique(flc_nlm_slopes[,4])[2:19],
-            unique(stc_nlm_slopes[,4])[2:19], unique(clc_nlm_slopes[,4])[2:19]))$p.value
-        # p = 0.0006853317
+            c(unique(rtc_nlm_slopes[,4])[2:(quant_num-1)], unique(hcc_nlm_slopes[,4])[2:(quant_num-1)], unique(lfc_nlm_slopes[,4])[2:(quant_num-1)],
+            unique(avc_nlm_slopes[,4])[2:(quant_num-1)], unique(aic_nlm_slopes[,4])[2:(quant_num-1)], unique(flc_nlm_slopes[,4])[2:(quant_num-1)],
+            unique(stc_nlm_slopes[,4])[2:(quant_num-1)], unique(clc_nlm_slopes[,4])[2:(quant_num-1)]))$p.value
+        # p = 0.0006221958
 
-        p.qrt20 <- wilcox.test(c(unique(rtc_nlm_slopes[,4])[20], unique(hcc_nlm_slopes[,4])[20], unique(lfc_nlm_slopes[,4])[20],
-            unique(avc_nlm_slopes[,4])[20], unique(aic_nlm_slopes[,4])[20], unique(flc_nlm_slopes[,4])[20],
-            unique(stc_nlm_slopes[,4])[20], unique(clc_nlm_slopes[,4])[20]), 
-            c(unique(rtc_nlm_slopes[,4])[2:19], unique(hcc_nlm_slopes[,4])[2:19], unique(lfc_nlm_slopes[,4])[2:19],
-            unique(avc_nlm_slopes[,4])[2:19], unique(aic_nlm_slopes[,4])[2:19], unique(flc_nlm_slopes[,4])[2:19],
-            unique(stc_nlm_slopes[,4])[2:19], unique(clc_nlm_slopes[,4])[2:19]))$p.value
-        # p = 0.04540067
+        p.qrt20 <- wilcox.test(c(unique(rtc_nlm_slopes[,4])[quant_num], unique(hcc_nlm_slopes[,4])[quant_num], unique(lfc_nlm_slopes[,4])[quant_num],
+            unique(avc_nlm_slopes[,4])[quant_num], unique(aic_nlm_slopes[,4])[quant_num], unique(flc_nlm_slopes[,4])[quant_num],
+            unique(stc_nlm_slopes[,4])[quant_num], unique(clc_nlm_slopes[,4])[quant_num]), 
+            c(unique(rtc_nlm_slopes[,4])[2:(quant_num-1)], unique(hcc_nlm_slopes[,4])[2:(quant_num-1)], unique(lfc_nlm_slopes[,4])[2:(quant_num-1)],
+            unique(avc_nlm_slopes[,4])[2:(quant_num-1)], unique(aic_nlm_slopes[,4])[2:(quant_num-1)], unique(flc_nlm_slopes[,4])[2:(quant_num-1)],
+            unique(stc_nlm_slopes[,4])[2:(quant_num-1)], unique(clc_nlm_slopes[,4])[2:(quant_num-1)]))$p.value
+        # p = 0.02364381
 
 
 
@@ -293,15 +293,15 @@ getStrExprCons <- function(nquant, ...) {
             # data$organ <- factor(data$organ, c("control", paste(unique(x_df$goslim))))
 
             p <- ggplot(data = data, color = organ, aes(x=quantile, y=scaled_slopes)) + 
-            geom_point(data = data) + 
-            geom_smooth(method = 'loess') + 
-            scale_y_continuous(expand = c(0.05, 0), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)) + 
-            scale_x_continuous(expand = c(0.075, 0), breaks=c(0, 5, 10, 15, 20)) + 
+            geom_point(colour = "blueviolet", size = 3) + 
+            geom_smooth(method = 'loess', colour = "blueviolet", size = 1.5) + 
+            scale_y_continuous(expand = c(0.05, 0), breaks = c(0, 0.25, 0.5, 0.75, 1)) + 
+            scale_x_continuous(expand = c(0.075, 0), breaks = seq(1, quant_num, 3)) + 
             coord_cartesian(ylim = c(-0.25,1.17)) + 
             scale_shape_manual(values = c(21,21)) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
-            q <- p + theme_classic() + xlab("Divergence time (Myr)") + ylab("Pearson distance") + 
+            q <- p + theme_classic() + xlab("Qantile base expression level") + ylab("Relative rate of expression evolution") + 
             # geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
             #     parse=TRUE, size=7.5, hjust = 0) + 
             theme(text=element_text(size = 16), 
@@ -311,7 +311,7 @@ getStrExprCons <- function(nquant, ...) {
                 axis.ticks.length = unit(0.29, "cm"), 
                 axis.ticks = element_line(colour = "black", size = 1.25), 
                 axis.line = element_line(colour = 'black', size = 1.25), 
-                plot.margin = unit(c(0.5, 0.25, 0, 0),"cm"), 
+                plot.margin = unit(c(0.2, 0.25, 0, 0),"cm"), 
                 axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
                     colour="black", face = "bold"), 
                 axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
@@ -333,8 +333,10 @@ getStrExprCons <- function(nquant, ...) {
         plotStrExprCons(data = str_expr_sl)
 
 
-
-
-
-
 }
+
+
+getExprCons(nquant = 500)
+
+
+
