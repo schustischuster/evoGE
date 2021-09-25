@@ -3,7 +3,7 @@
 # Input data: TPM expression values of 7003 core orthologs 
 
 
-getExprCons <- function(nquant, ...) {
+getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
 
     # Show error message if no quartile number is chosen
@@ -13,16 +13,24 @@ getExprCons <- function(nquant, ...) {
             call. = TRUE
             )
 
+    # Show error message if no quartile type is chosen
+    if ((missing(qtype)) || (!is.element(qtype, c("base_mean", "organ_spec"))))
+
+        stop("Please choose one of the available quantile types: 
+            'base_mean', 'organ_spec'",
+            call. = TRUE
+            )
+
 	# Set file path for input files
 	orthoTPM = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
 	orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("orthoTPM" = orthoTPM, "nquant" = nquant)
+    # return_list <- list("orthoTPM" = orthoTPM, "nquant" = nquant, "qtype" = qtype)
     # return(return_list)
     # }
-    # return_objects <- getExprCons(nquant = 500)
+    # return_objects <- getExprCons(nquant = 500, qtype = "base_mean")
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -50,10 +58,13 @@ getExprCons <- function(nquant, ...) {
     quant_num <- round(nrow(orthoExpr)/nquant)
 
 
-    orthoExpr$base_averaged <- rowMeans(orthoExpr[2:ncol(orthoExpr)])
-    orthoExpr$quartile <- ntile(orthoExpr$base_averaged, quant_num) # dplyr function to get n quartiles
+    if (qtype == "base_mean") {
 
-    quart_ls <- split(orthoExpr, f = orthoExpr$quartile)
+
+        orthoExpr$base_averaged <- rowMeans(orthoExpr[2:ncol(orthoExpr)])
+        orthoExpr$quartile <- ntile(orthoExpr$base_averaged, quant_num) # dplyr function to get n quartiles
+
+        quart_ls <- split(orthoExpr, f = orthoExpr$quartile)
 
 
 
@@ -61,8 +72,8 @@ getExprCons <- function(nquant, ...) {
     #---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
 
 
-    # Show message
-    message("Calculating expression distances...")
+        # Show message
+        message("Calculating expression distances...")
 
 
         # Use pearson correlation, inter-organ normalization and TPM for ms
@@ -253,6 +264,15 @@ getExprCons <- function(nquant, ...) {
             avc_nlm_slopes, aic_nlm_slopes, flc_nlm_slopes, stc_nlm_slopes, clc_nlm_slopes)
 
 
+
+    } else if (qtype == "organ_spec") {
+
+
+
+
+    }
+
+
         # Reshape data for ggplot2
         shapeSlopeData <- function(df) {
 
@@ -288,9 +308,16 @@ getExprCons <- function(nquant, ...) {
         # Plot pea distances and slopes of goslim and control data
         plotStrExprCons <- function(data) {
 
-            fname <- sprintf('%s.jpg', paste("str_expr_cons", quant_num, sep="_"))
+            if (qtype == "base_mean") {
 
-            # data$organ <- factor(data$organ, c("control", paste(unique(x_df$goslim))))
+                fname <- sprintf('%s.jpg', paste("expr_cons_base_mean", quant_num, sep="_"))
+                x_title <- "Qantile base expression level"
+
+            } else if (qtype == "organ_spec") {
+
+                fname <- sprintf('%s.jpg', paste("expr_cons_organ_spec", quant_num, sep="_"))
+                x_title <- "Qantile organ expression level"
+            }
 
             p <- ggplot(data = data, color = organ, aes(x=quantile, y=scaled_slopes)) + 
             geom_point(colour = "blueviolet", size = 3) + 
@@ -301,9 +328,7 @@ getExprCons <- function(nquant, ...) {
             scale_shape_manual(values = c(21,21)) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
-            q <- p + theme_classic() + xlab("Qantile base expression level") + ylab("Relative rate of expression evolution") + 
-            # geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
-            #     parse=TRUE, size=7.5, hjust = 0) + 
+            q <- p + theme_classic() + xlab(x_title) + ylab("Relative rate of expression evolution") + 
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 23.75), 
                 strip.text.x = element_text(margin = margin(0.43, 0, 0.43, 0, "cm")), 
@@ -336,7 +361,7 @@ getExprCons <- function(nquant, ...) {
 }
 
 
-getExprCons(nquant = 500)
+getExprCons(nquant = 500, qtype = "base_mean")
 
 
 
