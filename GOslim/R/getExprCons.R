@@ -6,14 +6,14 @@
 getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
 
-    # Show error message if no quartile number is chosen
+    # Show error message if no quantile number is chosen
     if ((missing(nquant)) || (nquant < 1))
 
         stop("Please choose a nquant value greater 1",
             call. = TRUE
             )
 
-    # Show error message if no quartile type is chosen
+    # Show error message if no quantile type is chosen
     if ((missing(qtype)) || (!is.element(qtype, c("base_mean", "organ_spec"))))
 
         stop("Please choose one of the available quantile types: 
@@ -54,7 +54,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
     orthoExpr <- orthoExpr %>% select (-c(
         A.thaliana_flowers_mature_pollen_28d_.2.:B.distachyon_flowers_mature_pollen_32d_.1.))
 
-    # Get quartiles
+    # Get quantiles
     quant_num <- round(nrow(orthoExpr)/nquant)
 
 
@@ -62,9 +62,9 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
 
         orthoExpr$base_averaged <- rowMeans(orthoExpr[2:ncol(orthoExpr)])
-        orthoExpr$quartile <- ntile(orthoExpr$base_averaged, quant_num) # dplyr function to get n quartiles
+        orthoExpr$quantile <- ntile(orthoExpr$base_averaged, quant_num) # dplyr function to get n quantiles
 
-        quart_ls <- split(orthoExpr, f = orthoExpr$quartile)
+        quart_ls <- split(orthoExpr, f = orthoExpr$quantile)
 
 
 
@@ -268,6 +268,9 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
     } else if (qtype == "organ_spec") {
 
 
+        # Show message
+        message("Calculating expression distances...")
+
         # Get organ mean and quantiles
         organ_ls <- split.default(orthoExpr[2:ncol(orthoExpr)], 
                 rep(seq_along(orthoExpr), 
@@ -278,9 +281,9 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
         getOrgQuant <- function(q) {
 
             q$base_averaged <- rowMeans(q)
-            q$quartile <- ntile(q$base_averaged, quant_num)
+            q$quantile <- ntile(q$base_averaged, quant_num)
 
-            q_ls <- split(q, f = q$quartile)
+            q_ls <- split(q, f = q$quantile)
 
 
             getDist <- function(b) {
@@ -453,7 +456,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             slopes <- unique(df$nlm_slope)
             quant <- seq(1:quant_num)
 
-            scale.slopes <- function(x){(x-min(x))/(max(x)-min(x))}
+            scale.slopes <- function(x){((x-min(x))/(max(x)-min(x)))+1}
             scaled_slopes <- scale.slopes(slopes)
 
 
@@ -484,20 +487,22 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             if (qtype == "base_mean") {
 
                 fname <- sprintf('%s.jpg', paste("expr_cons_base_mean", quant_num, sep="_"))
-                x_title <- "Qantile base expression level"
+                x_title <- "Inter-organ inter-species qantiles of expression level"
+                ycoord <- c(0.775,2.17)
 
             } else if (qtype == "organ_spec") {
 
                 fname <- sprintf('%s.jpg', paste("expr_cons_organ_spec", quant_num, sep="_"))
-                x_title <- "Qantile organ expression level"
+                x_title <- "Intra-organ inter-species qantiles of expression level"
+                ycoord <- c(0.9,2.225)
             }
 
             p <- ggplot(data = data, color = organ, aes(x=quantile, y=scaled_slopes)) + 
             geom_point(colour = "blueviolet", size = 3) + 
             geom_smooth(method = 'loess', colour = "blueviolet", size = 1.5) + 
-            scale_y_continuous(expand = c(0.05, 0), breaks = c(0, 0.25, 0.5, 0.75, 1)) + 
+            scale_y_continuous(expand = c(0.05, 0), breaks = c(1, 1.25, 1.5, 1.75, 2)) + 
             scale_x_continuous(expand = c(0.075, 0), breaks = seq(1, quant_num, 3)) + 
-            coord_cartesian(ylim = c(-0.25,1.17)) + 
+            coord_cartesian(ylim = ycoord) + 
             scale_shape_manual(values = c(21,21)) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
@@ -535,6 +540,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
 
 getExprCons(nquant = 500, qtype = "base_mean")
+getExprCons(nquant = 500, qtype = "organ_spec")
 
 
 
