@@ -240,25 +240,6 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
         clc_nlm_slopes <- data.frame(do.call(rbind, lapply(carpel_divc, getNLEstimates)))
 
 
-        # Check if 1st and last quantile evolve at significant different rate than the rest
-        p.qrt1 <- wilcox.test(c(unique(rtc_nlm_slopes[,4])[1], unique(hcc_nlm_slopes[,4])[1], unique(lfc_nlm_slopes[,4])[1],
-            unique(avc_nlm_slopes[,4])[1], unique(aic_nlm_slopes[,4])[1], unique(flc_nlm_slopes[,4])[1],
-            unique(stc_nlm_slopes[,4])[1], unique(clc_nlm_slopes[,4])[1]), 
-            c(unique(rtc_nlm_slopes[,4])[2:(quant_num-1)], unique(hcc_nlm_slopes[,4])[2:(quant_num-1)], unique(lfc_nlm_slopes[,4])[2:(quant_num-1)],
-            unique(avc_nlm_slopes[,4])[2:(quant_num-1)], unique(aic_nlm_slopes[,4])[2:(quant_num-1)], unique(flc_nlm_slopes[,4])[2:(quant_num-1)],
-            unique(stc_nlm_slopes[,4])[2:(quant_num-1)], unique(clc_nlm_slopes[,4])[2:(quant_num-1)]))$p.value
-        # p = 0.0006221958
-
-        p.qrt20 <- wilcox.test(c(unique(rtc_nlm_slopes[,4])[quant_num], unique(hcc_nlm_slopes[,4])[quant_num], unique(lfc_nlm_slopes[,4])[quant_num],
-            unique(avc_nlm_slopes[,4])[quant_num], unique(aic_nlm_slopes[,4])[quant_num], unique(flc_nlm_slopes[,4])[quant_num],
-            unique(stc_nlm_slopes[,4])[quant_num], unique(clc_nlm_slopes[,4])[quant_num]), 
-            c(unique(rtc_nlm_slopes[,4])[2:(quant_num-1)], unique(hcc_nlm_slopes[,4])[2:(quant_num-1)], unique(lfc_nlm_slopes[,4])[2:(quant_num-1)],
-            unique(avc_nlm_slopes[,4])[2:(quant_num-1)], unique(aic_nlm_slopes[,4])[2:(quant_num-1)], unique(flc_nlm_slopes[,4])[2:(quant_num-1)],
-            unique(stc_nlm_slopes[,4])[2:(quant_num-1)], unique(clc_nlm_slopes[,4])[2:(quant_num-1)]))$p.value
-        # p = 0.02364381
-
-
-
         # Set up list containing all organ goslim control sets
         control_nlm_slp_lst <- list(rtc_nlm_slopes, hcc_nlm_slopes, lfc_nlm_slopes, 
             avc_nlm_slopes, aic_nlm_slopes, flc_nlm_slopes, stc_nlm_slopes, clc_nlm_slopes)
@@ -284,6 +265,11 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             q$quantile <- ntile(q$base_averaged, quant_num)
 
             q_ls <- split(q, f = q$quantile)
+
+
+            # Extract expression data for quantile 1 (lowly expressed genes) for heatmap
+            ids_q1 <- as.numeric(c(rownames(q_ls[[1]])))
+            agis_q1 <- orthoExpr[c(ids_q1),]
 
 
             getDist <- function(b) {
@@ -465,6 +451,24 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
         str_expr_sl <- data.frame(do.call(rbind, lapply(control_nlm_slp_lst, shapeSlopeData)))
 
+
+        if (qtype == "organ_spec") {
+
+          # Check if 1st and last quantile evolve at significant different rate than the rest
+          # Wilcoxon rank-sum test for 14 quantiles
+          p.qrt1 <- wilcox.test(c(str_expr_sl[1,3], str_expr_sl[15,3], str_expr_sl[29,3], str_expr_sl[43,3], 
+            str_expr_sl[57,3], str_expr_sl[71,3], str_expr_sl[85,3], str_expr_sl[99,3]), c(str_expr_sl[2:13,3], 
+            str_expr_sl[16:27,3], str_expr_sl[30:41,3], str_expr_sl[44:55,3], str_expr_sl[58:69,3], 
+            str_expr_sl[72:83,3], str_expr_sl[86:97,3], str_expr_sl[100:111,3]))$p.value
+          # p-value = 2.894e-06
+
+          p.qrt14 <- wilcox.test(c(str_expr_sl[14,3], str_expr_sl[28,3], str_expr_sl[42,3], str_expr_sl[56,3], 
+            str_expr_sl[70,3], str_expr_sl[84,3], str_expr_sl[98,3], str_expr_sl[112,3]), c(str_expr_sl[2:13,3], 
+            str_expr_sl[16:27,3], str_expr_sl[30:41,3], str_expr_sl[44:55,3], str_expr_sl[58:69,3], 
+            str_expr_sl[72:83,3], str_expr_sl[86:97,3], str_expr_sl[100:111,3]))$p.value
+          # p-value = 2.894e-06
+        }
+        
 
 
         # Define specific notation
