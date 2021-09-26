@@ -268,7 +268,180 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
     } else if (qtype == "organ_spec") {
 
 
+        # Get organ mean and quantiles
+        organ_ls <- split.default(orthoExpr[2:ncol(orthoExpr)], 
+                rep(seq_along(orthoExpr), 
+                each = 21, 
+                length.out=ncol(orthoExpr)-1)
+                )
 
+        getOrgQuant <- function(q) {
+
+            q$base_averaged <- rowMeans(q)
+            q$quartile <- ntile(q$base_averaged, quant_num)
+
+            q_ls <- split(q, f = q$quartile)
+
+
+            getDist <- function(b) {
+
+                b_red <- b[-c(22:23)]
+
+                df_cor <- sqrt(1/2*(1 - cor(b_red, method="pearson")))
+
+                # Get organ names
+                df_names <- data.frame(names=names(df_cor[1,]))
+                ext_org_name <- df_names[1,]
+
+                if (ext_org_name == "A.thaliana_root_whole_root_5d_.2.") {
+                    organ <- "Root"
+                } else if (ext_org_name == "A.thaliana_hypocotyl_10d_.2.") {
+                    organ <- "Hypocotyl"
+                } else if (ext_org_name == "A.thaliana_leaf_1.2_7d_.2.") {
+                    organ <- "Leaf"
+                } else if (ext_org_name == "A.thaliana_apex_vegetative_7d_.2.") {
+                    organ <- "Apex_veg"
+                } else if (ext_org_name == "A.thaliana_apex_inflorescence_21d_.2.") {
+                    organ <- "Apex_inf"
+                } else if (ext_org_name == "A.thaliana_flower_stg12_21d._.2.") {
+                    organ <- "Flower"
+                } else if (ext_org_name == "A.thaliana_flower_stg12_stamens_21d._.2.") {
+                    organ <- "Stamen"
+                } else if (ext_org_name == "A.thaliana_flower_early_stg12_carpels_21d._.2.") {
+                    organ <- "Carpel"
+                }
+
+
+                replcor <- function(xrepl){
+
+                    xrepl <- c(xrepl)[xrepl>0][!(duplicated(c(xrepl)[xrepl>0]))]
+                    return(xrepl)
+                }
+
+                sp0_repl <- c(mean(replcor(df_cor[1:3,1:3])), mean(replcor(df_cor[4:6,4:6])), 
+                mean(replcor(df_cor[7:9,7:9])), mean(replcor(df_cor[10:12,10:12])), 
+                mean(replcor(df_cor[13:15,13:15])), mean(replcor(df_cor[16:18,16:18])), 
+                mean(replcor(df_cor[19:21,19:21]))) # AT-AT
+
+                # Get mean
+                df_cor <- as.data.frame(df_cor, stringsAsFactors=FALSE)
+
+                avgRepl <- function(x_df) {
+
+                    getRepl <- function(x) {
+
+                        split.default(x, 
+                          rep(seq_along(x), 
+                            each = 3, 
+                            length.out=ncol(x)
+                            )
+                        )
+                    }
+
+                    repl_lst <- getRepl(x_df)
+                    repl_sum <- lapply(repl_lst, sum)
+                    repl_mean <- as.numeric(unlist(repl_sum))/9
+
+                    return(repl_mean)
+                }
+
+                sp1_repl <- avgRepl(df_cor[4:6,1:3]) # AT-AL
+                sp2_repl <- avgRepl(df_cor[7:9,1:6]) # AT-CR AL-CR
+                sp3_repl <- avgRepl(df_cor[10:12,1:9]) # AT-ES AL-ES CR-ES
+                sp4_repl <- avgRepl(df_cor[13:15,1:12]) # AT-TH AL-TH CR-TH ES-TH
+                sp5_repl <- avgRepl(df_cor[16:18,1:15]) # AT-MT AL-MT CR-MT ES-MT TH-MT
+                sp6_repl <- avgRepl(df_cor[19:21,1:18]) # AT-BD AL-BD CR-BD ES-BD TH-BD MT-BD
+
+
+                getError <- function(cor_data) {
+
+                    std <- sd(cor_data, na.rm=TRUE)
+                    num <- length(cor_data)
+                    error <- std/sqrt(num)
+
+                    return(error)
+
+                } # Use this function to replace sd if reqired
+
+
+                df_cor_error <- data.frame(error = c(rep(as.numeric(c(sd(sp0_repl))),length(sp0_repl)),
+                    as.numeric(c(sd(sp1_repl))), rep(as.numeric(c(sd(sp2_repl))),length(sp2_repl)), 
+                    rep(as.numeric(c(sd(sp3_repl))),length(sp3_repl)), rep(as.numeric(c(sd(sp4_repl))),length(sp4_repl)), 
+                    rep(as.numeric(c(sd(sp5_repl))),length(sp5_repl)), rep(as.numeric(c(sd(sp6_repl))),length(sp6_repl))))
+
+
+                df_cor_avg <- data.frame(correlation = c(sp0_repl, sp1_repl, sp2_repl, sp3_repl, sp4_repl, sp5_repl, sp6_repl))
+                div_tag <- data.frame(clade = c(rep("T0", length(sp0_repl)), "T1", rep("T2", length(sp2_repl)), rep("T3", length(sp3_repl)), 
+                    rep("T4", length(sp4_repl)), rep("T5", length(sp5_repl)), rep("T6", length(sp6_repl))))
+                organ_id <- data.frame(comp_organ = rep(organ, nrow(df_cor_avg)))
+                div_times <- data.frame(div_times = c(rep(0, length(sp0_repl)), 7.1, rep(9.4, length(sp2_repl)), rep(25.6, length(sp3_repl)), 
+                    rep(46, length(sp4_repl)), rep(106, length(sp5_repl)), rep(160, length(sp6_repl))))
+                dataset <- data.frame(dataset = rep("Angiosperms ", nrow(df_cor_avg)))
+                df_cor_avg <- cbind(div_tag, organ_id, div_times, df_cor_avg, df_cor_error, dataset)
+
+                return(df_cor_avg)
+
+            }
+
+
+            q_cor_avg <- lapply(q_ls, getDist)
+
+
+            #---- Apply non-linear regression to sOU and pearson dist expression data and compare slopes -----
+
+            # Non-linear regression using negative exponential law fit: pairwise expression differences
+            # between species saturate with evolutionary time in a power law relationship
+            # Fits assumption of OU model underlying stabilizing GE selection as a decelarated process
+
+            getNLEstimates <- function(corrdata) {
+
+                comp_organ <- unique(corrdata$comp_organ)
+
+
+                nl_model <- function(a, b, c, x){
+
+                    y = a * exp(c * x) + b * (1 - exp(c * x))
+                    return(y)
+                }
+                # a + b defines maximum y value
+                # a defines intercept
+
+
+                x_DS_grid <- seq(0, 160, length = 200)  ## prediction grid
+
+                cor_0 <- corrdata$correlation[corrdata$clade=="T0"]
+
+                weights <- c(rep(3.5,7), 0.5, rep(1,2), rep(1.5,3), rep(2,4), rep(2.5,5), rep(3,6))
+
+                # Compute data points for DevSeq_AL_pearson_dist based on model
+                # First try to manually find rough parameters, then use nls to fine tune
+                mcoeff <- nls(correlation ~ a * exp(div_times * c) + b * (1-(exp(div_times * c))), 
+                    start = list(a = 0.01, b = 0.5, c = -0.01), data = corrdata, control = list(maxiter = 500), 
+                    weights=weights)
+                coeff <- as.data.frame(summary(mcoeff)["coefficients"])
+
+                model_expr_dist <- data.frame(y = do.call(rbind, lapply(x_DS_grid, nl_model, 
+                    a = coeff["a",1], b = coeff["b",1], c = coeff["c",1])))
+
+                model_coord <- data.frame(x = x_DS_grid, model_expr_dist)
+
+                # Get slope values
+                slopes = diff(model_coord$y)/diff(model_coord$x)
+                slopes_avg <- mean(slopes)
+
+                nlm_coord <- data.frame(model_coord, organ=rep(comp_organ, nrow(model_coord)), 
+                    nlm_slope=rep(slopes_avg, nrow(model_coord)))
+
+                return(nlm_coord)
+
+            }
+
+            # Get mean nlm regression slopes for all goslim control sets
+            nlm_slopes <- data.frame(do.call(rbind, lapply(q_cor_avg, getNLEstimates)))
+
+        }
+
+        control_nlm_slp_lst <- lapply(organ_ls, getOrgQuant)
 
     }
 
