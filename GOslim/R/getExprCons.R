@@ -376,6 +376,52 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             q_cor_avg <- lapply(q_ls, getDist)
 
 
+
+            # Make heatmap for root q1 expression as example
+            if (c(names=names(q[1,]))[1] == "A.thaliana_root_whole_root_5d_.2.") {
+
+
+                # Create heatmap with reversed RowSideColors
+                png(height = 880, width = 1600, pointsize = 10, file = file.path(out_dir, "output", "plots", "q1_expression_root.png"))
+                rc <- rep(c("#6a54a9", "#53b0db", "#2c8654", "#96ba37", "#fad819", "#e075af", "#ed311c", "#f2a72f"), each = 21)
+
+                heatmap.2(as.matrix(agis_q1[,2:ncol(agis_q1)]), 
+                    density.info = "none",
+                    labRow = FALSE, 
+                    labCol = FALSE,
+                    dendrogram = "none", 
+                    col = colorRampPalette(c("#f5f5f9", "#e7e7f3", "#c9c7ed", "#aca7e6", "#9187de", "#7867d3", "#5f46c7", "#4d35b0", "#4d35b0"))(n = 80), 
+                    scale = "none",
+                    trace = "none",
+                    lmat = rbind(c(0,0,0,0,0), c(0,5,0,4,0), c(0,3,0,2,0), 
+                        c(0,0,0,1,0), c(0,0,0,0,0)), 
+                    lhei = c(0.1,2.5,5,0.28,0.1),
+                    lwid = c(0.1,3.5,0.25,5,0.25),
+                    key.par = list(cex = 2.8), 
+                    ColSideColors = rc, 
+                    margins = c(2, 2),
+                    key = TRUE,
+                    key.xlab = "",
+                    key.title = "",
+                    distfun = function(x) as.dist(sqrt(1/2*(1-cor(t(x))))),
+                    hclustfun = function(x) hclust(x, method = "complete"),
+                    Rowv = TRUE, 
+                    Colv = FALSE
+                    ) 
+
+                dev.off()
+
+
+                # Create "data" folder in /out_dir/output
+                if (!dir.exists(file.path(out_dir, "output", "data"))) 
+                    dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
+
+                write.table(q, file = file.path(out_dir, "output", "data", paste0("q1_expression_root.txt")), 
+                sep="\t", col.names=TRUE, row.names=TRUE, dec=".", quote = FALSE)
+
+            }
+
+
             #---- Apply non-linear regression to sOU and pearson dist expression data and compare slopes -----
 
             # Non-linear regression using negative exponential law fit: pairwise expression differences
