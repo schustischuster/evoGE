@@ -383,7 +383,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
                 # Create heatmap with reversed RowSideColors
                 png(height = 880, width = 1600, pointsize = 10, file = file.path(out_dir, "output", "plots", "q1_expression_root.png"))
-                rc <- rep(c("#6a54a9", "#53b0db", "#2c8654", "#96ba37", "#fad819", "#e075af", "#ed311c", "#f2a72f"), each = 21)
+                cc <- rep(c("#6a54a9", "#53b0db", "#2c8654", "#96ba37", "#fad819", "#e075af", "#ed311c", "#f2a72f"), each = 21)
 
                 heatmap.2(as.matrix(agis_q1[,2:ncol(agis_q1)]), 
                     density.info = "none",
@@ -398,7 +398,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                     lhei = c(0.1,2.5,5,0.28,0.1),
                     lwid = c(0.1,3.5,0.25,5,0.25),
                     key.par = list(cex = 2.8), 
-                    ColSideColors = rc, 
+                    ColSideColors = cc, 
                     margins = c(2, 2),
                     key = TRUE,
                     key.xlab = "",
@@ -416,7 +416,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                 if (!dir.exists(file.path(out_dir, "output", "data"))) 
                     dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
 
-                write.table(q, file = file.path(out_dir, "output", "data", paste0("q1_expression_root.txt")), 
+                write.table(agis_q1, file = file.path(out_dir, "output", "data", paste0("q1_expression_root.txt")), 
                 sep="\t", col.names=TRUE, row.names=TRUE, dec=".", quote = FALSE)
 
             }
