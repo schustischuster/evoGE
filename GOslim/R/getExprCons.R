@@ -381,6 +381,41 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             if (c(names=names(q[1,]))[1] == "A.thaliana_root_whole_root_5d_.2.") {
 
 
+                color.palette <- function(steps, n.steps.between=NULL, ...) {
+
+                    if (is.null(n.steps.between)) 
+                        n.steps.between <- rep(0, (length(steps)-1))
+
+                    if (length(n.steps.between) != length(steps)-1)
+                        stop("Must have one less n.steps.between value than steps")
+
+                    fill.steps <- cumsum(rep(1, length(steps)) + c(0,n.steps.between))
+                    RGB <- matrix(NA, nrow = 3, ncol = fill.steps[length(fill.steps)])
+                    RGB[,fill.steps] <- col2rgb(steps)
+
+                    for (i in which(n.steps.between > 0)) {
+                        col.start = RGB[,fill.steps[i]]
+                        col.end = RGB[,fill.steps[i + 1]]
+
+                        for (j in seq(3)) {
+                            vals <-seq(col.start[j], col.end[j], length.out=n.steps.between[i]+2)[2:(2+n.steps.between[i]-1)]  
+                            RGB[j,(fill.steps[i] + 1):(fill.steps[i + 1] - 1)] <- vals
+                        }
+                    }
+
+                    new.steps <- rgb(RGB[1, ], RGB[2, ], RGB[3, ], maxColorValue = 255)
+                    pal <- colorRampPalette(new.steps, ...)
+
+                    return(pal)
+                }
+
+                # Define colors and number of steps for the plot
+                steps <- c("#fae85a", "#f7ea40", "#fdc91c", "#ffa700", "#fe8300", "#f85b17", 
+                    "#ee2727", "#ea2828", "#ea285a")
+
+                pal <- color.palette(steps, c(2, 10, 11, 12, 13, 14, 15, 16), space = "rgb")
+
+
                 # Create heatmap with reversed RowSideColors
                 png(height = 880, width = 1600, pointsize = 10, file = file.path(out_dir, "output", "plots", "q1_expression_root.png"))
                 cc <- rep(c("#6a54a9", "#53b0db", "#2c8654", "#96ba37", "#fad819", "#e075af", "#ed311c", "#f2a72f"), each = 21)
@@ -390,7 +425,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                     labRow = FALSE, 
                     labCol = FALSE,
                     dendrogram = "none", 
-                    col = colorRampPalette(c("#f5f5f9", "#e7e7f3", "#c9c7ed", "#aca7e6", "#9187de", "#7867d3", "#5f46c7", "#4d35b0", "#4d35b0"))(n = 80), 
+                    col = pal(100), 
                     scale = "none",
                     trace = "none",
                     lmat = rbind(c(0,0,0,0,0), c(0,5,0,4,0), c(0,3,0,2,0), 
