@@ -41,8 +41,16 @@ Download and extract the entire directory to the working directory on your compu
 in_dir <- file.path("evoGE", "GOslim", "data")
 out_dir <- file.path("evoGE", "GOslim")
 
-source(file.path("evoGE", "GOslim", "R", "plotPhyloCore.R"))
-
+# Source R files
+sourceDir <- function(path, trace = TRUE, ...) {
+   for (nm in list.files(path, pattern = "[.][RrSsQq]$")) {
+      if(trace) cat(nm,":")
+      source(file.path(path, nm), ...)
+      if(trace) cat("\n")
+   }
+}
+ 
+sourceDir(path_to_R_files)
 ```
 ---
 ## Data analysis and vizualization
