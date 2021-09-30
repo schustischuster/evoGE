@@ -40,6 +40,7 @@ Download and extract the entire directory to the working directory on your compu
 ```R
 in_dir <- file.path("evoGE", "GOslim", "data")
 out_dir <- file.path("evoGE", "GOslim")
+path_to_R_files <- file.path("evoGE", "GOslim", "R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
