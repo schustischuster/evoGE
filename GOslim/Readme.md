@@ -1,6 +1,6 @@
 ## Analyse rates of gene expression evolution of functional groups
 
-This code allows to analyse the rate of gene expression evolution of functionally related genes. This involves estimating the stability of correlations using Monte-Carlo simulations, matching optimal number of control gene sets to each GO slim term category by assessing balance statistics, evaluating the strength of expression conservation in relation to gene expression level, and applying non-linear negative exponential growth models to estimate the rates of gene expression evolution. 
+This code allows to analyse the rate of gene expression evolution of functionally related genes. This involves estimating the stability of correlations using Monte-Carlo simulations, matching optimal number of control gene sets to each GO slim term category by assessing balance statistics, evaluating the strength of expression conservation in relation to gene expression levels, and applying non-linear negative exponential growth models to estimate the rates of gene expression evolution. 
 
 
 ## Contents
@@ -20,7 +20,7 @@ Install and load the following R packages before running the reproducible script
 
 ```R
 # Create list of required packages
-lib_List <- c("dplyr", "ggplot2", "ape", "scales", "gtable")
+lib_List <- c("dplyr", "MatchIt", "gplots", "ggplot2", "scales")
 
 loadLibrary <- function(x) { 
     if (!require(x, character.only = T)) {
