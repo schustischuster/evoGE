@@ -68,7 +68,7 @@ estimatePOS(nbootstrap, coswidth, bss, ...)
 | :---  | :---  |
 | nbootstrap  | Number of sampling trajectories. |
 | coswidth  | Indicates the corridor of stability (COS). Values of 0.1/0.15/0.2 correspond to small/medium/large effect sizes, respectively. For more details, see [Cohen, Psychol Bull (1992)](https://pubmed.ncbi.nlm.nih.gov/19565683/). |
-| bss  | Indicates the level of confidence. |
+| bss  | Indicates the level of confidence for the confidence interval. |
 
 </br>
 
