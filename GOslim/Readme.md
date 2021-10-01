@@ -56,7 +56,7 @@ sourceDir(path_to_R_files)
 ---
 ## Data analysis and vizualization
 
-Sample correlations converge to the population value with increasing sample size, and it has been shown that the sample size should approach n=250 for stable estimates [Schönbrodt and Perugini, J Res Pers (2013)](https://www.sciencedirect.com/science/article/abs/pii/S0092656613000858). Since the points of stability (POS) published in this work were based on normal distributions, we implemented the simulations to retrieve sample size estimates for stable correlations derived from gene expression data.
+Sample correlations converge to the population value with increasing sample size, and it has been shown that the sample size should approach n=250 for stable estimates ([Schönbrodt and Perugini, J Res Pers. 2013](https://www.sciencedirect.com/science/article/abs/pii/S0092656613000858)). Since the points of stability (POS) published in this work were based on normal distributions, we implemented the simulations to retrieve sample size estimates for stable correlations derived from gene expression data.
 
 ```R
 estimatePOS(nbootstrap, coswidth, bss, ...)
@@ -66,8 +66,8 @@ estimatePOS(nbootstrap, coswidth, bss, ...)
 
 | Arguments  |  |
 | :---  | :---  |
-| nbootstrap  | Number of sampling trajectories. Must be either `"Median"` (median time derived from all studies) or `"Estimated"` (TTOL estimation). For more details, see [Hedges et al., MBE (2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4379413/). |
-| coswidth  | Indicates the corridor width. Must be either `"Median"` (median time derived from all studies) or `"Estimated"` (TTOL estimation). For more details, see [Hedges et al., MBE (2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4379413/). |
+| nbootstrap  | Number of sampling trajectories. |
+| coswidth  | Indicates the corridor of stability (COS) width. Values of 0.1/0.15/0.2 correspond to small/medium/large effect sizes, respectively. For more details, see [Cohen, Psychol Bull (1992)](https://pubmed.ncbi.nlm.nih.gov/19565683/). |
 | bss  | Indicates the bootstrap support. Must be either `"Median"` (median time derived from all studies) or `"Estimated"` (TTOL estimation). |
 
 </br>
