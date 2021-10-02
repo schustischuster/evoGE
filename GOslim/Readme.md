@@ -1,13 +1,13 @@
 ## Analyse rates of gene expression evolution of functional groups
 
-This code allows to analyse the rate of gene exopression evolution of functionally related genes. This involves estimating the stability of correlations using Monte-Carlo simulations, matching optimal number of control gene sets to each GO slim term category by assessing balance statistics, evaluating the strength of expression conservation in relation to gene expression levels, and applying non-linear regression models to estimate the rates of gene expression evolution. 
+This code allows to analyse the rate of gene expression evolution of functionally related genes. This involves estimating the stability of correlations using Monte-Carlo simulations, matching optimal number of control gene sets to each GO slim term category by assessing balance statistics, evaluating the strength of expression conservation in relation to gene expression levels, and applying non-linear regression models to estimate the rates of gene expression evolution. 
 
 
 ## Contents
 
 * [Getting Started](#getting-started)
   * [Required Packages](#required-packages)
-  * [Dara input](#data-input)
+  * [Data input](#data-input)
 * [Data analysis and visualization](#data-analysis-and-visualization)
 * [Session info](#session-info)
 
@@ -72,7 +72,7 @@ estimatePOS(nbootstrap, coswidth, bss, ...)
 
 </br>
 
-To reproduce the results of this study, execute the following call:
+To reproduce the results of this study, execute the following function call:
 
 ```R
 estimatePOS(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
