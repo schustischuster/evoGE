@@ -94,7 +94,7 @@ getExprCons(nquant, qtype = c("base_mean", "organ_spec"), ...)
 
 </br>
 
-To reproduce the results of this study, execute the following function call:
+To reproduce the results of this study, execute the following function calls:
 
 ```R
 getExprCons(nquant = 500, qtype = "base_mean")
