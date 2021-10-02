@@ -1,14 +1,14 @@
 ## Analyse rates of gene expression evolution of functional groups
 
-This code allows to analyse the rate of gene expression evolution of functionally related genes. This involves estimating the stability of correlations using Monte-Carlo simulations, matching optimal number of control gene sets to each GO slim term category by assessing balance statistics, evaluating the strength of expression conservation in relation to gene expression levels, and applying non-linear negative exponential growth models to estimate the rates of gene expression evolution. 
+This code allows to analyse the rate of gene exopression evolution of functionally related genes. This involves estimating the stability of correlations using Monte-Carlo simulations, matching optimal number of control gene sets to each GO slim term category by assessing balance statistics, evaluating the strength of expression conservation in relation to gene expression levels, and applying non-linear regression models to estimate the rates of gene expression evolution. 
 
 
 ## Contents
 
 * [Getting Started](#getting-started)
   * [Required Packages](#required-packages)
-  * [Data input](#data-input)
-* [Data vizualization](#data-vizualization)
+  * [Dara input](#data-input)
+* [Data analysis and visualization](#data-analysis-and-visualization)
 * [Session info](#session-info)
 
 ---
@@ -35,7 +35,7 @@ invisible(lapply(lib_List, loadLibrary))
 ```
 
 ### Data input
-Download and extract the entire directory to the working directory on your computer. Then, set the path for input and output files and source the R scripts: 
+Download and extract the entire directory to the working directory on your computer. Then, set the path for input and output files and source the R scripts:
 
 ```R
 in_dir <- file.path("evoGE", "GOslim", "data")
@@ -54,9 +54,9 @@ sourceDir <- function(path, trace = TRUE, ...) {
 sourceDir(path_to_R_files)
 ```
 ---
-## Data analysis and vizualization
+## Data analysis and visualization
 
-Sample correlations converge to the population value with increasing sample size, and it has been shown that the sample size should approach n=250 for stable estimates ([Schönbrodt and Perugini, J Res Pers. 2013](https://www.sciencedirect.com/science/article/abs/pii/S0092656613000858)). Since the points of stability (POS) published in this work were based on normal distributions, we implemented the simulations to retrieve sample size estimates for stable correlations derived from gene expression data.
+Sample correlations converge to the population value with increasing sample size, and it has been shown that the sample size should approach n=250 for stable estimates ([Schönbrodt and Perugini, J Res Pers. 2013](https://www.sciencedirect.com/science/article/abs/pii/S0092656613000858)). Since the points of stability (POS) published in this work were based on normal distributions, we implemented Monte-Carlo simulations to retrieve sample size estimates for stable correlations derived from gene expression data.
 
 ```R
 estimatePOS(nbootstrap, coswidth, bss, ...)
@@ -72,7 +72,7 @@ estimatePOS(nbootstrap, coswidth, bss, ...)
 
 </br>
 
-To reproduce the results of this study, execute the following function call:
+To reproduce the results of this study, execute the following call:
 
 ```R
 estimatePOS(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
@@ -86,3 +86,11 @@ estimatePOS(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
 ```R
 sessionInfo()
 ```
+
+
+
+
+
+
+
+
