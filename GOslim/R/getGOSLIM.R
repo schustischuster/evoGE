@@ -3,10 +3,6 @@
 # GOSLIM table contains the GOslim terms for 28553 A.thaliana genes with "AT" identifier
 # Create GOSLIM lists of 7003 angiosperm orthologous genes
 
-library(dplyr)
-library(MatchIt)
-library(ggplot2)
-library(scales)
 
 getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sample_size) {
 
@@ -27,9 +23,9 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
 
 	# Set file path for input files
-	GOSLIM = file.path(in_dir, "Functional_groups", "ATH_GO_GOSLIM.txt")
-	GOCAT = file.path(in_dir, "Functional_groups", "TAIR_GO_slim_categories.txt")
-	orthoTPM = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+	GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
+	GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
+	orthoTPM = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
 	GOSLIM <- read.table(GOSLIM, sep="\t", dec=".", quote = "", header=FALSE, skip=4, fill = TRUE, stringsAsFactors=FALSE)
 	GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
@@ -39,7 +35,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     # return_list <- list("orthoTPM" = orthoTPM, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "sample_size" = sample_size)
     # return(return_list)
     # }
-    # return_objects <- getGOSLIM(aspect = "biological_process", sample_size = 150)
+    # return_objects <- getGOSLIM(aspect = "biological_process", sample_size = 293)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -782,19 +778,19 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             geom_point(data = cont_circ, mapping = aes(x = x, y = y), size = 5, shape = 16, color = colscale[1]) + 
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 23.75), 
-                strip.text.x = element_text(margin = margin(0.43, 0, 0.43, 0, "cm")), 
+                strip.text.x = element_text(margin = margin(0.46, 0, 0.46, 0, "cm")), 
                 strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
                 axis.ticks.length = unit(0.29, "cm"), 
                 axis.ticks = element_line(colour = "black", size = 1.25), 
                 axis.line = element_line(colour = 'black', size = 1.25), 
                 plot.margin = unit(c(1, 0.25, 3.125, 0),"cm"), 
-                axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
+                axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 14.0, b = 0, l = 12.0), 
                     colour="black", face = "bold"), 
-                axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
+                axis.title.x = element_text(size=24.6, margin = margin(t = 7.5, r = 0, b = 5.75, l = 0), 
                     colour="black", face = "bold"), 
-                axis.text.x = element_text(size=21.5, margin = margin(t = 2.5, b = 8), colour="grey20"), 
-                axis.text.y = element_text(size=21.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
-                plot.title = element_text(size=24.25, colour=colscale[2], margin = margin(t = 0, b = 15), face = "plain"), 
+                axis.text.x = element_text(size=22.5, margin = margin(t = 2.5, b = 8), colour="grey20"), 
+                axis.text.y = element_text(size=22.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
+                plot.title = element_text(size=24.6, colour=colscale[2], margin = margin(t = 0, b = 15), face = "plain"), 
                 panel.spacing = unit(0.2, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
