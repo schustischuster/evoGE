@@ -783,7 +783,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 axis.ticks.length = unit(0.29, "cm"), 
                 axis.ticks = element_line(colour = "black", size = 1.25), 
                 axis.line = element_line(colour = 'black', size = 1.25), 
-                plot.margin = unit(c(1, 0.25, 3.125, 0),"cm"), 
+                plot.margin = unit(c(1, 0.25, 3.0, 0),"cm"), 
                 axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 14.0, b = 0, l = 12.0), 
                     colour="black", face = "bold"), 
                 axis.title.x = element_text(size=24.6, margin = margin(t = 7.5, r = 0, b = 5.75, l = 0), 
