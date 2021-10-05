@@ -572,20 +572,20 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             if (qtype == "base_mean") {
 
                 fname <- sprintf('%s.jpg', paste("expr_cons_base_mean", quant_num, sep="_"))
-                x_title <- "Inter-organ inter-species qantiles of expression level"
+                x_title <- "Inter-organ inter-species quantiles of expression level"
                 ycoord <- c(0.775,2.17)
 
             } else if (qtype == "organ_spec") {
 
                 fname <- sprintf('%s.jpg', paste("expr_cons_organ_spec", quant_num, sep="_"))
-                x_title <- "Intra-organ inter-species qantiles of expression level"
+                x_title <- "Intra-organ inter-species quantiles of expression level"
                 ycoord <- c(0.9,2.225)
             }
 
             p <- ggplot(data = data, color = organ, aes(x=quantile, y=scaled_slopes)) + 
             geom_point(colour = "blueviolet", size = 3) + 
             geom_smooth(method = 'loess', colour = "blueviolet", size = 1.5) + 
-            scale_y_continuous(expand = c(0.05, 0), breaks = c(1, 1.25, 1.5, 1.75, 2)) + 
+            scale_y_continuous(expand = c(0.05, 0), breaks = c(1.0, 1.25, 1.5, 1.75, 2.0), labels = c(format(round(1.0, 1), nsmall = 1), "", format(round(1.5, 1), nsmall = 1), "", format(round(2.0, 1), nsmall = 1))) + 
             scale_x_continuous(expand = c(0.075, 0), breaks = seq(1, quant_num, 3)) + 
             coord_cartesian(ylim = ycoord) + 
             scale_shape_manual(values = c(21,21)) + 
@@ -593,19 +593,19 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
             q <- p + theme_classic() + xlab(x_title) + ylab("Relative rate of expression evolution") + 
             theme(text=element_text(size = 16), 
-                strip.text = element_text(size = 23.75), 
-                strip.text.x = element_text(margin = margin(0.43, 0, 0.43, 0, "cm")), 
+                strip.text = element_text(size = 19.85), 
+                strip.text.x = element_text(margin = margin(0.38, 0, 0.38, 0, "cm")), 
                 strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
                 axis.ticks.length = unit(0.29, "cm"), 
                 axis.ticks = element_line(colour = "black", size = 1.25), 
                 axis.line = element_line(colour = 'black', size = 1.25), 
-                plot.margin = unit(c(0.2, 0.25, 0, 0),"cm"), 
-                axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
+                plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
+                axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 8.0, b = 0, l = 10), 
                     colour="black", face = "bold"), 
-                axis.title.x = element_text(size=24.6, margin = margin(t = 9.25, r = 0, b = 7.5, l = 0), 
+                axis.title.x = element_text(size=20.5, margin = margin(t = 5.5, r = 0, b = 5.5, l = 0), 
                     colour="black", face = "bold"), 
-                axis.text.x = element_text(size=21.5, margin = margin(t = 2.5, b = 8), colour="grey20"), 
-                axis.text.y = element_text(size=21.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
+                axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 8), colour="grey20"), 
+                axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
                 panel.spacing = unit(0.5, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
