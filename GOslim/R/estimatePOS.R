@@ -301,6 +301,8 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
         # Note: the POS for small effect sizes (w=0.1) and 95% CI is 732.15 for given seed
 
         pos_txt <- paste0("POS (n=", round(quantile(cor_pos$pos06, probs = 0.95)), ")")
+        cos_txt <- paste0("(w=", coswidth, ")")
+        cor_txt <- paste0("actual correlation (r=", tc, ")")
 
         p <- ggplot(df, aes(size, value, group = trajectory)) +
         geom_line(data = df, aes(size, value),
@@ -323,8 +325,8 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
         geom_segment(aes(x=536, xend=546.5, y=0.093, yend=0.093), colour = "black", show.legend = FALSE, size = 1.1) + 
         geom_segment(aes(x=557, xend=567.5, y=0.093, yend=0.093), colour = "black", show.legend = FALSE, size = 1.1) + 
         annotate("text", x=692, y=0.075, label= "Corridor of Stability", size=8.5) + 
-        annotate("text", x=631, y=0, label= "(w=0.15)", size=8.5) + 
-        annotate("text", x=629, y=0.872, label= "actual correlation (r=0.6)", size=8.5) + 
+        annotate("text", x=631, y=0, label= cos_txt, size=8.5) + 
+        annotate("text", x=629, y=0.872, label= cor_txt, size=8.5) + 
         labs(x = "Sample size", y = "Correlation") +
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.29, "cm"), 
