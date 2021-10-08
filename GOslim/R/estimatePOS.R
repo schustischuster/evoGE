@@ -298,7 +298,11 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
             th <- quantile(cor_pos$pos08, probs = loc)
         }
 
+        # Note: the POS for small effect sizes (w=0.1) and 95% CI is 732.15 for given seed
+
         pos_txt <- paste0("POS (n=", round(quantile(cor_pos$pos06, probs = 0.95)), ")")
+        cos_txt <- paste0("(w=", coswidth, ")")
+        cor_txt <- paste0("actual correlation (r=", tc, ")")
 
         p <- ggplot(df, aes(size, value, group = trajectory)) +
         geom_line(data = df, aes(size, value),
@@ -310,27 +314,31 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
         geom_hline(yintercept = tc, size = 1.125) + 
         geom_vline(xintercept = th, col="grey44", size = 1.25) + 
         annotate("text", x=420, y=0.28, label=pos_txt, size=8.5, col="grey44") + 
-        geom_segment(aes(x = 331, y = 0.28, xend = 304, yend = 0.28), arrow = arrow(length = unit(0.5, "cm")), 
+        geom_segment(aes(x = 335, y = 0.28, xend = 305, yend = 0.28), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="grey44") + 
-        geom_segment(aes(x=503, xend=514, y=0.0125, yend=0.0125), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=525.5, xend=536.5, y=0.0125, yend=0.0125), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=548, xend=559, y=0.0125, yend=0.0125), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=503, xend=514, y=0.0525, yend= 0.0525), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=525.5, xend=536.5, y=0.0525, yend=0.0525), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=548, xend=559, y=0.0525, yend=0.0525), colour = "black", show.legend = FALSE, size = 1.1) + 
-        annotate("text", x=690, y=0.0326, label= "Corridor of Stability", size=8.5) + 
+        geom_segment(aes(x = 625.7, y = 0.825, xend = 625.72, yend = 0.62), arrow = arrow(length = unit(0.5, "cm")), 
+            size=1.1, col="black") + 
+        geom_segment(aes(x=515, xend=525.5, y=0.0535, yend=0.0535), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=536, xend=546.5, y=0.0535, yend=0.0535), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=557, xend=567.5, y=0.0535, yend=0.0535), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=515, xend=525.5, y=0.093, yend=0.093), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=536, xend=546.5, y=0.093, yend=0.093), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=557, xend=567.5, y=0.093, yend=0.093), colour = "black", show.legend = FALSE, size = 1.1) + 
+        annotate("text", x=692, y=0.075, label= "Corridor of Stability", size=8.5) + 
+        annotate("text", x=631, y=0, label= cos_txt, size=8.5) + 
+        annotate("text", x=629, y=0.872, label= cor_txt, size=8.5) + 
         labs(x = "Sample size", y = "Correlation") +
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.29, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(0.5, 1.35, 0.5, 0),"cm"), 
-            axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 15.2, b = 0, l = 10.8), 
+            plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
+            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 8.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
-            axis.title.x = element_text(size=24.6, margin = margin(t = 6.5, r = 0, b = 0, l = 0), 
+            axis.title.x = element_text(size=20.5, margin = margin(t = 5.5, r = 0, b = 5.65, l = 0), 
                 colour="black", face = "bold"), 
-            axis.text.x = element_text(size=21.5, margin = margin(t = 2.85, b = 8), colour="grey20"), 
-            axis.text.y = element_text(size=21.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20")
+            axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 8), colour="grey20"), 
+            axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 4.1, r = 1.5), colour="grey20")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
