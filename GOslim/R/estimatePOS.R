@@ -309,24 +309,24 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
             color = "#e26887", alpha = 0.50, size = 0.25) + 
         scale_x_continuous(limits = c(0, 820), breaks = c(0, 200, 400, 600, 800), expand = c(0.007, 0)) + 
         scale_y_continuous(limits = c(-0.15, 0.99), breaks = c(0, 0.2, 0.4, 0.6, 0.8), expand = c(0, 0)) + 
-        geom_hline(yintercept = ui, linetype = 2, size = 1.125) + 
-        geom_hline(yintercept = li, linetype = 2, size = 1.125) + 
-        geom_hline(yintercept = tc, size = 1.125) + 
+        geom_hline(yintercept = ui, linetype = 2, size = 1.1435) + 
+        geom_hline(yintercept = li, linetype = 2, size = 1.1435) + 
+        geom_hline(yintercept = tc, size = 1.1435) + 
         geom_vline(xintercept = th, col="grey44", size = 1.25) + 
         annotate("text", x=416, y=0.28, label=pos_txt, size=8.0, col="grey44") + 
         geom_segment(aes(x = 335, y = 0.28, xend = 305, yend = 0.28), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="grey44") + 
-        geom_segment(aes(x = 625.7, y = 0.825, xend = 625.72, yend = 0.62), arrow = arrow(length = unit(0.5, "cm")), 
+        geom_segment(aes(x = 636.5, y = 0.825, xend = 636.5, yend = 0.62), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="black") + 
-        geom_segment(aes(x=527, xend=537.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=526.5, xend=537, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
         geom_segment(aes(x=548, xend=558.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=569, xend=579.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=527, xend=537.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=569.5, xend=580, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=526.5, xend=537, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
         geom_segment(aes(x=548, xend=558.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=569, xend=579.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=569.5, xend=580, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
         annotate("text", x=697, y=0.075, label= "Corridor of Stability", size=8.0) + 
         annotate("text", x=639.5, y=0, label= cos_txt, size=8.0) + 
-        annotate("text", x=627, y=0.872, label= cor_txt, size=8.0) + 
+        annotate("text", x=634, y=0.872, label= cor_txt, size=8.0) + 
         labs(x = "Sample size", y = "Correlation") +
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.29, "cm"), 
