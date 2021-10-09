@@ -313,29 +313,29 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
         geom_hline(yintercept = li, linetype = 2, size = 1.125) + 
         geom_hline(yintercept = tc, size = 1.125) + 
         geom_vline(xintercept = th, col="grey44", size = 1.25) + 
-        annotate("text", x=420, y=0.28, label=pos_txt, size=8.5, col="grey44") + 
+        annotate("text", x=416, y=0.28, label=pos_txt, size=8.0, col="grey44") + 
         geom_segment(aes(x = 335, y = 0.28, xend = 305, yend = 0.28), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="grey44") + 
         geom_segment(aes(x = 625.7, y = 0.825, xend = 625.72, yend = 0.62), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="black") + 
-        geom_segment(aes(x=515, xend=525.5, y=0.0535, yend=0.0535), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=536, xend=546.5, y=0.0535, yend=0.0535), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=557, xend=567.5, y=0.0535, yend=0.0535), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=515, xend=525.5, y=0.093, yend=0.093), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=536, xend=546.5, y=0.093, yend=0.093), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=557, xend=567.5, y=0.093, yend=0.093), colour = "black", show.legend = FALSE, size = 1.1) + 
-        annotate("text", x=692, y=0.075, label= "Corridor of Stability", size=8.5) + 
-        annotate("text", x=631, y=0, label= cos_txt, size=8.5) + 
-        annotate("text", x=629, y=0.872, label= cor_txt, size=8.5) + 
+        geom_segment(aes(x=527, xend=537.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=548, xend=558.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=569, xend=579.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=527, xend=537.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=548, xend=558.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=569, xend=579.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
+        annotate("text", x=697, y=0.075, label= "Corridor of Stability", size=8.0) + 
+        annotate("text", x=639.5, y=0, label= cos_txt, size=8.0) + 
+        annotate("text", x=627, y=0.872, label= cor_txt, size=8.0) + 
         labs(x = "Sample size", y = "Correlation") +
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.29, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
             plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
-            axis.title.y = element_text(size=20.5, margin = margin(t = 0, r = 8.0, b = 0, l = 10), 
+            axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
-            axis.title.x = element_text(size=20.5, margin = margin(t = 5.5, r = 0, b = 5.65, l = 0), 
+            axis.title.x = element_text(size=22.75, margin = margin(t = 4.0, r = 0, b = 7.15, l = 0), 
                 colour="black", face = "bold"), 
             axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 8), colour="grey20"), 
             axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 4.1, r = 1.5), colour="grey20")
