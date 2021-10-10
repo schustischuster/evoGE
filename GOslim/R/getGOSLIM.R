@@ -705,8 +705,8 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
                 colscale <- c("#adadad", "#ee7500")
                 p.value <- c(paste("italic('P =')~", set_scientific(0.00004)))
-                y3pos <- y3pos-0.001
-                y4pos <- y4pos-0.0007
+                y3pos <- y3pos-0.0015
+                y4pos <- y4pos-0.0004
 
             } else if (gocat == "DNA binding") {
 
@@ -729,26 +729,26 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
             corg <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel")
 
-            goslim_lb <- data.frame(x = 85, y = y1pos, label = c("GOterm","","","","","","",""), 
+            goslim_lb <- data.frame(x = 82, y = y1pos, label = c("GOterm","","","","","","",""), 
                 comp_organ = corg)
-            control_lb <- data.frame(x = 85, y = y2pos, label = c("Control","","","","","","",""), 
+            control_lb <- data.frame(x = 82, y = y2pos, label = c("Control","","","","","","",""), 
                 comp_organ = corg)
-            c_text <- data.frame(x = xpos, y = y3pos, label = c("",paste("cset =", length(root_divc)),"","","","","",""), 
+            c_text <- data.frame(x = xpos-53, y = y3pos, label = c("",paste("control sets:", length(root_divc)),"","","","","",""), 
                 comp_organ = corg)
 
-            p_text <- data.frame(x = 56, y = y4pos, label = c("","",p.value,"","","","",""), 
+            p_text <- data.frame(x = 48, y = y4pos, label = c("","",p.value,"","","","",""), 
                 comp_organ = corg)
 
             corgcat <- factor("Root", levels = c("Root", "Hypocotyl", "Leaf", 
                     "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
 
-            go_line <- data.frame(x = 50, xend = 80, y = y1pos, yend = y1pos, 
+            go_line <- data.frame(x = 47, xend = 77, y = y1pos, yend = y1pos, 
                 comp_organ = corgcat)
-            cont_line <- data.frame(x = 50, xend = 80, y = y2pos, yend = y2pos, 
+            cont_line <- data.frame(x = 47, xend = 77, y = y2pos, yend = y2pos, 
                 comp_organ = corgcat)
 
-            go_circ <- data.frame(x = 65, y = y1pos, comp_organ = corgcat)
-            cont_circ <- data.frame(x = 65, y = y2pos, comp_organ = corgcat)
+            go_circ <- data.frame(x = 62, y = y1pos, comp_organ = corgcat)
+            cont_circ <- data.frame(x = 62, y = y2pos, comp_organ = corgcat)
 
             data$group <- factor(data$group, c("control", paste(unique(x_df$goslim))))
             data2$group <- factor(data2$group, c("control", paste(unique(x_df$goslim))))
@@ -765,11 +765,11 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
             q <- p + theme_classic() + xlab("Divergence time (Myr)") + ylab("Pearson distance") + 
             labs(title = tltname) + 
-            geom_text(data = goslim_lb, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
-            geom_text(data = control_lb, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
-            geom_text(data = c_text, mapping = aes(x = x, y = y, label = label), size=7.5, hjust = 0) + 
+            geom_text(data = goslim_lb, mapping = aes(x = x, y = y, label = label), size=8, hjust = 0) + 
+            geom_text(data = control_lb, mapping = aes(x = x, y = y, label = label), size=8, hjust = 0) + 
+            geom_text(data = c_text, mapping = aes(x = x, y = y, label = label), size=8, hjust = 0) + 
             geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
-                parse=TRUE, size=7.5, hjust = 0) + 
+                parse=TRUE, size=8, hjust = 0) + 
             geom_segment(data = go_line, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
                 colour = colscale[2], show.legend = FALSE, size = 2.5) + 
             geom_point(data = go_circ, mapping = aes(x = x, y = y), size = 5, shape = 16, color = colscale[2]) + 
@@ -784,13 +784,13 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 axis.ticks = element_line(colour = "black", size = 1.25), 
                 axis.line = element_line(colour = 'black', size = 1.25), 
                 plot.margin = unit(c(1, 0.25, 3.0, 0),"cm"), 
-                axis.title.y = element_text(size=24.6, margin = margin(t = 0, r = 14.0, b = 0, l = 12.0), 
+                axis.title.y = element_text(size=27.35, margin = margin(t = 0, r = 12.75, b = 0, l = 12.0), 
                     colour="black", face = "bold"), 
-                axis.title.x = element_text(size=24.6, margin = margin(t = 7.5, r = 0, b = 5.75, l = 0), 
+                axis.title.x = element_text(size=27.35, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
                     colour="black", face = "bold"), 
                 axis.text.x = element_text(size=22.5, margin = margin(t = 2.5, b = 8), colour="grey20"), 
                 axis.text.y = element_text(size=22.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
-                plot.title = element_text(size=24.6, colour=colscale[2], margin = margin(t = 0, b = 15), face = "plain"), 
+                plot.title = element_text(size=27.35, colour=colscale[2], margin = margin(t = 0, b = 15), face = "plain"), 
                 panel.spacing = unit(0.2, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
