@@ -89,7 +89,7 @@ getExprCons(nquant, qtype = c("base_mean", "organ_spec"), ...)
 
 | Arguments  |  |
 | :---  | :---  |
-| nquant  | Number of quantiles. |
+| nquant  | Number of genes in each quantile. |
 | qtype  | Type of quantile. Use "base_mean" for quantiles of average gene expression across organs and species, and "organ_spec" for organ-specific (intra-organ) quantiles of average gene expression across species. |
 
 </br>
