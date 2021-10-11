@@ -118,17 +118,17 @@ sessionInfo()
 #> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 #> attached base packages:
-#> [1] stats   graphics   grDevices utils   datasets   methods   base    
+#> [1] stats    graphics    grDevices    utils    datasets    methods    base    
 
 #> other attached packages:
-#> [1] gplots_3.0.1.1   MatchIt_4.2.0   scales_0.5.0   ggplot2_2.2.1   dplyr_0.7.4
+#> [1] gplots_3.0.1.1    MatchIt_4.2.0    scales_0.5.0    ggplot2_2.2.1    dplyr_0.7.4
 
 #> loaded via a namespace (and not attached):
-#> [1] Rcpp_1.0.7         gtools_3.5.0       assertthat_0.2.1   bitops_1.0-6      
-#> [5] grid_3.3.3         R6_2.4.1           plyr_1.8.4         backports_1.2.1   
-#> [9] gtable_0.3.0       magrittr_1.5       KernSmooth_2.23-15 rlang_0.1.6       
-#>[13] lazyeval_0.2.1     gdata_2.18.0       bindrcpp_0.2       tools_3.3.3       
-#>[17] glue_1.2.0         munsell_0.5.0      pkgconfig_2.0.3    colorspace_1.3-2  
+#> [1] Rcpp_1.0.7         gtools_3.5.0       assertthat_0.2.1      bitops_1.0-6      
+#> [5] grid_3.3.3         R6_2.4.1           plyr_1.8.4            backports_1.2.1   
+#> [9] gtable_0.3.0       magrittr_1.5       KernSmooth_2.23-15    rlang_0.1.6       
+#>[13] lazyeval_0.2.1     gdata_2.18.0       bindrcpp_0.2          tools_3.3.3       
+#>[17] glue_1.2.0         munsell_0.5.0      pkgconfig_2.0.3       colorspace_1.3-2  
 #>[21] caTools_1.17.1     bindr_0.1.1        tibble_1.3.4  
 
 ```
