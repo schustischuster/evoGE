@@ -118,10 +118,10 @@ sessionInfo()
 #> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base    
+#> [1] stats   graphics   grDevices utils   datasets   methods   base    
 
 #> other attached packages:
-#> [1] gplots_3.0.1.1 MatchIt_4.2.0  scales_0.5.0   ggplot2_2.2.1  dplyr_0.7.4
+#> [1] gplots_3.0.1.1   MatchIt_4.2.0   scales_0.5.0   ggplot2_2.2.1   dplyr_0.7.4
 
 #> loaded via a namespace (and not attached):
 #> [1] Rcpp_1.0.7         gtools_3.5.0       assertthat_0.2.1   bitops_1.0-6      
