@@ -118,22 +118,18 @@ sessionInfo()
 #> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 #> attached base packages:
-#> [1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base    
+#> [1] stats     graphics  grDevices utils     datasets  methods   base    
 
 #> other attached packages:
-#> [1] mgcv_1.8-17          nlme_3.1-131         ggplot2_2.2.1        rtracklayer_1.34.2   GenomicRanges_1.26.4
-#> [6] GenomeInfoDb_1.10.3  IRanges_2.8.2        S4Vectors_0.12.2     BiocGenerics_0.20.0  dplyr_0.7.4 
-#>[11] plyr_1.8.4
+#> [1] gplots_3.0.1.1 MatchIt_4.2.0  scales_0.5.0   ggplot2_2.2.1  dplyr_0.7.4
 
 #> loaded via a namespace (and not attached):
-#> [1] Rcpp_0.12.14               bindr_0.1.1                XVector_0.14.1             magrittr_1.5              
-#> [5] zlibbioc_1.20.0            GenomicAlignments_1.10.1   munsell_0.5.0              BiocParallel_1.8.2        
-#> [9] colorspace_1.3-2           lattice_0.20-34            R6_2.4.1                   rlang_0.1.6               
-#>[13] tools_3.3.3                grid_3.3.3                 SummarizedExperiment_1.4.0 gtable_0.3.0              
-#>[17] Biobase_2.34.0             lazyeval_0.2.1             assertthat_0.2.1           tibble_1.3.4              
-#>[21] Matrix_1.2-8               bindrcpp_0.2               bitops_1.0-6               RCurl_1.95-4.10           
-#>[25] glue_1.2.0                 scales_0.5.0               Biostrings_2.42.1          Rsamtools_1.26.2          
-#>[29] XML_3.98-1.9               pkgconfig_2.0.3  
+#> [1] Rcpp_1.0.7         gtools_3.5.0       assertthat_0.2.1   bitops_1.0-6      
+#> [5] grid_3.3.3         R6_2.4.1           plyr_1.8.4         backports_1.2.1   
+#> [9] gtable_0.3.0       magrittr_1.5       KernSmooth_2.23-15 rlang_0.1.6       
+#>[13] lazyeval_0.2.1     gdata_2.18.0       bindrcpp_0.2       tools_3.3.3       
+#>[17] glue_1.2.0         munsell_0.5.0      pkgconfig_2.0.3    colorspace_1.3-2  
+#>[21] caTools_1.17.1     bindr_0.1.1        tibble_1.3.4  
 
 ```
 
