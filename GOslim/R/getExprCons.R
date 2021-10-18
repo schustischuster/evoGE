@@ -67,6 +67,24 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
         quart_ls <- split(orthoExpr, f = orthoExpr$quantile)
 
 
+        # Write genes of lowest and highest expression quantile to table
+        q_max <- orthoExpr[orthoExpr$quantile == quant_num, ]
+        q_max_ids <- q_max$gene_id
+        q_min <- orthoExpr[orthoExpr$quantile == 1, ]
+        q_min_ids <- q_min$gene_id
+
+        # Create "data" folder in /out_dir/output
+        if (!dir.exists(file.path(out_dir, "output", "data"))) 
+            dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
+
+        q_base_ids_out <- list(q_min_ids, q_max_ids)
+        names(q_base_ids_out) <- c("gene_ids_q1", paste0("gene_ids_q", quant_num))
+
+        for(i in names(q_base_ids_out)){
+            write.table(q_base_ids_out[[i]], file=file.path(out_dir, "output", "data", paste0(i, ".txt")), 
+                sep="\t", col.names=FALSE, row.names=FALSE, dec=".", quote = FALSE)
+        }
+
 
 
     #---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
@@ -269,7 +287,9 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
             # Extract expression data for quantile 1 (lowly expressed genes) for heatmap
             ids_q1 <- as.numeric(c(rownames(q_ls[[1]])))
-            agis_q1 <- orthoExpr[c(ids_q1),]
+            agis_q1 <- orthoExpr[c(ids_q1),]$gene_id
+            ids_qmax <- as.numeric(c(rownames(q_ls[[quant_num]])))
+            assign(paste0("agis_q", quant_num), orthoExpr[c(ids_qmax),]$gene_id) # agis_q14
 
 
             getDist <- function(b) {
@@ -451,8 +471,13 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                 if (!dir.exists(file.path(out_dir, "output", "data"))) 
                     dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
 
-                write.table(agis_q1, file = file.path(out_dir, "output", "data", paste0("q1_expression_root.txt")), 
-                sep="\t", col.names=TRUE, row.names=TRUE, dec=".", quote = FALSE)
+                q_root_ids_out <- list(agis_q1, agis_q14)
+                names(q_root_ids_out) <- c("gene_ids_root_q1", paste0("gene_ids_root_q", quant_num))
+
+                for(i in names(q_root_ids_out)){
+                    write.table(q_root_ids_out[[i]], file=file.path(out_dir, "output", "data", paste0(i, ".txt")), 
+                        sep="\t", col.names=FALSE, row.names=FALSE, dec=".", quote = FALSE)
+                }
 
             }
 
@@ -533,7 +558,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
         str_expr_sl <- data.frame(do.call(rbind, lapply(control_nlm_slp_lst, shapeSlopeData)))
 
 
-        if (qtype == "organ_spec") {
+        if (quant_num == 14) {
 
           # Check if 1st and last quantile evolve at significant different rate than the rest
           # Wilcoxon rank-sum test for 14 quantiles
@@ -541,13 +566,15 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             str_expr_sl[57,3], str_expr_sl[71,3], str_expr_sl[85,3], str_expr_sl[99,3]), c(str_expr_sl[2:13,3], 
             str_expr_sl[16:27,3], str_expr_sl[30:41,3], str_expr_sl[44:55,3], str_expr_sl[58:69,3], 
             str_expr_sl[72:83,3], str_expr_sl[86:97,3], str_expr_sl[100:111,3]))$p.value
-          # p-value = 2.894e-06
+          # p-value = 2.894e-06 for organ_spec
+          # p-value = 0.0006221958 for base_mean
 
           p.qrt14 <- wilcox.test(c(str_expr_sl[14,3], str_expr_sl[28,3], str_expr_sl[42,3], str_expr_sl[56,3], 
             str_expr_sl[70,3], str_expr_sl[84,3], str_expr_sl[98,3], str_expr_sl[112,3]), c(str_expr_sl[2:13,3], 
             str_expr_sl[16:27,3], str_expr_sl[30:41,3], str_expr_sl[44:55,3], str_expr_sl[58:69,3], 
             str_expr_sl[72:83,3], str_expr_sl[86:97,3], str_expr_sl[100:111,3]))$p.value
-          # p-value = 2.894e-06
+          # p-value = 2.894e-06 for organ_spec
+          # p-value = 0.02364381 for base_mean
         }
         
 
