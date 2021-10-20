@@ -59,7 +59,7 @@ sourceDir(path_to_R_files)
 Sample correlations converge to the population value with increasing sample size, and it has been shown that the sample size should approach n=250 for stable estimates ([Schönbrodt and Perugini, J Res Pers. 2013](https://www.sciencedirect.com/science/article/abs/pii/S0092656613000858)). Since the points of stability (POS) published in this work were based on normal distributions, we implemented Monte-Carlo simulations to retrieve sample size estimates for stable correlations derived from gene expression data.
 
 
-  estimatePOS(nbootstrap, coswidth, bss, ...)
+> estimatePOS(nbootstrap, coswidth, bss, ...)
 
 
 </br>
@@ -81,10 +81,10 @@ estimatePOS(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
 
 Next, we wanted to test wether the evolutionary stability of gene subsets is affected by gene expression levels. We therefore generated subsets of orthologous genes according to quantiles of average expression either across all samples (inter-organ inter-species), or within the same organ across species (intra-organ inter-species). For each quantile set, we then calculated metric pearson distances and fitted non-linear regression models to estimate quantile-specific rates of gene expression evolution.
 
-```R
-getExprCons(nquant, qtype = c("base_mean", "organ_spec"), ...)
 
-```
+> getExprCons(nquant, qtype = c("base_mean", "organ_spec"), ...)
+
+
 </br>
 
 | Arguments  |  |
@@ -103,10 +103,10 @@ getExprCons(nquant = 500, qtype = "organ_spec")
 ```
 Now, multiple control genes will be matched to each gene of a GO slim category that is larger than the size threshold (POS) estimated above. The optimal number of control sets will be determined using balance statistics (standardized mean difference and variance ratio). Subsequently, intra-organ distances will be calculated for all species pairs and gene sets, and non-linear regression model will be fitted to the data. Finally, the regression slopes of treatment and control groups of each functional category will be compared using nonparametric statistics (Wilcoxon rank-sum test, permutation test).
 
-```R
-getGOSLIM(aspect, sample_size)
 
-```
+> getGOSLIM(aspect, sample_size)
+
+
 </br>
 
 | Arguments  |  |
