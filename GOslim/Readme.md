@@ -101,7 +101,7 @@ getExprCons(nquant = 500, qtype = "base_mean")
 getExprCons(nquant = 500, qtype = "organ_spec")
 
 ```
-Next, multiple control genes will be matched to each gene of a GO slim category that is larger than the size threshold (POS) estimated above. The optimal number of control sets will be determined using balance statistics (standardized mean difference and variance ratio). Subsequently, pearson distances will be calculated for treatment and control groups of each GO slim category, followed by fitting a non-linear regression model to the data. Finally, the regression slopes of treatment and control groups of each functional category will be compared using nonparametric statistics (Wilcoxon rank-sum test, permutation test).
+Now, multiple control genes will be matched to each gene of a GO slim category that is larger than the size threshold (POS) estimated above. The optimal number of control sets will be determined using balance statistics (standardized mean difference and variance ratio). Subsequently, pearson distances will be calculated for treatment and control groups and non-linear regression model will be fitted to the data. Finally, the regression slopes of treatment and control groups of each functional category will be compared using nonparametric statistics (Wilcoxon rank-sum test, permutation test).
 
 ---
 ## Session info
