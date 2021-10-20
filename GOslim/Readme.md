@@ -79,7 +79,7 @@ estimatePOS(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
 
 ```
 
-Next, we wanted to test wether the evolutionary stability of gene subsets is affected by gene expression levels. We therefore generated subsets of orthologous genes according to quantiles of average expression either across all samples (inter-organ inter-species), or within an organ across species (intra-organ inter-species). For each quantile set, we then calculated metric pearson distances and fitted non-linear regression models to estimate quantile-specific rates of gene expression evolution.
+Next, we wanted to test wether the evolutionary stability of gene subsets is affected by gene expression levels. We therefore generated subsets of orthologous genes according to quantiles of average expression either across all samples (inter-organ inter-species), or within the same organ across species (intra-organ inter-species). For each quantile set, we then calculated metric pearson distances and fitted non-linear regression models to estimate quantile-specific rates of gene expression evolution.
 
 ```R
 getExprCons(nquant, qtype = c("base_mean", "organ_spec"), ...)
