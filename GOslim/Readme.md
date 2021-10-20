@@ -112,11 +112,11 @@ getGOSLIM(aspect, sample_size)
 | Arguments  |  |
 | :---  | :---  |
 | aspect  | GOslim term aspect. Can be either "biological_process" or "molecular_function" |
-| sample_size  | Indicates the minimum number of genes in a GO slim category. This is the point of stability (POS) determined in the previous step. |
+| sample_size  | Indicates the minimum number of genes required in a GO slim category. This is the point of stability (POS) determined in the previous step. |
 
 </br>
 
-To reproduce the results of this study, execute the following function call:
+To reproduce the results of this study, execute the following function calls:
 
 ```R
 getGOSLIM(aspect = "biological_process", sample_size = 293)
