@@ -103,6 +103,27 @@ getExprCons(nquant = 500, qtype = "organ_spec")
 ```
 Now, multiple control genes will be matched to each gene of a GO slim category that is larger than the size threshold (POS) estimated above. The optimal number of control sets will be determined using balance statistics (standardized mean difference and variance ratio). Subsequently, intra-organ distances will be calculated for all species pairs and gene sets, and non-linear regression model will be fitted to the data. Finally, the regression slopes of treatment and control groups of each functional category will be compared using nonparametric statistics (Wilcoxon rank-sum test, permutation test).
 
+```R
+getGOSLIM(aspect, sample_size)
+
+```
+</br>
+
+| Arguments  |  |
+| :---  | :---  |
+| aspect  | GOslim term aspect. Can be either "biological_process" or "molecular_function" |
+| sample_size  | Indicates the minimum number of genes in a GO slim category. This is the point of stability (POS) determined in the previous step. |
+
+</br>
+
+To reproduce the results of this study, execute the following function call:
+
+```R
+getGOSLIM(aspect = "biological_process", sample_size = 293)
+getGOSLIM(aspect = "molecular_function", sample_size = 293)
+
+```
+
 ---
 ## Session info
 
