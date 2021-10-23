@@ -287,7 +287,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
             # Extract expression data for quantile 1 (lowly expressed genes) for heatmap
             ids_q1 <- as.numeric(c(rownames(q_ls[[1]])))
-            agis_q1 <- orthoExpr[c(ids_q1),]$gene_id
+            agis_q1 <- orthoExpr[c(ids_q1),]
             ids_qmax <- as.numeric(c(rownames(q_ls[[quant_num]])))
             assign(paste0("agis_q", quant_num), orthoExpr[c(ids_qmax),]$gene_id) # agis_q14
 
@@ -581,15 +581,26 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
         # Define specific notation
         set_scientific <- function(l) {
-            # turn in to character string in scientific notation
-            l <- format(l, scientific = TRUE)
-            # quote the part before the exponent to keep all the digits
-            l <- gsub("^(.*)e", "'\\1'e", l)
-            # turn the 'e+' into plotmath format
-            l <- gsub("e", "%*%10^", l)
-            # return this as an expression
-            parse(text=l)
+
+            if (l < 0.01) {
+
+                # turn in to character string in scientific notation
+                l <- format(l, scientific = TRUE)
+                # quote the part before the exponent to keep all the digits
+                l <- gsub("^(.*)e", "'\\1'e", l)
+                # turn the 'e+' into plotmath format
+                l <- gsub("e", "%*%10^", l)
+                # return this as an expression
+                parse(text=l)
+
+            } else return(l)
         }
+
+
+        # Slightly modify organ names
+        str_expr_sl_df <- str_expr_sl
+        str_expr_sl_df$organ <- factor(gsub("_", " ", str_expr_sl_df$organ), levels=c("Root", 
+            "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
 
 
 
@@ -609,6 +620,42 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                 ycoord <- c(0.9,2.225)
             }
 
+            corg <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel")
+
+            if (quant_num == 14) {
+
+                # Add Wilcoxon p-values for q1/q14 vs q2-q13 to plot
+                if (qtype == "base_mean") {
+
+                    p.value1 <- c(paste0("italic('P')[q1]~", "'='~", set_scientific(signif(p.qrt1,1))))
+                    p.value14 <- c(paste0("italic(' P')[q14]~", "'='~", set_scientific(signif(p.qrt14,1))))
+
+                    p_text <- data.frame(x = 2.5, y = c(0.85,0.877,rep(0.85,6)), label = c("",p.value1,p.value14,"","","","",""), 
+                    organ = corg)
+
+                    l_text <- data.frame(x = 7.5, y = 0.881, label = c("WRS:","","","","","","",""), 
+                    organ = corg)
+
+                } else if (qtype == "organ_spec") {
+
+                    p.value1 <- c(paste0("italic('  P')[q1]~", "'='~", set_scientific(signif(p.qrt1,1))))
+                    p.value14 <- c(paste0("italic('P')[q14]~", "'='~", set_scientific(signif(p.qrt14,1))))
+
+                    p_text <- data.frame(x = 1.5, y = 0.9975, label = c("",p.value1,p.value14,"","","","",""), 
+                    organ = corg)
+
+                    l_text <- data.frame(x = 7.75, y = 1.0025, label = c("WRS:","","","","","","",""), 
+                    organ = corg)
+                }
+                # Genes in quantiles q1 and q14 show lower rates of expression evolution compared
+                # to genes in the other quantiles (Pq1/Pq14 indicate p-value; Wilcoxon rank-sum test)
+
+            } else {
+
+                p_text <- data.frame(x = 2, y = 0.9, label = c("","","","","","","",""), 
+                    organ = corg)
+            }
+
             p <- ggplot(data = data, color = organ, aes(x=quantile, y=scaled_slopes)) + 
             geom_point(colour = "blueviolet", size = 3) + 
             geom_smooth(method = 'loess', colour = "blueviolet", size = 1.5) + 
@@ -619,6 +666,10 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
             q <- p + theme_classic() + xlab(x_title) + ylab("Relative rate of expression evolution") + 
+            geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
+                parse=TRUE, size=7.25, hjust = 0) + 
+            geom_text(data = l_text, mapping = aes(x = x, y = y, label = label), 
+                size=7.25, hjust = 0) + 
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 19.85), 
                 strip.text.x = element_text(margin = margin(0.38, 0, 0.38, 0, "cm")), 
@@ -645,7 +696,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                 width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
         }
 
-        plotStrExprCons(data = str_expr_sl)
+        plotStrExprCons(data = str_expr_sl_df)
 
 
 }
