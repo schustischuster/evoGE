@@ -324,6 +324,69 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
         plotMatchIt(data = gg2mbplot)
 
+        
+        # Make plot of "biosynthetic process" matching for supplement
+        if (unique(x_df$goslim) == "biosynthetic process") {
+
+            # Get expression of all unmatched control genes
+            cids <- data.frame(do.call(rbind, lapply(control_out, function(k) k[1])))
+
+            cgogeneexpress <- data.frame(subset(comb_exdf[,c(3,13:ncol(comb_exdf))], comb_exdf[,1] %!in% cids[,1]))
+            cgeneexpress <- subset(cgogeneexpress, sign == 0)[-1]
+            cgeneexpress_df <- data.frame(exp=unlist(cgeneexpress), class=rep("unmatched controls", length(unlist(cgeneexpress))))
+            tcdata <- ggmbplot
+            tcdata$class <- gsub("t", unique(x_df$goslim), tcdata$class)
+            tcdata$class <- gsub("m", "matched controls #" , tcdata$class)
+            biosplotdf <- rbind(tcdata, cgeneexpress_df)
+
+            plotMatchItSI <- function(data) {
+
+                fname <- sprintf('%s.png', paste(unique(x_df$goslim), "matchIt_SI", sep="_"))
+
+                data$class <- factor(data$class, levels = unique(data$class))
+
+                ntreatmc <- nrow(x_df)
+                nuc <- nrow(cgeneexpress)
+
+                n_text <- data.frame(x = c(1, 2, 3, 4, 5), y = c(13.15, 13.15, 13.15, 13.15, 13.15), 
+                    label = c(rep(ntreatmc, 4), nuc))
+
+                plt_title <- paste(unique(x_df$goslim), " (n=", ntreat, ")", sep="")
+
+                p <- ggplot(data=data, aes(x = class, y = exp)) + 
+                geom_boxplot(data = data, aes(x = class, y = exp), fill=c("#28a100","grey50","grey50","grey50","#ed0000"), 
+                    size=1.1, fatten=1.5, outlier.size = 2, alpha=0.35) + 
+                scale_y_continuous(limits = c(0, 14.75))
+
+                q <- p + theme_classic() + xlab("") + ylab("log2(TPM+1)") +
+                geom_text(data = n_text, mapping = aes(x = x, y = y, label = label), 
+                    size=6.1, hjust = 0, angle=90, col="grey55") + 
+                theme(text=element_text(size = 16), 
+                axis.ticks.length = unit(0.29, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.25), 
+                axis.line = element_line(colour = 'black', size = 1.25), 
+                plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
+                axis.title.y = element_text(size=22.5, margin = margin(t = 0, r = 1.0, b = 0, l = 10), 
+                    colour="black", face = "bold"), 
+                axis.title.x = element_text(size=8, margin = margin(t = 0, r = 0, b = 0, l = 0), 
+                    colour="black", face = "bold"), 
+                axis.text.x = element_text(size=18.8, angle=90, margin = margin(t = 2.5, b = 0), 
+                    colour="grey20", hjust=1, vjust=0.5), 
+                axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 1.5), 
+                    colour="grey20"), 
+                panel.spacing = unit(0.5, "cm"), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor.x = element_blank(), 
+                panel.grid.minor.y = element_blank(), 
+                legend.position = "none")
+
+                ggsave(file = file.path(out_dir, "output", "plots", "MatchIt", fname), plot = q, 
+                    width = 3.05, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
+            }
+
+            plotMatchItSI(data = biosplotdf)
+
+        }
 
 
 
