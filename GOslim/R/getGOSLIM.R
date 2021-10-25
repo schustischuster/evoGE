@@ -351,8 +351,6 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 n_text <- data.frame(x = c(1, 2, 3, 4, 5), y = c(13.15, 13.15, 13.15, 13.15, 13.15), 
                     label = c(rep(ntreatmc, 4), nuc))
 
-                plt_title <- paste(unique(x_df$goslim), " (n=", ntreat, ")", sep="")
-
                 p <- ggplot(data=data, aes(x = class, y = exp)) + 
                 geom_boxplot(data = data, aes(x = class, y = exp), fill=c("#28a100","grey50","grey50","grey50","#ed0000"), 
                     size=1.1, fatten=1.5, outlier.size = 2, alpha=0.35) + 
