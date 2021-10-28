@@ -6,9 +6,9 @@
 plotGOs <- function(...) {
 
 
-	# Set file path for input files
-	GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
-	GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
+    # Set file path for input files
+    GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
+    GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
     orthoTPM = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
     filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
@@ -25,8 +25,8 @@ plotGOs <- function(...) {
     names(ldf) <- names
     res <- lapply(ldf, summary) # check if file input is OK
 
-	GOSLIM <- read.table(GOSLIM, sep="\t", dec=".", quote = "", header=FALSE, skip=4, fill = TRUE, stringsAsFactors=FALSE)
-	GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
+    GOSLIM <- read.table(GOSLIM, sep="\t", dec=".", quote = "", header=FALSE, skip=4, fill = TRUE, stringsAsFactors=FALSE)
+    GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
     orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
