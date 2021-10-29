@@ -106,6 +106,23 @@ plotGOs <- function(...) {
     getGoslimStats_molecular_function$diff <- getGoslimStats_molecular_function$nlm_slope - 
                                               getGoslimStats_molecular_function$nlm_slope_control
 
+    bp_slp <- split(getGoslimStats_biological_process, getGoslimStats_biological_process$goslim_term)
+    mf_slp <- split(getGoslimStats_molecular_function, getGoslimStats_molecular_function$goslim_term)
+
+    bp_slp <- unlist(lapply(bp_slp, function(x){mean(x$diff)}))
+    mf_slp <- unlist(lapply(mf_slp, function(x){mean(x$diff)}))
+
+    bp_slp <- data.frame(goslim_term=names(bp_slp), delta_slope=bp_slp)
+    perm_stats_biological_process <- merge(perm_stats_biological_process, bp_slp)
+    wilcox_stats_biological_process <- merge(wilcox_stats_biological_process, bp_slp)
+
+    mf_slp <- data.frame(goslim_term=names(mf_slp), delta_slope=mf_slp)
+    perm_stats_molecular_function <- merge(perm_stats_molecular_function, mf_slp)
+    wilcox_stats_molecular_function <- merge(wilcox_stats_molecular_function, mf_slp)
+
+    perm_stats <- rbind(perm_stats_biological_process, perm_stats_molecular_function)
+    wilcox_stats <- rbind(wilcox_stats_biological_process, wilcox_stats_molecular_function)
+
 
 
 
