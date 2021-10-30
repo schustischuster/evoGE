@@ -124,6 +124,8 @@ getGOSLIM(aspect = "molecular_function", sample_size = 293)
 
 ```
 
+To generate plots for
+
 ---
 ## Session info
 
