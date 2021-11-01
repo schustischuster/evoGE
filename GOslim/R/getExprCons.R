@@ -46,6 +46,16 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
     orthoExpr[,2:ncol(orthoExpr)] <- log2(orthoExpr[,2:ncol(orthoExpr)] + 1)
     orthoExpr <- orthoExpr[!grepl("ERCC", orthoExpr$gene_id),]
 
+    # Write core orthologs to file (needed as background gene set for ShinyGO analysis)
+    # Create "data" folder in /out_dir/output
+    if (!dir.exists(file.path(out_dir, "output", "data"))) 
+        dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
+
+    ortho_gene_ids <- orthoExpr[,1]
+
+    write.table(ortho_gene_ids, file=file.path(out_dir, "output", "data", "ortho_gene_ids.txt"), 
+        sep="\t", col.names=FALSE, row.names=FALSE, dec=".", quote = FALSE)
+    
 
     # Negate dplyr %in%
     `%!in%` = Negate(`%in%`)
