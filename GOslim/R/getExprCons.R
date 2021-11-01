@@ -471,7 +471,9 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                 if (!dir.exists(file.path(out_dir, "output", "data"))) 
                     dir.create(file.path(out_dir, "output", "data"), recursive = TRUE)
 
-                q_root_ids_out <- list(agis_q1, agis_q14)
+                agis_q1_ids <- agis_q1[,1]
+
+                q_root_ids_out <- list(agis_q1_ids, agis_q14)
                 names(q_root_ids_out) <- c("gene_ids_root_q1", paste0("gene_ids_root_q", quant_num))
 
                 for(i in names(q_root_ids_out)){
