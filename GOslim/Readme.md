@@ -124,7 +124,7 @@ getGOSLIM(aspect = "molecular_function", sample_size = 293)
 
 ```
 
-To vizualize the results of the GO enrichment analysis for the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
+To vizualize the results of the GO enrichment analysis for genes of the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
 
 ```R
 plotGOs()
