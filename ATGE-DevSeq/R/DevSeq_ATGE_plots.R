@@ -261,7 +261,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
     } else if (is.element("pearson", coefficient) && is.element("complete", clustm)) {
 
-      dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:8,13:15,10:12,9,16:52))
+      dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:4,7:8,5:6,13:15,10:12,9,18:19,16:17,20:52))
 
     } else dend_order = as.dendrogram(df_clust.res)
 
@@ -392,7 +392,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     brc_col <- factor(brc_col, unique(brc_col))
 
     png(height = 1195, width = 1200, pointsize = 10.94, file = fname)
-    par(mar = c(17.31, 4, 4, 1.5), mgp = c(3, 0.525, 0), lwd = 8.8, cex = 3, cex.axis = 0.85)
+    par(mar = c(17.31, 4, 3.5, 1.5), mgp = c(3, 0.525, 0), lwd = 8.8, cex = 3, cex.axis = 0.85)
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
     plot(df_dend)
     axis(side = 2, lwd = 3.5)
@@ -409,6 +409,25 @@ genelist <- c("WUS", "REV", "AP1", "AG", "LFY", "PLT1", "FLC", "PIN1")
 plotRE <- function(exp_data, genelist) {
 
     data <- exp_data[exp_data$symbol %in% genelist,]
+
+
+    # Define specific notation
+    set_scientific <- function(l) {
+
+        if (l < 0.01) {
+
+            # turn in to character string in scientific notation
+            l <- format(l, scientific = TRUE)
+            # quote the part before the exponent to keep all the digits
+            l <- gsub("^(.*)e", "'\\1'e", l)
+            # turn the 'e+' into plotmath format
+            l <- gsub("e", "%*%10^", l)
+            # return this as an expression
+            parse(text=l)
+
+        } else return(l)
+    }
+
 
     # get cor p value
     pwdata <- split(data[,7:ncol(data)], rep(1:(nrow(data)/2), each = 2))
@@ -456,7 +475,7 @@ plotRE <- function(exp_data, genelist) {
     tlabel <- paste0("r = ", round(peacor, 2))
 
     if (length(tlabel) == 8) {
-        xcoor <- c(4.5, 4.5, 4.5, 6.5, 4.5, 22.5, 4.5, 4.5)
+        xcoor <- c(4.2, 4.2, 4.2, 22.75, 4.2, 22.75, 4.2, 4.2)
         ycoor <- c(0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98)
     } else {
         xcoor <- c(rep(4.5, length(tlabel)))
@@ -470,11 +489,14 @@ plotRE <- function(exp_data, genelist) {
         y     = ycoor
         )
 
-    plabel <- paste0("italic('P =')~", formatC(p_value, format="e", digits=0)) #p-value of cor test label
+    plabel <- unlist(lapply(p_value, function(x) {
+        paste0("italic('P =')~", set_scientific(signif(x, 1)))
+        } #p-value of cor test label
+        ))
 
     if (length(plabel) == 8) {
-        xpcoor <- c(5.2, 5.2, 5.2, 7.0, 5.2, 21.7, 5.2, 5.2)
-        ypcoor <- c(0.86, -0.02, 0.86, 0.86, 0.86, 0.86, -0.02, 0.86)
+        xpcoor <- c(5.9, 5.9, 5.9, 21.225, 5.9, 21.225, 5.9, 5.9)
+        ypcoor <- c(0.86, -0.01, 0.86, 0.86, 0.86, 0.86, -0.01, 0.86)
     } else {
         xpcoor <- c(rep(5.2, length(plabel)))
         ypcoor <- c(rep(0.86, length(plabel)))
@@ -500,7 +522,7 @@ plotRE <- function(exp_data, genelist) {
         geom_text(data = dat_text,
             mapping = aes(x = x, y = y, label = label), size=6.2) + 
         geom_text(data = pdat_text,
-            mapping = aes(x = x, y = y, label = format(label, scientific=TRUE)), size=6.2, parse=TRUE) + 
+            mapping = aes(x = x, y = y, label = label), size=6.2, parse=TRUE) + 
         guides(shape = guide_legend(override.aes = list(stroke=1.5)))
         
 
@@ -512,7 +534,7 @@ plotRE <- function(exp_data, genelist) {
             axis.ticks.length = unit(0.2, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.9), 
             axis.line = element_line(colour = 'black', size = 0.9), 
-            plot.margin = unit(c(0.4, 0.2, 0.2, 0.4),"cm"), 
+            plot.margin = unit(c(0.2, 0.2, 0.2, 0.4),"cm"), 
             axis.title.y = element_text(size=18.9, margin = margin(t = 0, r = 5.5, b = 0, l = 11.5), colour="black", 
                 face = "plain"), 
             axis.title.x = element_text(size=18.9, margin = margin(t = 4.5, r = 0, b = 0, l = 0), colour="black", 
