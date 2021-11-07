@@ -202,7 +202,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#730404", "#a80606", "#db0808", "yellow", "#fcfce4")
+    steps <- c("#7f0405", "#b40607", "#e40808", "yellow", "#fcfce4")
     pal <- color.palette(steps, c(10, 24, 38, 5), space = "rgb")
 
     # Set filename
@@ -475,7 +475,7 @@ plotRE <- function(exp_data, genelist) {
     tlabel <- paste0("r = ", round(peacor, 2))
 
     if (length(tlabel) == 8) {
-        xcoor <- c(4.2, 4.2, 4.2, 22.75, 4.2, 22.75, 4.2, 4.2)
+        xcoor <- c(4.15, 4.15, 4.15, 22.75, 4.15, 22.75, 4.15, 4.15)
         ycoor <- c(0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98)
     } else {
         xcoor <- c(rep(4.5, length(tlabel)))
@@ -495,7 +495,7 @@ plotRE <- function(exp_data, genelist) {
         ))
 
     if (length(plabel) == 8) {
-        xpcoor <- c(5.9, 5.9, 5.9, 21.225, 5.9, 21.225, 5.9, 5.9)
+        xpcoor <- c(5.9, 5.9, 5.9, 21.235, 5.9, 21.235, 5.9, 5.9)
         ypcoor <- c(0.86, -0.01, 0.86, 0.86, 0.86, 0.86, -0.01, 0.86)
     } else {
         xpcoor <- c(rep(5.2, length(plabel)))
@@ -534,7 +534,7 @@ plotRE <- function(exp_data, genelist) {
             axis.ticks.length = unit(0.2, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.9), 
             axis.line = element_line(colour = 'black', size = 0.9), 
-            plot.margin = unit(c(0.2, 0.2, 0.2, 0.4),"cm"), 
+            plot.margin = unit(c(0.15, 0.2, 0.2, 0.4),"cm"), 
             axis.title.y = element_text(size=18.9, margin = margin(t = 0, r = 5.5, b = 0, l = 11.5), colour="black", 
                 face = "plain"), 
             axis.title.x = element_text(size=18.9, margin = margin(t = 4.5, r = 0, b = 0, l = 0), colour="black", 
