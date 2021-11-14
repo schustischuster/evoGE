@@ -51,27 +51,17 @@ source(file.path("evoGE", "ATGE-DevSeq", "R", "DevSeq_ATGE_plots.R"))
 After loading the data and sourcing the R script, run the following commands to generate the plots:
 
 ```R
-# Boxplot showing pairwise ATGE-DevSeq gene correlations 
-plot_Gene_Corr(spearman_RE, pearson_RE, pearson_log2_RE)
-
-# Boxplot showing ATGE-DevSeq sample correlations
-plot_Sample_Corr(atge_devseq_spearman, atge_devseq_pearson, atge_devseq_log_pearson)
+# Pairwise correlation plots
+plotRE(exp_data = devseq_log2_re_vs_atge_log2_re, genelist = genelist)
 
 # Correlation heatmap of merged ATGE-DevSeq data
-makeCorrplot(atge_devseq_re, coefficient = "pearson")
-makeCorrplot(atge_devseq_re_log, coefficient = "pearson")
+makeCorrplot(exp_data=atge_devseq_re_log, coefficient="pearson", clustm="complete")
 
 # hclust dendrogram of ATGE and DevSeq data
-makeDendrogram(atge_re, coefficient = "pearson")
-makeDendrogram(devseq_re, coefficient = "pearson")
+makeDendrogram(atge, coefficient = "pearson", clustm="complete")
+makeDendrogram(devseq, coefficient = "pearson", clustm="complete")
 
 ```
-
-The plotting functions will create the panels for the following figure:
-
-
-![ATGE-DevSeq](README_files/ATGE-DevSeq.png)
-
 
 ---
 ## Session info
