@@ -54,7 +54,7 @@ After loading the data and sourcing the R script, run the following commands to 
 # Pairwise correlation plots
 plotRE(exp_data = devseq_log2_re_vs_atge_log2_re, genelist = genelist)
 
-# Correlation heatmap of merged ATGE-DevSeq data
+# Correlation heatmap of combined ATGE-DevSeq data
 makeCorrplot(exp_data=atge_devseq_re_log, coefficient="pearson", clustm="complete")
 
 # hclust dendrogram of ATGE and DevSeq data
