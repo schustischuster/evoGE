@@ -11,6 +11,10 @@ plotGOs <- function(...) {
     GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
     orthoTPM = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
+    glob_q1_gop = file.path(in_dir, "global_q1_express_ids.csv")
+    glob_q14_gop = file.path(in_dir, "global_q14_express_ids.csv")
+    root_q1_gop = file.path(in_dir, "root_q1_express_ids.csv")
+
     filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
     filenames <- filenames[!filenames %in% "./GOslim/output/data/cor_bsv_traject_293_1000.txt"]
     names_txt <- gsub('.*/', '', filenames)
@@ -29,8 +33,12 @@ plotGOs <- function(...) {
     GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
     orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
+    glob_q1_go <- read.table(glob_q1_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
+    glob_q14_go <- read.table(glob_q14_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
+    root_q1_go <- read.table(root_q1_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
 
-    # return_list <- list("ldf" = ldf, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "orthoTPM" = orthoTPM)
+
+    # return_list <- list("ldf" = ldf, "glob_q1_go" = glob_q1_go, "glob_q14_go" = glob_q14_go, "root_q1_go" = root_q1_go, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "orthoTPM" = orthoTPM)
     # return(return_list)
     # }
     # return_objects <- plotGOs()
@@ -90,13 +98,13 @@ plotGOs <- function(...) {
 
     # Add number of genes to each GOSLIM category of stats tables
     perm_stats_biological_process <- merge(subset(perm_stats_biological_process, 
-        perm_stats_biological_process$p_value_FDR < 0.05), stats_ortho_genes_df)
+        perm_stats_biological_process$p_value_FDR < 0.01), stats_ortho_genes_df)
     perm_stats_molecular_function <- merge(subset(perm_stats_molecular_function, 
-        perm_stats_molecular_function$p_value_FDR < 0.05), stats_ortho_genes_df)
+        perm_stats_molecular_function$p_value_FDR < 0.01), stats_ortho_genes_df)
     wilcox_stats_biological_process <- merge(subset(wilcox_stats_biological_process, 
-        wilcox_stats_biological_process$p_value_FDR < 0.05), stats_ortho_genes_df)
+        wilcox_stats_biological_process$p_value_FDR < 0.01), stats_ortho_genes_df)
     wilcox_stats_molecular_function <- merge(subset(wilcox_stats_molecular_function, 
-        wilcox_stats_molecular_function$p_value_FDR < 0.05), stats_ortho_genes_df)
+        wilcox_stats_molecular_function$p_value_FDR < 0.01), stats_ortho_genes_df)
 
 
     # Check if GE of functional group shows stronger or weaker conservation compared to control
@@ -122,6 +130,103 @@ plotGOs <- function(...) {
 
     perm_stats <- rbind(perm_stats_biological_process, perm_stats_molecular_function)
     wilcox_stats <- rbind(wilcox_stats_biological_process, wilcox_stats_molecular_function)
+
+    # Remove GO categories that have only one background control set from wilcox_stats table
+    wilcox_stats <- wilcox_stats[!(wilcox_stats$goslim_term %in% c("protein binding" ,"RNA binding")), ]
+
+
+
+    plotGOCat <- function(df) {
+
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), "COS", sep="_"))
+
+        if (deparse(substitute(df)) == "glob_q1_go"){
+
+            df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 8)
+            plot_mar <- c(0.2, 0.1, 10.5, 1)
+            enr_br <- c(4, 8, 12)
+            enr_l <- c("4", "8", "12")
+            fdr_br <- c(5, 15, 25)
+            fdr_l <- c("5", "15", "25")
+            leg_b <- "horizontal"
+            plt_title <- "GO enrichment global q1"
+            
+
+        } else if (deparse(substitute(df)) == "glob_q14_go"){
+            
+            df <- subset(df, Enrichment.FDR < 0.000000001 & nGenes >= 8 & Fold.Enrichment >= 5)
+            plot_mar <- c(3.5, 0.1, 0, 0)
+            enr_br <- c(6, 8, 10)
+            enr_l <- c("6", "8", "10")
+            fdr_br <- c(10, 20, 30)
+            fdr_l <- c("10", "20", "30")
+            leg_b <- "vertical"
+            plt_title <- "GO enrichment global q14"
+            # Remove redundant GO categories
+            go_rm_ls <- c("Peptide biosynthetic process ", "Ribonucleotide complex subunit organization ", 
+            "Ribonucleoprotein complex subunit organization ")
+            df <- df[ ! df$Pathway %in% go_rm_ls, ]
+            df$Pathway <- gsub("compounds", "comp", df$Pathway)
+
+        } else if (deparse(substitute(df)) == "root_q1_go"){
+
+            df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 6 & Fold.Enrichment >= 3)
+            plot_mar <- c(0.2, 0.1, 5.75, 0)
+            enr_br <- c(4, 6, 8, 10)
+            enr_l <- c("4", "6", "8", "10")
+            fdr_br <- c(5, 10, 15)
+            fdr_l <- c("5", "10", "15")
+            leg_b <- "vertical"
+            plt_title <- "GO enrichment root q1"
+            # Remove redundant GO categories
+            go_rm_ls <- c("Anatomical structure formation involved in morphogenesis ", "Cellular component assembly involved in morphogenesis ", 
+            "Mitochondrial mRNA modification ", "Pollen exine formation ", "Pollen wall assembly ", "Anatomical structure morphogenesis ", 
+            "Cellular component morphogenesis ")
+            df <- df[ ! df$Pathway %in% go_rm_ls, ]
+            df$Pathway <- gsub("transport in", "transport", df$Pathway)
+        }
+
+        # Reorder df by number of genes
+        df$Pathway <- reorder(df$Pathway, df$nGenes)
+        df$FDR <- -log(df$Enrichment.FDR, 10)
+
+        p <- ggplot(df, aes(x = nGenes, y = Pathway, colour = FDR)) +
+        geom_point(mapping=aes(size = Fold.Enrichment)) + 
+        scale_x_continuous(expand = c(0.1, 0)) + 
+        scale_colour_continuous(low = "yellow2", high = "red", breaks = fdr_br, labels = fdr_l, 
+            name = expression("FDR ["*-log[10]*"]")) + 
+        scale_size_continuous(range = c(4, 10.5), breaks = enr_br, labels = enr_l, 
+            name = "Enrichment") + 
+        guides(size = guide_legend(order = 2), colour=guide_colourbar(order = 1)) + 
+        labs(x = "Number of Genes", y = NULL) + 
+        ggtitle(plt_title) + 
+        theme(panel.background = element_blank(), 
+            axis.ticks.length = unit(0.29, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.25), 
+            axis.line = element_line(colour = 'black', size = 1.25), 
+            plot.margin = unit(plot_mar, "cm"), 
+            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 8, l = 0), hjust = 0.5),
+            legend.text=element_text(size=15), 
+            legend.title=element_text(size=17),
+            legend.direction = "vertical", 
+            legend.box = leg_b,
+            legend.key = element_blank(),
+            axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+                colour="black", face = "bold"), 
+            axis.title.x = element_text(size=22.75, margin = margin(t = 1.0, r = 0, b = 7.15, l = 0), 
+                colour="black", face = "bold"), 
+            axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 8), colour="grey20"), 
+            axis.text.y = element_text(size=19, angle=0, margin = margin(l = 10, r = -2), colour="grey20")
+        )
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
+               width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+
+    }
+
+    plotGOCat(glob_q1_go)
+    plotGOCat(glob_q14_go)
+    plotGOCat(root_q1_go)
 
 
 
