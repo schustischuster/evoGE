@@ -143,7 +143,7 @@ plotGOs <- function(...) {
         if (deparse(substitute(df)) == "glob_q1_go"){
 
             df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 8)
-            plot_mar <- c(0.2, 0.1, 10.5, 1)
+            plot_mar <- c(0.2, -0.025, 9.841, 0.825)
             enr_br <- c(4, 8, 12)
             enr_l <- c("4", "8", "12")
             fdr_br <- c(5, 15, 25)
@@ -155,7 +155,7 @@ plotGOs <- function(...) {
         } else if (deparse(substitute(df)) == "glob_q14_go"){
             
             df <- subset(df, Enrichment.FDR < 0.000000001 & nGenes >= 8 & Fold.Enrichment >= 5)
-            plot_mar <- c(3.5, 0.1, 0, 0)
+            plot_mar <- c(1.7, -0.05, 0, -0.025)
             enr_br <- c(6, 8, 10)
             enr_l <- c("6", "8", "10")
             fdr_br <- c(10, 20, 30)
@@ -171,7 +171,7 @@ plotGOs <- function(...) {
         } else if (deparse(substitute(df)) == "root_q1_go"){
 
             df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 6 & Fold.Enrichment >= 3)
-            plot_mar <- c(0.2, 0.1, 5.75, 0)
+            plot_mar <- c(0.2, -0.05, 4.845, -0.038)
             enr_br <- c(4, 6, 8, 10)
             enr_l <- c("4", "6", "8", "10")
             fdr_br <- c(5, 10, 15)
@@ -193,8 +193,8 @@ plotGOs <- function(...) {
         p <- ggplot(df, aes(x = nGenes, y = Pathway, colour = FDR)) +
         geom_point(mapping=aes(size = Fold.Enrichment)) + 
         scale_x_continuous(expand = c(0.1, 0)) + 
-        scale_colour_continuous(low = "yellow2", high = "red", breaks = fdr_br, labels = fdr_l, 
-            name = expression("FDR ["*-log[10]*"]")) + 
+        scale_colour_continuous(low = "#ecec00", high = "red", breaks = fdr_br, labels = fdr_l, 
+            name = expression(-log[10]*"(FDR)")) + 
         scale_size_continuous(range = c(4, 10.5), breaks = enr_br, labels = enr_l, 
             name = "Enrichment") + 
         guides(size = guide_legend(order = 2), colour=guide_colourbar(order = 1)) + 
@@ -205,17 +205,17 @@ plotGOs <- function(...) {
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
             plot.margin = unit(plot_mar, "cm"), 
-            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 8, l = 0), hjust = 0.5),
-            legend.text=element_text(size=15), 
-            legend.title=element_text(size=17),
+            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
+            legend.text=element_text(size=17.5), 
+            legend.title=element_text(size=18),
             legend.direction = "vertical", 
             legend.box = leg_b,
             legend.key = element_blank(),
             axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
-            axis.title.x = element_text(size=22.75, margin = margin(t = 1.0, r = 0, b = 7.15, l = 0), 
+            axis.title.x = element_text(size=22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
                 colour="black", face = "bold"), 
-            axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 8), colour="grey20"), 
+            axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 7), colour="grey20"), 
             axis.text.y = element_text(size=19, angle=0, margin = margin(l = 10, r = -2), colour="grey20")
         )
 
@@ -227,6 +227,71 @@ plotGOs <- function(...) {
     plotGOCat(glob_q1_go)
     plotGOCat(glob_q14_go)
     plotGOCat(root_q1_go)
+
+
+
+    # Visualize GOslim categories that show different rates of GE divergence than background
+    # Plot results of permutation test for SI
+    plotGOslimSts <- function(df) {
+
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), "COS", sep="_"))
+
+        # Capitalize first string of each GO term category name
+        CapStr <- function(y) {
+            c <- strsplit(y, " ")[[1]]
+            paste(toupper(substring(c, 1,1)), substring(c, 2),
+                sep="", collapse=" ")
+        }
+
+        df$goslim_term <- paste(sapply(gsub("([A-Za-z]+).*", "\\1", df$goslim_term), CapStr), 
+            sub(".*? ", "", df$goslim_term))
+
+        df$goslim_term <- gsub("Growth growth", "Growth", df$goslim_term)
+
+        # Reorder df by number of genes
+        df$goslim_term <- gsub("nucleobase-containing", "nucleobase", df$goslim_term)
+        df$goslim_term <- reorder(df$goslim_term, desc(df$p_value_FDR))
+        df$p_value_FDR <- -log(df$p_value_FDR, 10)
+        df$color = ifelse(df$delta_slope < 0, "palegreen2", "red2")
+
+        p <- ggplot(df, aes(x = p_value_FDR, y = goslim_term, colour = color)) +
+        geom_point(mapping=aes(size = ortho_genes, colour = color)) + 
+        scale_x_continuous(expand = c(0.05, 0), limits = c(2, 3.4), breaks = c(2, 2.5, 3), 
+            labels = c("2", "", "3")) + 
+        scale_color_identity(breaks = c("palegreen2", "red2"), labels = c("Low", "High"), 
+            guide = "legend", name = "Expression \ndivergence") + 
+        scale_size_continuous(range = c(4, 10.5), breaks = c(500, 1000, 1500), 
+            labels = c("500", "1000", "1500"), name = "Gene count") + 
+        guides(size = guide_legend(order = 2), colour = guide_legend(order = 1, override.aes=list(size = 8))) + 
+        labs(x = expression(-log[10]*"(FDR)"), y = NULL) + 
+        ggtitle("Expression divergence across functional groups") + 
+        theme(panel.background = element_blank(), 
+            axis.ticks.length = unit(0.29, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.25), 
+            axis.line = element_line(colour = 'black', size = 1.25), 
+            plot.margin = unit(c(6.7125, 0.12, 0, 1.72), "cm"), 
+            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
+            legend.text=element_text(size=17.5), 
+            legend.title=element_text(size=18),
+            legend.direction = "vertical", 
+            legend.box = "vertical",
+            legend.key = element_blank(),
+            legend.margin=margin(t = 0.255, l = 0.41, b = -0.04, unit='cm'),
+            axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+                colour="black", face = "bold"), 
+            axis.title.x = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 1, l = 0), 
+                colour="black", face = "bold"), 
+            axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 7.15), colour="grey20"), 
+            axis.text.y = element_text(size=19, angle=0, margin = margin(l = 8.8, r = 3.25), colour="grey20")
+        )
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
+               width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+
+    }
+
+    plotGOslimSts(perm_stats)
+    # plotGOslimSts(wilcox_stats)
 
 
 
