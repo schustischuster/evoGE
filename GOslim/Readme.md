@@ -75,7 +75,7 @@ Sample correlations converge to the population value with increasing sample size
 To reproduce the results of this study, execute the following function call:
 
 ```R
-estimatePOS(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
+estimatePOS(nbootstrap = 1000, coswidth = 0.1, bss = 0.8)
 
 ```
 
@@ -119,8 +119,8 @@ Now, multiple control genes will be matched to each gene of a GO slim category t
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-getGOSLIM(aspect = "biological_process", sample_size = 293)
-getGOSLIM(aspect = "molecular_function", sample_size = 293)
+getGOSLIM(aspect = "biological_process", sample_size = 412)
+getGOSLIM(aspect = "molecular_function", sample_size = 412)
 
 ```
 
