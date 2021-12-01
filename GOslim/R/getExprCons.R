@@ -299,7 +299,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
             ids_q1 <- as.numeric(c(rownames(q_ls[[1]])))
             agis_q1 <- orthoExpr[c(ids_q1),]
             ids_qmax <- as.numeric(c(rownames(q_ls[[quant_num]])))
-            assign(paste0("agis_q", quant_num), orthoExpr[c(ids_qmax),]$gene_id) # agis_q14
+            agis_qmax <- orthoExpr[c(ids_qmax),]$gene_id
 
 
             getDist <- function(b) {
@@ -483,7 +483,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
                 agis_q1_ids <- agis_q1[,1]
 
-                q_root_ids_out <- list(agis_q1_ids, agis_q14)
+                q_root_ids_out <- list(agis_q1_ids, agis_qmax)
                 names(q_root_ids_out) <- c("gene_ids_root_q1", paste0("gene_ids_root_q", quant_num))
 
                 for(i in names(q_root_ids_out)){
@@ -648,6 +648,14 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                     l_text <- data.frame(x = 7.5, y = 0.881, label = c("WRS:","","","","","","",""), 
                     organ = corg)
 
+                    q1_arw <- data.frame(x = 1, y = 0.5, xend = 1, yend = 0.825, organ = "Root")
+
+                    q14_arw <- data.frame(x = 14, y = 0.5, xend = 14, yend = 0.825, organ = "Root")
+
+                    q_alpha <- 1
+
+                    x_scale <- c(1,"","",4,"","",7,"","",10,"","","",14)
+
                 } else if (qtype == "organ_spec") {
 
                     p.value1 <- c(paste0("italic('  P')[q1]~", "'='~", set_scientific(signif(p.qrt1,1))))
@@ -658,6 +666,14 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
                     l_text <- data.frame(x = 7.75, y = 1.0025, label = c("WRS:","","","","","","",""), 
                     organ = corg)
+
+                    q1_arw <- data.frame(x = 1, y = 0.5, xend = 1, yend = 0.945, organ = "Root")
+
+                    q14_arw <- data.frame(x = 14, y = 0.5, xend = 14, yend = 0.945, organ = "Root")
+
+                    q_alpha <- 1
+
+                    x_scale <- c(1,"","",4,"","",7,"","",10,"","","",14)
                 }
                 # Genes in quantiles q1 and q14 show lower rates of expression evolution compared
                 # to genes in the other quantiles (Pq1/Pq14 indicate p-value; Wilcoxon rank-sum test)
@@ -666,13 +682,23 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
                 p_text <- data.frame(x = 2, y = 0.9, label = c("","","","","","","",""), 
                     organ = corg)
+                l_text <- p_text
+
+                q1_arw <- data.frame(x = 1, y = 1, xend = 1, yend = 1, organ = "Apex veg")
+
+                q14_arw <- q1_arw
+
+                q_alpha <- 0
+
+                x_scale <- waiver()
             }
 
             p <- ggplot(data = data, color = organ, aes(x=quantile, y=scaled_slopes)) + 
             geom_point(colour = "blueviolet", size = 3) + 
             geom_smooth(method = 'loess', colour = "blueviolet", size = 1.5) + 
-            scale_y_continuous(expand = c(0.05, 0), breaks = c(1.0, 1.25, 1.5, 1.75, 2.0), labels = c(format(round(1.0, 1), nsmall = 1), "", format(round(1.5, 1), nsmall = 1), "", format(round(2.0, 1), nsmall = 1))) + 
-            scale_x_continuous(expand = c(0.075, 0), breaks = seq(1, quant_num, 3)) + 
+            scale_y_continuous(expand = c(0.05, 0), breaks = c(1.0, 1.25, 1.5, 1.75, 2.0), 
+                labels = c(format(round(1.0, 1), nsmall = 1), "", format(round(1.5, 1), nsmall = 1), "", format(round(2.0, 1), nsmall = 1))) + 
+            scale_x_continuous(expand = c(0.075, 0), breaks = seq(1:quant_num), labels = x_scale) + 
             coord_cartesian(ylim = ycoord) + 
             scale_shape_manual(values = c(21,21)) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
@@ -682,11 +708,17 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                 parse=TRUE, size=7.25, hjust = 0) + 
             geom_text(data = l_text, mapping = aes(x = x, y = y, label = label), 
                 size=7.25, hjust = 0) + 
+            geom_segment(data = q1_arw, aes(x = x, y = y, xend = xend, yend = yend), 
+                arrow = arrow(length = unit(0.55, "cm"), type = "closed"), 
+                size=1.1, col="red4", alpha = q_alpha) + 
+            geom_segment(data = q14_arw, aes(x = x, y = y, xend = xend, yend = yend), 
+                arrow = arrow(length = unit(0.55, "cm"), type = "closed"), 
+                size=1.1, col="red4", alpha = q_alpha) +
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 19.85), 
                 strip.text.x = element_text(margin = margin(0.38, 0, 0.38, 0, "cm")), 
                 strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
-                axis.ticks.length = unit(0.29, "cm"), 
+                axis.ticks.length = unit(0.22, "cm"), 
                 axis.ticks = element_line(colour = "black", size = 1.25), 
                 axis.line = element_line(colour = 'black', size = 1.25), 
                 plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
@@ -694,8 +726,8 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                     colour="black", face = "bold"), 
                 axis.title.x = element_text(size=22.75, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
                     colour="black", face = "bold"), 
-                axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 8), colour="grey20"), 
-                axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
+                axis.text.x = element_text(size=18.8, margin = margin(t = 3.25, b = 8), colour="grey20"), 
+                axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
                 panel.spacing = unit(0.5, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
