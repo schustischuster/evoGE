@@ -265,7 +265,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 cratio <- cratio-1
 
                 # check for success
-                success <- ((stmdif <= 0.01) && (varR >= 1))
+                success <- ((stmdif <= 0.01) && (varR >= 0.99))
             }
 
             return(match_res_m)
@@ -348,11 +348,13 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 ntreatmc <- nrow(x_df)
                 nuc <- nrow(cgeneexpress)
 
-                n_text <- data.frame(x = c(1, 2, 3, 4, 5), y = c(13.15, 13.15, 13.15, 13.15, 13.15), 
-                    label = c(rep(ntreatmc, 4), nuc))
+                ncontrol <- ncol(mplot)
+
+                n_text <- data.frame(x = seq(1:(ncontrol+2)), y = rep(13.15, ncontrol+2), 
+                    label = c(rep(ntreatmc, 1+ncontrol), nuc))
 
                 p <- ggplot(data=data, aes(x = class, y = exp)) + 
-                geom_boxplot(data = data, aes(x = class, y = exp), fill=c("#28a100","grey50","grey50","grey50","#ed0000"), 
+                geom_boxplot(data = data, aes(x = class, y = exp), fill=c("#28a100", rep("grey50",ncontrol),"#ed0000"), 
                     size=1.1, fatten=1.5, outlier.size = 2, alpha=0.35) + 
                 scale_y_continuous(limits = c(0, 14.75))
 
@@ -950,7 +952,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
         plt_w <- 25.5
         mb <- 11
-        legpos <- c(0.5,0.95)
+        legpos <- c(0.5, 0.95)
         btmm <- 0.25
 
     } else if (aspect == "molecular_function") {
@@ -964,7 +966,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     p <- ggplot(pdata, aes(factor(term), data, fill = test)) + 
     geom_bar(stat="identity", position = "dodge") + 
     scale_fill_brewer(palette = "Set1") + 
-    scale_y_continuous(limits = c(0, 0.95)) + 
+    scale_y_continuous(limits = c(0, 1.0)) + 
     xlab("") + 
     ylab("p value (FDR adjusted)") +  
     ggtitle(paste("GO", aspect, sep=" ")) +
