@@ -1,5 +1,5 @@
 # Estimate the stability of Pearson expression correlations using Monte Carlo simulations 
-# Similar procedure as in Schönbrodt et al., 2013
+# Similar procedure as in Schönbrodt and Perugini, 2013
 
 
 estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
