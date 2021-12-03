@@ -409,7 +409,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
 
 }
 
-estimatePOS(nbootstrap = 1000, coswidth = 0.15, bss = 0.95)
+estimatePOS(nbootstrap = 1000, coswidth = 0.1, bss = 0.8)
 
 
 
