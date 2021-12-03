@@ -36,7 +36,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
     # return_list <- list("orthoexp" = orthoexp, "nbootstrap" = nbootstrap, "coswidth" = coswidth, "bss" = bss)
     # return(return_list)
     # }
-    # return_objects <- estimatePOS(nbootstrap = 10, coswidth = 0.15, bss = 0.95)
+    # return_objects <- estimatePOS(nbootstrap = 1000, coswidth = 0.1, bss = 0.8)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -146,8 +146,8 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
     }
 
 
-    # Repeat bootstrapping function n times
-    set.seed(326) 
+    # Repeat sampling function n times
+    set.seed(250) 
     # Note: Seed will give different results in R versions < 3.6.0 because algorithm for 
     # random-number generator underlying sample() function was changed. See post on SO 
     # https://stackoverflow.com/questions/47199415/is-set-seed-consistent-over-different-versions-of-r-and-ubuntu/56381613#56381613
@@ -298,35 +298,76 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
             th <- quantile(cor_pos$pos08, probs = loc)
         }
 
-        # Note: the POS for small effect sizes (w=0.1) and 95% CI is 732.15 for given seed
+        if (deparse(substitute(df)) == "traject06_df" && nbootstrap == 1000 && coswidth == 0.1 && bss == 0.8){
 
-        pos_txt <- paste0("POS (n=", round(quantile(cor_pos$pos06, probs = 0.95)), ")")
+            possegpos <- 0.0585
+            th09 <- quantile(cor_pos$pos06, probs = 0.9)
+            th095 <- quantile(cor_pos$pos06, probs = 0.95)
+            pos09_txt <- c("POS (CL 90%)")
+            pos09_ntxt <- paste0("n=", round(quantile(cor_pos$pos06, probs = 0.9)))
+            pos09segpos <- 0.253
+            y09pos <- 0.253
+            y09posntxt <- 0.1765
+            pos095_txt <- c("POS (CL 95%)")
+            pos095_ntxt <- paste0("n=", round(quantile(cor_pos$pos06, probs = 0.95)))
+            pos095segpos <- 0.446
+            y095pos <- 0.446
+            y095posntxt <- 0.3695
+        
+        } else {
+
+            possegpos <- -0.2
+            th09 <- -0.2
+            th095 <- -0.2
+            pos09_txt <- ""
+            pos09_ntxt <- ""
+            pos09segpos <- -0.2
+            y09pos <- -0.2
+            y09posntxt <- -0.2
+            pos095_txt <- ""
+            pos095_ntxt <- ""
+            pos095segpos <- -0.2
+            y095pos <- -0.2
+            y095posntxt <- -0.2
+        }
+
+        pos_txt <- c("POS (CL 80%)")
+        pos_ntxt <- paste0("n=", round(quantile(cor_pos$pos06, probs = loc)))
         cos_txt <- paste0("(w=", coswidth, ")")
         cor_txt <- paste0("actual correlation (r=", tc, ")")
 
         p <- ggplot(df, aes(size, value, group = trajectory)) +
         geom_line(data = df, aes(size, value),
             color = "#e26887", alpha = 0.50, size = 0.25) + 
-        scale_x_continuous(limits = c(0, 820), breaks = c(0, 200, 400, 600, 800), expand = c(0.007, 0)) + 
+        scale_x_continuous(limits = c(0, 955), breaks = c(0, 200, 400, 600, 800), expand = c(0.007, 0)) + 
         scale_y_continuous(limits = c(-0.15, 0.99), breaks = c(0, 0.2, 0.4, 0.6, 0.8), expand = c(0, 0)) + 
-        geom_hline(yintercept = ui, linetype = 2, size = 1.115) + 
-        geom_hline(yintercept = li, linetype = 2, size = 1.115) + 
+        geom_hline(yintercept = ui, linetype = 2, size = 1.145) + 
+        geom_hline(yintercept = li, linetype = 2, size = 1.145) + 
         geom_hline(yintercept = tc, size = 1.115) + 
-        geom_vline(xintercept = th, col="grey44", size = 1.25) + 
-        annotate("text", x=416, y=0.28, label=pos_txt, size=8.0, col="grey44") + 
-        geom_segment(aes(x = 335, y = 0.28, xend = 305, yend = 0.28), arrow = arrow(length = unit(0.5, "cm")), 
-            size=1.1, col="grey44") + 
-        geom_segment(aes(x = 620.5, y = 0.825, xend = 620.5, yend = 0.62), arrow = arrow(length = unit(0.5, "cm")), 
-            size=1.1, col="black") + 
-        geom_segment(aes(x=527, xend=537.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=548, xend=558.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=569, xend=579.5, y=0.056, yend=0.056), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=527, xend=537.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=548, xend=558.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=569, xend=579.5, y=0.092, yend=0.092), colour = "black", show.legend = FALSE, size = 1.1) + 
-        annotate("text", x=697, y=0.075, label= "Corridor of Stability", size=8.0) + 
-        annotate("text", x=639.5, y=0, label= cos_txt, size=8.0) + 
-        annotate("text", x=620.8, y=0.872, label= cor_txt, size=8.0) + 
+        geom_vline(xintercept = th, col="grey35", size = 1.15) + 
+        annotate("text", x=557, y=0.0585, label=pos_txt, size=7.75, col="grey35") + 
+        annotate("text", x=504.0, y=-0.018, label=pos_ntxt, size=7.75, col="grey35") +
+        geom_segment(aes(x = 454, y = possegpos, xend = 424, yend = possegpos), arrow = arrow(length = unit(0.5, "cm")), 
+            size=1.1, col="grey35") + 
+        annotate("text", x=710, y=y09pos, label=pos09_txt, size=7.75, col="grey50") + 
+        annotate("text", x=656.9, y=y09posntxt, label=pos09_ntxt, size=7.75, col="grey50") +
+        geom_segment(aes(x = 606.9, y = pos09segpos, xend = 576.9, yend = pos09segpos), arrow = arrow(length = unit(0.5, "cm")), 
+            size=1.1, col="grey50") + 
+        annotate("text", x=853.5, y=y095pos, label=pos095_txt, size=7.75, col="grey65") + 
+        annotate("text", x=800.4, y=y095posntxt, label=pos095_ntxt, size=7.75, col="grey65") +
+        geom_segment(aes(x = 750.5, y = pos095segpos, xend = 720.5, yend = pos095segpos), arrow = arrow(length = unit(0.5, "cm")), 
+            size=1.1, col="grey65") +
+        geom_segment(aes(x=71.05, xend=83.25, y=0.045, yend=0.045), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=95.3, xend=107.5, y=0.045, yend=0.045), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=71.05, xend=83.25, y=0.0715, yend=0.0715), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=95.3, xend=107.5, y=0.0715, yend=0.0715), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=th09, xend=th09, y=0.205, yend=0.945), colour = "grey50", show.legend = FALSE, size = 1.15) + 
+        geom_segment(aes(x=th095, xend=th095, y=0.4, yend=0.8), colour = "grey65", show.legend = FALSE, size = 1.15) + 
+        annotate("text", x=239, y=0.0585, label= "Corridor of Stability", size=7.75) + 
+        annotate("text", x=167, y=-0.018, label= cos_txt, size=7.75) + 
+        annotate("text", x=792.75, y=0.92, label= cor_txt, size=7.75) + 
+        geom_segment(aes(x = 792.75, y = 0.875, xend = 792.75, yend = 0.6125), arrow = arrow(length = unit(0.5, "cm")), 
+            size=1.1, col="black") +
         labs(x = "Sample size", y = "Correlation") +
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.29, "cm"), 
@@ -341,8 +382,8 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
             axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 4.1, r = 1.5), colour="grey20")
         )
 
-        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
-               width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+        suppressWarnings(ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
+               width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE))
 
     }
 
