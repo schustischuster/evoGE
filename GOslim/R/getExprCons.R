@@ -726,7 +726,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                     colour="black", face = "bold"), 
                 axis.title.x = element_text(size=22.75, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
                     colour="black", face = "bold"), 
-                axis.text.x = element_text(size=18.8, margin = margin(t = 3.25, b = 8), colour="grey20"), 
+                axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
                 axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
                 panel.spacing = unit(0.5, "cm"), 
                 panel.grid.major = element_blank(),
