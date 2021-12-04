@@ -300,19 +300,19 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
 
         if (deparse(substitute(df)) == "traject06_df" && nbootstrap == 1000 && coswidth == 0.1 && bss == 0.8){
 
-            possegpos <- 0.0585
+            possegpos <- 0.0535
             th09 <- quantile(cor_pos$pos06, probs = 0.9)
             th095 <- quantile(cor_pos$pos06, probs = 0.95)
             pos09_txt <- c("POS (CL 90%)")
             pos09_ntxt <- paste0("n=", round(quantile(cor_pos$pos06, probs = 0.9)))
-            pos09segpos <- 0.253
-            y09pos <- 0.253
-            y09posntxt <- 0.1765
+            pos09segpos <- 0.247
+            y09pos <- 0.247
+            y09posntxt <- 0.172
             pos095_txt <- c("POS (CL 95%)")
             pos095_ntxt <- paste0("n=", round(quantile(cor_pos$pos06, probs = 0.95)))
-            pos095segpos <- 0.446
-            y095pos <- 0.446
-            y095posntxt <- 0.3695
+            pos095segpos <- 0.4409
+            y095pos <- 0.4409
+            y095posntxt <- 0.3659
         
         } else {
 
@@ -344,33 +344,33 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
         geom_hline(yintercept = ui, linetype = 2, size = 1.145) + 
         geom_hline(yintercept = li, linetype = 2, size = 1.145) + 
         geom_hline(yintercept = tc, size = 1.115) + 
-        geom_vline(xintercept = th, col="grey35", size = 1.15) + 
-        annotate("text", x=557, y=0.0585, label=pos_txt, size=7.75, col="grey35") + 
-        annotate("text", x=504.0, y=-0.018, label=pos_ntxt, size=7.75, col="grey35") +
+        geom_vline(xintercept = th, col="grey35", size = 1.1) + 
+        annotate("text", x=552, y=0.0535, label=pos_txt, size=7.5, col="grey35") + 
+        annotate("text", x=500.5, y=-0.0215, label=pos_ntxt, size=7.5, col="grey35") +
         geom_segment(aes(x = 454, y = possegpos, xend = 424, yend = possegpos), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="grey35") + 
-        annotate("text", x=710, y=y09pos, label=pos09_txt, size=7.75, col="grey50") + 
-        annotate("text", x=656.9, y=y09posntxt, label=pos09_ntxt, size=7.75, col="grey50") +
+        annotate("text", x=705, y=y09pos, label=pos09_txt, size=7.5, col="grey50") + 
+        annotate("text", x=653.25, y=y09posntxt, label=pos09_ntxt, size=7.5, col="grey50") +
         geom_segment(aes(x = 606.9, y = pos09segpos, xend = 576.9, yend = pos09segpos), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="grey50") + 
-        annotate("text", x=853.5, y=y095pos, label=pos095_txt, size=7.75, col="grey65") + 
-        annotate("text", x=800.4, y=y095posntxt, label=pos095_ntxt, size=7.75, col="grey65") +
-        geom_segment(aes(x = 750.5, y = pos095segpos, xend = 720.5, yend = pos095segpos), arrow = arrow(length = unit(0.5, "cm")), 
+        annotate("text", x=849, y=y095pos, label=pos095_txt, size=7.5, col="grey65") + 
+        annotate("text", x=797.5, y=y095posntxt, label=pos095_ntxt, size=7.5, col="grey65") +
+        geom_segment(aes(x = 751, y = pos095segpos, xend = 721, yend = pos095segpos), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="grey65") +
-        geom_segment(aes(x=71.05, xend=83.25, y=0.045, yend=0.045), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=95.3, xend=107.5, y=0.045, yend=0.045), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=71.05, xend=83.25, y=0.0715, yend=0.0715), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=95.3, xend=107.5, y=0.0715, yend=0.0715), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=th09, xend=th09, y=0.205, yend=0.945), colour = "grey50", show.legend = FALSE, size = 1.15) + 
-        geom_segment(aes(x=th095, xend=th095, y=0.4, yend=0.8), colour = "grey65", show.legend = FALSE, size = 1.15) + 
-        annotate("text", x=239, y=0.0585, label= "Corridor of Stability", size=7.75) + 
-        annotate("text", x=167, y=-0.018, label= cos_txt, size=7.75) + 
-        annotate("text", x=792.75, y=0.92, label= cor_txt, size=7.75) + 
-        geom_segment(aes(x = 792.75, y = 0.875, xend = 792.75, yend = 0.6125), arrow = arrow(length = unit(0.5, "cm")), 
+        geom_segment(aes(x=74.0, xend=86.2, y=0.0405, yend=0.0405), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=98.5, xend=110.7, y=0.0405, yend=0.0405), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=74.0, xend=86.2, y=0.0659, yend=0.0659), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=98.5, xend=110.7, y=0.0659, yend=0.0659), colour = "black", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=th09, xend=th09, y=0.205, yend=0.89), colour = "grey50", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=th095, xend=th095, y=0.4, yend=0.8), colour = "grey65", show.legend = FALSE, size = 1.1) + 
+        annotate("text", x=238, y=0.0535, label= "Corridor of Stability", size=7.5) + 
+        annotate("text", x=167.5, y=-0.0215, label= cos_txt, size=7.5) + 
+        annotate("text", x=792.75, y=0.935, label= cor_txt, size=7.5) + 
+        geom_segment(aes(x = 792.75, y = 0.895, xend = 792.75, yend = 0.6125), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="black") +
         labs(x = "Sample size", y = "Correlation") +
         theme(panel.background = element_blank(), 
-            axis.ticks.length = unit(0.29, "cm"), 
+            axis.ticks.length = unit(0.22, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
             plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
@@ -378,8 +378,8 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
                 colour="black", face = "bold"), 
             axis.title.x = element_text(size=22.75, margin = margin(t = 4.0, r = 0, b = 7.15, l = 0), 
                 colour="black", face = "bold"), 
-            axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 8), colour="grey20"), 
-            axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 4.1, r = 1.5), colour="grey20")
+            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
+            axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 4.1, r = 2.5), colour="grey20")
         )
 
         suppressWarnings(ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
