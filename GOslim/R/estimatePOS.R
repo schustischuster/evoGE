@@ -363,10 +363,10 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
         geom_segment(aes(x=98.5, xend=110.7, y=0.0659, yend=0.0659), colour = "black", show.legend = FALSE, size = 1.1) + 
         geom_segment(aes(x=th09, xend=th09, y=0.205, yend=0.89), colour = "grey50", show.legend = FALSE, size = 1.1) + 
         geom_segment(aes(x=th095, xend=th095, y=0.4, yend=0.8), colour = "grey65", show.legend = FALSE, size = 1.1) + 
-        annotate("text", x=238, y=0.0535, label= "Corridor of Stability", size=7.5) + 
-        annotate("text", x=167.5, y=-0.0215, label= cos_txt, size=7.5) + 
-        annotate("text", x=792.75, y=0.935, label= cor_txt, size=7.5) + 
-        geom_segment(aes(x = 792.75, y = 0.895, xend = 792.75, yend = 0.6125), arrow = arrow(length = unit(0.5, "cm")), 
+        annotate("text", x=238, y=0.0535, label = "Corridor of Stability", size=7.5) + 
+        annotate("text", x=167.5, y=-0.0215, label = cos_txt, size=7.5) + 
+        annotate("text", x=791.5, y=0.935, label = cor_txt, size=7.5) + 
+        geom_segment(aes(x = 791.5, y = 0.895, xend = 791.5, yend = 0.6125), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="black") +
         labs(x = "Sample size", y = "Correlation") +
         theme(panel.background = element_blank(), 
