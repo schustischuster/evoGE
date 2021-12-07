@@ -10,6 +10,7 @@ plotGOs <- function(...) {
     GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
     GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
     orthoTPM = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+    atTPM = file.path(in_dir, "AT_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
 
     glob_q1_gop = file.path(in_dir, "global_q1_express_ids.csv")
     glob_q14_gop = file.path(in_dir, "global_q14_express_ids.csv")
@@ -32,13 +33,14 @@ plotGOs <- function(...) {
     GOSLIM <- read.table(GOSLIM, sep="\t", dec=".", quote = "", header=FALSE, skip=4, fill = TRUE, stringsAsFactors=FALSE)
     GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
     orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+    atTPM <- read.table(atTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
     glob_q1_go <- read.table(glob_q1_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
     glob_q14_go <- read.table(glob_q14_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
     root_q1_go <- read.table(root_q1_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "glob_q1_go" = glob_q1_go, "glob_q14_go" = glob_q14_go, "root_q1_go" = root_q1_go, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "orthoTPM" = orthoTPM)
+    # return_list <- list("ldf" = ldf, "glob_q1_go" = glob_q1_go, "glob_q14_go" = glob_q14_go, "root_q1_go" = root_q1_go, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "orthoTPM" = orthoTPM, "atTPM" = atTPM)
     # return(return_list)
     # }
     # return_objects <- plotGOs()
@@ -71,6 +73,8 @@ plotGOs <- function(...) {
     coreOrthologs <- coreOrthologs[!grepl("ERCC", coreOrthologs)] # Rm spike-ins from ortholog list
     coreOrthologs <- as.data.frame(coreOrthologs)
 
+    # Prepare A.thaliana expression data
+    atExpr <- tibble::rownames_to_column(atTPM, "gene_id")
 
     # Remove "other" categories because not informative
     # Remove "response to light stimulus" because plants were grown at constant light
@@ -138,12 +142,12 @@ plotGOs <- function(...) {
 
     plotGOCat <- function(df) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), "COS", sep="_"))
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), sep="_"))
 
         if (deparse(substitute(df)) == "glob_q1_go"){
 
             df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 8)
-            plot_mar <- c(0.2, -0.025, 9.841, 0.825)
+            plot_mar <- c(0.2, -0.025, 9.677, 0.825)
             enr_br <- c(4, 8, 12)
             enr_l <- c("4", "8", "12")
             fdr_br <- c(5, 15, 25)
@@ -155,7 +159,7 @@ plotGOs <- function(...) {
         } else if (deparse(substitute(df)) == "glob_q14_go"){
             
             df <- subset(df, Enrichment.FDR < 0.000000001 & nGenes >= 8 & Fold.Enrichment >= 5)
-            plot_mar <- c(1.7, -0.05, 0, -0.025)
+            plot_mar <- c(1.125, -0.05, 0, -0.025)
             enr_br <- c(6, 8, 10)
             enr_l <- c("6", "8", "10")
             fdr_br <- c(10, 20, 30)
@@ -171,7 +175,7 @@ plotGOs <- function(...) {
         } else if (deparse(substitute(df)) == "root_q1_go"){
 
             df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 6 & Fold.Enrichment >= 3)
-            plot_mar <- c(0.2, -0.05, 4.845, -0.038)
+            plot_mar <- c(0.2, -0.05, 3.5575, -0.038)
             enr_br <- c(4, 6, 8, 10)
             enr_l <- c("4", "6", "8", "10")
             fdr_br <- c(5, 10, 15)
@@ -180,7 +184,7 @@ plotGOs <- function(...) {
             plt_title <- "GO enrichment root q1"
             # Remove redundant GO categories
             go_rm_ls <- c("Anatomical structure formation involved in morphogenesis ", "Cellular component assembly involved in morphogenesis ", 
-            "Mitochondrial mRNA modification ", "Pollen exine formation ", "Pollen wall assembly ", "Anatomical structure morphogenesis ", 
+            "Mitochondrial mRNA modification ", "Pollen exine formation ", "Anatomical structure morphogenesis ", 
             "Cellular component morphogenesis ")
             df <- df[ ! df$Pathway %in% go_rm_ls, ]
             df$Pathway <- gsub("transport in", "transport", df$Pathway)
@@ -193,7 +197,7 @@ plotGOs <- function(...) {
         p <- ggplot(df, aes(x = nGenes, y = Pathway, colour = FDR)) +
         geom_point(mapping=aes(size = Fold.Enrichment)) + 
         scale_x_continuous(expand = c(0.1, 0)) + 
-        scale_colour_continuous(low = "#ecec00", high = "red", breaks = fdr_br, labels = fdr_l, 
+        scale_colour_continuous(low = "#eaea00", high = "red", breaks = fdr_br, labels = fdr_l, 
             name = expression(-log[10]*"(FDR)")) + 
         scale_size_continuous(range = c(4, 10.5), breaks = enr_br, labels = enr_l, 
             name = "Enrichment") + 
@@ -201,13 +205,13 @@ plotGOs <- function(...) {
         labs(x = "Number of Genes", y = NULL) + 
         ggtitle(plt_title) + 
         theme(panel.background = element_blank(), 
-            axis.ticks.length = unit(0.29, "cm"), 
+            axis.ticks.length = unit(0.25, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
             plot.margin = unit(plot_mar, "cm"), 
             plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
-            legend.text=element_text(size=17.5), 
-            legend.title=element_text(size=18),
+            legend.text=element_text(size=18.5), 
+            legend.title=element_text(size=18.8),
             legend.direction = "vertical", 
             legend.box = leg_b,
             legend.key = element_blank(),
@@ -215,8 +219,8 @@ plotGOs <- function(...) {
                 colour="black", face = "bold"), 
             axis.title.x = element_text(size=22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
                 colour="black", face = "bold"), 
-            axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 7), colour="grey20"), 
-            axis.text.y = element_text(size=19, angle=0, margin = margin(l = 10, r = -2), colour="grey20")
+            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7), colour="grey20"), 
+            axis.text.y = element_text(size=19.25, angle=0, margin = margin(l = 10, r = -2), colour="grey20")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -234,7 +238,7 @@ plotGOs <- function(...) {
     # Plot results of permutation test for SI
     plotGOslimSts <- function(df) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), "COS", sep="_"))
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), sep="_"))
 
         # Capitalize first string of each GO term category name
         CapStr <- function(y) {
@@ -250,15 +254,16 @@ plotGOs <- function(...) {
 
         # Reorder df by number of genes
         df$goslim_term <- gsub("nucleobase-containing", "nucleobase", df$goslim_term)
+        df$goslim_term <- gsub("Embryo development", "Embryo and post-embryonic development", df$goslim_term)
         df$goslim_term <- reorder(df$goslim_term, desc(df$p_value_FDR))
         df$p_value_FDR <- -log(df$p_value_FDR, 10)
-        df$color = ifelse(df$delta_slope < 0, "palegreen2", "red2")
+        df$color = ifelse(df$delta_slope < 0, "blueviolet", "#e79600")
 
         p <- ggplot(df, aes(x = p_value_FDR, y = goslim_term, colour = color)) +
         geom_point(mapping=aes(size = ortho_genes, colour = color)) + 
         scale_x_continuous(expand = c(0.05, 0), limits = c(2, 3.4), breaks = c(2, 2.5, 3), 
             labels = c("2", "", "3")) + 
-        scale_color_identity(breaks = c("palegreen2", "red2"), labels = c("Low", "High"), 
+        scale_color_identity(breaks = c("#e79600", "blueviolet"), labels = c("High", "Low"), 
             guide = "legend", name = "Expression \ndivergence") + 
         scale_size_continuous(range = c(4, 10.5), breaks = c(500, 1000, 1500), 
             labels = c("500", "1000", "1500"), name = "Gene count") + 
@@ -266,23 +271,23 @@ plotGOs <- function(...) {
         labs(x = expression(-log[10]*"(FDR)"), y = NULL) + 
         ggtitle("Expression divergence across functional groups") + 
         theme(panel.background = element_blank(), 
-            axis.ticks.length = unit(0.29, "cm"), 
+            axis.ticks.length = unit(0.25, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(6.7125, 0.12, 0, 1.72), "cm"), 
+            plot.margin = unit(c(7.25, 0.12, 0, 1.745), "cm"), 
             plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
-            legend.text=element_text(size=17.5), 
-            legend.title=element_text(size=18),
+            legend.text=element_text(size=18.5), 
+            legend.title=element_text(size=18.8),
             legend.direction = "vertical", 
             legend.box = "vertical",
             legend.key = element_blank(),
-            legend.margin=margin(t = 0.255, l = 0.41, b = -0.04, unit='cm'),
+            legend.margin=margin(t = 0.228, l = 0.41, b = -0.25, unit='cm'),
             axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
             axis.title.x = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 1, l = 0), 
                 colour="black", face = "bold"), 
-            axis.text.x = element_text(size=18.8, margin = margin(t = 2.5, b = 7.15), colour="grey20"), 
-            axis.text.y = element_text(size=19, angle=0, margin = margin(l = 8.8, r = 3.25), colour="grey20")
+            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7.15), colour="grey20"), 
+            axis.text.y = element_text(size=19.25, angle=0, margin = margin(l = 8.8, r = 3.25), colour="grey20")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -292,6 +297,80 @@ plotGOs <- function(...) {
 
     plotGOslimSts(perm_stats)
     # plotGOslimSts(wilcox_stats)
+
+
+
+    # Heatmap showing expression of embryo development genes in Arabidopsis thaliana
+    at_embr_dev <-atExpr[atExpr$gene_id %in% slim_ortho_ls[["embryo development"]]$V1,]
+
+    # Scale data to the unit interval
+    scaleTPM <- function(x){(x-min(x))/(max(x)-min(x))}
+    at_embr_dev_scd <- as.data.frame(t(apply(at_embr_dev[,2:ncol(at_embr_dev)], 1, scaleTPM)))
+
+
+    color.palette <- function(steps, n.steps.between=NULL, ...) {
+
+        if (is.null(n.steps.between)) 
+            n.steps.between <- rep(0, (length(steps)-1))
+
+        if (length(n.steps.between) != length(steps)-1)
+            stop("Must have one less n.steps.between value than steps")
+
+        fill.steps <- cumsum(rep(1, length(steps)) + c(0,n.steps.between))
+        RGB <- matrix(NA, nrow = 3, ncol = fill.steps[length(fill.steps)])
+        RGB[,fill.steps] <- col2rgb(steps)
+
+        for (i in which(n.steps.between > 0)) {
+            col.start = RGB[,fill.steps[i]]
+            col.end = RGB[,fill.steps[i + 1]]
+
+            for (j in seq(3)) {
+                vals <-seq(col.start[j], col.end[j], length.out=n.steps.between[i]+2)[2:(2+n.steps.between[i]-1)]  
+                RGB[j,(fill.steps[i] + 1):(fill.steps[i + 1] - 1)] <- vals
+            }
+        }
+
+        new.steps <- rgb(RGB[1, ], RGB[2, ], RGB[3, ], maxColorValue = 255)
+        pal <- colorRampPalette(new.steps, ...)
+
+        return(pal)
+    }
+
+    # Define colors and number of steps for the plot
+    steps <- c("#fae85a", "#f7ea40", "#fdc91c", "#ffa700", "#fe8300", "#f85b17", 
+        "#ee2727", "#ea2828", "#ea285a")
+
+    pal <- color.palette(steps, c(2, 10, 11, 12, 13, 14, 15, 16), space = "rgb")
+
+
+    # Create heatmap with reversed RowSideColors
+    png(height = 880, width = 1600, pointsize = 10, file = file.path(out_dir, "output", "plots", "at_embr_dev_scaled.png"))
+    cc <- c(rep("#6a54a9",18), rep("#53b0db",12), rep("#2c8654",27), rep("#96ba37",9), rep("#fad819",9), rep("#e075af",12), rep("red3",24), rep("grey70",18))
+
+    heatmap.2(as.matrix(at_embr_dev_scd), 
+        density.info = "none",
+        labRow = FALSE, 
+        labCol = FALSE,
+        dendrogram = "none", 
+        col = pal(100), 
+        scale = "none",
+        trace = "none",
+        lmat = rbind(c(0,0,0,0,0), c(0,5,0,4,0), c(0,3,0,2,0), c(0,0,0,1,0), c(0,0,0,0,0)), 
+        lhei = c(0,2.5,5,0.28,0.1),
+        lwid = c(0.1,2.4,0.25,5,0.5),
+        key.par = list(cex = 2.8), 
+        ColSideColors = cc, 
+        margins = c(2, 2),
+        key = TRUE,
+        key.xlab = "",
+        key.title = "",
+        distfun = function(x) as.dist(sqrt(1/2*(1-cor(t(x))))),
+        hclustfun = function(x) hclust(x, method = "complete"),
+        Rowv = TRUE, 
+        Colv = FALSE
+        )
+
+    dev.off()
 
 
 
