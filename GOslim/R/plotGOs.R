@@ -17,7 +17,7 @@ plotGOs <- function(...) {
     root_q1_gop = file.path(in_dir, "root_q1_express_ids.csv")
 
     filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
-    filenames <- filenames[!filenames %in% "./GOslim/output/data/cor_bsv_traject_293_1000.txt"]
+    filenames <- filenames[!filenames %in% "./GOslim/output/data/cor_bsv_traject_1000.txt"]
     names_txt <- gsub('.*/', '', filenames)
     names <- gsub("\\..*","", names_txt)
 
@@ -102,13 +102,13 @@ plotGOs <- function(...) {
 
     # Add number of genes to each GOSLIM category of stats tables
     perm_stats_biological_process <- merge(subset(perm_stats_biological_process, 
-        perm_stats_biological_process$p_value_FDR < 0.01), stats_ortho_genes_df)
+        perm_stats_biological_process$p_value_FDR < 0.005), stats_ortho_genes_df)
     perm_stats_molecular_function <- merge(subset(perm_stats_molecular_function, 
-        perm_stats_molecular_function$p_value_FDR < 0.01), stats_ortho_genes_df)
+        perm_stats_molecular_function$p_value_FDR < 0.005), stats_ortho_genes_df)
     wilcox_stats_biological_process <- merge(subset(wilcox_stats_biological_process, 
-        wilcox_stats_biological_process$p_value_FDR < 0.01), stats_ortho_genes_df)
+        wilcox_stats_biological_process$p_value_FDR < 0.005), stats_ortho_genes_df)
     wilcox_stats_molecular_function <- merge(subset(wilcox_stats_molecular_function, 
-        wilcox_stats_molecular_function$p_value_FDR < 0.01), stats_ortho_genes_df)
+        wilcox_stats_molecular_function$p_value_FDR < 0.005), stats_ortho_genes_df)
 
 
     # Check if GE of functional group shows stronger or weaker conservation compared to control
