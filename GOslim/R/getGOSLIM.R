@@ -829,7 +829,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
   # Perform permutation test as alternative to Wilcox rank sum test
   # Note: For comparison of 8 organs and at least two control sets, the possible number of
-  # combinations is: n! / ((n-m)! * m!) = 735471; 100000 iterations seem a good appoximation
+  # combinations is: n! / ((n-m)! * m!) = 735471; 100000 iterations seem a good approximation
 
   perm_stats <- do.call(rbind, lapply(getGoslimStats_lst, function(z) {
 
