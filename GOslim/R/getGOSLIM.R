@@ -1,5 +1,5 @@
 # Extract GOslim terms with aspect of interest (biological process, molecular function) 
-# from TAIR list downloaded on 19th April 2021
+# from TAIR version 20211101
 # GOSLIM table contains the GOslim terms for 28553 A.thaliana genes with "AT" identifier
 # Create GOSLIM lists of 7003 angiosperm orthologous genes
 
@@ -323,70 +323,6 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         }
 
         plotMatchIt(data = gg2mbplot)
-
-        
-        # Make plot of "biosynthetic process" matching for supplement
-        if (unique(x_df$goslim) == "biosynthetic process") {
-
-            # Get expression of all unmatched control genes
-            cids <- data.frame(do.call(rbind, lapply(control_out, function(k) k[1])))
-
-            cgogeneexpress <- data.frame(subset(comb_exdf[,c(3,13:ncol(comb_exdf))], comb_exdf[,1] %!in% cids[,1]))
-            cgeneexpress <- subset(cgogeneexpress, sign == 0)[-1]
-            cgeneexpress_df <- data.frame(exp=unlist(cgeneexpress), class=rep("unmatched controls", length(unlist(cgeneexpress))))
-            tcdata <- ggmbplot
-            tcdata$class <- gsub("t", unique(x_df$goslim), tcdata$class)
-            tcdata$class <- gsub("m", "matched controls #" , tcdata$class)
-            biosplotdf <- rbind(tcdata, cgeneexpress_df)
-
-            plotMatchItSI <- function(data) {
-
-                fname <- sprintf('%s.png', paste(unique(x_df$goslim), "matchIt_SI", sep="_"))
-
-                data$class <- factor(data$class, levels = unique(data$class))
-
-                ntreatmc <- nrow(x_df)
-                nuc <- nrow(cgeneexpress)
-
-                ncontrol <- ncol(mplot)
-
-                n_text <- data.frame(x = seq(1:(ncontrol+2)), y = rep(13.15, ncontrol+2), 
-                    label = c(rep(ntreatmc, 1+ncontrol), nuc))
-
-                p <- ggplot(data=data, aes(x = class, y = exp)) + 
-                geom_boxplot(data = data, aes(x = class, y = exp), fill=c("#28a100", rep("grey50",ncontrol),"#ed0000"), 
-                    size=1.1, fatten=1.5, outlier.size = 2, alpha=0.35) + 
-                scale_y_continuous(limits = c(0, 14.75))
-
-                q <- p + theme_classic() + xlab("") + ylab("log2(TPM+1)") +
-                geom_text(data = n_text, mapping = aes(x = x, y = y, label = label), 
-                    size=6.1, hjust = 0, angle=90, col="grey55") + 
-                theme(text=element_text(size = 16), 
-                axis.ticks.length = unit(0.29, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.25), 
-                axis.line = element_line(colour = 'black', size = 1.25), 
-                plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
-                axis.title.y = element_text(size=22.5, margin = margin(t = 0, r = 1.0, b = 0, l = 10), 
-                    colour="black", face = "bold"), 
-                axis.title.x = element_text(size=8, margin = margin(t = 0, r = 0, b = 0, l = 0), 
-                    colour="black", face = "bold"), 
-                axis.text.x = element_text(size=18.8, angle=90, margin = margin(t = 2.5, b = 0), 
-                    colour="grey20", hjust=1, vjust=0.5), 
-                axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 1.5), 
-                    colour="grey20"), 
-                panel.spacing = unit(0.5, "cm"), 
-                panel.grid.major = element_blank(),
-                panel.grid.minor.x = element_blank(), 
-                panel.grid.minor.y = element_blank(), 
-                legend.position = "none")
-
-                ggsave(file = file.path(out_dir, "output", "plots", "MatchIt", fname), plot = q, 
-                    width = 3.05, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
-            }
-
-            plotMatchItSI(data = biosplotdf)
-
-        }
 
 
 
@@ -752,42 +688,32 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             lf_data <- data2[data2$comp_organ == "Leaf",]
             y4pos <- (max(lf_data$correlation)*1.12)/7
 
-            if (gocat == "response to chemical") {
-
-                colscale <- c("#adadad", "#1e9ac7")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.002)))
-                y3pos <- y3pos-0.001
-                y4pos <- y4pos-0.002
-
-            } else if (gocat == "embryo development") {
-
-                colscale <- c("#adadad", "#cb0000")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.0004)))
-
-            } else if (gocat == "nucleobase-containing compound metabolic process") {
+            if (gocat == "nucleobase-containing compound metabolic process") {
 
                 colscale <- c("#adadad", "#ee7500")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.00004)))
+                p.value_wrs <- c(paste(set_scientific(0.00003)))
+                p.value_pt <- c(paste(set_scientific(0.005)))
                 y3pos <- y3pos-0.0015
                 y4pos <- y4pos-0.0004
-
-            } else if (gocat == "DNA binding") {
-
-                colscale <- c("#adadad", "#08ac39")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.005)))
-                y3pos <- y3pos-0.0025
-                y4pos <- y4pos-0.0055
+                tt1 <- "WRS:"
+                tt2 <- "PT:"
 
             } else if (gocat == "cellular component organization") {
 
                 colscale <- c("#adadad", "#835bba")
-                p.value <- c(paste("italic('P =')~", set_scientific(0.001)))
+                p.value_wrs <- c(paste(set_scientific(0.003)))
+                p.value_pt <- c(paste(set_scientific(0.0005)))
                 y3pos <- y3pos-0.0025
                 y4pos <- y4pos-0.0045
+                tt1 <- "WRS:"
+                tt2 <- "PT:"
 
             } else {
                 colscale <- c("#adadad", "black")
-                p.value <- c("")
+                p.value_wrs <- ""
+                p.value_pt <- ""
+                tt1 <- ""
+                tt2 <- ""
             }
 
             corg <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel")
@@ -796,11 +722,13 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 comp_organ = corg)
             control_lb <- data.frame(x = 82, y = y2pos, label = c("Control","","","","","","",""), 
                 comp_organ = corg)
-            c_text <- data.frame(x = xpos-53, y = y3pos, label = c("",paste("control sets:", length(root_divc)),"","","","","",""), 
+            c_text <- data.frame(x = xpos-55.5, y = y3pos+0.0002, label = c("",paste("Control sets:", length(root_divc)),"","","","","",""), 
                 comp_organ = corg)
 
-            p_text <- data.frame(x = 48, y = y4pos, label = c("","",p.value,"","","","",""), 
-                comp_organ = corg)
+            p_text <- data.frame(x = c(rep(88,3),88,rep(88,4)), y = c(rep(y4pos+0.0002,3),y4pos-0.0005,rep(y4pos,4)), 
+                label = c("","",p.value_wrs,p.value_pt,"","","",""), comp_organ = corg)
+            p_text_tl <- data.frame(x = c(rep(28.25,3),50.25,rep(50.25,4)), y = c(rep(y4pos-0.007,3),y4pos-0.0075,rep(y4pos,4)), 
+                label = c("","",tt1,tt2,"","","",""), comp_organ = corg)
 
             corgcat <- factor("Root", levels = c("Root", "Hypocotyl", "Leaf", 
                     "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel"))
@@ -833,6 +761,8 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             geom_text(data = c_text, mapping = aes(x = x, y = y, label = label), size=8, hjust = 0) + 
             geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
                 parse=TRUE, size=8, hjust = 0) + 
+            geom_text(data = p_text_tl, mapping = aes(x = x, y = y, label = label), 
+                size=8, hjust = 0) + 
             geom_segment(data = go_line, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
                 colour = colscale[2], show.legend = FALSE, size = 2.5) + 
             geom_point(data = go_circ, mapping = aes(x = x, y = y), size = 5, shape = 16, color = colscale[2]) + 
@@ -842,17 +772,17 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 23.75), 
                 strip.text.x = element_text(margin = margin(0.46, 0, 0.46, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
-                axis.ticks.length = unit(0.29, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.25), 
-                axis.line = element_line(colour = 'black', size = 1.25), 
-                plot.margin = unit(c(1, 0.25, 3.0, 0),"cm"), 
-                axis.title.y = element_text(size=27.35, margin = margin(t = 0, r = 12.75, b = 0, l = 12.0), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.75), 
+                axis.ticks.length = unit(0.265, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.45), 
+                axis.line = element_line(colour = 'black', size = 1.45), 
+                plot.margin = unit(c(1, 0.1225, 3.0, 0),"cm"), 
+                axis.title.y = element_text(size=27.35, margin = margin(t = 0, r = 12.6, b = 0, l = 12), 
                     colour="black", face = "bold"), 
                 axis.title.x = element_text(size=27.35, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
                     colour="black", face = "bold"), 
-                axis.text.x = element_text(size=22.5, margin = margin(t = 2.5, b = 8), colour="grey20"), 
-                axis.text.y = element_text(size=22.5, angle=0, margin = margin(l = 2.5, r = 1.5), colour="grey20"), 
+                axis.text.x = element_text(size=22.5, margin = margin(t = 3.75, b = 6.75), colour="grey20"), 
+                axis.text.y = element_text(size=22.5, angle=0, margin = margin(l = 0.75, r = 3.1), colour="grey20"), 
                 plot.title = element_text(size=27.35, colour=colscale[2], margin = margin(t = 0, b = 15), face = "plain"), 
                 panel.spacing = unit(0.2, "cm"), 
                 panel.grid.major = element_blank(),
@@ -898,6 +828,8 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
 
 
   # Perform permutation test as alternative to Wilcox rank sum test
+  # Note: For comparison of 8 organs and at least two control sets, the possible number of
+  # combinations is: n! / ((n-m)! * m!) = 735471; 100000 iterations seem a good appoximation
 
   perm_stats <- do.call(rbind, lapply(getGoslimStats_lst, function(z) {
 
