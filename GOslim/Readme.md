@@ -59,7 +59,7 @@ sourceDir(path_to_R_files)
 Sample correlations converge to the population value with increasing sample size, and it has been shown that the sample size should approach n=250 for stable estimates ([Schönbrodt and Perugini, J Res Pers. 2013](https://www.sciencedirect.com/science/article/abs/pii/S0092656613000858)). Since the points of stability (POS) published in this work were based on normal distributions, we implemented Monte-Carlo simulations to retrieve sample size estimates for stable correlations derived from gene expression data.
 
 
-* estimatePOS(nbootstrap, coswidth, bss, ...)
+* `estimatePOS(nbootstrap, coswidth, bss, ...)`
 
 
 </br>
