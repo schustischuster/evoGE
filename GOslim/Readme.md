@@ -82,7 +82,7 @@ estimatePOS(nbootstrap = 1000, coswidth = 0.1, bss = 0.8)
 Next, we wanted to test wether the evolutionary stability of gene subsets is affected by gene expression levels. We therefore generated subsets of orthologous genes according to quantiles of average expression either across all samples (inter-organ inter-species), or within the same organ across species (intra-organ inter-species). For each quantile set, we then calculated metric pearson distances and fitted non-linear regression models to estimate quantile-specific rates of gene expression evolution.
 
 
-* getExprCons(nquant, qtype, ...)
+* `getExprCons(nquant, qtype, ...)`
 
 
 </br>
@@ -104,7 +104,7 @@ getExprCons(nquant = 500, qtype = "organ_spec")
 Now, multiple control genes will be matched to each gene of a GO slim category that is larger than the size threshold (POS) estimated above. The optimal number of control sets will be determined using balance statistics (standardized mean difference and variance ratio). Subsequently, intra-organ distances will be calculated for all species pairs and gene sets, and non-linear regression model will be fitted to the data. Finally, the regression slopes of treatment and control groups of each functional category will be compared using nonparametric statistics (Wilcoxon rank-sum test, permutation test).
 
 
-* getGOSLIM(aspect, sample_size)
+* `getGOSLIM(aspect, sample_size)`
 
 
 </br>
@@ -127,7 +127,7 @@ getGOSLIM(aspect = "molecular_function", sample_size = 412)
 To vizualize the results of the GO enrichment analysis for genes of the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
 
 ```R
-plotGOs()
+`plotGOs()`
 
 ```
 
