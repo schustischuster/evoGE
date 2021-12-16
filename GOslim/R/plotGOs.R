@@ -175,7 +175,7 @@ plotGOs <- function(...) {
         } else if (deparse(substitute(df)) == "root_q1_go"){
 
             df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 6 & Fold.Enrichment >= 3)
-            plot_mar <- c(0.2, -0.05, 3.5575, -0.038)
+            plot_mar <- c(0.2, -0.05, 3.5575, 0.6925)
             enr_br <- c(4, 6, 8, 10)
             enr_l <- c("4", "6", "8", "10")
             fdr_br <- c(5, 10, 15)
@@ -187,7 +187,7 @@ plotGOs <- function(...) {
             "Mitochondrial mRNA modification ", "Pollen exine formation ", "Anatomical structure morphogenesis ", 
             "Cellular component morphogenesis ")
             df <- df[ ! df$Pathway %in% go_rm_ls, ]
-            df$Pathway <- gsub("transport in", "transport", df$Pathway)
+            df$Pathway <- gsub("transport in photosystem I", "transport in photos I", df$Pathway)
         }
 
         # Reorder df by number of genes
@@ -199,7 +199,7 @@ plotGOs <- function(...) {
         scale_x_continuous(expand = c(0.1, 0)) + 
         scale_colour_continuous(low = "#eaea00", high = "red", breaks = fdr_br, labels = fdr_l, 
             name = expression(-log[10]*"(FDR)")) + 
-        scale_size_continuous(range = c(4, 10.5), breaks = enr_br, labels = enr_l, 
+        scale_size_continuous(range = c(5, 10.55), breaks = enr_br, labels = enr_l, 
             name = "Enrichment") + 
         guides(size = guide_legend(order = 2), colour=guide_colourbar(order = 1)) + 
         labs(x = "Number of Genes", y = NULL) + 
@@ -210,8 +210,8 @@ plotGOs <- function(...) {
             axis.line = element_line(colour = 'black', size = 1.25), 
             plot.margin = unit(plot_mar, "cm"), 
             plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
-            legend.text=element_text(size=18.5), 
-            legend.title=element_text(size=18.8),
+            legend.text=element_text(size=17.5), 
+            legend.title=element_text(size=18.0),
             legend.direction = "vertical", 
             legend.box = leg_b,
             legend.key = element_blank(),
@@ -220,7 +220,7 @@ plotGOs <- function(...) {
             axis.title.x = element_text(size=22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
                 colour="black", face = "bold"), 
             axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7), colour="grey20"), 
-            axis.text.y = element_text(size=19.25, angle=0, margin = margin(l = 10, r = -2), colour="grey20")
+            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 10, r = -2), colour="grey20")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -265,8 +265,8 @@ plotGOs <- function(...) {
             labels = c("2", "", "3")) + 
         scale_color_identity(breaks = c("#e79600", "blueviolet"), labels = c("High", "Low"), 
             guide = "legend", name = "Expression \ndivergence") + 
-        scale_size_continuous(range = c(4, 10.5), breaks = c(500, 1000, 1500), 
-            labels = c("500", "1000", "1500"), name = "Gene count") + 
+        scale_size_continuous(range = c(5, 10.55), breaks = c(425, 850, 1500), 
+            labels = c("425", "850", "1500"), name = "Gene count") + 
         guides(size = guide_legend(order = 2), colour = guide_legend(order = 1, override.aes=list(size = 8))) + 
         labs(x = expression(-log[10]*"(FDR)"), y = NULL) + 
         ggtitle("Expression divergence across functional groups") + 
@@ -274,10 +274,10 @@ plotGOs <- function(...) {
             axis.ticks.length = unit(0.25, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(7.25, 0.12, 0, 1.745), "cm"), 
+            plot.margin = unit(c(7.25, 0.12, 0, 1.37), "cm"), 
             plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
-            legend.text=element_text(size=18.5), 
-            legend.title=element_text(size=18.8),
+            legend.text=element_text(size=17.5), 
+            legend.title=element_text(size=18.0),
             legend.direction = "vertical", 
             legend.box = "vertical",
             legend.key = element_blank(),
@@ -287,7 +287,7 @@ plotGOs <- function(...) {
             axis.title.x = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 1, l = 0), 
                 colour="black", face = "bold"), 
             axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7.15), colour="grey20"), 
-            axis.text.y = element_text(size=19.25, angle=0, margin = margin(l = 8.8, r = 3.25), colour="grey20")
+            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 8.8, r = 3.25), colour="grey20")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
