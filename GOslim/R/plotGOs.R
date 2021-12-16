@@ -197,7 +197,7 @@ plotGOs <- function(...) {
         p <- ggplot(df, aes(x = nGenes, y = Pathway, colour = FDR)) +
         geom_point(mapping=aes(size = Fold.Enrichment)) + 
         scale_x_continuous(expand = c(0.1, 0)) + 
-        scale_colour_continuous(low = "#eaea00", high = "red", breaks = fdr_br, labels = fdr_l, 
+        scale_colour_continuous(low = "#e7e700", high = "red", breaks = fdr_br, labels = fdr_l, 
             name = expression(-log[10]*"(FDR)")) + 
         scale_size_continuous(range = c(5, 10.55), breaks = enr_br, labels = enr_l, 
             name = "Enrichment") + 
@@ -257,13 +257,13 @@ plotGOs <- function(...) {
         df$goslim_term <- gsub("Embryo development", "Embryo and post-embryonic development", df$goslim_term)
         df$goslim_term <- reorder(df$goslim_term, desc(df$p_value_FDR))
         df$p_value_FDR <- -log(df$p_value_FDR, 10)
-        df$color = ifelse(df$delta_slope < 0, "blueviolet", "#e79600")
+        df$color = ifelse(df$delta_slope < 0, "#782fcc", "#f20000")
 
         p <- ggplot(df, aes(x = p_value_FDR, y = goslim_term, colour = color)) +
         geom_point(mapping=aes(size = ortho_genes, colour = color)) + 
         scale_x_continuous(expand = c(0.05, 0), limits = c(2, 3.4), breaks = c(2, 2.5, 3), 
             labels = c("2", "", "3")) + 
-        scale_color_identity(breaks = c("#e79600", "blueviolet"), labels = c("High", "Low"), 
+        scale_color_identity(breaks = c("#f20000", "#782fcc"), labels = c("High", "Low"), 
             guide = "legend", name = "Expression \ndivergence") + 
         scale_size_continuous(range = c(5, 10.55), breaks = c(425, 850, 1500), 
             labels = c("425", "850", "1500"), name = "Gene count") + 
