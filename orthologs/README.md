@@ -49,10 +49,8 @@ source(file.path("evoGE", "orthologs", "R", "plotPhyloCore.R"))
 
 The following function will generate the angiosperm phylogeny and orthologous gene plots:: 
 
-```R
-plotPhyloCore(div_times = c("Median", "Estimated"))
+* `plotPhyloCore(div_times = c("Median", "Estimated"))`
 
-```
 </br>
 
 | Arguments  |  |
