@@ -47,7 +47,7 @@ source(file.path("evoGE", "orthologs", "R", "plotPhyloCore.R"))
 ---
 ## Data analysis and vizualization
 
-The following function will generate the angiosperm phylogeny and orthologous gene plots:: 
+The following function will generate the angiosperm phylogeny and orthologous gene plots:
 
 * `plotPhyloCore(div_times = c("Median", "Estimated"))`
 
