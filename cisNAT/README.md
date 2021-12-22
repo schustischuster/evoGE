@@ -70,11 +70,8 @@ sourceDir(path_to_R_files)
 
 The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater than 0.5 TPM in at least two out of three replicates in at least one sample type. 
 
-```R
-* `getPcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-        experiment = c("single-species", "comparative"))`
+* `getPcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), experiment = c("single-species", "comparative"))`
 
-```
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
@@ -89,11 +86,8 @@ lapply(species_list, getPcPc, experiment = "comparative")
 
 The following function will extract all non-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. A sense-antisense pair is considered as expressed if both non-coding antisense and coding sense transcript reach the threshold, which can be set to any value, in at least two out of three replicates in at least one sample type. 
 
-```R
-getNcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-        experiment = c("single-species", "comparative"), threshold)
+* `getNcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), experiment = c("single-species", "comparative"), threshold)`
 
-```
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
@@ -123,11 +117,8 @@ getDevSeq_ATGE()
 
 Numerous studies using different model organisms including _Arabidopsis_, _Caenorhabditis_, _Drosophila_, _human_, and _Saccharomyces_ have shown that neighboring genes tend to be coexpressed, e.g. [Cohen  et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/11017073), [Boutanaev et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/12478293), [Lercher et al. (2002)](https://www.ncbi.nlm.nih.gov/pubmed/11992122), [Lercher et al. (2003)](https://www.ncbi.nlm.nih.gov/pubmed/12566401), [Williams and Bowles (2004)](https://www.ncbi.nlm.nih.gov/pubmed/15173112). We wanted to test if a similar trend can be found in the DevSeq data set. The following function will extract all protein-coding gene pairs and their intergenic distance from the GTF file, apply an expression threshold of 0.5 TPM, compute pairwise log2 expression correlations across all samples, and write the results to a CSV file.
 
-```R
-getPcPcNO(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-          experiment = c("single-species", "comparative"))
+* `getPcPcNO(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), experiment = c("single-species", "comparative"))`
 
-```
 To generate the data table for _Arabidopsis thaliana_, execute the following function call: 
 
 ```R
@@ -139,13 +130,9 @@ getPcPcNO("ATH", "single-species")
 
 ...
 
-```R
-getRandGeneCor(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
-              cor_method = c("Pearson", "Spearman"),
-              experiment = c("single-species", "comparative"), 
-              bootstrap_repl)
+* `getRandGeneCor(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), cor_method = c("Pearson", "Spearman"),
+                  experiment = c("single-species", "comparative"), bootstrap_repl)`
 
-```
 To generate the data table for _Arabidopsis thaliana_ used in this study, execute the following function call. It will generate 100 bootstrap replicates of 10.000 randomized protein-coding gene pairs. This code may run for several hours on smaller systems. For shorter running time, reduce the number of bootstrap replicates.  
 
 ```R
