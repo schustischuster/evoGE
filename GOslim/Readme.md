@@ -1,6 +1,6 @@
 ## Analyse rates of gene expression evolution of functional groups
 
-This code allows to analyse the rate of gene expression evolution for functionally related genes. This involves estimating the stability of correlations using Monte-Carlo simulations, matching optimal number of control gene sets to each GO slim term category under the assessment of balance statistics, evaluating the strength of expression conservation in relation to gene expression levels, and applying non-linear regression models to estimate the rates of gene expression evolution for functionally related genes. 
+This code allows to analyse the rate of gene expression evolution for functionally related genes. This involves estimating the stability of correlations using a Monte-Carlo simulation, matching optimal number of control gene sets to each GO slim term category under the assessment of balance statistics, evaluating the strength of expression conservation in relation to gene expression levels, and applying non-linear regression models to estimate the rates of gene expression evolution for functionally related genes. 
 
 
 ## Contents
