@@ -175,20 +175,6 @@ source(file.path("cisNAT", "R", "SAS_plots.R"))
 
 ```
 
-The plotting functions will generate the panels for the following figures:
-
-
-![SAS_expression](README_files/SAS_expression_cor.png)
-
-![med_dist_cor.png](README_files/med_dist_cor.png)
-
-![SAS_CC_scatter](README_files/SAS_CC_cor.png)
-
-![SAS_class_distr](README_files/SAS_class_distr.png)
-
-![SAS_overlap_cor](README_files/SAS_overlap_cor.png)
-
-
 ---
 ## Session info
 
