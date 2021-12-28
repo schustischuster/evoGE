@@ -63,6 +63,7 @@ To reproduce the results of this study, execute the following function call:
 
 ```R
 plotPhyloCore(div_times = "Estimated")
+plotPhyloCore(div_times = "Estimated")
 
 ```
 
