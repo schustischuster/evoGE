@@ -66,7 +66,7 @@ plotPhyloCore(div_times = "Estimated")
 
 ```
 
-The following function will generate the simplified phylogenetic trees for angiosperms and mammals: 
+The following function will generate simplified phylogenetic trees for angiosperms and mammals: 
 
 * `plotPhyloComp(div_times = c("Median", "Estimated"))`
 
