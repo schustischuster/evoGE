@@ -63,7 +63,17 @@ To reproduce the results of this study, execute the following function call:
 
 ```R
 plotPhyloCore(div_times = "Estimated")
-plotPhyloCore(div_times = "Estimated")
+
+```
+
+The following function will generate the simplified phylogenetic trees for angiosperms and mammals: 
+
+* `plotPhyloComp(div_times = c("Median", "Estimated"))`
+
+This function takes the same arguments described above. TTOL estimation (`"Estimated"`) was used to generate the plots:
+
+```R
+plotPhyloComp(div_times = "Estimated")
 
 ```
 
