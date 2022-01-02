@@ -121,14 +121,17 @@ plotGOs <- function(...) {
     bp_slp <- split(getGoslimStats_biological_process, getGoslimStats_biological_process$goslim_term)
     mf_slp <- split(getGoslimStats_molecular_function, getGoslimStats_molecular_function$goslim_term)
 
+    n_cont_bp <- unlist(lapply(bp_slp, function(x){length(unique(x$nlm_slope_control))/length(unique(x$organ))}))
+    n_cont_mf <- unlist(lapply(mf_slp, function(x){length(unique(x$nlm_slope_control))/length(unique(x$organ))}))
+
     bp_slp <- unlist(lapply(bp_slp, function(x){mean(x$diff)}))
     mf_slp <- unlist(lapply(mf_slp, function(x){mean(x$diff)}))
 
-    bp_slp <- data.frame(goslim_term=names(bp_slp), delta_slope=bp_slp)
+    bp_slp <- data.frame(goslim_term=names(bp_slp), delta_slope=bp_slp, n_cont=n_cont_bp)
     perm_stats_biological_process <- merge(perm_stats_biological_process, bp_slp)
     wilcox_stats_biological_process <- merge(wilcox_stats_biological_process, bp_slp)
 
-    mf_slp <- data.frame(goslim_term=names(mf_slp), delta_slope=mf_slp)
+    mf_slp <- data.frame(goslim_term=names(mf_slp), delta_slope=mf_slp, n_cont=n_cont_mf)
     perm_stats_molecular_function <- merge(perm_stats_molecular_function, mf_slp)
     wilcox_stats_molecular_function <- merge(wilcox_stats_molecular_function, mf_slp)
 
@@ -323,6 +326,12 @@ plotGOs <- function(...) {
         df$goslim_term <- reorder(df$goslim_term, desc(df$p_value_FDR))
         df$p_value_FDR <- -log(df$p_value_FDR, 10)
         df$color = ifelse(df$delta_slope < 0, "#5972b5", "#f20000")
+
+        # Get number of control gene sets
+        if (nrow(df) == 9) {
+        cont_df <- data.frame(y = df$goslim_term, n_cont = df$n_cont, 
+            x = df$p_value_FDR + 0.35, col = rep("#888888", nrow(df)))
+        }
 
         p <- ggplot(df, aes(x = p_value_FDR, y = goslim_term, colour = color)) +
         geom_point(mapping=aes(size = ortho_genes, colour = color)) + 
