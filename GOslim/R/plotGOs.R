@@ -148,8 +148,8 @@ plotGOs <- function(...) {
 
             df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 8)
             plot_mar <- c(0.2, -0.025, 9.677, 0.825)
-            enr_br <- c(4, 8, 12)
-            enr_l <- c("4", "8", "12")
+            enr_br <- c(3, 6, 9, 12)
+            enr_l <- c("3", "6", "9", "12")
             fdr_br <- c(5, 15, 25)
             fdr_l <- c("5", "15", "25")
             leg_b <- "horizontal"
@@ -160,8 +160,8 @@ plotGOs <- function(...) {
             
             df <- subset(df, Enrichment.FDR < 0.000000001 & nGenes >= 8 & Fold.Enrichment >= 5)
             plot_mar <- c(1.125, -0.05, 0, -0.025)
-            enr_br <- c(6, 8, 10)
-            enr_l <- c("6", "8", "10")
+            enr_br <- c(5.01, 6, 7, 8, 9, 10)
+            enr_l <- c("5", "6", "7", "8", "9", "10")
             fdr_br <- c(10, 20, 30)
             fdr_l <- c("10", "20", "30")
             leg_b <- "vertical"
@@ -176,8 +176,8 @@ plotGOs <- function(...) {
 
             df <- subset(df, Enrichment.FDR < 0.01 & nGenes >= 6 & Fold.Enrichment >= 3)
             plot_mar <- c(0.2, -0.05, 3.5575, 0.6925)
-            enr_br <- c(4, 6, 8, 10)
-            enr_l <- c("4", "6", "8", "10")
+            enr_br <- c(3.06, 6, 9, 12)
+            enr_l <- c("3", "6", "9", "12")
             fdr_br <- c(5, 10, 15)
             fdr_l <- c("5", "10", "15")
             leg_b <- "vertical"
@@ -201,7 +201,7 @@ plotGOs <- function(...) {
             name = expression(-log[10]*"(FDR)")) + 
         scale_size_continuous(range = c(5, 10.55), breaks = enr_br, labels = enr_l, 
             name = "Enrichment") + 
-        guides(size = guide_legend(order = 2), colour=guide_colourbar(order = 1)) + 
+        guides(size = guide_legend(order = 2, keywidth = 1.9, keyheight = 1.9), colour=guide_colourbar(order = 1)) + 
         labs(x = "Number of Genes", y = NULL) + 
         ggtitle(plt_title) + 
         theme(panel.background = element_blank(), 
@@ -214,7 +214,7 @@ plotGOs <- function(...) {
             legend.title=element_text(size=18.0),
             legend.direction = "vertical", 
             legend.box = leg_b,
-            legend.key = element_blank(),
+            legend.key = element_rect(colour = "transparent", fill = "white"),
             axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
             axis.title.x = element_text(size=22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
@@ -264,9 +264,9 @@ plotGOs <- function(...) {
         scale_x_continuous(expand = c(0.05, 0), limits = c(2, 3.4), breaks = c(2, 2.5, 3), 
             labels = c("2", "", "3")) + 
         scale_color_identity(breaks = c("#f20000", "#5972b5"), labels = c("High", "Low"), 
-            guide = "legend", name = "Expression \ndivergence") + 
-        scale_size_continuous(range = c(5, 10.55), breaks = c(415, 850, 1500), 
-            labels = c("415", "850", "1500"), name = "Gene count") + 
+            guide = "legend", name = "Divergence") + 
+        scale_size_continuous(range = c(5, 10.55), breaks = c(415, 900, 1600), 
+            labels = c("415", "900", "1600"), name = "Gene count") + 
         guides(size = guide_legend(order = 2), colour = guide_legend(order = 1, override.aes=list(size = 8))) + 
         labs(x = expression(-log[10]*"(FDR)"), y = NULL) + 
         ggtitle("Expression divergence across functional groups") + 
@@ -280,7 +280,8 @@ plotGOs <- function(...) {
             legend.title=element_text(size=18.0),
             legend.direction = "vertical", 
             legend.box = "vertical",
-            legend.key = element_blank(),
+            legend.key.size = unit(1.75,"line"),
+            legend.key = element_rect(colour = "transparent", fill = "white"),
             legend.margin=margin(t = 0.228, l = 0.41, b = -0.25, unit='cm'),
             axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
