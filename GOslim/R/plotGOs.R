@@ -346,13 +346,13 @@ plotGOs <- function(...) {
         labs(x = expression(-log[10]*"(FDR)"), y = NULL) + 
         ggtitle("Gene expression divergence \nacross functional groups") + 
         theme(panel.background = element_blank(), 
-            axis.ticks.length = unit(0.28, "cm"), 
+            axis.ticks.length = unit(0.26, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.1), 
             axis.line = element_line(colour = 'black', size = 1.1), 
-            plot.margin = unit(c(2.25, 1.75, 0, 2.75), "cm"), 
+            plot.margin = unit(c(1.1225, 1.75, 0, 2.25), "cm"), 
             plot.title = element_text(size=21.25, margin = margin(t = 8, r = 0, b = 11, l = 0), 
                 hjust = 0.5, lineheight = 1),
-            legend.position = c(0.805, 0.42), 
+            legend.position = c(0.815, 0.42), 
             legend.text = element_text(size=19.25), 
             legend.title = element_text(size=19.75),
             legend.direction = "vertical", 
@@ -364,8 +364,8 @@ plotGOs <- function(...) {
                 colour="black", face = "bold"), 
             axis.title.x = element_text(size=21.25, margin = margin(t = 0, r = 0, b = 1, l = 0), 
                 colour="black", face = "bold"), 
-            axis.text.x = element_text(size=19.75, margin = margin(t = 4.25, b = 7.15), colour="grey20"), 
-            axis.text.y = element_text(size=20.25, angle=0, margin = margin(l = 8.8, r = 4), colour="grey20")
+            axis.text.x = element_text(size=18.95, margin = margin(t = 4.25, b = 7.15), colour="grey20"), 
+            axis.text.y = element_text(size=20.28, angle=0, margin = margin(l = 8.8, r = 4), colour="grey20")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
