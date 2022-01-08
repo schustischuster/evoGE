@@ -6,27 +6,44 @@
 # GOslim categories retrieved from TAIR version 20211101
 
 
-getCV <- function(aspect = c("biological_process", "molecular_function"), pFDR, ...) {
+getCV <- function(aspect = c("biological_process", "molecular_function"), estimate = c("VST", "TPM"), 
+                  pFDR, ...) {
 
-	# Show error message if no/unknown GO aspect is chosen
-	if ((missing(aspect)) || (!is.element(aspect, c("biological_process", "molecular_function"))))
+    # Show error message if no/unknown GO aspect is chosen
+    if ((missing(aspect)) || (!is.element(aspect, c("biological_process", "molecular_function"))))
 
-		stop("Please choose one of the available aspects: 
-			'biological_process', 'molecular_function'",
-			call. = TRUE
-			)
+        stop("Please choose one of the available aspects: 
+            'biological_process', 'molecular_function'",
+            call. = TRUE
+            )
 
-	# Show error message if no sample_size for GO term size is chosen
-	if ((missing(pFDR)) || (pFDR > 1))
+    # Show error message if no sample_size for GO term size is chosen
+    if ((missing(estimate)) || (!is.element(estimate, c("VST", "TPM"))))
 
-		stop("Please choose p-value cutoff",
-			call. = TRUE
-			)
+        stop("Please choose one of the available expression estimates: 
+            'VST', 'TPM'",
+            call. = TRUE
+            )
 
-	# Set file path for input files
+    # Show error message if no sample_size for GO term size is chosen
+    if ((missing(pFDR)) || (pFDR > 1))
+
+        stop("Please choose p-value cutoff",
+            call. = TRUE
+            )
+
+    # Set file path for input files
 	GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
 	GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
-	orthoTPM = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+
+    if (estimate == "VST" ) {
+
+        orthoEst = file.path(in_dir, "AT_core_inter_count_mat_vsd_sample_names.csv")
+
+    } else { 
+
+        orthoEst = file.path(in_dir, "AT_core_inter_TPM_mat_deseq_sample_names.csv")
+    }
 
 	filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
     filenames <- filenames[!filenames %in% "./GOslim/output/data/cor_bsv_traject_1000.txt"]
@@ -42,15 +59,15 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), pFDR, 
     names(ldf) <- names
     res <- lapply(ldf, summary) # check if file input is OK
 
-	GOSLIM <- read.table(GOSLIM, sep="\t", dec=".", quote = "", header=FALSE, skip=4, fill = TRUE, stringsAsFactors=FALSE)
-	GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
-	orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+    GOSLIM <- read.table(GOSLIM, sep="\t", dec=".", quote = "", header=FALSE, skip=4, fill = TRUE, stringsAsFactors=FALSE)
+    GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
+    orthoEst <- read.table(orthoEst, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "orthoTPM" = orthoTPM, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "pFDR" = pFDR, "res" = res)
+    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "estimate" = estimate, "pFDR" = pFDR, "res" = res)
     # return(return_list)
     # }
-    # return_objects <- getCV(aspect = "biological_process", pFDR = 0.01)
+    # return_objects <- getCV(aspect = "biological_process", estimate = "VST", pFDR = 0.01)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -64,8 +81,12 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), pFDR, 
 
 
     # Prepare angiosperm ortholog data
-    orthoExpr <- data.frame(gene_id=sub("\\:.*", "", orthoTPM[,1]),orthoTPM[,2:ncol(orthoTPM)])
-    orthoExpr[,2:ncol(orthoExpr)] <- log2(orthoExpr[,2:ncol(orthoExpr)] + 1)
+    orthoExpr <- data.frame(gene_id=sub("\\:.*", "", orthoEst[,1]),orthoEst[,2:ncol(orthoEst)])
+    
+    if (estimate == "TPM") { 
+        orthoExpr[,2:ncol(orthoExpr)] <- log2(orthoExpr[,2:ncol(orthoExpr)] + 1)
+    }
+
     orthoExpr <- orthoExpr[!grepl("ERCC", orthoExpr$gene_id),]
 
 
