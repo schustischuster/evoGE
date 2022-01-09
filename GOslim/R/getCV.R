@@ -7,7 +7,7 @@
 
 
 getCV <- function(aspect = c("biological_process", "molecular_function"), estimate = c("VST", "TPM"), 
-                  pFDR, ...) {
+                  padjust, ...) {
 
     # Show error message if no/unknown GO aspect is chosen
     if ((missing(aspect)) || (!is.element(aspect, c("biological_process", "molecular_function"))))
@@ -17,7 +17,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             call. = TRUE
             )
 
-    # Show error message if no sample_size for GO term size is chosen
+    # Show error message if no expression estimate is chosen
     if ((missing(estimate)) || (!is.element(estimate, c("VST", "TPM"))))
 
         stop("Please choose one of the available expression estimates: 
@@ -25,8 +25,8 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             call. = TRUE
             )
 
-    # Show error message if no sample_size for GO term size is chosen
-    if ((missing(pFDR)) || (pFDR > 1))
+    # Show error message if no pvalue cutoff is chosen
+    if ((missing(padjust)) || (padjust > 1))
 
         stop("Please choose p-value cutoff",
             call. = TRUE
@@ -64,10 +64,10 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     orthoEst <- read.table(orthoEst, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "estimate" = estimate, "pFDR" = pFDR, "res" = res)
+    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "estimate" = estimate, "padjust" = padjust, "res" = res)
     # return(return_list)
     # }
-    # return_objects <- getCV(aspect = "biological_process", estimate = "VST", pFDR = 0.01)
+    # return_objects <- getCV(aspect = "biological_process", estimate = "VST", padjust = 0.01)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -163,6 +163,55 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     }
 
     spec_CV <- calculateAvgCV(x_avg)
+
+
+    # Order coeff var table by base expression value
+    spec_CV <- spec_CV[order(spec_CV$CV_averaged),]
+
+    spec_CV$sign <- c(rep(1, 3501), rep(0, 3502))
+
+
+    # Perform nearest distance matching with caliper option
+    # Check balance statistics to find optimal caliper
+    calpr <- 0.5
+
+        matchSample <- function(x) {
+
+            success <- FALSE
+            while (!success) {
+
+                # Create background gene set
+                match_res <- matchit(sign ~ base_averaged, x, method = "nearest", caliper = calpr, 
+                    std.caliper = TRUE, distance = "logit", replace = FALSE, m.order = "data", 
+                    ratio = 1)
+                match_res_m <- match_res$match.matrix
+
+                # Extract standard mean difference from matchIt summary data
+                comp <- as.data.frame(summary(match_res, standardize = TRUE)["sum.matched"])
+                stmdif <- abs(comp[1,3])
+                varR <- abs(comp[1,4])
+
+                calpr <- calpr-0.01
+
+                # check for success
+                success <- ((stmdif <= 0.01) && (varR >= 0.99))
+            }
+
+            return(match_res_m)
+        }
+
+    match_res_df <- matchSample(spec_CV)
+
+    match_res_sep <- data.frame(treat = rownames(match_res_df), control = match_res_df)
+    match_res_sep <- match_res_sep[!is.na(match_res_sep$control),]
+
+    stable_genes <- subset(x_avg, rownames(x_avg) %in% match_res_sep$treat)
+    dynamic_genes <- subset(x_avg, rownames(x_avg) %in% match_res_sep$control)
+
+    stable_genes <- merge(stable_genes, spec_CV)
+    dynamic_genes <- merge(dynamic_genes, spec_CV)
+
+
 
 
 
