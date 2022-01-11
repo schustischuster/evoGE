@@ -131,7 +131,14 @@ plotGOs()
 
 ```
 
-* `getCV(aspect = c("biological_process", "molecular_function"), estimate = c("VST", "TPM")`
+* `getCV(aspect, estimate)`
+
+The following function call has been used to generate the results of this study:
+
+```R
+getCV(aspect = "biological_process", estimate = "VST")
+
+```
 
 ---
 ## Session info
