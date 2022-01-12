@@ -130,6 +130,7 @@ To vizualize the results of the GO enrichment analysis for genes of the first an
 plotGOs()
 
 ```
+To vizualize the results of the GO enrichment analysis for genes of the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
 
 * `getCV(aspect, estimate)`
 
