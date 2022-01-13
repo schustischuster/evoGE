@@ -134,7 +134,7 @@ Finally, every gene was classified as evolutionary stable or variable using the 
 | Arguments  |  |
 | :---  | :---  |
 | aspect  | GOslim term aspect. Can be either "biological_process" or "molecular_function" |
-| estimate  | Expression estimate. Use "VST" for variance stabilization transformed counts, or "TPM" |
+| estimate  | Expression estimate. Use "VST" for variance stabilization transformed counts, or "TPM" for Transcripts Per Million |
 
 
 The following function call has been used to generate the results of this study:
