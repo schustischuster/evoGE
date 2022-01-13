@@ -117,6 +117,7 @@ getGOSLIM(aspect = "biological_process", sample_size = 412)
 getGOSLIM(aspect = "molecular_function", sample_size = 412)
 
 ```
+</br>
 
 To vizualize the results of the GO enrichment analysis for genes of the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
 
@@ -126,7 +127,7 @@ plotGOs()
 ```
 </br>
 
-Finally, every gene was classified as evolutionary stable or variable (as done in [Berthelot et al., Nat Ecol Evol (2018)](https://pubmed.ncbi.nlm.nih.gov/29180706/)) using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the proportion of stable and variable genes was compared in each functional category. 
+Finally, every gene was classified as evolutionary stable or variable using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the proportion of stable and variable genes was compared in each functional category. 
 
 * `getCV(aspect, estimate)`
 
