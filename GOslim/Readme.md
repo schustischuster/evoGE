@@ -130,9 +130,19 @@ To vizualize the results of the GO enrichment analysis for genes of the first an
 plotGOs()
 
 ```
-To vizualize the results of the GO enrichment analysis for genes of the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
+Finally, every gene was classified as evolutionary stable or variable (as done in REF) using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the nearest method and caliper option. Then, the proportion of stable and variable genes was compared in each functional category. 
 
 * `getCV(aspect, estimate)`
+
+
+</br>
+
+| Arguments  |  |
+| :---  | :---  |
+| aspect  | GOslim term aspect. Can be either "biological_process" or "molecular_function" |
+| estimate  | Expression estimate. Use "VST" for variance stabilization transformed counts, or "TPM" |
+
+</br>
 
 The following function call has been used to generate the results of this study:
 
