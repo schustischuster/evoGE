@@ -62,15 +62,12 @@ Sample correlations converge to the population value with increasing sample size
 * `estimatePOS(nbootstrap, coswidth, bss, ...)`
 
 
-</br>
-
 | Arguments  |  |
 | :---  | :---  |
 | nbootstrap  | Number of sampling trajectories. |
 | coswidth  | Indicates the corridor of stability (COS). Values of 0.1/0.15/0.2 correspond to small/medium/large effect sizes, respectively. For more details, see [Cohen, Psychol Bull (1992)](https://pubmed.ncbi.nlm.nih.gov/19565683/). |
 | bss  | Indicates the level of confidence for the confidence interval. |
 
-</br>
 
 To reproduce the results of this study, execute the following function call:
 
@@ -78,6 +75,7 @@ To reproduce the results of this study, execute the following function call:
 estimatePOS(nbootstrap = 1000, coswidth = 0.1, bss = 0.8)
 
 ```
+</br>
 
 Next, we wanted to test wether the evolutionary stability of gene subsets is affected by gene expression levels. We therefore generated subsets of orthologous genes according to quantiles of average expression either across all samples (inter-organ inter-species), or within the same organ across species (intra-organ inter-species). For each quantile set, we then calculated metric pearson distances and fitted non-linear regression models to estimate quantile-specific rates of gene expression evolution.
 
@@ -85,14 +83,11 @@ Next, we wanted to test wether the evolutionary stability of gene subsets is aff
 * `getExprCons(nquant, qtype, ...)`
 
 
-</br>
-
 | Arguments  |  |
 | :---  | :---  |
 | nquant  | Number of genes in each quantile. |
 | qtype  | Type of quantile. Use "base_mean" for quantiles of average gene expression across organs and species, and "organ_spec" for organ-specific (intra-organ) quantiles of average gene expression across species. |
 
-</br>
 
 To reproduce the results of this study, execute the following function calls:
 
@@ -101,20 +96,19 @@ getExprCons(nquant = 500, qtype = "base_mean")
 getExprCons(nquant = 500, qtype = "organ_spec")
 
 ```
+</br>
+
 Now, multiple control genes will be matched to each gene of a GO slim category that is larger than the size threshold (POS) estimated above. The optimal number of control sets will be determined using balance statistics (standardized mean difference and variance ratio). Subsequently, intra-organ distances will be calculated for all species pairs and gene sets, and non-linear regression model will be fitted to the data. Finally, the regression slopes of treatment and control groups of each functional category will be compared using nonparametric statistics (Wilcoxon rank-sum test, permutation test).
 
 
 * `getGOSLIM(aspect, sample_size)`
 
 
-</br>
-
 | Arguments  |  |
 | :---  | :---  |
 | aspect  | GOslim term aspect. Can be either "biological_process" or "molecular_function" |
 | sample_size  | Indicates the minimum number of genes required in a GO slim category. This is the point of stability (POS) determined in the previous step. |
 
-</br>
 
 To reproduce the results of this study, execute the following function calls:
 
@@ -132,7 +126,7 @@ plotGOs()
 ```
 </br>
 
-Finally, every gene was classified as evolutionary stable or variable (as done in REF) using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the proportion of stable and variable genes was compared in each functional category. 
+Finally, every gene was classified as evolutionary stable or variable (as done in [Berthelot et al., Nat Ecol Evol (2018)](https://pubmed.ncbi.nlm.nih.gov/29180706/)) using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the proportion of stable and variable genes was compared in each functional category. 
 
 * `getCV(aspect, estimate)`
 
