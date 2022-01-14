@@ -6,7 +6,8 @@
 # GOslim categories retrieved from TAIR version 20211101
 
 
-getCV <- function(aspect = c("biological_process", "molecular_function"), estimate = c("VST", "TPM"), ...) {
+getCV <- function(aspect = c("biological_process", "molecular_function"), estimate = c("VST", "TPM"), 
+    sample_size, ...) {
 
     # Show error message if no/unknown GO aspect is chosen
     if ((missing(aspect)) || (!is.element(aspect, c("biological_process", "molecular_function"))))
@@ -21,6 +22,13 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
         stop("Please choose one of the available expression estimates: 
             'VST', 'TPM'",
+            call. = TRUE
+            )
+
+    # Show error message if no sample_size for GO term size is chosen
+    if ((missing(sample_size)) || (sample_size < 1))
+
+        stop("Please choose one of the available aspects",
             call. = TRUE
             )
 
@@ -56,10 +64,10 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     orthoEst <- read.table(orthoEst, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "estimate" = estimate, "res" = res)
+    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "estimate" = estimate, "sample_size" = sample_size, "res" = res)
     # return(return_list)
     # }
-    # return_objects <- getCV(aspect = "biological_process", estimate = "VST")
+    # return_objects <- getCV(aspect = "biological_process", estimate = "VST", sample_size = 412)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -165,6 +173,8 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
     # Perform nearest distance matching with caliper option
     # Check balance statistics to find optimal caliper
+    message("Matching genes...")
+
     calpr <- 0.5
 
         matchSample <- function(x) {
@@ -203,6 +213,8 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     stable_genes <- merge(stable_genes, spec_CV)
     variable_genes <- merge(variable_genes, spec_CV)
 
+
+    message("Process GOslim terms...")
 
 
 
