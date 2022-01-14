@@ -2,15 +2,15 @@
 # Similar procedure as in Schönbrodt and Perugini, 2013
 
 
-estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
+estimatePOS <- function(nbootstrap, coswidth, clevel, ...) {
 
 
-	# Show error message if no sample size for nbootstrap is chosen
-	if ((missing(nbootstrap)) || (nbootstrap < 1))
+    # Show error message if no sample size for nbootstrap is chosen
+    if ((missing(nbootstrap)) || (nbootstrap < 1))
 
-		stop("Please choose number of bootstraps",
-			call. = TRUE
-			)
+        stop("Please choose number of bootstraps",
+            call. = TRUE
+            )
 
     # Show error message if no sample size for coswidth is chosen
     if ((missing(coswidth)) || (coswidth >= 1 | coswidth < 0))
@@ -19,24 +19,24 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
             call. = TRUE
             )
 
-    # Show error message if no sample size for bootstrap support is chosen
-    if ((missing(bss)) || (bss  >= 1 | bss < 0))
+    # Show error message if no confidence level is chosen
+    if ((missing(clevel)) || (clevel  >= 1 | clevel < 0))
 
         stop("Please choose bootstrap support between 0 and 1",
             call. = TRUE
             )
 
 
-	# Set file path for input files
-	orthoexp = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+    # Set file path for input files
+    orthoexp = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
 
-	orthoexp <- read.table(orthoexp, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+    orthoexp <- read.table(orthoexp, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("orthoexp" = orthoexp, "nbootstrap" = nbootstrap, "coswidth" = coswidth, "bss" = bss)
+    # return_list <- list("orthoexp" = orthoexp, "nbootstrap" = nbootstrap, "coswidth" = coswidth, "clevel" = clevel)
     # return(return_list)
     # }
-    # return_objects <- estimatePOS(nbootstrap = 1000, coswidth = 0.1, bss = 0.8)
+    # return_objects <- estimatePOS(nbootstrap = 1000, coswidth = 0.1, clevel = 0.8)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -298,7 +298,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
             th <- quantile(cor_pos$pos08, probs = loc)
         }
 
-        if (deparse(substitute(df)) == "traject06_df" && nbootstrap == 1000 && coswidth == 0.1 && bss == 0.8){
+        if (deparse(substitute(df)) == "traject06_df" && nbootstrap == 1000 && coswidth == 0.1 && clevel == 0.8){
 
             possegpos <- 0.0535
             th09 <- quantile(cor_pos$pos06, probs = 0.9)
@@ -387,7 +387,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
 
     }
 
-    plotTrajectories(traject06_df, loc = bss)
+    plotTrajectories(traject06_df, loc = clevel)
 
 
 
@@ -409,7 +409,7 @@ estimatePOS <- function(nbootstrap, coswidth, bss, ...) {
 
 }
 
-estimatePOS(nbootstrap = 1000, coswidth = 0.1, bss = 0.8)
+estimatePOS(nbootstrap = 1000, coswidth = 0.1, clevel = 0.8)
 
 
 
