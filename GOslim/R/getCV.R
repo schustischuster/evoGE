@@ -214,7 +214,95 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     variable_genes <- merge(variable_genes, spec_CV)
 
 
+
+    #--------- Extract GOslim data for DevSeq core orthologs and check GO enrichment ----------
+
     message("Processing GOslim terms...")
+    
+
+    if (aspect == "biological_process") {
+
+        selCAT <- dplyr::filter(GOCAT, grepl("biological process", ONTOLOGY.ASPECT))
+
+    } else if (aspect == "molecular_function") {
+
+        selCAT <- dplyr::filter(GOCAT, grepl("molecular function", ONTOLOGY.ASPECT))
+    }
+
+    slim_names <- selCAT$SLIM_NAME
+    slim_name_ls <- setNames(as.list(c(slim_names)), c(slim_names)) # generate named list with all GOSLIM terms
+
+    # Extract all genes for each GOslim term of slim_name_ls list
+    # V1 in GOSLIM table contains the gene ID, V9 contains the GOslim terms
+    slim_genes_ls <- lapply(slim_name_ls, function(x){dplyr::filter(GOSLIM, grepl(x,V9))})
+
+    # Get list with items reduced to unique gene id's
+    slim_genes_uls <- lapply(slim_genes_ls, function(x){x[!duplicated(x[,1]),]})
+
+    coreOrthologs <- sub("\\:.*", "", orthoEst[,1]) # get AT orthologs
+    coreOrthologs <- coreOrthologs[!grepl("ERCC", coreOrthologs)] # Rm spike-ins from ortholog list
+    coreOrthologs <- as.data.frame(coreOrthologs)
+
+
+    # Clean up GOslim term list: Remove specific categories
+    if (aspect == "biological_process") {
+        
+        # Remove "other" categories because not informative
+        # Remove "response to light stimulus" because plants were grown at constant light
+        # Remove "cell cycle" because those genes have strong, cell-type specific expression that makes it impossible to match controls
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other metabolic processes" = NULL)
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other cellular processes" = NULL)
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other biological processes" = NULL)
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("response to light stimulus" = NULL)
+        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("cell cycle" = NULL)
+        # Remove some remaining functional ontologies from list
+        slim_genes_uls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, !grepl("F", V8))})
+        # Delete "Cell Growth" GOslim term from "Growth" category
+        slim_genes_uls[["growth"]] <- dplyr::filter(slim_genes_uls[["growth"]], !grepl("cell growth", V9))
+    
+    } else if (aspect == "molecular_function") {
+
+        # Correct GOslim term for class "RNA binding" (it contains another term called "translation factor activity, RNA binding")
+        slim_genes_uls[["RNA binding"]]$V9 <- rep("RNA binding", nrow(slim_genes_uls[["RNA binding"]]))
+
+    }
+
+
+    # Get list of orthologous genes that are associated with a GOSLIM term
+    slim_ortho_ls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, (V1 %in% coreOrthologs[,1]))})
+
+    # Create stats table
+    stats_all_genes <- lapply(slim_genes_uls, function(x){nrow(x)})
+    stats_ortho_genes <- lapply(slim_ortho_ls, function(x){nrow(x)})
+
+    stats_all_genes_df <- data.frame(all_genes = matrix(unlist(stats_all_genes), byrow=TRUE), stringsAsFactors=FALSE)
+    stats_ortho_genes_df <- data.frame(ortho_genes = matrix(unlist(stats_ortho_genes), byrow=TRUE), stringsAsFactors=FALSE)
+    goslim_northo_stats <- cbind(stats_all_genes_df, stats_ortho_genes_df)
+    goslim_northo_stats$goslim_term <- names(slim_ortho_ls)
+    goslim_northo_stats$expected <- (7003/28553)*goslim_northo_stats$all_genes
+    goslim_northo_stats$fold_enrichment <- goslim_northo_stats$ortho_genes/goslim_northo_stats$expected
+    goslim_northo_stats <- goslim_northo_stats[c("goslim_term", "all_genes", "ortho_genes", "expected", "fold_enrichment")]
+
+
+    # Compute GO enrichment p value and FDR corrected p value
+    pwdata <- split(goslim_northo_stats, rep(1:(nrow(goslim_northo_stats)), each = 1))
+    lst <- setNames(vector('list', length(pwdata)), 1:length(pwdata))
+
+    for (i in 1:length(pwdata)) {
+       allg <- as.numeric(as.character(unlist(pwdata[[i]][,2])))
+       ortg <- as.numeric(as.character(unlist(pwdata[[i]][,3])))
+       probabilities <- dhyper(c(0:allg), allg, (28553-allg), 7003, log = FALSE)
+       pvalue <- 2*(sum(probabilities[(ortg+1):(allg+1)]))
+       lst[[i]] <- pvalue
+    }
+
+    p_value <- c(do.call(rbind, lst))
+    padj<- data.frame(p_value=p.adjust(p_value, method = "fdr", n = length(p_value))) # FDR correction
+    goslim_northo_enrich_stats <- cbind(goslim_northo_stats, padj)
+
+
+    # Remove all ortholog GOslim lists wth fewer entries than defines sample_size
+    slim_ortho_ls <- Filter(function(dt) nrow(dt) >= sample_size, slim_ortho_ls)
 
 
 
