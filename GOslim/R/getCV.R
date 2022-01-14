@@ -6,8 +6,7 @@
 # GOslim categories retrieved from TAIR version 20211101
 
 
-getCV <- function(aspect = c("biological_process", "molecular_function"), estimate = c("VST", "TPM"), 
-                  padjust, ...) {
+getCV <- function(aspect = c("biological_process", "molecular_function"), estimate = c("VST", "TPM"), ...) {
 
     # Show error message if no/unknown GO aspect is chosen
     if ((missing(aspect)) || (!is.element(aspect, c("biological_process", "molecular_function"))))
@@ -22,13 +21,6 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
         stop("Please choose one of the available expression estimates: 
             'VST', 'TPM'",
-            call. = TRUE
-            )
-
-    # Show error message if no pvalue cutoff is chosen
-    if ((missing(padjust)) || (padjust > 1))
-
-        stop("Please choose p-value cutoff",
             call. = TRUE
             )
 
@@ -64,10 +56,10 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     orthoEst <- read.table(orthoEst, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "estimate" = estimate, "padjust" = padjust, "res" = res)
+    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "estimate" = estimate, "res" = res)
     # return(return_list)
     # }
-    # return_objects <- getCV(aspect = "biological_process", estimate = "VST", padjust = 0.01)
+    # return_objects <- getCV(aspect = "biological_process", estimate = "VST")
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -206,10 +198,10 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     match_res_sep <- match_res_sep[!is.na(match_res_sep$control),]
 
     stable_genes <- subset(x_avg, rownames(x_avg) %in% match_res_sep$treat)
-    dynamic_genes <- subset(x_avg, rownames(x_avg) %in% match_res_sep$control)
+    variable_genes <- subset(x_avg, rownames(x_avg) %in% match_res_sep$control)
 
     stable_genes <- merge(stable_genes, spec_CV)
-    dynamic_genes <- merge(dynamic_genes, spec_CV)
+    variable_genes <- merge(variable_genes, spec_CV)
 
 
 
