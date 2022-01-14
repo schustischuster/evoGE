@@ -59,20 +59,20 @@ sourceDir(path_to_R_files)
 Sample correlations converge to the population value with increasing sample size, and it has been shown that the sample size should approach n=250 for stable estimates ([Schönbrodt and Perugini, J Res Pers. 2013](https://www.sciencedirect.com/science/article/abs/pii/S0092656613000858)). Since the points of stability (POS) published in this work were based on normal distributions, we implemented a Monte-Carlo simulation to retrieve sample size estimates for stable correlations derived from gene expression data.
 
 
-* `estimatePOS(nbootstrap, coswidth, bss, ...)`
+* `estimatePOS(nbootstrap, coswidth, clevel, ...)`
 
 
 | Arguments  |  |
 | :---  | :---  |
 | nbootstrap  | Number of sampling trajectories. |
 | coswidth  | Indicates the corridor of stability (COS). Values of 0.1/0.15/0.2 correspond to small/medium/large effect sizes, respectively. For more details, see [Cohen, Psychol Bull (1992)](https://pubmed.ncbi.nlm.nih.gov/19565683/). |
-| bss  | Indicates the level of confidence for the confidence interval. |
+| clevel  | Indicates the level of confidence for the confidence interval. |
 
 
 To reproduce the results of this study, execute the following function call:
 
 ```R
-estimatePOS(nbootstrap = 1000, coswidth = 0.1, bss = 0.8)
+estimatePOS(nbootstrap = 1000, coswidth = 0.1, clevel = 0.8)
 
 ```
 </br>
