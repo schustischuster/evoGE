@@ -28,7 +28,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     # Show error message if no sample_size for GO term size is chosen
     if ((missing(sample_size)) || (sample_size < 1))
 
-        stop("Please choose one of the available aspects",
+        stop("Please choose GOslim sample size cutoff",
             call. = TRUE
             )
 
@@ -45,7 +45,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         orthoEst = file.path(in_dir, "AT_core_inter_TPM_mat_deseq_sample_names.csv")
     }
 
-	filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
+    filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
     filenames <- filenames[!filenames %in% "./GOslim/output/data/cor_bsv_traject_1000.txt"]
     names_txt <- gsub('.*/', '', filenames)
     names <- gsub("\\..*","", names_txt)
@@ -214,7 +214,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     variable_genes <- merge(variable_genes, spec_CV)
 
 
-    message("Process GOslim terms...")
+    message("Processing GOslim terms...")
 
 
 
