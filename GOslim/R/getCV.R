@@ -215,7 +215,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
 
 
-    #--------- Extract GOslim data for DevSeq core orthologs and check GO enrichment ----------
+    #--- Extract GOslim data for DevSeq core orthologs and classify genes (stable/variable) ---
 
     message("Processing GOslim terms...")
     
