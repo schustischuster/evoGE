@@ -202,8 +202,8 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#7f0405", "#b40607", "#e40808", "yellow", "#fcfce4")
-    pal <- color.palette(steps, c(10, 24, 38, 5), space = "rgb")
+    steps <- c("#800e0e", "#b41414", "#e11b1b", "#ffff1f", "#fcfce4")
+    pal <- color.palette(steps, c(10, 24, 39, 4), space = "rgb")
 
     # Set filename
     dfname <- deparse(substitute(exp_data))
