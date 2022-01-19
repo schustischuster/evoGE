@@ -271,7 +271,6 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     # Get list of orthologous genes that are associated with a GOSLIM term
     slim_ortho_ls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, (V1 %in% coreOrthologs[,1]))})
 
-
     # Remove all ortholog GOslim lists wth fewer entries than defines sample_size
     slim_ortho_ls <- Filter(function(dt) nrow(dt) >= sample_size, slim_ortho_ls)
 
@@ -317,7 +316,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     cv_stats$chisq_FDR <- p.adjust(cv_stats$chisq_test, method = "fdr")
     cv_stats$fisher_FDR <- p.adjust(cv_stats$fisher_test, method = "fdr")
 
-    # Remove all GOslim categories with a p-adjust value greater than 0.005
+    # Remove all GOslim categories with a p-adjust value greater than 0.001
     cv_stats <- dplyr::filter(cv_stats, cv_stats$chisq_FDR <= 0.001, cv_stats$fisher_FDR <= 0.001)
 
 
