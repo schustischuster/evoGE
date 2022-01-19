@@ -271,38 +271,55 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     # Get list of orthologous genes that are associated with a GOSLIM term
     slim_ortho_ls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, (V1 %in% coreOrthologs[,1]))})
 
-    # Create stats table
-    stats_all_genes <- lapply(slim_genes_uls, function(x){nrow(x)})
-    stats_ortho_genes <- lapply(slim_ortho_ls, function(x){nrow(x)})
-
-    stats_all_genes_df <- data.frame(all_genes = matrix(unlist(stats_all_genes), byrow=TRUE), stringsAsFactors=FALSE)
-    stats_ortho_genes_df <- data.frame(ortho_genes = matrix(unlist(stats_ortho_genes), byrow=TRUE), stringsAsFactors=FALSE)
-    goslim_northo_stats <- cbind(stats_all_genes_df, stats_ortho_genes_df)
-    goslim_northo_stats$goslim_term <- names(slim_ortho_ls)
-    goslim_northo_stats$expected <- (7003/28553)*goslim_northo_stats$all_genes
-    goslim_northo_stats$fold_enrichment <- goslim_northo_stats$ortho_genes/goslim_northo_stats$expected
-    goslim_northo_stats <- goslim_northo_stats[c("goslim_term", "all_genes", "ortho_genes", "expected", "fold_enrichment")]
-
-
-    # Compute GO enrichment p value and FDR corrected p value
-    pwdata <- split(goslim_northo_stats, rep(1:(nrow(goslim_northo_stats)), each = 1))
-    lst <- setNames(vector('list', length(pwdata)), 1:length(pwdata))
-
-    for (i in 1:length(pwdata)) {
-       allg <- as.numeric(as.character(unlist(pwdata[[i]][,2])))
-       ortg <- as.numeric(as.character(unlist(pwdata[[i]][,3])))
-       probabilities <- dhyper(c(0:allg), allg, (28553-allg), 7003, log = FALSE)
-       pvalue <- 2*(sum(probabilities[(ortg+1):(allg+1)]))
-       lst[[i]] <- pvalue
-    }
-
-    p_value <- c(do.call(rbind, lst))
-    padj<- data.frame(p_value=p.adjust(p_value, method = "fdr", n = length(p_value))) # FDR correction
-    goslim_northo_enrich_stats <- cbind(goslim_northo_stats, padj)
-
 
     # Remove all ortholog GOslim lists wth fewer entries than defines sample_size
     slim_ortho_ls <- Filter(function(dt) nrow(dt) >= sample_size, slim_ortho_ls)
+
+
+    # Does the proportion of stable/variable genes in GO category differ from the proportion
+    # of stable/variable genes across all orthologs => Chi-Square Test/Fisher's Exact Test
+    checkStability <- function(df) {
+
+        go_term <- unique(df$V9)
+
+        names(df)[1] <- "gene_id" 
+
+        stable_G <- merge(df, stable_genes, by = "gene_id")
+        variable_G <- merge(df, variable_genes, by = "gene_id")
+
+        # Create contingency table
+        tab <- matrix(c(nrow(stable_G), nrow(variable_G), nrow(stable_genes)-nrow(stable_G), 
+            nrow(variable_genes)-nrow(variable_G)), ncol=2, byrow=TRUE)
+
+        colnames(tab) <- c('stable', 'variable')
+        rownames(tab) <- c('GO', 'other')
+        tab <- as.table(tab)
+
+        chisq <- chisq.test(tab, correct=T)$p.value
+
+        fishtest <- fisher.test(tab)$p.value
+
+        output <- data.frame(GO_term = go_term,
+            stable_genes = nrow(stable_G), 
+            variable_genes = nrow(variable_G),
+            chisq_test = chisq, 
+            fisher_test = fishtest
+            )
+
+        return(output)
+    }
+
+    cv_stats <- do.call(rbind, lapply(slim_ortho_ls, checkStability))
+    rownames(cv_stats) <- NULL
+
+
+    # FDR correction of Chi-Square p-value
+    cv_stats$chisq_FDR <- p.adjust(cv_stats$chisq_test, method = "fdr")
+    cv_stats$fisher_FDR <- p.adjust(cv_stats$fisher_test, method = "fdr")
+
+    # Remove all GOslim categories with a p-adjust value greater than 0.005
+    cv_stats <- dplyr::filter(cv_stats, cv_stats$chisq_FDR <= 0.001, cv_stats$fisher_FDR <= 0.001)
+
 
 
 
