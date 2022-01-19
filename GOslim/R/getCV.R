@@ -283,12 +283,12 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
         names(df)[1] <- "gene_id" 
 
-        stable_G <- merge(df, stable_genes, by = "gene_id")
-        variable_G <- merge(df, variable_genes, by = "gene_id")
+        stable_GO <- merge(df, stable_genes, by = "gene_id")
+        variable_GO <- merge(df, variable_genes, by = "gene_id")
 
         # Create contingency table
-        tab <- matrix(c(nrow(stable_G), nrow(variable_G), nrow(stable_genes)-nrow(stable_G), 
-            nrow(variable_genes)-nrow(variable_G)), ncol=2, byrow=TRUE)
+        tab <- matrix(c(nrow(stable_GO), nrow(variable_GO), nrow(stable_genes)-nrow(stable_GO), 
+            nrow(variable_genes)-nrow(variable_GO)), ncol=2, byrow=TRUE)
 
         colnames(tab) <- c('stable', 'variable')
         rownames(tab) <- c('GO', 'other')
@@ -299,8 +299,8 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         fishtest <- fisher.test(tab)$p.value
 
         output <- data.frame(GO_term = go_term,
-            stable_genes = nrow(stable_G), 
-            variable_genes = nrow(variable_G),
+            stable_genes = nrow(stable_GO), 
+            variable_genes = nrow(variable_GO),
             chisq_test = chisq, 
             fisher_test = fishtest
             )
