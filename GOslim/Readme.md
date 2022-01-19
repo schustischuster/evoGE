@@ -127,7 +127,7 @@ plotGOs()
 ```
 </br>
 
-Finally, every gene was classified as evolutionary stable or variable using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the proportion of stable and variable genes was compared in each functional category. 
+Finally, every gene was classified as evolutionary stable or variable using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the fraction of stable and variable genes was assessed in each functional category. Each category was tested for a significant increase in the fraction of stable or variable genes using a Chi-squared test.
 
 * `getCV(aspect, estimate, sample_size)`
 
