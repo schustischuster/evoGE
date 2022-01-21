@@ -329,27 +329,54 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
 
     # Plot results of CV analysis
-    plotGOCat <- function(df) {
+    plotCVs <- function(df, cat) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), sep="_"))
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), cat, sep="_"))
 
-        # Reorder df by number of genes
-        df <- df
+        # Subset and reorder data
+        if (cat == "stable") {
 
-        p <- ggplot(df, aes(aes(fill = CV_cat, y = n_genes, x = GO_term))) +
+            gene_list <- c("post-embryonic development", "reproduction", 
+                "cellular component organization", "transport", 
+                "nucleobase-containing compound metabolic process", "embryo development", 
+                "protein metabolic process")
+            
+            df <- df[df$GO_term %in% gene_list,]
+            df$GO_term <- factor(df$GO_term, levels = gene_list)
+
+            plt_title <- "Functional categories with larger fraction of stable genes"
+
+        } else if (cat == "variable") {
+
+            gene_list <- c("response to abiotic stimulus", "response to chemical", 
+                "response to external stimulus", "response to biotic stimulus", 
+                "response to endogenous stimulus", "response to stress")
+            
+            df <- df[df$GO_term %in% gene_list,]
+            df$GO_term <- factor(df$GO_term, levels = gene_list)
+
+            plt_title <- "Functional categories with larger fraction of variable genes"
+
+        }
+
+        df$CV_cat <- relevel(df$CV_cat, 'variable genes')
+
+        p <- ggplot(df, aes(fill = CV_cat, y = n_genes, x = GO_term)) +
         geom_bar(position="fill", stat="identity") + 
-        labs(x = "Number of Genes", y = NULL) + 
-        ggtitle("CVs") + 
+        coord_flip() +
+        labs(x = NULL, y = "Fraction of Genes") + 
+        scale_fill_discrete(breaks=c("stable genes","variable genes")) + 
+        ggtitle(plt_title) + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.25, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(0.2, -0.05, 3.5575, 0.6925), "cm"), 
+            plot.margin = unit(c(0.2, 0.2, 0.5, 0.5), "cm"), 
             plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
             legend.text=element_text(size=17.5), 
             legend.title=element_text(size=18.0),
-            legend.direction = "vertical", 
-            legend.box = "vertical",
+            legend.direction = "horizontal", 
+            legend.position = "bottom", 
             legend.key = element_rect(colour = "transparent", fill = "white"),
             axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
@@ -364,7 +391,8 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
     }
 
-    plotCVs(cv_stats_rs)
+    plotCVs(cv_stats_rs, cat = "stable")
+    plotCVs(cv_stats_rs, cat = "variable")
 
 
 
