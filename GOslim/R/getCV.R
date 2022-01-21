@@ -322,14 +322,15 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
     # Reshape data for ggplot2
     cv_stats_rs <- data.frame(
-        GO_term = rep(cv_stats$GO_term,2), CV_cat = rep(c("stable genes", "variable_genes"), each = nrow(cv_stats)), 
+        GO_term = rep(cv_stats$GO_term,2), CV_cat = rep(c("stable genes", "variable genes"), each = nrow(cv_stats)), 
         n_genes = c(cv_stats$stable_genes, cv_stats$variable_genes), 
         chisq_test = rep(cv_stats$chisq_test,2), fisher_test = rep(cv_stats$fisher_test,2), 
         chisq_FDR = rep(cv_stats$chisq_FDR,2), fisher_FDR = rep(cv_stats$fisher_FDR,2))
+    cv_stats_rs <- cv_stats_rs[order(cv_stats_rs$GO_term),]
 
 
     # Plot results of CV analysis
-    plotCVs <- function(df, cat) {
+    plotCV <- function(df, cat) {
 
         fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), cat, sep="_"))
 
@@ -391,8 +392,9 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
     }
 
-    plotCVs(cv_stats_rs, cat = "stable")
-    plotCVs(cv_stats_rs, cat = "variable")
+    plotCV(cv_stats_rs, cat = "stable")
+    plotCV(cv_stats_rs, cat = "variable")
+
 
 
 
