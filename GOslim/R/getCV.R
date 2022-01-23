@@ -334,57 +334,80 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
         fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), cat, sep="_"))
 
+        # Capitalize first string of each GO term category name
+        CapStr <- function(y) {
+            c <- strsplit(y, " ")[[1]]
+            paste(toupper(substring(c, 1,1)), substring(c, 2),
+                sep="", collapse=" ")
+        }
+
+        df$GO_term <- paste(sapply(gsub("([A-Za-z]+).*", "\\1", df$GO_term), CapStr), 
+            sub(".*? ", "", df$GO_term))
+
+        # Correct some formating errors
+        df$GO_term <- gsub("Transport transport", "Transport", df$GO_term)
+        df$GO_term <- gsub("Reproduction reproduction", "Reproduction", df$GO_term)
+
+        df$GO_term <- gsub("Post development", "Post-embryonic development", df$GO_term)
+        df$GO_term <- gsub("Embryo development", "Embryo and post-embryonic development", df$GO_term)
+
         # Subset and reorder data
         if (cat == "stable") {
 
-            gene_list <- c("post-embryonic development", "reproduction", 
-                "cellular component organization", "transport", 
-                "nucleobase-containing compound metabolic process", "embryo development", 
-                "protein metabolic process")
+            gene_list <- c("Post-embryonic development", "Reproduction", 
+                "Cellular component organization", "Transport", 
+                "Nucleobase compound metabolic process", "Embryo and post-embryonic development", 
+                "Protein metabolic process")
             
             df <- df[df$GO_term %in% gene_list,]
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
-            plt_title <- "Functional categories with larger fraction of stable genes"
+            plt_title <- "GO categories with larger fraction of stable genes"
+
+            legend_pos <- "none"
 
         } else if (cat == "variable") {
 
-            gene_list <- c("response to abiotic stimulus", "response to chemical", 
-                "response to external stimulus", "response to biotic stimulus", 
-                "response to endogenous stimulus", "response to stress")
+            gene_list <- c("Response to abiotic stimulus", "Response to chemical", 
+                "Response to external stimulus", "Response to biotic stimulus", 
+                "Response to endogenous stimulus", "Response to stress")
             
             df <- df[df$GO_term %in% gene_list,]
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
-            plt_title <- "Functional categories with larger fraction of variable genes"
+            plt_title <- "GO categories with larger fraction of variable genes"
+
+            legend_pos <- "top"
 
         }
 
         df$CV_cat <- relevel(df$CV_cat, 'variable genes')
 
-        p <- ggplot(df, aes(fill = CV_cat, y = n_genes, x = GO_term)) +
+        p <- ggplot(df, aes(fill = CV_cat, y = n_genes, x = GO_term, width = 0.825)) +
         geom_bar(position="fill", stat="identity") + 
-        coord_flip() +
+        coord_flip(ylim = c(0, 1.4)) + 
+        geom_text(aes(label=n_genes), position = position_fill(vjust = 0.5), size = 6.55, fontface = "bold") + 
         labs(x = NULL, y = "Fraction of Genes") + 
-        scale_fill_discrete(breaks=c("stable genes","variable genes")) + 
+        scale_fill_discrete(breaks=c("stable genes", "variable genes")) + 
         ggtitle(plt_title) + 
+        annotate("text", x = 1, y = 1.2, label = "Test") + 
         theme(panel.background = element_blank(), 
-            axis.ticks.length = unit(0.25, "cm"), 
+            axis.ticks.length = unit(0.26, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(0.2, 0.2, 0.5, 0.5), "cm"), 
-            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
+            plot.margin = unit(c(0.5, 0.2, 0.5, 0.5), "cm"), 
+            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 1),
             legend.text=element_text(size=17.5), 
             legend.title=element_text(size=18.0),
             legend.direction = "horizontal", 
-            legend.position = "bottom", 
+            legend.position = legend_pos, 
             legend.key = element_rect(colour = "transparent", fill = "white"),
-            axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+            axis.title.y = element_text(size=22.5, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
-            axis.title.x = element_text(size=22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
+            axis.title.x = element_text(size=22.5, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
                 colour="black", face = "bold"), 
-            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7), colour="grey20"), 
-            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 10, r = -2), colour="grey20")
+            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
+            axis.text.y = element_text(size=19.05, angle=0, margin = margin(l = 10, r = 2.5), colour="grey20")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
