@@ -375,7 +375,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             df <- df[df$GO_term %in% gene_list,]
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
-            plt_title <- "GO categories with larger fraction of stable genes  "
+            plt_title <- "GO categories with larger fraction of stable genes   "
             plot_mar = unit(c(0.75, 0.075, 0.75, -0.25), "cm")
             legend_pos <- "none"
 
@@ -399,14 +399,14 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         # Create df for FDR p-value mapping
         FDR_df <- data.frame(x = df[seq(1, nrow(df), 2), "GO_term"], 
             y = rep(1.025, nrow(df)/2), 
-            p_val = c(paste(set_scientific(df[seq(1, nrow(df), 2), "chisq_FDR"]))), 
+            p_val = c(paste("italic('P =')~", set_scientific(df[seq(1, nrow(df), 2), "chisq_FDR"]))), 
             CV_cat = df[seq(1, nrow(df), 2), "CV_cat"]
             )
 
         p <- ggplot(df, aes(fill = CV_cat, y = n_genes, x = GO_term, width = 0.825)) +
         geom_bar(position="fill", stat="identity") + 
         scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1)) + 
-        coord_flip(ylim = c(0, 1.175)) + 
+        coord_flip(ylim = c(0, 1.285)) + 
         geom_text(aes(label=n_genes), position = position_fill(vjust = 0.5), size = 6.71, fontface = "bold") + 
         labs(x = NULL, y = "Fraction of Genes              ") + 
         scale_fill_discrete(breaks=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
@@ -418,7 +418,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
             plot.margin = plot_mar, 
-            plot.title = element_text(size = 22.25, margin = margin(t = 0, r = 0, b = 8.5, l = 0), hjust = 1.15), 
+            plot.title = element_text(size = 22.25, margin = margin(t = 0, r = 0, b = 8.5, l = 0), hjust = 1.1), 
             legend.box.margin = margin(2, 50, -7, 0), 
             legend.text = element_text(size = 22.0), 
             legend.title = element_blank(), 
