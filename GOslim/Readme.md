@@ -141,7 +141,7 @@ Finally, every gene was classified as evolutionary stable or variable using the 
 The following function call has been used to generate the results of this study:
 
 ```R
-getCV(aspect = "biological_process", estimate = "VST", sample_size = 412)
+getCV(aspect = "biological_process", estimate = "VST", sample_size = 412 )
 
 ```
 
