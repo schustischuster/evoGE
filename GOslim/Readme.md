@@ -134,14 +134,14 @@ Finally, every gene was classified as evolutionary stable or variable using the 
 | Arguments  |  |
 | :---  | :---  |
 | aspect  | GOslim term aspect. Can be either "biological_process" or "molecular_function" |
-| estimate  | Expression estimate. Use "VST" for variance stabilization transformed counts, or "TPM" for Transcripts Per Million |
+| estimate  | Expression estimate. Use "VST" for Variance Stabilization Transformed counts, or "TPM" for Transcripts Per Million |
 | sample_size  | Indicates the minimum number of genes required in a GO slim category. This is the point of stability (POS) determined in estimatePOS(). |
 
 
-The following function call has been used to generate the results of this study:
+The following function call was used to generate the results of this study:
 
 ```R
-getCV(aspect = "biological_process", estimate = "VST", sample_size = 412 )
+getCV(aspect = "biological_process", estimate = "VST", sample_size = 412)
 
 ```
 
