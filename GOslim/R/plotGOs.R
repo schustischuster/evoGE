@@ -347,8 +347,8 @@ plotGOs <- function(...) {
         ggtitle("Gene expression divergence \nacross functional groups") + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.05), 
-            axis.line = element_line(colour = 'black', size = 1.05), 
+            axis.ticks = element_line(colour = "black", size = 1.0), 
+            axis.line = element_line(colour = 'black', size = 1.0), 
             plot.margin = unit(c(1.1225, 1.75, 0, 2.25), "cm"), 
             plot.title = element_text(size=21.25, margin = margin(t = 8, r = 0, b = 11, l = 0), 
                 hjust = 0.5, lineheight = 1),
