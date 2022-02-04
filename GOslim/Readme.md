@@ -106,7 +106,7 @@ Now, multiple control genes will be matched to each gene of a GO slim category t
 
 | Arguments  |  |
 | :---  | :---  |
-| aspect  | GOslim term aspect. Can be either "biological_process" or "molecular_function" |
+| aspect  | GO slim term aspect. Can be either "biological_process" or "molecular_function" |
 | sample_size  | Indicates the minimum number of genes required in a GO slim category. This is the point of stability (POS) determined in the previous step. |
 
 
@@ -133,7 +133,7 @@ Finally, every gene was classified as evolutionary stable or variable using the 
 
 | Arguments  |  |
 | :---  | :---  |
-| aspect  | GOslim term aspect. Can be either "biological_process" or "molecular_function" |
+| aspect  | GO slim term aspect. Can be either "biological_process" or "molecular_function" |
 | estimate  | Expression estimate. Use "VST" for Variance Stabilization Transformed counts, or "TPM" for Transcripts Per Million |
 | sample_size  | Indicates the minimum number of genes required in a GO slim category. This is the point of stability (POS) determined in estimatePOS(). |
 
