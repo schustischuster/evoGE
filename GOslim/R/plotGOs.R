@@ -340,15 +340,15 @@ plotGOs <- function(...) {
         scale_y_discrete(expand = c(0.075, 0)) + 
         scale_color_identity(breaks = c("#dc580c", "#4b71ae"), labels = c("High", "Low"), 
             guide = "legend", name = "Divergence") + 
-        scale_size_continuous(range = c(5.9, 10.25), breaks = c(415, 750, 1100, 1600), 
-            labels = c("415", "750", "1100", "1600"), name = "Gene count") + 
+        scale_size_continuous(range = c(5.9, 12.0), breaks = c(415, 700, 1100, 1600), 
+            labels = c("415", "700", "1100", "1600"), name = "Gene count") + 
         guides(size = guide_legend(order = 2), colour = guide_legend(order = 1, override.aes=list(size = 8))) + 
         labs(x = expression(-log[10]*"(FDR)"), y = NULL) + 
         ggtitle("Gene expression divergence \nacross functional groups") + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.1), 
-            axis.line = element_line(colour = 'black', size = 1.1), 
+            axis.ticks = element_line(colour = "black", size = 1.05), 
+            axis.line = element_line(colour = 'black', size = 1.05), 
             plot.margin = unit(c(1.1225, 1.75, 0, 2.25), "cm"), 
             plot.title = element_text(size=21.25, margin = margin(t = 8, r = 0, b = 11, l = 0), 
                 hjust = 0.5, lineheight = 1),
