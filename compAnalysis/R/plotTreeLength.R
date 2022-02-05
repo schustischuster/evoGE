@@ -1,6 +1,7 @@
-# Read total tree length data for Brassicaceae and Angiosperm orthologous protein-coding gene  
-# expression phylogenies and plot tree length for bootstrap phylogenies and original tree length
-# This function generates boxplots for main figure
+# Read regression slope data from log and LOESS model for both DevSeq and Brawand data
+# Data input: Slope values are from individual organ regressions
+# DevSeq = angiosperm data, Brawand11 = mammalian data (from 2011 paper), Brawand11 = re-
+# analyzed mammalian data
 
 
 
@@ -112,14 +113,14 @@ plotTreeLength <- function() {
             strip.text = element_text(size = 36.25), 
             strip.text.x = element_text(margin = margin(0.6, 0, 0.6, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 3.25), 
-            axis.ticks.length = unit(0.5, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 2), 
-            axis.line = element_line(colour = 'black', size = 2), 
+            axis.ticks.length = unit(0.45, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.7), 
+            axis.line = element_line(colour = 'black', size = 1.7), 
             plot.margin = unit(c(0.5, 0.015, 0.5, 0.475),"cm"), 
-            axis.title.y = element_text(size=39, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
+            axis.title.y = element_text(size=36.25, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
                 face = "plain"), 
             axis.title.x = element_blank(), 
-            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t = -52.4, b = 42.5), colour="black", 
+            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t = -52, b = 42.5), colour="black", 
                 hjust = 0.99, vjust = 0.5), 
             axis.text.y = element_text(size=36.25, angle=0, margin = margin(r = 5), colour="black"), 
             panel.spacing = unit(0.5, "cm"), 
@@ -172,14 +173,14 @@ plotTreeLength <- function() {
             strip.text = element_text(size = 36.25), 
             strip.text.x = element_text(margin = margin(0.6, 0, 0.6, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 3.25), 
-            axis.ticks.length = unit(0.5, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 2), 
-            axis.line = element_line(colour = 'black', size = 2), 
+            axis.ticks.length = unit(0.45, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.7), 
+            axis.line = element_line(colour = 'black', size = 1.7), 
             plot.margin = unit(c(0.5, 0.5, 0.5, 10.55),"cm"), 
-            axis.title.y = element_text(size=39, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
+            axis.title.y = element_text(size=36.25, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
                 face = "plain"), 
             axis.title.x = element_blank(), 
-            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t=-44.57, b=59), colour="black", 
+            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t=-44, b=59), colour="black", 
                 hjust = 0.99, vjust = 0.5), 
             axis.text.y = element_text(size=36.25, angle=0, margin = margin(r = 5), colour="black"), 
             panel.spacing = unit(0.5, "cm"), 
