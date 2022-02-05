@@ -1,7 +1,6 @@
-# Read regression slope data from log and LOESS model for both DevSeq and Brawand data
-# Data input: Slope values are from individual organ regressions
-# DevSeq = angiosperm data, Brawand11 = mammalian data (from 2011 paper), Brawand11 = re-
-# analyzed mammalian data
+# Read total tree length data for Brassicaceae and Angiosperm orthologous protein-coding gene  
+# expression phylogenies and plot tree length for bootstrap phylogenies and original tree length
+# This function generates boxplots for main figure
 
 
 
@@ -96,8 +95,8 @@ plotTreeLength <- function() {
         fname <- sprintf('%s.jpg', paste("Total_tree_length", spec_order, sep="_"))
             
         p <- ggplot(data=data, aes(x = Organ, y = Total_tree_length, group = Organ)) + 
-        stat_boxplot(geom ='errorbar', width = 0.35, size=1.7, color="black") + 
-        geom_boxplot(width = 0.85, size = 1.7, fatten = 1.35, color="black", outlier.shape = NA, 
+        stat_boxplot(geom ='errorbar', width = 0.35, size=1.75, color="black") + 
+        geom_boxplot(width = 0.85, size = 1.75, fatten = 1.35, color="black", outlier.shape = NA, 
             alpha = 1, aes(fill = Organ)) + 
         geom_point(data = data2, position = position_dodge(width=0.75), size = 5, col = "red2", 
             aes(x = Organ, y = Total_tree_length)) + 
@@ -113,14 +112,14 @@ plotTreeLength <- function() {
             strip.text = element_text(size = 36.25), 
             strip.text.x = element_text(margin = margin(0.6, 0, 0.6, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 3.25), 
-            axis.ticks.length = unit(0.45, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.7), 
-            axis.line = element_line(colour = 'black', size = 1.7), 
+            axis.ticks.length = unit(0.5, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.935), 
+            axis.line = element_line(colour = 'black', size = 1.935), 
             plot.margin = unit(c(0.5, 0.015, 0.5, 0.475),"cm"), 
-            axis.title.y = element_text(size=36.25, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
+            axis.title.y = element_text(size=39, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
                 face = "plain"), 
             axis.title.x = element_blank(), 
-            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t = -52, b = 42.5), colour="black", 
+            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t = -52.4, b = 42.5), colour="black", 
                 hjust = 0.99, vjust = 0.5), 
             axis.text.y = element_text(size=36.25, angle=0, margin = margin(r = 5), colour="black"), 
             panel.spacing = unit(0.5, "cm"), 
@@ -159,8 +158,8 @@ plotTreeLength <- function() {
         fname <- sprintf('%s.jpg', paste("Total_tree_length_pollen", spec_order, sep="_"))
             
         p <- ggplot(data=data, aes(x = Organ, y = Total_tree_length, group = Organ)) + 
-        stat_boxplot(geom ='errorbar', width = 0.35, size=1.7, color="black") + 
-        geom_boxplot(width = 0.9, size = 1.7, fatten = 1.35, color="black", outlier.shape = NA, 
+        stat_boxplot(geom ='errorbar', width = 0.35, size=1.75, color="black") + 
+        geom_boxplot(width = 0.9, size = 1.75, fatten = 1.35, color="black", outlier.shape = NA, 
             alpha = 1, aes(fill = Organ)) + 
         geom_point(data = data2, position = position_dodge(width=0.75), size = 5, col = "red2", 
             aes(x = Organ, y = Total_tree_length)) + 
@@ -173,14 +172,14 @@ plotTreeLength <- function() {
             strip.text = element_text(size = 36.25), 
             strip.text.x = element_text(margin = margin(0.6, 0, 0.6, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 3.25), 
-            axis.ticks.length = unit(0.45, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.7), 
-            axis.line = element_line(colour = 'black', size = 1.7), 
+            axis.ticks.length = unit(0.5, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.935), 
+            axis.line = element_line(colour = 'black', size = 1.935), 
             plot.margin = unit(c(0.5, 0.5, 0.5, 10.55),"cm"), 
-            axis.title.y = element_text(size=36.25, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
+            axis.title.y = element_text(size=39, margin = margin(t = 0, r = 18.5, b = 0, l = 2), colour="black", 
                 face = "plain"), 
             axis.title.x = element_blank(), 
-            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t=-44, b=59), colour="black", 
+            axis.text.x = element_text(size=36.25, angle=45, margin = margin(t=-44.57, b=59), colour="black", 
                 hjust = 0.99, vjust = 0.5), 
             axis.text.y = element_text(size=36.25, angle=0, margin = margin(r = 5), colour="black"), 
             panel.spacing = unit(0.5, "cm"), 
