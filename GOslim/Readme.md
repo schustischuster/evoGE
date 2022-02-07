@@ -19,7 +19,7 @@ This code allows to analyse the rate of gene expression evolution for functional
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-# Create list of required packages
+# List of required packages
 lib_List <- c("dplyr", "MatchIt", "gplots", "ggplot2", "scales")
 
 instpack <- lib_List %in% rownames(installed.packages())
