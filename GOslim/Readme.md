@@ -22,15 +22,13 @@ Install and load the following R packages before running the reproducible script
 # Create list of required packages
 lib_List <- c("dplyr", "MatchIt", "gplots", "ggplot2", "scales")
 
-loadLibrary <- function(x) { 
-    if (!require(x, character.only = T)) {
-        install.packages('x')
-        library(x)
-    }
+instpack <- lib_List %in% rownames(installed.packages())
+if (any(instpack == FALSE)) {
+  install.packages(lib_List[!instpack], dependencies = TRUE)
 }
 
 # Load packages
-invisible(lapply(lib_List, loadLibrary))
+invisible(lapply(lib_List, library, character.only = TRUE))
 
 ```
 
