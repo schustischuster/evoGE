@@ -20,11 +20,12 @@ Install and load the following R packages before running the reproducible script
 
 ```R
 # List of required packages
-lib_List <- c("dplyr", "MatchIt", "gplots", "ggplot2", "scales")
+lib_List <- c("dplyr", "MatchIt", "huxtable", "vtable", "scales", "abundant")
 
-instpack <- lib_List %in% rownames(installed.packages())
+# Install missing packages
+instpack <- lib_List %in% installed.packages()[,"Package"]
 if (any(instpack == FALSE)) {
-  install.packages(lib_List[!instpack], dependencies = TRUE)
+  install.packages(lib_List[!instpack])
 }
 
 # Load packages
