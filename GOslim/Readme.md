@@ -10,7 +10,7 @@ This code allows to analyse the rate of gene expression evolution for functional
   * [Data input](#data-input)
 * [Data analysis and visualization](#data-analysis-and-visualization)
   * [Stability of correlations](#stability-of-correlations)
-  * [Relationship between evolutionary stability and gene expression level](#relationship-between-evolutionary-stability-and-gene-expression-level)
+  * [Relationship between evolutionary conservation and gene expression level](#relationship-between-evolutionary-conservation-and-gene-expression-level)
   * [Rate of expression evolution](#rate-of-expression-evolution)
   * [Generate plots of GO analysis](#generate-plots-of-go-analysis)
   * [Coefficient of variation](#coefficient-of-variation)
