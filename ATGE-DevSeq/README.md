@@ -20,7 +20,7 @@ Install and load the following R packages before running the reproducible script
 
 ```R
 
-# List of required packages
+# Required packages
 lib_List <- c("dplyr", "gplots", "factoextra", "dendextend")
 
 # Install missing packages
