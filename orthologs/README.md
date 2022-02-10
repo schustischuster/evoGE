@@ -19,7 +19,7 @@ This code allows to generate the angiosperm phylogeny and coding/non-coding orth
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-# Create list of required packages
+# Required packages
 lib_List <- c("dplyr", "ggplot2", "ape", "scales", "gtable", "ggtree")
 
 # Install missing packages
