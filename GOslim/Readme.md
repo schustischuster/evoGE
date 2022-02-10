@@ -60,6 +60,8 @@ sourceDir(path_to_R_files)
 ---
 ## Data analysis and visualization
 
+### Stability of correlations
+
 Sample correlations converge to the population value with increasing sample size, and it has been shown that the sample size should approach n=250 for stable estimates ([Schönbrodt and Perugini, J Res Pers. 2013](https://www.sciencedirect.com/science/article/abs/pii/S0092656613000858)). Since the points of stability (POS) published in this work were based on normal distributions, we implemented a Monte-Carlo simulation to retrieve sample size estimates for stable correlations derived from gene expression data.
 
 
@@ -79,7 +81,7 @@ To reproduce the results of this study, execute the following function call:
 estimatePOS(nbootstrap = 1000, coswidth = 0.1, clevel = 0.8)
 
 ```
-</br>
+### Relationship between gene expression level and evolutionary conservation
 
 Next, we wanted to test wether the evolutionary stability of gene subsets is affected by gene expression levels. We therefore generated subsets of orthologous genes according to quantiles of average expression either across all samples (inter-organ inter-species), or within the same organ across species (intra-organ inter-species). For each quantile set, we then calculated metric pearson distances and fitted non-linear regression models to estimate quantile-specific rates of gene expression evolution.
 
@@ -100,7 +102,7 @@ getExprCons(nquant = 500, qtype = "base_mean")
 getExprCons(nquant = 500, qtype = "organ_spec")
 
 ```
-</br>
+### Rate of expression evolution
 
 Now, multiple control genes will be matched to each gene of a GO slim category that is larger than the size threshold (POS) estimated above. The optimal number of control sets will be determined using balance statistics (standardized mean difference and variance ratio). Subsequently, intra-organ distances will be calculated for all species pairs and gene sets, and non-linear regression model will be fitted to the data. Finally, the regression slopes of treatment and control groups of each functional category will be compared using nonparametric statistics (Wilcoxon rank-sum test, permutation test).
 
@@ -121,7 +123,7 @@ getGOSLIM(aspect = "biological_process", sample_size = 412)
 getGOSLIM(aspect = "molecular_function", sample_size = 412)
 
 ```
-</br>
+### Generate plots of GO analysis
 
 To vizualize the results of the GO enrichment analysis for genes of the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
 
@@ -129,7 +131,7 @@ To vizualize the results of the GO enrichment analysis for genes of the first an
 plotGOs()
 
 ```
-</br>
+### Coefficient of variation
 
 Finally, every gene was classified as evolutionary stable or variable using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the fraction of stable and variable genes was assessed in each functional category. Each category was tested for a significant increase in the fraction of stable or variable genes using a Chi-squared test.
 
