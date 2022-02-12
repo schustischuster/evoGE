@@ -264,7 +264,7 @@ plotGOs <- function(...) {
 
         p <- ggplot(df, aes(x = p_value_FDR, y = goslim_term, colour = color)) +
         geom_point(mapping=aes(size = ortho_genes, colour = color)) + 
-        scale_x_continuous(expand = c(0, 0), limits = c(1.919, 3.7), breaks = c(2, 2.5, 3, 3.5), 
+        scale_x_continuous(expand = c(0, 0), limits = c(1.924, 3.59), breaks = c(2, 2.5, 3, 3.5), 
             labels = c("2", "", "3", "")) + 
         scale_color_identity(breaks = c("#dc580c", "#4b71ae"), labels = c("High", "Low"), 
             guide = "legend", name = "Divergence") + 
@@ -277,7 +277,7 @@ plotGOs <- function(...) {
             axis.ticks.length = unit(0.25, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(7.25, 0.12, 0, 1.37), "cm"), 
+            plot.margin = unit(c(7.25, 0.15, 0, 1.37), "cm"), 
             plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
             legend.text=element_text(size=17.5), 
             legend.title=element_text(size=18.0),
