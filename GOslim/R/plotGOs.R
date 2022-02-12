@@ -264,8 +264,8 @@ plotGOs <- function(...) {
 
         p <- ggplot(df, aes(x = p_value_FDR, y = goslim_term, colour = color)) +
         geom_point(mapping=aes(size = ortho_genes, colour = color)) + 
-        scale_x_continuous(expand = c(0.05, 0), limits = c(2, 3.4), breaks = c(2, 2.5, 3), 
-            labels = c("2", "", "3")) + 
+        scale_x_continuous(expand = c(0, 0), limits = c(1.919, 3.7), breaks = c(2, 2.5, 3, 3.5), 
+            labels = c("2", "", "3", "")) + 
         scale_color_identity(breaks = c("#dc580c", "#4b71ae"), labels = c("High", "Low"), 
             guide = "legend", name = "Divergence") + 
         scale_size_continuous(range = c(5, 10.55), breaks = c(415, 900, 1600), 
