@@ -564,7 +564,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
 
         # Show message
-        message("Starting analysis and generate plots...")
+        message("Generate plots...")
 
 
         # Combine all goslim organ list elements to one data frame
@@ -840,7 +840,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
   	median_control <- median(control)
   	test_stat <- abs(median_treat-median_control)
 
-  	set.seed(1357) # Set seed for reproducibility
+  	set.seed(700) # Set seed for reproducibility
   	all_slope_data <- data.frame(slope_value = c(treat, control), 
   		goslim_term = c(rep("GO", length(treat)),rep("Control", length(control))))
   	n_perm <- 100000
@@ -940,8 +940,6 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     write.table(goslim_out_list[[i]], file=file.path(out_dir, "output", "data", paste0(i, "_", aspect, ".txt")), 
         sep="\t", col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
   }
-
-
 
 
 
