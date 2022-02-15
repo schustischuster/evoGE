@@ -746,8 +746,4 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 }
 
 
-getExprCons(nquant = 500, qtype = "base_mean")
-getExprCons(nquant = 500, qtype = "organ_spec")
-
-
 
