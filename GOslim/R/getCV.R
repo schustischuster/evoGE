@@ -409,14 +409,14 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         coord_flip(ylim = c(0, 1.2985)) + 
         geom_text(aes(label=n_genes), position = position_fill(vjust = 0.5), size = 6.71, fontface = "bold") + 
         labs(x = NULL, y = "Fraction of Genes              ") + 
-        scale_fill_manual(values=c("#97ce6a", "#4d88b3"), breaks=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
+        scale_fill_manual(values=c("#548aba", "#dbad58"), breaks=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
         guides(fill = guide_legend(keywidth = 0.35, keyheight = 0.35, default.unit="inch")) + 
         ggtitle(plt_title) +  
         geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 6.71, parse=TRUE, hjust = 0) + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.05), 
-            axis.line = element_line(colour = 'black', size = 1.05), 
+            axis.ticks = element_line(colour = "black", size = 1.025), 
+            axis.line = element_line(colour = 'black', size = 1.025), 
             plot.margin = plot_mar, 
             plot.title = element_text(size = 21.25, margin = margin(t = 0, r = 0, b = 8.5, l = 0), hjust = 1.775), 
             legend.box.margin = margin(0, 82, -9, 0), 
@@ -438,8 +438,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
     }
 
-    plotCV(cv_stats_rs, cat = "stable")
-    plotCV(cv_stats_rs, cat = "variable")
+
 
 }
 
