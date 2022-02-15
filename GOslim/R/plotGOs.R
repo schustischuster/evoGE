@@ -264,8 +264,8 @@ plotGOs <- function(...) {
 
         p <- ggplot(df, aes(x = p_value_FDR, y = goslim_term, colour = color)) +
         geom_point(mapping=aes(size = ortho_genes, colour = color)) + 
-        scale_x_continuous(expand = c(0.05, 0), limits = c(2, 3.4), breaks = c(2, 2.5, 3), 
-            labels = c("2", "", "3")) + 
+        scale_x_continuous(expand = c(0, 0), limits = c(1.924, 3.59), breaks = c(2, 2.5, 3, 3.5), 
+            labels = c("2", "", "3", "")) + 
         scale_color_identity(breaks = c("#dc580c", "#4b71ae"), labels = c("High", "Low"), 
             guide = "legend", name = "Divergence") + 
         scale_size_continuous(range = c(5, 10.55), breaks = c(415, 900, 1600), 
@@ -277,7 +277,7 @@ plotGOs <- function(...) {
             axis.ticks.length = unit(0.25, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.25), 
             axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(7.25, 0.12, 0, 1.37), "cm"), 
+            plot.margin = unit(c(7.25, 0.15, 0, 1.37), "cm"), 
             plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
             legend.text=element_text(size=17.5), 
             legend.title=element_text(size=18.0),
@@ -340,15 +340,15 @@ plotGOs <- function(...) {
         scale_y_discrete(expand = c(0.075, 0)) + 
         scale_color_identity(breaks = c("#dc580c", "#4b71ae"), labels = c("High", "Low"), 
             guide = "legend", name = "Divergence") + 
-        scale_size_continuous(range = c(5.9, 10.25), breaks = c(415, 750, 1100, 1600), 
-            labels = c("415", "750", "1100", "1600"), name = "Gene count") + 
+        scale_size_continuous(range = c(5.9, 12.0), breaks = c(415, 700, 1100, 1600), 
+            labels = c("415", "700", "1100", "1600"), name = "Gene count") + 
         guides(size = guide_legend(order = 2), colour = guide_legend(order = 1, override.aes=list(size = 8))) + 
         labs(x = expression(-log[10]*"(FDR)"), y = NULL) + 
         ggtitle("Gene expression divergence \nacross functional groups") + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.1), 
-            axis.line = element_line(colour = 'black', size = 1.1), 
+            axis.ticks = element_line(colour = "black", size = 1.025), 
+            axis.line = element_line(colour = 'black', size = 1.025), 
             plot.margin = unit(c(1.1225, 1.75, 0, 2.25), "cm"), 
             plot.title = element_text(size=21.25, margin = margin(t = 8, r = 0, b = 11, l = 0), 
                 hjust = 0.5, lineheight = 1),
