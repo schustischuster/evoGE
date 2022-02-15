@@ -101,6 +101,9 @@ estimatePOS <- function(nbootstrap, coswidth, clevel, ...) {
         Flower_ES, Carpel_TH, Carpel_BD))
 
 
+    # Show message
+    message("Running Monte Carlo simulation...")
+
 
     # Define a list of sample sizes for simulation
     sample_size_ls <- seq(20, 1000, by = 1)
@@ -246,6 +249,15 @@ estimatePOS <- function(nbootstrap, coswidth, clevel, ...) {
     }
 
     cor_pos <- getPOS(cor_bsv)
+
+
+    # Save plot to file
+    # Show message
+    message("Generate plots...")
+
+    # Create "plot" folder in /out_dir/output
+    if (!dir.exists(file.path(out_dir, "output", "plots")))
+        dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
 
 
 
@@ -408,8 +420,5 @@ estimatePOS <- function(nbootstrap, coswidth, clevel, ...) {
 
 
 }
-
-estimatePOS(nbootstrap = 1000, coswidth = 0.1, clevel = 0.8)
-
 
 
