@@ -1,21 +1,11 @@
-# Compute coefficient of variation (CV) for 7003 angiosperm core orthologous genes
-# Classifiy genes into evolutionarily stable and variable genes based on average CV across organs
-# Match stable and variable genes based on their average gene expression level, using caliper matching
-# Similar procedure as described in Berthelot et al., Nat Ecol Evol (2018)
-# Check proportion of stable/variable genes for GOslim terms of interest  
+# Plot mean expression of orthologs from all GOslim categories that show a significant
+# different proportion of evolutionarily stable and variable genes
+# Show mean expression for both matched and all genes for each GOslim category
 # GOslim categories retrieved from TAIR version 20211101
 
 
-getCV <- function(aspect = c("biological_process", "molecular_function"), estimate = c("VST", "TPM"), 
-    sample_size, ...) {
+plotGOExpr <- function(estimate = c("VST", "TPM"), sample_size, ...) {
 
-    # Show error message if no/unknown GO aspect is chosen
-    if ((missing(aspect)) || (!is.element(aspect, c("biological_process", "molecular_function"))))
-
-        stop("Please choose one of the available aspects: 
-            'biological_process', 'molecular_function'",
-            call. = TRUE
-            )
 
     # Show error message if no expression estimate is chosen
     if ((missing(estimate)) || (!is.element(estimate, c("VST", "TPM"))))
@@ -64,10 +54,10 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     orthoEst <- read.table(orthoEst, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "estimate" = estimate, "sample_size" = sample_size, "res" = res)
+    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "estimate" = estimate, "sample_size" = sample_size, "res" = res)
     # return(return_list)
     # }
-    # return_objects <- getCV(aspect = "biological_process", estimate = "VST", sample_size = 412)
+    # return_objects <- getCV(estimate = "VST", sample_size = 412)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -214,6 +204,82 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     variable_genes <- merge(variable_genes, spec_CV)
 
 
+    # Generate table of all matched genes (4896) containing average CV and expression values
+    # spec_CV table = table containing average CV and expression values for all genes (7003)
+    x_avg_match <- rbind(stable_genes, variable_genes)
+    spec_CV_match <- x_avg_match %>% select (-c(Root_AT:Carpel_BD))
+
+
+
+    # Plot pea distances and slopes of goslim and control data
+    plotCVExpr <- function(data) {
+
+            if (qtype == "base_mean") {
+
+                fname <- sprintf('%s.jpg', paste("expr_cons_base_mean", quant_num, sep="_"))
+                x_title <- "Inter-organ inter-species quantiles of expression level"
+                ycoord <- c(0.775,2.17)
+
+            } else if (qtype == "organ_spec") {
+
+                fname <- sprintf('%s.jpg', paste("expr_cons_organ_spec", quant_num, sep="_"))
+                x_title <- "Intra-organ inter-species quantiles of expression level"
+                ycoord <- c(0.9,2.225)
+            }
+
+            corg <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel")
+
+            p <- ggplot(data = data, color = organ, aes(x=quantile, y=scaled_slopes)) + 
+            geom_point(colour = "blueviolet", size = 3) + 
+            geom_smooth(method = 'loess', colour = "blueviolet", size = 1.5) + 
+            scale_y_continuous(expand = c(0.05, 0), breaks = c(1.0, 1.25, 1.5, 1.75, 2.0), 
+                labels = c(format(round(1.0, 1), nsmall = 1), "", format(round(1.5, 1), nsmall = 1), "", format(round(2.0, 1), nsmall = 1))) + 
+            scale_x_continuous(expand = c(0.075, 0), breaks = seq(1:quant_num), labels = x_scale) + 
+            coord_cartesian(ylim = ycoord) + 
+            scale_shape_manual(values = c(21,21)) + 
+            guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
+
+            q <- p + theme_classic() + xlab(x_title) + ylab("Relative rate of expression evolution") + 
+            geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
+                parse=TRUE, size=7.25, hjust = 0) + 
+            geom_text(data = l_text, mapping = aes(x = x, y = y, label = label), 
+                size=7.25, hjust = 0) + 
+            geom_segment(data = q1_arw, aes(x = x, y = y, xend = xend, yend = yend), 
+                arrow = arrow(length = unit(0.55, "cm"), type = "closed"), 
+                size=1.1, col="red4", alpha = q_alpha) + 
+            geom_segment(data = q14_arw, aes(x = x, y = y, xend = xend, yend = yend), 
+                arrow = arrow(length = unit(0.55, "cm"), type = "closed"), 
+                size=1.1, col="red4", alpha = q_alpha) +
+            theme(text=element_text(size = 16), 
+                strip.text = element_text(size = 19.85), 
+                strip.text.x = element_text(margin = margin(0.38, 0, 0.38, 0, "cm")), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+                axis.ticks.length = unit(0.22, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.25), 
+                axis.line = element_line(colour = 'black', size = 1.25), 
+                plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
+                axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 6.4, b = 0, l = 10), 
+                    colour="black", face = "bold"), 
+                axis.title.x = element_text(size=22.75, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
+                    colour="black", face = "bold"), 
+                axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
+                axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
+                panel.spacing = unit(0.5, "cm"), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor.x = element_blank(), 
+                panel.grid.minor.y = element_blank(), 
+                legend.position = "none") 
+
+            q <- q + facet_wrap(~ organ, nrow = 2)
+
+            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+                width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
+        }
+
+        plotCVExpr(data = str_expr_sl_df)
+
+
+
 
     #--- Extract GOslim data for DevSeq core orthologs and classify genes (stable/variable) ---
 
@@ -342,104 +408,13 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         }
 
 
-    # Plot results of CV analysis
-    plotCV <- function(df, cat) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), cat, sep="_"))
-
-        # Capitalize first string of each GO term category name
-        CapStr <- function(y) {
-            c <- strsplit(y, " ")[[1]]
-            paste(toupper(substring(c, 1,1)), substring(c, 2),
-                sep="", collapse=" ")
-        }
-
-        df$GO_term <- paste(sapply(gsub("([A-Za-z]+).*", "\\1", df$GO_term), CapStr), 
-            sub(".*? ", "", df$GO_term))
-
-        # Correct some formating errors
-        df$GO_term <- gsub("Transport transport", "Transport", df$GO_term)
-        df$GO_term <- gsub("Reproduction reproduction", "Reproduction", df$GO_term)
-
-        df$GO_term <- gsub("Post development", "Post-embryonic development", df$GO_term)
-        df$GO_term <- gsub("Embryo development", "Embryo and post-embryonic development", df$GO_term)
-
-        # Subset and reorder data
-        if (cat == "stable") {
-
-            gene_list <- c("Post-embryonic development", "Reproduction", 
-                "Cellular component organization", "Transport", 
-                "Nucleobase compound metabolic process", "Embryo and post-embryonic development", 
-                "Protein metabolic process")
-            
-            df <- df[df$GO_term %in% gene_list,]
-            df$GO_term <- factor(df$GO_term, levels = gene_list)
-
-            plt_title <- "GO categories with larger fraction of stable genes   "
-            plot_mar = unit(c(0.75, -0.25, 1.5, -0.325), "cm")
-            legend_pos <- "none"
-
-        } else if (cat == "variable") {
-
-            gene_list <- c("Response to abiotic stimulus", "Response to chemical", 
-                "Response to external stimulus", "Response to biotic stimulus", 
-                "Response to endogenous stimulus", "Response to stress")
-            
-            df <- df[df$GO_term %in% gene_list,]
-            df$GO_term <- factor(df$GO_term, levels = gene_list)
-
-            plt_title <- "GO categories with larger fraction of variable genes"
-            plot_mar = unit(c(0.75, 1.9, 1.5, -0.11), "cm")
-            legend_pos <- "top"
-
-        }
-
-        df$CV_cat <- relevel(df$CV_cat, 'variable genes')
-
-        # Create df for FDR p-value mapping
-        FDR_df <- data.frame(x = df[seq(1, nrow(df), 2), "GO_term"], 
-            y = rep(1.025, nrow(df)/2), 
-            p_val = c(paste("italic('P =')~", set_scientific(df[seq(1, nrow(df), 2), "chisq_FDR"]))), 
-            CV_cat = df[seq(1, nrow(df), 2), "CV_cat"]
-            )
-
-        p <- ggplot(df, aes(fill = CV_cat, y = n_genes, x = GO_term, width = 0.85)) +
-        geom_bar(position="fill", stat="identity") + 
-        scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1)) + 
-        coord_flip(ylim = c(0, 1.2985)) + 
-        geom_text(aes(label=n_genes), position = position_fill(vjust = 0.5), size = 6.71, fontface = "bold") + 
-        labs(x = NULL, y = "Fraction of Genes              ") + 
-        scale_fill_manual(values=c("#dbad58", "#548aba"), breaks=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
-        guides(fill = guide_legend(keywidth = 0.35, keyheight = 0.35, default.unit="inch")) + 
-        ggtitle(plt_title) +  
-        geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 6.71, parse=TRUE, hjust = 0) + 
-        theme(panel.background = element_blank(), 
-            axis.ticks.length = unit(0.26, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.025), 
-            axis.line = element_line(colour = 'black', size = 1.025), 
-            plot.margin = plot_mar, 
-            plot.title = element_text(size = 21.25, margin = margin(t = 0, r = 0, b = 8.5, l = 0), hjust = 1.775), 
-            legend.box.margin = margin(0, 82, -9, 0), 
-            legend.text = element_text(size = 21.25), 
-            legend.title = element_blank(), 
-            legend.direction = "horizontal", 
-            legend.position = legend_pos, 
-            legend.key = element_rect(colour = "transparent", fill = "white"),
-            axis.title.y = element_text(size = 20.25, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
-                colour="black", face = "plain"), 
-            axis.title.x = element_text(size = 20.25, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
-                colour="black", face = "plain"), 
-            axis.text.x = element_text(size = 18.9, margin = margin(t = 3.5, b = 8), colour="grey20"), 
-            axis.text.y = element_text(size = 20.28, angle=0, margin = margin(l = 10, r = 2.5), colour="grey20")
-        )
-
-        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
-               width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
-
-    }
-
-    plotCV(cv_stats_rs, cat = "stable")
-    plotCV(cv_stats_rs, cat = "variable")
+    # Plot mean expression of orthologs for GOslim categories that show significant different 
+    # proportion of stable/variable genes
+    # Table of core orthologs with average expression value = x_avg
+    # List of all GOslim categories above size threshold = slim_ortho_ls
+    # Table with all GOslim categories that show significant different proportion of table/
+    # variable genes = cv_stats_rs
 
 }
 
