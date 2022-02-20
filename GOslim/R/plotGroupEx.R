@@ -1,6 +1,7 @@
 # Plot mean expression of orthologs from all GOslim categories that show a significant
 # different proportion of evolutionarily stable and variable genes
-# Show mean expression for both matched and all genes for each GOslim category
+# Make plots for both matched and all genes for each GOslim category
+# Also show distribution of mean coefficient of variation (CV) before and after matching
 # GOslim categories retrieved from TAIR version 20211101
 
 
@@ -57,7 +58,7 @@ plotGroupEx <- function(estimate = c("VST", "TPM"), sample_size, ...) {
     # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "estimate" = estimate, "sample_size" = sample_size, "res" = res)
     # return(return_list)
     # }
-    # return_objects <- getCV(estimate = "VST", sample_size = 412)
+    # return_objects <- plotGroupEx(estimate = "VST", sample_size = 412)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -208,75 +209,92 @@ plotGroupEx <- function(estimate = c("VST", "TPM"), sample_size, ...) {
     # spec_CV table = table containing average CV and expression values for all genes (7003)
     x_avg_match <- rbind(stable_genes, variable_genes)
     spec_CV_match <- x_avg_match %>% select (-c(Root_AT:Carpel_BD))
+    spec_CV_all <- spec_CV
+
+    spec_CV_all$group <- rep("All", nrow(spec_CV_all))
+    spec_CV_match$group <- rep("Matched", nrow(spec_CV_match))
+    spec_CV_df <- rbind(spec_CV_all, spec_CV_match)
+
+    spec_CV_df$sign[spec_CV_df$sign == 1] <- "stable"
+    spec_CV_df$sign[spec_CV_df$sign == 0] <- "variable"
 
 
 
     # Plot pea distances and slopes of goslim and control data
-    plotCVExpr <- function(data) {
+    plotCVExpr <- function(data, plotclass) {
 
-            if (qtype == "base_mean") {
+            if (plotclass == "mCV") {
 
-                fname <- sprintf('%s.jpg', paste("expr_cons_base_mean", quant_num, sep="_"))
-                x_title <- "Inter-organ inter-species quantiles of expression level"
-                ycoord <- c(0.775,2.17)
+                data <- data.frame(value = data$CV_averaged, class = data$sign, group = data$group)
+                fname <- sprintf('%s.jpg', paste("mean_coeff_var", estimate, sample_size, sep="_"))
+                x_title <- "Orthologous genes"
+                y_title <- "Mean coefficient of variation"
+                y_lim <- c(-0.025, max(data$value))
 
-            } else if (qtype == "organ_spec") {
+            } else if (plotclass == "express") {
 
-                fname <- sprintf('%s.jpg', paste("expr_cons_organ_spec", quant_num, sep="_"))
-                x_title <- "Intra-organ inter-species quantiles of expression level"
-                ycoord <- c(0.9,2.225)
+                data <- data.frame(value = data$base_averaged, class = data$sign, group = data$group)
+                fname <- sprintf('%s.jpg', paste("coeff_var_expr", estimate, sample_size, sep="_"))
+                x_title <- "Orthologous genes"
+
+                if (estimate == "VST") {
+                    y_title <- "Expression (VST counts)"
+                } else if (estimate == "TPM") {
+                    y_title <- "log2(TPM+1)"
+                }
+                
+                y_lim <- c(min(data$value)-(0.15*min(data$value)), max(data$value))
             }
 
-            corg <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", "Flower", "Stamen", "Carpel")
+            n_all <- sum(data['class'] == "stable" & data['group'] == "All")
+            n_sub <- sum(data['class'] == "stable" & data['group'] == "Matched")
 
-            p <- ggplot(data = data, color = organ, aes(x=quantile, y=scaled_slopes)) + 
-            geom_point(colour = "blueviolet", size = 3) + 
-            geom_smooth(method = 'loess', colour = "blueviolet", size = 1.5) + 
-            scale_y_continuous(expand = c(0.05, 0), breaks = c(1.0, 1.25, 1.5, 1.75, 2.0), 
-                labels = c(format(round(1.0, 1), nsmall = 1), "", format(round(1.5, 1), nsmall = 1), "", format(round(2.0, 1), nsmall = 1))) + 
-            scale_x_continuous(expand = c(0.075, 0), breaks = seq(1:quant_num), labels = x_scale) + 
-            coord_cartesian(ylim = ycoord) + 
-            scale_shape_manual(values = c(21,21)) + 
+            dat_text <- data.frame(
+                label = c(n_all, n_sub, n_all, n_sub),
+                group   = c( "All", "Matched"),
+                x     = c(1, 1, 2, 2),
+                y     = c(rep(y_lim[1], 4))
+                )
+
+            p <- ggplot(data = data, color = class, aes(x=class, y=value)) + 
+            geom_boxplot(colour = "black", size = 1.2, fatten = 2.5, notch = TRUE, 
+                outlier.shape = 16, outlier.size = 3.25, fill = rep(c("orange", "blueviolet"), 2), 
+                outlier.color = "grey25", outlier.stroke = 1, outlier.alpha = 0.28, 
+                outlier.fill = "grey25") + 
+            scale_y_continuous(expand = c(0.028, 0), limits = y_lim) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
-            q <- p + theme_classic() + xlab(x_title) + ylab("Relative rate of expression evolution") + 
-            geom_text(data = p_text, mapping = aes(x = x, y = y, label = label), 
-                parse=TRUE, size=7.25, hjust = 0) + 
-            geom_text(data = l_text, mapping = aes(x = x, y = y, label = label), 
-                size=7.25, hjust = 0) + 
-            geom_segment(data = q1_arw, aes(x = x, y = y, xend = xend, yend = yend), 
-                arrow = arrow(length = unit(0.55, "cm"), type = "closed"), 
-                size=1.1, col="red4", alpha = q_alpha) + 
-            geom_segment(data = q14_arw, aes(x = x, y = y, xend = xend, yend = yend), 
-                arrow = arrow(length = unit(0.55, "cm"), type = "closed"), 
-                size=1.1, col="red4", alpha = q_alpha) +
+            q <- p + theme_classic() + xlab(x_title) + ylab(y_title) + 
+            geom_text(data = dat_text, mapping = aes(x = x, y = y, label = label), 
+                size = 6.5, vjust = 0, colour = "grey25") + 
             theme(text=element_text(size = 16), 
-                strip.text = element_text(size = 19.85), 
-                strip.text.x = element_text(margin = margin(0.38, 0, 0.38, 0, "cm")), 
+                strip.text = element_text(size = 19.5), 
+                strip.text.x = element_text(margin = margin(0.37, 0, 0.37, 0, "cm")), 
                 strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
-                axis.ticks.length = unit(0.22, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.25), 
-                axis.line = element_line(colour = 'black', size = 1.25), 
-                plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
-                axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 6.4, b = 0, l = 10), 
+                axis.ticks.length = unit(0.24, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.2), 
+                axis.line = element_line(colour = 'black', size = 1.2), 
+                plot.margin = unit(c(0.5, 15.5, 1.25, 0), "cm"), 
+                axis.title.y = element_text(size = 22.0, margin = margin(t = 0, r = 6.4, b = 0, l = 10), 
                     colour="black", face = "bold"), 
-                axis.title.x = element_text(size=22.75, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
+                axis.title.x = element_text(size = 22.0, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
                     colour="black", face = "bold"), 
-                axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
-                axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
+                axis.text.x = element_text(size = 19.0, margin = margin(t = 3.5, b = 8), colour="grey20"), 
+                axis.text.y = element_text(size = 18.8, angle = 0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
                 panel.spacing = unit(0.5, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
                 panel.grid.minor.y = element_blank(), 
                 legend.position = "none") 
 
-            q <- q + facet_wrap(~ organ, nrow = 2)
+            q <- q + facet_wrap(~ group, ncol = 2)
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
                 width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
         }
 
-        plotCVExpr(data = str_expr_sl_df)
+        plotCVExpr(data = spec_CV_df, plotclass = "mCV")
+        plotCVExpr(data = spec_CV_df, plotclass = "express")
 
 
 
