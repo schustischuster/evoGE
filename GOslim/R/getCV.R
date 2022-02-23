@@ -438,7 +438,8 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
     }
 
-
+    plotCV(cv_stats_rs, cat = "stable")
+    plotCV(cv_stats_rs, cat = "variable")
 
 }
 
