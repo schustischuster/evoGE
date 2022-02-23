@@ -379,7 +379,28 @@ plotGOs <- function(...) {
 
 
     # Heatmap showing expression of embryo development genes in Arabidopsis thaliana
-    at_embr_dev <-atExpr[atExpr$gene_id %in% slim_ortho_ls[["embryo development"]]$V1,]
+    at_embr_dev <- atExpr[atExpr$gene_id %in% slim_ortho_ls[["embryo development"]]$V1,]
+
+
+    calculateAvgExpr <- function(df) {
+
+            # Split data frame by sample replicates into a list
+            # then get rowMeans for each subset and bind averaged data to gene_id column
+
+            averaged_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], 
+                rep(seq_along(df), 
+                each = 3, 
+                length.out=ncol(df)-1)
+                ), rowMeans)
+              )
+
+            averaged_replicates <- cbind(df[1], averaged_replicates)
+        
+            return(averaged_replicates)
+    }
+
+    at_embr_dev <- calculateAvgExpr(at_embr_dev)
+
 
     # Scale data to the unit interval
     scaleTPM <- function(x){(x-min(x))/(max(x)-min(x))}
@@ -416,14 +437,14 @@ plotGOs <- function(...) {
 
     # Define colors and number of steps for the plot
     steps <- c("#fae85a", "#f7ea40", "#fdc91c", "#ffa700", "#fe8300", "#f85b17", 
-        "#ee2727", "#ea2828", "#ea285a")
+        "#ea2828", "#ea285a")
 
-    pal <- color.palette(steps, c(2, 10, 11, 12, 13, 14, 15, 16), space = "rgb")
+    pal <- color.palette(steps, c(2, 10, 11, 12, 13, 14, 5), space = "rgb")
 
 
     # Create heatmap with reversed RowSideColors
     png(height = 880, width = 1600, pointsize = 10, file = file.path(out_dir, "output", "plots", "at_embr_dev_scaled.png"))
-    cc <- c(rep("#6a54a9",18), rep("#53b0db",12), rep("#2c8654",27), rep("#96ba37",9), rep("#fad819",9), rep("#e075af",12), rep("red3",24), rep("grey70",18))
+    cc <- c(rep("#6a54a9",6), rep("#53b0db",4), rep("#2c8654",9), rep("#96ba37",3), rep("#fad819",3), rep("#e075af",4), rep("red3",8), rep("grey70",6))
 
     heatmap.2(as.matrix(at_embr_dev_scd), 
         density.info = "none",
@@ -443,7 +464,7 @@ plotGOs <- function(...) {
         key.xlab = "",
         key.title = "",
         distfun = function(x) as.dist(sqrt(1/2*(1-cor(t(x))))),
-        hclustfun = function(x) hclust(x, method = "complete"),
+        hclustfun = function(x) hclust(x, method = "average"),
         Rowv = TRUE, 
         Colv = FALSE
         )
