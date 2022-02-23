@@ -382,7 +382,7 @@ plotGOs <- function(...) {
     at_embr_dev <- atExpr[atExpr$gene_id %in% slim_ortho_ls[["embryo development"]]$V1,]
 
 
-    calculateAvgExpr <- function(df) {
+    calculateAvgEx <- function(df) {
 
             # Split data frame by sample replicates into a list
             # then get rowMeans for each subset and bind averaged data to gene_id column
@@ -399,7 +399,7 @@ plotGOs <- function(...) {
             return(averaged_replicates)
     }
 
-    at_embr_dev <- calculateAvgExpr(at_embr_dev)
+    at_embr_dev <- calculateAvgEx(at_embr_dev)
 
 
     # Scale data to the unit interval
