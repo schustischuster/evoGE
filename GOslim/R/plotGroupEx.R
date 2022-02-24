@@ -5,16 +5,8 @@
 # GOslim categories retrieved from TAIR version 20211101
 
 
-plotGroupEx <- function(estimate = c("VST", "TPM"), sample_size, ...) {
+plotGroupEx <- function(sample_size, ...) {
 
-
-    # Show error message if no expression estimate is chosen
-    if ((missing(estimate)) || (!is.element(estimate, c("VST", "TPM"))))
-
-        stop("Please choose one of the available expression estimates: 
-            'VST', 'TPM'",
-            call. = TRUE
-            )
 
     # Show error message if no sample_size for GO term size is chosen
     if ((missing(sample_size)) || (sample_size < 1))
@@ -27,14 +19,10 @@ plotGroupEx <- function(estimate = c("VST", "TPM"), sample_size, ...) {
 	GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
 	GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
 
-    if (estimate == "VST" ) {
 
-        orthoEst = file.path(in_dir, "AT_core_inter_count_mat_vsd_sample_names.csv")
+    orthoEst = file.path(in_dir, "AT_core_inter_count_mat_vsd_sample_names.csv")
+    orthoTPM = file.path(in_dir, "AT_core_inter_TPM_mat_deseq_sample_names.csv")
 
-    } else { 
-
-        orthoEst = file.path(in_dir, "AT_core_inter_TPM_mat_deseq_sample_names.csv")
-    }
 
     filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
     filenames <- filenames[!filenames %in% "./GOslim/output/data/cor_bsv_traject_1000.txt"]
@@ -53,12 +41,13 @@ plotGroupEx <- function(estimate = c("VST", "TPM"), sample_size, ...) {
     GOSLIM <- read.table(GOSLIM, sep="\t", dec=".", quote = "", header=FALSE, skip=4, fill = TRUE, stringsAsFactors=FALSE)
     GOCAT <- read.table(GOCAT, sep="\t", dec=".", header=TRUE, skip=7, fill = TRUE, stringsAsFactors=FALSE)
     orthoEst <- read.table(orthoEst, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+    orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "estimate" = estimate, "sample_size" = sample_size, "res" = res)
+    # return_list <- list("ldf" = ldf, "orthoTPM" = orthoTPM, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "sample_size" = sample_size, "res" = res)
     # return(return_list)
     # }
-    # return_objects <- plotGroupEx(estimate = "VST", sample_size = 412)
+    # return_objects <- plotGroupEx(sample_size = 412)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
@@ -258,9 +247,8 @@ plotGroupEx <- function(estimate = c("VST", "TPM"), sample_size, ...) {
 
             p <- ggplot(data = data, color = class, aes(x=class, y=value)) + 
             geom_boxplot(colour = "black", size = 1.2, fatten = 2.5, notch = TRUE, 
-                outlier.shape = 16, outlier.size = 3.25, fill = rep(c("orange", "blueviolet"), 2), 
-                outlier.color = "grey25", outlier.stroke = 1, outlier.alpha = 0.28, 
-                outlier.fill = "grey25") + 
+                outlier.shape = 21, outlier.size = 3.5, fill = rep(c("orange", "blueviolet"), 2), 
+                outlier.color = "grey25", outlier.alpha = 0.28, outlier.fill = "grey25") + 
             scale_y_continuous(expand = c(0.028, 0), limits = y_lim) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
