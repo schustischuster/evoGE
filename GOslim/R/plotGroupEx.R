@@ -44,7 +44,7 @@ plotGroupEx <- function(sample_size, ...) {
     orthoTPM <- read.table(orthoTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "orthoTPM" = orthoTPM, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "sample_size" = sample_size, "res" = res)
+    # return_list <- list("ldf" = ldf, "orthoEst" = orthoEst, "orthoTPM" = orthoTPM, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "sample_size" = sample_size, "res" = res)
     # return(return_list)
     # }
     # return_objects <- plotGroupEx(sample_size = 412)
