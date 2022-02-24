@@ -16,8 +16,8 @@ plotGroupEx <- function(sample_size, ...) {
             )
 
     # Set file path for input files
-	GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
-	GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
+    GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
+    GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
 
 
     orthoEst = file.path(in_dir, "AT_core_inter_count_mat_vsd_sample_names.csv")
@@ -60,22 +60,28 @@ plotGroupEx <- function(sample_size, ...) {
     #------------------- Calculate average core ortholog expression and CV --------------------
 
 
-    # Prepare angiosperm ortholog data
-    orthoExpr <- data.frame(gene_id=sub("\\:.*", "", orthoEst[,1]),orthoEst[,2:ncol(orthoEst)])
-    
-    if (estimate == "TPM") { 
-        orthoExpr[,2:ncol(orthoExpr)] <- log2(orthoExpr[,2:ncol(orthoExpr)] + 1)
-    }
-
-    orthoExpr <- orthoExpr[!grepl("ERCC", orthoExpr$gene_id),]
-
-
     # Negate dplyr %in%
     `%!in%` = Negate(`%in%`)
 
-    # Remove pollen samples
-    orthoExpr <- orthoExpr %>% select (-c(
+
+    # Prepare angiosperm ortholog data
+    procExprTable <- function(z) {
+
+        zExpr <- data.frame(gene_id=sub("\\:.*", "", z[,1]), z[,2:ncol(z)])
+        zExpr <- zExpr[!grepl("ERCC", zExpr$gene_id),]
+
+        # Remove pollen samples
+        zExpr <- zExpr %>% select (-c(
         A.thaliana_flowers_mature_pollen_28d_.2.:B.distachyon_flowers_mature_pollen_32d_.1.))
+
+        return(zExpr)
+    }
+
+    orthoExpr <- procExprTable(orthoEst)
+    orthoTPM <- procExprTable(orthoTPM)
+
+
+    orthoTPM[,2:ncol(orthoTPM)] <- log2(orthoTPM[,2:ncol(orthoTPM)] + 1)
 
 
     calculateAvgExpr <- function(df) {
@@ -96,6 +102,7 @@ plotGroupEx <- function(sample_size, ...) {
     }
 
     x_avg <- calculateAvgExpr(orthoExpr)
+    x_tavg <- calculateAvgExpr(orthoTPM)
 
     DevSeq_col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", "Flower", 
     	"Stamen", "Carpel"), each=7)
@@ -103,6 +110,7 @@ plotGroupEx <- function(sample_size, ...) {
     repl_names <- paste0(DevSeq_col_names, DevSeq_spec_names)
 
     colnames(x_avg)[2:ncol(x_avg)] <- repl_names
+    colnames(x_tavg)[2:ncol(x_tavg)] <- repl_names
 
 
     # Compute average expression and CV for each organ
@@ -215,24 +223,18 @@ plotGroupEx <- function(sample_size, ...) {
             if (plotclass == "mCV") {
 
                 data <- data.frame(value = data$CV_averaged, class = data$sign, group = data$group)
-                fname <- sprintf('%s.jpg', paste("mean_coeff_var", estimate, sample_size, sep="_"))
+                fname <- sprintf('%s.jpg', paste("mean_coeff_var_VST", sample_size, sep="_"))
                 x_title <- "Orthologous genes"
                 y_title <- "Mean coefficient of variation"
-                y_lim <- c(-0.025, max(data$value))
+                y_lim <- c(-0.0225, max(data$value))
 
             } else if (plotclass == "express") {
 
                 data <- data.frame(value = data$base_averaged, class = data$sign, group = data$group)
-                fname <- sprintf('%s.jpg', paste("coeff_var_expr", estimate, sample_size, sep="_"))
+                fname <- sprintf('%s.jpg', paste("coeff_var_expr_VST", sample_size, sep="_"))
                 x_title <- "Orthologous genes"
-
-                if (estimate == "VST") {
-                    y_title <- "Expression (VST counts)"
-                } else if (estimate == "TPM") {
-                    y_title <- "log2(TPM+1)"
-                }
-                
-                y_lim <- c(min(data$value)-(0.15*min(data$value)), max(data$value))
+                y_title <- "Expression (VST counts)"
+                y_lim <- c(min(data$value)-(0.14*min(data$value)), max(data$value))
             }
 
             n_all <- sum(data['class'] == "stable" & data['group'] == "All")
@@ -249,23 +251,23 @@ plotGroupEx <- function(sample_size, ...) {
             geom_boxplot(colour = "black", size = 1.2, fatten = 2.5, notch = TRUE, 
                 outlier.shape = 21, outlier.size = 3.5, fill = rep(c("orange", "blueviolet"), 2), 
                 outlier.color = "grey25", outlier.alpha = 0.28, outlier.fill = "grey25") + 
-            scale_y_continuous(expand = c(0.028, 0), limits = y_lim) + 
+            scale_y_continuous(expand = c(0.035, 0), limits = y_lim) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
             q <- p + theme_classic() + xlab(x_title) + ylab(y_title) + 
             geom_text(data = dat_text, mapping = aes(x = x, y = y, label = label), 
                 size = 6.5, vjust = 0, colour = "grey25") + 
             theme(text=element_text(size = 16), 
-                strip.text = element_text(size = 19.5), 
-                strip.text.x = element_text(margin = margin(0.37, 0, 0.37, 0, "cm")), 
+                strip.text = element_text(size = 19.85), 
+                strip.text.x = element_text(margin = margin(0.375, 0, 0.375, 0, "cm")), 
                 strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
                 axis.ticks.length = unit(0.24, "cm"), 
                 axis.ticks = element_line(colour = "black", size = 1.2), 
                 axis.line = element_line(colour = 'black', size = 1.2), 
-                plot.margin = unit(c(0.5, 15.5, 1.25, 0), "cm"), 
-                axis.title.y = element_text(size = 22.0, margin = margin(t = 0, r = 6.4, b = 0, l = 10), 
+                plot.margin = unit(c(0.5, 15.95, 1.25, 0), "cm"), 
+                axis.title.y = element_text(size = 22.25, margin = margin(t = 0, r = 6.4, b = 0, l = 10), 
                     colour="black", face = "bold"), 
-                axis.title.x = element_text(size = 22.0, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
+                axis.title.x = element_text(size = 22.25, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
                     colour="black", face = "bold"), 
                 axis.text.x = element_text(size = 19.0, margin = margin(t = 3.5, b = 8), colour="grey20"), 
                 axis.text.y = element_text(size = 18.8, angle = 0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
