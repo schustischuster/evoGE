@@ -15,6 +15,7 @@ plotGOs <- function(...) {
     glob_q1_gop = file.path(in_dir, "global_q1_express_ids.csv")
     glob_q14_gop = file.path(in_dir, "global_q14_express_ids.csv")
     root_q1_gop = file.path(in_dir, "root_q1_express_ids.csv")
+    emb_dev_gop = file.path(in_dir, "embryo_post_embryonic_dev_genes.csv")
 
     filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
     filenames <- filenames[!filenames %in% "./GOslim/output/data/cor_bsv_traject_1000.txt"]
@@ -38,9 +39,10 @@ plotGOs <- function(...) {
     glob_q1_go <- read.table(glob_q1_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
     glob_q14_go <- read.table(glob_q14_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
     root_q1_go <- read.table(root_q1_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
+    emb_dev_go <- read.table(emb_dev_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "glob_q1_go" = glob_q1_go, "glob_q14_go" = glob_q14_go, "root_q1_go" = root_q1_go, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "orthoTPM" = orthoTPM, "atTPM" = atTPM)
+    # return_list <- list("ldf" = ldf, "glob_q1_go" = glob_q1_go, "glob_q14_go" = glob_q14_go, "root_q1_go" = root_q1_go, "emb_dev_go" = emb_dev_go, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "orthoTPM" = orthoTPM, "atTPM" = atTPM)
     # return(return_list)
     # }
     # return_objects <- plotGOs()
