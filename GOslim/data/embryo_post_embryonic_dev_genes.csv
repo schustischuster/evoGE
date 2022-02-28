@@ -29,3 +29,4 @@
 "Meristem development ",29," http://amigo.geneontology.org/amigo/term/GO:0048507"," IP5P6  emb2411  TPL  SRD2  MCM2  WOX4  DEK1  ALDH5F1  AHK4  CDC27B  ALE2  LUH  RPK2  NSN1  RAPTOR1  CHER1  AMP1  OBE4  PCN  TAR2  MIK1  LUG  DCP2  DOT2  EMB1705  MOB1A  OBE2  EYE  TOP1ALPHA"
 "Cotyledon development ",21," http://amigo.geneontology.org/amigo/term/GO:0048825"," IP5P6  ABCG11  ABCG14  POT12  RPN12A  ATHB-13  ALDH5F1    PID  NSN1  OPS  TCP4  PRL1  DOT4  ATML1  TAR2  NPY1  DOT2  INVE  GIF1  CUL4"
 "Embryonic morphogenesis ",18," http://amigo.geneontology.org/amigo/term/GO:0048598"," IP5P6  POL2A  ABCG11  ABCG14    ATHB-13  AHK4  PEX12  OPS  TCP4  TOC75-3  MEE43  DOT4  TAR2  DOT2  SCL23  NMT1"
+"Xylem and phloem pattern formation ",14," http://amigo.geneontology.org/amigo/term/GO:0010051"," IP5P6  TPL  ABCG11  ABCG14    OPS  CHER1  AMP1  PCN  NOV  DOT4  TAR2  CUV  DOT2"
