@@ -1,6 +1,6 @@
 ## Make angiosperm phylogeny and ortholog gene plots
 
-This code allows to generate the angiosperm phylogeny and coding/non-coding orthologous gene plots. 
+This code allows to build the angiosperm and mammalian phylogenies based on divergence times obtained from [TimeTree](http://www.timetree.org/), and to generate plots showing the total number of coding/non-coding orthologous genes for the pairwise species comparisons. 
 
 
 ## Contents
