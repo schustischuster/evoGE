@@ -12,9 +12,10 @@ plotGOs <- function(...) {
     orthoTPM = file.path(in_dir, "AT_core_inter_tpm_mat_deseq_sample_names.csv")
     atTPM = file.path(in_dir, "AT_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
 
-    glob_q1_gop = file.path(in_dir, "global_q1_express_ids.csv")
-    glob_q14_gop = file.path(in_dir, "global_q14_express_ids.csv")
-    root_q1_gop = file.path(in_dir, "root_q1_express_ids.csv")
+    glob_q1_gop = file.path(in_dir, "global_q1_express_enrichment.csv")
+    glob_q14_gop = file.path(in_dir, "global_q14_express_enrichment.csv")
+    root_q1_gop = file.path(in_dir, "root_q1_express_enrichment.csv")
+    emb_dev_gop = file.path(in_dir, "embryo_post_embryonic_dev_genes.csv")
 
     filenames <- list.files(file.path(out_dir, "output", "data"), pattern="*.txt", full.names=TRUE)
     filenames <- filenames[!filenames %in% "./GOslim/output/data/cor_bsv_traject_1000.txt"]
@@ -38,9 +39,10 @@ plotGOs <- function(...) {
     glob_q1_go <- read.table(glob_q1_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
     glob_q14_go <- read.table(glob_q14_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
     root_q1_go <- read.table(root_q1_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
+    emb_dev_go <- read.table(emb_dev_gop, sep=",", dec=".", header=TRUE, fill = TRUE, stringsAsFactors=FALSE)
 
 
-    # return_list <- list("ldf" = ldf, "glob_q1_go" = glob_q1_go, "glob_q14_go" = glob_q14_go, "root_q1_go" = root_q1_go, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "orthoTPM" = orthoTPM, "atTPM" = atTPM)
+    # return_list <- list("ldf" = ldf, "glob_q1_go" = glob_q1_go, "glob_q14_go" = glob_q14_go, "root_q1_go" = root_q1_go, "emb_dev_go" = emb_dev_go, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "orthoTPM" = orthoTPM, "atTPM" = atTPM)
     # return(return_list)
     # }
     # return_objects <- plotGOs()
@@ -223,7 +225,7 @@ plotGOs <- function(...) {
             axis.title.x = element_text(size=22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
                 colour="black", face = "bold"), 
             axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7), colour="grey20"), 
-            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 10, r = -2), colour="grey20")
+            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 10, r = -2), colour="grey5")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -470,6 +472,54 @@ plotGOs <- function(...) {
         )
 
     dev.off()
+
+
+
+    # Plot GO categories present in embryo and post-embryonic development GOslim parent term
+    plotEDCat <- function(df) {
+
+        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), "child_terms" , sep="_"))
+
+        # Remove some GO categories
+        go_rm_ls <- c("Developmental process ", "Anatomical structure development ", 
+            "Multicellular organismal process ", "Multicellular organism development ", 
+            "System development ", "Post-embryonic development ", "Embryo development ", 
+            "Reproductive process ", "Reproduction ", "Developmental process involved in reproduction ", 
+            "Reproductive system development ", "Cellular component organization or biogenesis ", 
+            "Cellular component organization ", "Organelle organization ", "RNA processing ", 
+            "NcRNA metabolic process ", "Cell division ")
+        df <- df[ ! df$Pathway %in% go_rm_ls, ]
+        df$Pathway <- gsub("Embryo development ending in seed dormancy ", 
+            "Embryo dev ending in seed dormancy ", df$Pathway)
+
+
+        p <- ggplot(df, aes(x = reorder(Pathway, nGenes), y = nGenes)) +
+        geom_bar(stat = "identity", width = 0.75, fill = "#37764f") + 
+        coord_flip() + 
+        scale_x_discrete(expand = c(0.025,0)) + 
+        scale_y_continuous(expand = c(0.03,0)) + 
+        labs(x = NULL, y = "Number of Genes") + 
+        ggtitle("Embryo and post-embryonic development") + 
+        theme(panel.background = element_blank(), 
+            axis.ticks.length = unit(0.24, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.1), 
+            axis.line = element_line(colour = 'black', size = 1.1), 
+            plot.margin = unit(c(0.5, 0.5, 1.0, 0.5), "cm"), 
+            plot.title = element_text(size = 19.85, margin = margin(t = 1, r = 0, b = 4, l = 0), hjust = 0.5),
+            axis.title.y = element_text(size = 22.0, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+                colour="black", face = "bold"), 
+            axis.title.x = element_text(size = 22.0, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
+                colour="black", face = "bold"), 
+            axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 7), colour = "grey5"), 
+            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 10, r = -2), colour = "grey5")
+        )
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
+               width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+
+    }
+
+    plotEDCat(emb_dev_go)
 
 
 
