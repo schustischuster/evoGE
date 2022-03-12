@@ -1,6 +1,7 @@
 # Visualize results of GO analysis 
 # Input files: GO annotation files from TAIR, quantile expression gene lists of interest, 
-# GOslim terms cntaining core orthologs that evolve at different rate than background
+# GOslim terms containing core orthologs that evolve at different rate than background,
+# Arabidopsis thaliana DevSeq gene expression tables
 
 
 plotGOs <- function(...) {
@@ -520,7 +521,6 @@ plotGOs <- function(...) {
     }
 
     plotEDCat(emb_dev_go)
-
 
 
 
