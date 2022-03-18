@@ -22,7 +22,6 @@ Install Bioconductor core packages and ggtree:
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install()
-
 BiocManager::install(ggtree)
 
 ```
