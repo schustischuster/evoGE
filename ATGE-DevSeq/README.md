@@ -8,7 +8,7 @@ This code visualizes the results of the AtGenExpress (ATGE) and DevSeq comparati
 * [Getting Started](#getting-started)
   * [Required Packages](#required-packages)
   * [Data input](#data-input)
-* [Visualization](#visualization)
+* [Data visualization](#data-visualization)
 * [Session info](#session-info)
 
 
@@ -35,7 +35,7 @@ invisible(lapply(lib_List, library, character.only = TRUE))
 ```
   
 ### Data input
-Download and extract the entire directory to the working directory on your computer. Then, set the path for input and output files and source the R scripts:
+Download and extract the DevSeq repository to the working directory on your computer. Then, set the path for input and output files and source the R scripts:
 
 ```R
 in_dir <- file.path("evoGE", "ATGE-DevSeq", "data")
@@ -45,12 +45,12 @@ source(file.path("evoGE", "ATGE-DevSeq", "R", "DevSeq_ATGE_plots.R"))
 
 ```
 
-## Visualization
+## Data visualization
 
 After loading the data and sourcing the R script, run the following commands to generate the plots:
 
 ```R
-# Pairwise correlation plots
+# Pairwise gene correlation plots
 plotRE(exp_data = devseq_log2_re_vs_atge_log2_re, genelist = genelist)
 
 # Correlation heatmap of combined ATGE-DevSeq data
