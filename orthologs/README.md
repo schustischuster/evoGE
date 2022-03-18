@@ -16,22 +16,18 @@ This code allows to build the angiosperm and mammalian phylogenies based on dive
 
 
 ### Required Packages
-Install Bioconductor if not already installed:
+Install Bioconductor core packages and ggtree:
 
 ```R
-# Install Bioconductor v3.10 for R >=3.6.1
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install(version = "3.10")
+BiocManager::install()
 
 ```
 
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-# Install ggtree
-BiocManager::install("ggtree")
-
 # Required packages
 lib_List <- c("dplyr", "ggplot2", "ape", "scales", "gtable", "ggtree")
 
