@@ -23,6 +23,8 @@ if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install()
 
+BiocManager::install(ggtree)
+
 ```
 
 Install and load the following R packages before running the reproducible scripts:
