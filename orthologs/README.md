@@ -51,6 +51,7 @@ in_dir <- file.path("evoGE", "orthologs", "data")
 out_dir <- file.path("evoGE", "orthologs")
 
 source(file.path("evoGE", "orthologs", "R", "plotPhyloCore.R"))
+source(file.path("evoGE", "orthologs", "R", "plotPhyloComp.R"))
 
 ```
 ---
