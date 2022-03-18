@@ -17,6 +17,16 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 
 
 ### Required Packages
+Install Bioconductor core packages and ggtree:
+
+```R
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install()
+BiocManager::install(ggtree)
+
+```
+
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
@@ -24,15 +34,14 @@ Install and load the following R packages before running the reproducible script
 lib_List <- c("dplyr", "gplots", "ggplot2", "factoextra", "dendextend", "ggbeeswarm", "lsmeans", "scales", 
 "matrixStats", "ape", "ggtree")
 
-loadLibrary <- function(x) { 
-    if (!require(x, character.only = T)) {
-        install.packages('x')
-        library(x)
-    }
+# Install missing packages
+instpack <- lib_List %in% installed.packages()[,"Package"]
+if (any(instpack == FALSE)) {
+  install.packages(lib_List[!instpack])
 }
 
 # Load packages
-invisible(lapply(lib_List, loadLibrary))
+invisible(lapply(lib_List, library, character.only = TRUE))
 
 ```
 
