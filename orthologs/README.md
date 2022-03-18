@@ -8,7 +8,7 @@ This code allows to build the angiosperm and mammalian phylogenies based on dive
 * [Getting Started](#getting-started)
   * [Required Packages](#required-packages)
   * [Data input](#data-input)
-* [Data vizualization](#data-vizualization)
+* [Data analysis and vizualization](#data-analysis-and-vizualization)
 * [Session info](#session-info)
 
 ---
