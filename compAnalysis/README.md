@@ -1,7 +1,7 @@
 
 ## Perform comparative analysis of DevSeq and Brawand data
 
-This code allows to reproduce the inter-organ intra-species, inter-species and cross-kingdom analyses of the DevSeq and Brawand [(Brawand et al., 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) data sets. 
+This code allows to reproduce the inter-organ intra-species, inter-species and cross-kingdom analyses of the DevSeq and mammalian organ [(Brawand et al., 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) RNA-seq data sets. 
 
 
 ## Contents
