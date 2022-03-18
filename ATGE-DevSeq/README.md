@@ -35,7 +35,7 @@ invisible(lapply(lib_List, library, character.only = TRUE))
 ```
   
 ### Data input
-Download and extract the DevSeq repository to the working directory on your computer. Then, set the path for input and output files and source the R scripts:
+Download and extract the evoGE repository to the working directory on your computer. Then, set the path for input and output files and source the R scripts:
 
 ```R
 in_dir <- file.path("evoGE", "ATGE-DevSeq", "data")
