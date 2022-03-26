@@ -495,7 +495,7 @@ plotGOs <- function(...) {
 
 
         p <- ggplot(df, aes(x = reorder(Pathway, nGenes), y = nGenes)) +
-        geom_bar(stat = "identity", width = 0.75, fill = "#37764f") + 
+        geom_bar(stat = "identity", width = 0.75, fill = "#5e5e5e") + 
         coord_flip() + 
         scale_x_discrete(expand = c(0.025,0)) + 
         scale_y_continuous(expand = c(0.03,0)) + 
