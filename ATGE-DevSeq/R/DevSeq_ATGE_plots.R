@@ -352,9 +352,14 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
               sprintf('%s_dend.png', paste(dfname, coefficient, sep="_"))
               )
 
+    colnames(x)[colnames(x) == "flower_stg15_carpels_ATGE"] <- "fruit_stg15_carpels_ATGE"
+    colnames(x)[colnames(x) == "flower_stg16_siliques_ATGE"] <- "fruit_stg16_siliques_ATGE"
+    colnames(x)[colnames(x) == "flower_stg15_carpels_DevSeq"] <- "fruit_stg15_carpels_DevSeq"
+    colnames(x)[colnames(x) == "flower_stg16_siliques_DevSeq"] <- "fruit_stg16_siliques_DevSeq"
+
     # Define colors based on sample name
     label_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#1d2f55", fl="#e40000", ro="#3d62b4", 
-      le="#00d200", co="#00d200", ca="#00d200")
+      le="#00d200", co="#00d200", ca="#00d200", fr="#8a0000")
 
     x_df <- x[, 7:ncol(x)]
     x_df[is.na(x_df)] <- 0 # replaces NAs by 0
@@ -392,7 +397,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     brc_col <- factor(brc_col, unique(brc_col))
 
     png(height = 1195, width = 1200, pointsize = 10.94, file = fname)
-    par(mar = c(17.31, 4, 3.5, 1.5), mgp = c(3, 0.525, 0), lwd = 8.8, cex = 3, cex.axis = 0.85)
+    par(mar = c(17.1, 4, 3.15, 1.5), mgp = c(3, 0.525, 0), lwd = 8.8, cex = 3, cex.axis = 0.85)
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
     plot(df_dend)
     axis(side = 2, lwd = 3.5)
@@ -453,22 +458,22 @@ plotRE <- function(exp_data, genelist) {
     exp_df_ATGE <- subset(exp_df, experiment == "ATGE")
     exp_df_DevSeq <- subset(exp_df, experiment == "DevSeq")
 
-    x_labels <- c("root_whole_root_7d" = "rt", "root_whole_root_14d.17d" = "", 
-        "root_whole_root_21d" = "", "hypocotyl_10d.7d" = "", "X1st_internode_24d.28d" = "st", 
-        "cotyledons_7d" = "", "leaf_1_2_7d" = "", "leaf_1_2_petiole_10d.17d" = "lf", 
+    x_labels <- c("root_whole_root_7d" = "Rt", "root_whole_root_14d.17d" = "", 
+        "root_whole_root_21d" = "", "hypocotyl_10d.7d" = "", "X1st_internode_24d.28d" = "St", 
+        "cotyledons_7d" = "", "leaf_1_2_7d" = "", "leaf_1_2_petiole_10d.17d" = "Lf", 
         "leaf_5_6_17d" = "", "leaves_senescing_35d" = "", "apex_vegetative_7d" = "", 
-        "apex_vegetative_14d" = "ap", "apex_inflorescence_21d" = "", "flower_stg9_21d." = "", 
-        "flower_stg10_11_21d." = "fl", "flower_stg12_21d." = "", "flower_stg15_21d." = "", 
-        "flower_stg12_sepals_21d." = "", "flower_stg15_sepals_21d." = "flo", "flower_stg12_petals_21d." = "", 
+        "apex_vegetative_14d" = "Ap", "apex_inflorescence_21d" = "", "flower_stg9_21d." = "", 
+        "flower_stg10_11_21d." = "Fl", "flower_stg12_21d." = "", "flower_stg15_21d." = "", 
+        "flower_stg12_sepals_21d." = "", "flower_stg15_sepals_21d." = "Flo", "flower_stg12_petals_21d." = "", 
         "flower_stg15_petals_21d." = "", "flower_stg12_stamens_21d." = "", "flower_stg15_stamens_21d." = "", 
-        "flower_stg12_carpels_21d." = "", "flower_stg15_carpels_21d." = "ft", "fruit_stg16_siliques_28d." = "")
+        "flower_stg12_carpels_21d." = "", "flower_stg15_carpels_21d." = "Ft", "fruit_stg16_siliques_28d." = "")
 
     line_df <- data.frame(
         x = c(0.5, 3.5, 4.5, 5.5, 10.5, 13.5, 24.5),
         y = -0.135,
         xend = c(3.5, 4.5, 5.5, 10.5, 13.5, 24.5, 26.5),
         yend = -0.135,
-        colour = c("#3d62b4", "#243968", "#009700", "#00d200", "#ff9100", "#e40000", "#b10000")
+        colour = c("#3d62b4", "#243968", "#009700", "#00d200", "#ff9100", "#e40000", "#8a0000")
         )
 
     peacor = unique(data$Pearson) #cor value label
@@ -511,13 +516,13 @@ plotRE <- function(exp_data, genelist) {
 
 
     p <- ggplot() + 
-        geom_point(data=exp_df_ATGE, aes(x=samples, y=RE), shape=17, color="#ccad00", stroke=3.5) + 
-        geom_line(data=exp_df_ATGE, aes(x=samples, y=RE, group=1), color="#ccad00", linetype="solid", lwd=1.4) + 
-        geom_point(data=exp_df_DevSeq, aes(x=samples, y=RE), shape=16, color="#b82e90", stroke=3.5) + 
-        geom_line(data=exp_df_DevSeq, aes(x=samples, y=RE, group=1), color="#b82e90", linetype="21", lwd=1.4) + 
+        geom_point(data=exp_df_ATGE, aes(x=samples, y=RE), shape=17, color="#ccad00", stroke=3.575) + 
+        geom_line(data=exp_df_ATGE, aes(x=samples, y=RE, group=1), color="#ccad00", linetype="solid", lwd=1.55) + 
+        geom_point(data=exp_df_DevSeq, aes(x=samples, y=RE), shape=16, color="#b82e90", stroke=3.575) + 
+        geom_line(data=exp_df_DevSeq, aes(x=samples, y=RE, group=1), color="#b82e90", linetype="21", lwd=1.55) + 
         scale_y_continuous(expand = c(0.075, 0), limits=c(-0.16, 1.01), breaks = seq(0, 1, len = 6)) + 
         scale_x_discrete(expand = c(0.025, 0), labels = x_labels) + 
-        geom_segment(data = line_df, mapping = aes(x=x, y=y, xend=xend, yend=yend, color=colour), size=5, inherit.aes = FALSE) + 
+        geom_segment(data = line_df, mapping = aes(x=x, y=y, xend=xend, yend=yend, color=colour), size=5.9, inherit.aes = FALSE) + 
         scale_colour_identity() + 
         geom_text(data = dat_text,
             mapping = aes(x = x, y = y, label = label), size=6.2) + 
@@ -534,12 +539,12 @@ plotRE <- function(exp_data, genelist) {
             axis.ticks.length = unit(0.2, "cm"), 
             axis.ticks = element_line(colour = "black", size = 0.9), 
             axis.line = element_line(colour = 'black', size = 0.9), 
-            plot.margin = unit(c(0.15, 0.2, 0.2, 0.4),"cm"), 
+            plot.margin = unit(c(0.1, 0.2, 0.1, 0.4), "cm"),  
             axis.title.y = element_text(size=18.9, margin = margin(t = 0, r = 5.5, b = 0, l = 11.5), colour="black", 
                 face = "plain"), 
             axis.title.x = element_text(size=18.9, margin = margin(t = 4.5, r = 0, b = 0, l = 0), colour="black", 
                 face = "plain"), 
-            axis.text.x = element_text(size=17.0, angle=0, margin = margin(t = 2.5, b = 4), colour="grey5"), 
+            axis.text.x = element_text(size=17.0, angle=0, margin = margin(t = 2.75, b = 3.75), colour="grey25"), 
             axis.text.y = element_text(size=16.2, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey5"), 
             panel.spacing = unit(0.45, "cm"), 
             panel.grid.major = element_blank(),
