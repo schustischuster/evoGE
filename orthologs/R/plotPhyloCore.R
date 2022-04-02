@@ -42,7 +42,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
   # Make marker species phylogeny plot
   png(file = file.path(out_dir, "output", "plots", treename), 
     width = 3250, height = 3700, res = 800)
-  par(mar = c(0.5, 0.25, 0, 0.25), bg=NA)
+  par(mar = c(0.88, 0.25, 0, 0.25), bg=NA)
 
   plot(vert_tree, type = "phylogram", use.edge.length = TRUE, show.node.label = FALSE, 
     edge.width = 1.55, edge.lty = 1, font = 3, root.edge = FALSE, label.offset = 2, 
@@ -166,7 +166,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
     geom_text(data = dat_text, mapping = aes(x = x, y = y, label=label), color = "red", size = 3.8)
 
     q <- p + facet_wrap( ~ class, scales='free', ncol = 1) + 
-    theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of pairwise orthologs w/ A.thaliana") + 
+    theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of pairwise 1-1 orthologs w/ A.thaliana") + 
     scale_color_manual(values = "gray35") + 
     geom_text(data = spec_label, mapping = aes(x = x, y = y, label = label), size=3.75) + 
     theme(
@@ -181,14 +181,14 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       panel.grid.minor = element_blank(), 
       panel.spacing = unit(0.125, "lines"), 
       panel.grid.minor.y = element_line(size = 0.3, colour = "grey95"), 
-      axis.title.x = element_text(colour = "black", size=12, 
+      axis.title.x = element_text(colour = "black", size = 12, 
         margin = margin(t = 1.0, r = 0, b = 10.75, l = 0)), 
-      axis.title.y = element_text(colour = "black", size=12, 
+      axis.title.y = element_text(colour = "black", size = 12, 
         margin = margin(t = 0, r = 3.125, b = 0, l = 0)), 
-      axis.text.x = element_text(colour = "black", size=10.75, 
+      axis.text.x = element_text(colour = "black", size = 10.6, 
         margin = margin(t = 2, r = 0, b = 5.0, l = 0), vjust = 0.5), 
-      axis.text.y = element_text(colour = "black", size=10.75, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
-      panel.border = element_rect(colour = "grey55", fill=NA, size=1))
+      axis.text.y = element_text(colour = "black", size = 10.6, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
+      panel.border = element_rect(colour = "grey55", fill = NA, size = 1))
 
 
     ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
