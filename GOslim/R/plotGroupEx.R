@@ -226,6 +226,7 @@ plotGroupEx <- function(sample_size, ...) {
                 fname <- sprintf('%s.jpg', paste("mean_coeff_var_VST", sample_size, sep="_"))
                 x_title <- "Orthologous genes"
                 y_title <- "Mean coefficient of variation"
+                y_title_mar <- c(t = 0, r = 6.4, b = 0, l = 10)
                 y_lim <- c(-0.0225, max(data$value))
 
             } else if (plotclass == "express") {
@@ -234,6 +235,7 @@ plotGroupEx <- function(sample_size, ...) {
                 fname <- sprintf('%s.jpg', paste("coeff_var_expr_VST", sample_size, sep="_"))
                 x_title <- "Orthologous genes"
                 y_title <- "Expression (VST counts)"
+                y_title_mar <- c(t = 0, r = 2.4, b = 0, l = 14)
                 y_lim <- c(min(data$value)-(0.14*min(data$value)), max(data$value))
             }
 
@@ -248,8 +250,8 @@ plotGroupEx <- function(sample_size, ...) {
                 )
 
             p <- ggplot(data = data, color = class, aes(x=class, y=value)) + 
-            geom_boxplot(colour = "black", size = 1.2, fatten = 2.5, notch = TRUE, 
-                outlier.shape = 21, outlier.size = 3.5, fill = rep(c("orange", "blueviolet"), 2), 
+            geom_boxplot(colour = "black", size = 1.15, fatten = 2.5, notch = TRUE, 
+                outlier.shape = 21, outlier.size = 3.5, fill = c("#ffd280", "#fca80a", "#91c7e5", "#3195cf"), 
                 outlier.color = "grey25", outlier.alpha = 0.28, outlier.fill = "grey25") + 
             scale_y_continuous(expand = c(0.035, 0), limits = y_lim) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
@@ -260,16 +262,16 @@ plotGroupEx <- function(sample_size, ...) {
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 19.85), 
                 strip.text.x = element_text(margin = margin(0.375, 0, 0.375, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.35), 
                 axis.ticks.length = unit(0.24, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.2), 
-                axis.line = element_line(colour = 'black', size = 1.2), 
-                plot.margin = unit(c(0.5, 15.95, 1.25, 0), "cm"), 
-                axis.title.y = element_text(size = 22.25, margin = margin(t = 0, r = 6.4, b = 0, l = 10), 
+                axis.ticks = element_line(colour = "black", size = 1.15), 
+                axis.line = element_line(colour = 'black', size = 1.15), 
+                plot.margin = unit(c(0.5, 15.75, 1.25, 0), "cm"), 
+                axis.title.y = element_text(size = 22.0, margin = margin(y_title_mar), 
                     colour="black", face = "bold"), 
-                axis.title.x = element_text(size = 22.25, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
+                axis.title.x = element_text(size = 22.0, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
                     colour="black", face = "bold"), 
-                axis.text.x = element_text(size = 19.0, margin = margin(t = 3.5, b = 8), colour="grey20"), 
+                axis.text.x = element_text(size = 19.0, margin = margin(t = 3.5, b = 8), colour="grey5"), 
                 axis.text.y = element_text(size = 18.8, angle = 0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
                 panel.spacing = unit(0.5, "cm"), 
                 panel.grid.major = element_blank(),
@@ -442,22 +444,19 @@ plotGroupEx <- function(sample_size, ...) {
         get_cat <- unique(get_all$category)
 
         extr_all_num <- function(t) {
-            num <- sum(get_all$category == t)
-            out <- data.frame(category = t, num = num, group = rep("All"))
+
+            num_a <- sum(get_all$category == t)
+            out_a <- data.frame(category = t, num = num_a, group = "All")
+
+            num_m <- sum(get_match$category == t)
+            out_m <- data.frame(category = t, num = num_m, group = "Matched")
+
+            ratio <- data.frame(category = t, num = (num_m/num_a), group = "Ratio")
+            out <- rbind(ratio)
             return(out)
         }
 
-        all_num <- data.frame(do.call(rbind, lapply(get_cat, extr_all_num)))
-
-        extr_match_num <- function(u) {
-            num <- sum(get_match$category == u)
-            out <- data.frame(category = u, num = num, group = rep("Matched"))
-            return(out)
-        }
-        
-        match_num <- data.frame(do.call(rbind, lapply(get_cat, extr_match_num)))
-
-        dat_text <- rbind(all_num, match_num)
+        dat_text <- data.frame(do.call(rbind, lapply(get_cat, extr_all_num)))
         dat_text$y <- rep(10.2)
 
         # Label facet strips
@@ -467,8 +466,8 @@ plotGroupEx <- function(sample_size, ...) {
                     )
 
         p <- ggplot(data = data, color = group, aes(x=reorder(category, base_averaged, .fun='median'), y=base_averaged)) + 
-        geom_boxplot(colour = "black", size = 1.2, fatten = 2.5, notch = TRUE, 
-            outlier.shape = NA, fill = rep(c("orange", "blueviolet"), each = 13)) + 
+        geom_boxplot(colour = "black", size = 1.15, fatten = 2.5, notch = TRUE, 
+            outlier.shape = NA, fill = rep(c("#f7ba1e", "#46a0d4"), each = 13)) + 
         coord_flip(ylim = quantile(data$base_averaged, c(0.0025, 0.9975))) + 
         scale_x_discrete(expand = c(0.025, 0)) + 
         guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
@@ -477,19 +476,19 @@ plotGroupEx <- function(sample_size, ...) {
         # geom_text(data = dat_text, mapping = aes(x = category, y = y, label = num, group = group), 
             # size = 6.65, vjust = 0.5, hjust = 1, colour = "grey50") + 
         theme(text=element_text(size = 16), 
-            strip.text = element_text(size = 19.5), 
-            strip.text.x = element_text(margin = margin(0.37, 0, 0.37, 0, "cm")), 
-            strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+            strip.text = element_text(size = 19.85), 
+            strip.text.x = element_text(margin = margin(0.375, 0, 0.375, 0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.35), 
             axis.ticks.length = unit(0.24, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.2), 
-            axis.line = element_line(colour = 'black', size = 1.2), 
-            plot.margin = unit(c(0.5, 0.2, 1.25, -0.4), "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.15), 
+            axis.line = element_line(colour = 'black', size = 1.15), 
+            plot.margin = unit(c(0.5, 0.5, 1.25, 0.5), "cm"), 
             axis.title.y = element_text(size = 22.0, margin = margin(t = 0, r = 0, b = 0, l = 0), 
                 colour="black", face = "bold"), 
             axis.title.x = element_text(size = 22.0, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
                 colour="black", face = "bold"), 
             axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
-            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 0, r = 2.5), colour="grey20"), 
+            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 0, r = 2.5), colour="grey5"), 
             panel.spacing = unit(0.5, "cm"), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
