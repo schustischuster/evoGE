@@ -16,8 +16,8 @@ plotGroupEx <- function(sample_size, ...) {
             )
 
     # Set file path for input files
-    GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
-    GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
+	GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
+	GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
 
 
     orthoEst = file.path(in_dir, "AT_core_inter_count_mat_vsd_sample_names.csv")
