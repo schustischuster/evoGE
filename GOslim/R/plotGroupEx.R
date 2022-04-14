@@ -294,14 +294,7 @@ plotGroupEx <- function(sample_size, ...) {
     message("Processing GOslim terms...")
     
 
-    if (aspect == "biological_process") {
-
-        selCAT <- dplyr::filter(GOCAT, grepl("biological process", ONTOLOGY.ASPECT))
-
-    } else if (aspect == "molecular_function") {
-
-        selCAT <- dplyr::filter(GOCAT, grepl("molecular function", ONTOLOGY.ASPECT))
-    }
+    selCAT <- dplyr::filter(GOCAT, grepl("biological process", ONTOLOGY.ASPECT))
 
     slim_names <- selCAT$SLIM_NAME
     slim_name_ls <- setNames(as.list(c(slim_names)), c(slim_names)) # generate named list with all GOSLIM terms
@@ -318,28 +311,20 @@ plotGroupEx <- function(sample_size, ...) {
     coreOrthologs <- as.data.frame(coreOrthologs)
 
 
-    # Clean up GOslim term list: Remove specific categories
-    if (aspect == "biological_process") {
-        
-        # Remove "other" categories because not informative
-        # Remove "response to light stimulus" because plants were grown at constant light
-        # Remove "cell cycle" because those genes have strong, cell-type specific expression that makes it impossible to match controls
-        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other metabolic processes" = NULL)
-        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other cellular processes" = NULL)
-        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other biological processes" = NULL)
-        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("response to light stimulus" = NULL)
-        slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("cell cycle" = NULL)
-        # Remove some remaining functional ontologies from list
-        slim_genes_uls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, !grepl("F", V8))})
-        # Delete "Cell Growth" GOslim term from "Growth" category
-        slim_genes_uls[["growth"]] <- dplyr::filter(slim_genes_uls[["growth"]], !grepl("cell growth", V9))
+    # Clean up GOslim term list
     
-    } else if (aspect == "molecular_function") {
-
-        # Correct GOslim term for class "RNA binding" (it contains another term called "translation factor activity, RNA binding")
-        slim_genes_uls[["RNA binding"]]$V9 <- rep("RNA binding", nrow(slim_genes_uls[["RNA binding"]]))
-
-    }
+    # Remove "other" categories because not informative
+    # Remove "response to light stimulus" because plants were grown at constant light
+    # Remove "cell cycle" because those genes have strong, cell-type specific expression that makes it impossible to match controls
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other metabolic processes" = NULL)
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other cellular processes" = NULL)
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("other biological processes" = NULL)
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("response to light stimulus" = NULL)
+    slim_genes_uls <- slim_genes_uls %>% purrr::list_modify("cell cycle" = NULL)
+    # Remove some remaining functional ontologies from list
+    slim_genes_uls <- lapply(slim_genes_uls, function(x){dplyr::filter(x, !grepl("F", V8))})
+    # Delete "Cell Growth" GOslim term from "Growth" category
+    slim_genes_uls[["growth"]] <- dplyr::filter(slim_genes_uls[["growth"]], !grepl("cell growth", V9))
 
 
     # Get list of orthologous genes that are associated with a GOSLIM term
@@ -394,35 +379,134 @@ plotGroupEx <- function(sample_size, ...) {
     cv_stats <- dplyr::filter(cv_stats, cv_stats$chisq_FDR <= 0.001, cv_stats$fisher_FDR <= 0.001)
 
 
-    # Reshape data for ggplot2
-    cv_stats_rs <- data.frame(
-        GO_term = rep(cv_stats$GO_term,2), CV_cat = rep(c("stable genes", "variable genes"), each = nrow(cv_stats)), 
-        n_genes = c(cv_stats$stable_genes, cv_stats$variable_genes), 
-        chisq_test = rep(cv_stats$chisq_test,2), fisher_test = rep(cv_stats$fisher_test,2), 
-        chisq_FDR = rep(cv_stats$chisq_FDR,2), fisher_FDR = rep(cv_stats$fisher_FDR,2))
-    cv_stats_rs <- cv_stats_rs[order(cv_stats_rs$GO_term),]
+    # Select GOslim categories that show significant chisq_test p-value
+    slim_ortho_all_ls <- slim_ortho_ls[c(as.character(cv_stats$GO_term))] # all core orthologos
+
+    getGOCat <- function(r) {
+        gene_id <- r$V1
+        category <- r$V9
+        df <- cbind(gene_id = gene_id, category = category)
+    }
+
+    slim_ortho_all_df <- data.frame(do.call(rbind, lapply(slim_ortho_all_ls, getGOCat)))
+
+    x_tavg$base_averaged <- rowMeans(x_tavg[2:ncol(x_tavg)])
+    x_tavg <- x_tavg %>% select(gene_id, base_averaged)
+
+    # Replace mean VST values with mean TPM expression values in all/matched groups
+    spec_CV_all <- merge(subset(spec_CV_all, select=-c(base_averaged)), x_tavg)
+    spec_CV_match <- merge(subset(spec_CV_match, select=-c(base_averaged)), x_tavg)
+
+    slim_ortho_all_expr <- merge(slim_ortho_all_df, spec_CV_all, by = "gene_id") %>% 
+                           select(-c(CV_Root:CV_averaged, sign)) %>% 
+                           arrange(category)
+
+    slim_ortho_match_expr <- merge(slim_ortho_all_df, spec_CV_match, by = "gene_id") %>% 
+                             select(-c(CV_Root:CV_averaged, sign)) %>% 
+                             arrange(category)
+
+    slim_ortho_expr <- rbind(slim_ortho_all_expr, slim_ortho_match_expr)
 
 
-    # Define specific notation
-        set_scientific <- function(l) {
-            # turn in to character string in scientific notation
-            l <- formatC(l, format = "e", digits = 0)
-            # quote the part before the exponent to keep all the digits
-            l <- gsub("^(.*)e", "'\\1'e", l)
-            # turn the 'e+' into plotmath format
-            l <- gsub("e", "%*%10^", l)
-            # return this as an expression
-            parse(text=l)
+
+    # Plot mean expression of GOslim groups across samples
+    plotGOEx <- function(data) {
+
+        fname <- sprintf('%s.jpg', paste("mean_expr_across_samples", sample_size, sep="_"))
+
+        # Capitalize first string of each GO term category name
+        CapStr <- function(y) {
+            c <- strsplit(y, " ")[[1]]
+            paste(toupper(substring(c, 1,1)), substring(c, 2),
+                sep="", collapse=" ")
         }
 
+        data$category <- paste(sapply(gsub("([A-Za-z]+).*", "\\1", data$category), CapStr), 
+            sub(".*? ", "", data$category))
+
+        # Correct some formating errors
+        data$category <- gsub("Transport transport", "Transport", data$category)
+        data$category <- gsub("Reproduction reproduction", "Reproduction", data$category)
+
+        data$category <- gsub("Post development", "Post-embryonic development", data$category)
+        data$category <- gsub("Embryo development", "Embryo and post-embryonic development", data$category)
+
+        y_title <- "log2(TPM+1)"
+        y_lim <- c(min(data$base_averaged), max(data$base_averaged)*1.1)
 
 
-    # Plot mean expression of orthologs for GOslim categories that show significant different 
-    # proportion of stable/variable genes
-    # Table of core orthologs with average expression value = x_avg
-    # List of all GOslim categories above size threshold = slim_ortho_ls
-    # Table with all GOslim categories that show significant different proportion of table/
-    # variable genes = cv_stats_rs
+        # Extract number of genes for each GO category
+        # Do this for both all genes and matched genes
+        get_all <- data[data$group == "All",]
+        get_match <- data[data$group == "Matched",]
+        get_cat <- unique(get_all$category)
+
+        extr_all_num <- function(t) {
+            num <- sum(get_all$category == t)
+            out <- data.frame(category = t, num = num, group = rep("All"))
+            return(out)
+        }
+
+        all_num <- data.frame(do.call(rbind, lapply(get_cat, extr_all_num)))
+
+        extr_match_num <- function(u) {
+            num <- sum(get_match$category == u)
+            out <- data.frame(category = u, num = num, group = rep("Matched"))
+            return(out)
+        }
+        
+        match_num <- data.frame(do.call(rbind, lapply(get_cat, extr_match_num)))
+
+        dat_text <- rbind(all_num, match_num)
+        dat_text$y <- rep(10.2)
+
+        # Label facet strips
+        strip_names <- c(
+                    `All` = paste0("All ","(", "n=", nrow(spec_CV_all), ")"),
+                    `Matched` = paste0("Matched ","(", "n=", nrow(spec_CV_match), ")")
+                    )
+
+        p <- ggplot(data = data, color = group, aes(x=reorder(category, base_averaged, .fun='median'), y=base_averaged)) + 
+        geom_boxplot(colour = "black", size = 1.2, fatten = 2.5, notch = TRUE, 
+            outlier.shape = NA, fill = rep(c("orange", "blueviolet"), each = 13)) + 
+        coord_flip(ylim = quantile(data$base_averaged, c(0.0025, 0.9975))) + 
+        scale_x_discrete(expand = c(0.025, 0)) + 
+        guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
+
+        q <- p + theme_classic() + xlab("") + ylab(y_title) + 
+        # geom_text(data = dat_text, mapping = aes(x = category, y = y, label = num, group = group), 
+            # size = 6.65, vjust = 0.5, hjust = 1, colour = "grey50") + 
+        theme(text=element_text(size = 16), 
+            strip.text = element_text(size = 19.5), 
+            strip.text.x = element_text(margin = margin(0.37, 0, 0.37, 0, "cm")), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+            axis.ticks.length = unit(0.24, "cm"), 
+            axis.ticks = element_line(colour = "black", size = 1.2), 
+            axis.line = element_line(colour = 'black', size = 1.2), 
+            plot.margin = unit(c(0.5, 0.2, 1.25, -0.4), "cm"), 
+            axis.title.y = element_text(size = 22.0, margin = margin(t = 0, r = 0, b = 0, l = 0), 
+                colour="black", face = "bold"), 
+            axis.title.x = element_text(size = 22.0, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
+                colour="black", face = "bold"), 
+            axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
+            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 0, r = 2.5), colour="grey20"), 
+            panel.spacing = unit(0.5, "cm"), 
+            panel.grid.major = element_blank(),
+            panel.grid.minor.x = element_blank(), 
+            panel.grid.minor.y = element_blank(), 
+            legend.position = "none") 
+
+        q <- q + facet_wrap(~ group, ncol = 2, labeller = as_labeller(strip_names))
+
+        ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+            width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
+    }
+
+    plotGOEx(data = slim_ortho_expr)
+
+
+
+
 
 }
 
