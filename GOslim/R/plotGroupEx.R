@@ -16,8 +16,8 @@ plotGroupEx <- function(sample_size, ...) {
             )
 
     # Set file path for input files
-	GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
-	GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
+    GOSLIM = file.path(in_dir, "ATH_GO_GOSLIM.txt")
+    GOCAT = file.path(in_dir, "TAIR_GO_slim_categories.txt")
 
 
     orthoEst = file.path(in_dir, "AT_core_inter_count_mat_vsd_sample_names.csv")
@@ -443,7 +443,7 @@ plotGroupEx <- function(sample_size, ...) {
         get_match <- data[data$group == "Matched",]
         get_cat <- unique(get_all$category)
 
-        extr_all_num <- function(t) {
+        extr_num <- function(t) {
 
             num_a <- sum(get_all$category == t)
             out_a <- data.frame(category = t, num = num_a, group = "All")
@@ -452,11 +452,10 @@ plotGroupEx <- function(sample_size, ...) {
             out_m <- data.frame(category = t, num = num_m, group = "Matched")
 
             ratio <- data.frame(category = t, num = (num_m/num_a), group = "Ratio")
-            out <- rbind(ratio)
-            return(out)
+            return(ratio)
         }
 
-        dat_text <- data.frame(do.call(rbind, lapply(get_cat, extr_all_num)))
+        dat_text <- data.frame(do.call(rbind, lapply(get_cat, extr_num)))
         dat_text$y <- rep(10.2)
 
         # Label facet strips
