@@ -84,7 +84,7 @@ estimatePOS(nbootstrap = 1000, coswidth = 0.1, clevel = 0.8)
 ```
 ### Relationship between gene expression level and evolutionary conservation
 
-Next, we wanted to test wether the evolutionary stability of gene subsets is affected by gene expression levels. We therefore generated subsets of orthologous genes according to quantiles of average expression either across all samples (inter-organ inter-species), or within the same organ across species (intra-organ inter-species). For each quantile set, we then calculated metric pearson distances and fitted non-linear regression models to estimate quantile-specific rates of gene expression evolution.
+Next, we wanted to test whether the evolutionary stability of gene subsets is affected by gene expression levels. We therefore generated subsets of orthologous genes according to quantiles of average expression either across all samples (inter-organ inter-species), or within the same organ across species (intra-organ inter-species). For each quantile set, we then calculated metric Pearson distances and fitted non-linear regression models to estimate quantile-specific rates of gene expression evolution.
 
 
 * `getExprCons(nquant, qtype, ...)`
@@ -126,7 +126,7 @@ getGOSLIM(aspect = "molecular_function", sample_size = 412)
 ```
 ### Generate plots of GO analysis
 
-To vizualize the results of the GO enrichment analysis for genes of the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
+To visualize the results of the GO enrichment analysis for genes of the first and last expression quantile, and to plot the test statistics for the relative rates of expression evolution of genes belonging to predefined functional groups, execute the following function (make sure to run getExprCons and getGOSLIM functions first):
 
 ```R
 plotGOs()
