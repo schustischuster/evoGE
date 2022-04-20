@@ -14,7 +14,7 @@ This code allows to analyse the rate of gene expression evolution for functional
   * [Rate of expression evolution](#rate-of-expression-evolution)
   * [Generate plots of GO analysis](#generate-plots-of-go-analysis)
   * [Coefficient of variation](#coefficient-of-variation)
-  * [Expression intensity across functional groups](#expression-intensity-across-functional-groups)
+  * [Expression levels across functional groups](#expression-levels-across-functional-groups)
 * [Session info](#session-info)
 
 ---
@@ -152,9 +152,9 @@ getCV(aspect = "biological_process", estimate = "VST", sample_size = 412)
 
 ```
 
-### Expression intensity across functional groups
+### Expression levels across functional groups
 
-Finally, the mean expression level of each gene across organs and species was calculated, and their distribution was visualized for all GOslim categories that showed a significant different proportion of evolutionarily stable and variable genes. Expression values are log2-transformed Transcripts Per Million (TPM).
+Finally, the mean expression level of each gene across organs and species was calculated, and their distribution was visualized for all GO slim categories that showed a significant different proportion of evolutionarily stable and variable genes. Expression values are log2-transformed Transcripts Per Million (TPM).
 
 * `plotGroupEx(sample_size, ...)`
 
