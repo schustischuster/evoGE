@@ -14,6 +14,7 @@ This code allows to analyse the rate of gene expression evolution for functional
   * [Rate of expression evolution](#rate-of-expression-evolution)
   * [Generate plots of GO analysis](#generate-plots-of-go-analysis)
   * [Coefficient of variation](#coefficient-of-variation)
+  * [Expression intensity across functional groups](#expression-intensity-across-functional-groups)
 * [Session info](#session-info)
 
 ---
@@ -133,7 +134,7 @@ plotGOs()
 ```
 ### Coefficient of variation
 
-Finally, every gene was classified as evolutionary stable or variable using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the fraction of stable and variable genes was assessed in each functional category. Each category was tested for a significant increase in the fraction of stable or variable genes using a Chi-squared test.
+Every gene was classified as evolutionary stable or variable using the coefficient of variation (CV). This coefficient was calculated independently for each organ across species, and then averaged, resulting in a mean coefficient of variation for each gene. Stable and variable genes were matched based on their mean expression level across samples using the "nearest" method and caliper option. Then, the fraction of stable and variable genes was assessed in each functional category. Each category was tested for a significant increase in the fraction of stable or variable genes using a Chi-squared test.
 
 * `getCV(aspect, estimate, sample_size)`
 
@@ -148,6 +149,21 @@ The following function call was used to generate the results of this study:
 
 ```R
 getCV(aspect = "biological_process", estimate = "VST", sample_size = 412)
+
+```
+
+### Expression intensity across functional groups
+
+Finally, the mean expression level of each gene across organs and species was calculated, and their distribution was visualized for each functional group (GO Slim).
+
+* `plotGroupEx(sample_size, ...)`
+
+| Arguments  |  |
+| :---  | :---  |
+| sample_size  | Indicates the minimum number of genes required in a GO slim category. This is the point of stability (POS) determined in estimatePOS(). |
+
+```R
+plotGroupEx(sample_size = 412)
 
 ```
 
