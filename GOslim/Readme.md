@@ -154,7 +154,7 @@ getCV(aspect = "biological_process", estimate = "VST", sample_size = 412)
 
 ### Expression intensity across functional groups
 
-Finally, the mean expression level of each gene across organs and species was calculated, and their distribution was visualized for each functional group (GO Slim).
+Finally, the mean expression level of each gene across organs and species was calculated, and their distribution was visualized for all GOslim categories that showed a significant different proportion of evolutionarily stable and variable genes. Expression values are log2-transformed Transcripts Per Million (TPM).
 
 * `plotGroupEx(sample_size, ...)`
 
