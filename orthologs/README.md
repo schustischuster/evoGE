@@ -8,7 +8,7 @@ This code allows to build the angiosperm and mammalian phylogenies based on dive
 * [Getting Started](#getting-started)
   * [Required Packages](#required-packages)
   * [Data input](#data-input)
-* [Data analysis and vizualization](#data-analysis-and-vizualization)
+* [Data analysis and visualization](#data-analysis-and-visualization)
 * [Session info](#session-info)
 
 ---
@@ -55,7 +55,7 @@ source(file.path("evoGE", "orthologs", "R", "plotPhyloComp.R"))
 
 ```
 ---
-## Data analysis and vizualization
+## Data analysis and visualization
 
 The following function will generate the angiosperm phylogeny and orthologous gene plots:
 
