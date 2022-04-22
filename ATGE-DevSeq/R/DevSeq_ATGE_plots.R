@@ -87,7 +87,7 @@ gene_sample_cor <- rbind(gene_cor, sample_cor)
 # Store results in /out_dir/output/plots
 if (!dir.exists(file.path(out_dir, "output", "plots"))) 
   dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
-message("Storing plots in: ", file.path("output", "plots"))
+message("Plots will be stored in: ", file.path("output", "plots"))
 
 
 
@@ -143,7 +143,6 @@ plotCor <- function(data) {
             width = 10.0, height = 7.0, dpi = 300, units = c("in"), limitsize = FALSE) 
     }
 
-    plotCor(data = gene_sample_cor)
 
 
 
@@ -371,11 +370,11 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     df_clust.res <- hclust(df_t_dist.mat, method = clustm) # agglomerate clustering
 
     # Re-order (rotate) some of the clusters to make the colors more distinguishable 
-    if (dfname == "atge") {
+    if ((dfname == "atge") && (coefficient == "pearson") && (clustm == "complete")) {
 
       df_dend = dendextend::rotate(as.dendrogram(df_clust.res),c(1,3,2,5,4,6:11,14:15,12:13,16:24,26,25))
 
-    } else if (dfname == "devseq") {
+    } else if ((dfname == "devseq") && (coefficient == "pearson") && (clustm == "complete")) {
 
       df_dend = dendextend::rotate(as.dendrogram(df_clust.res),c(1:5,7,6,8:24,26,25))
 
@@ -407,8 +406,6 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
 
 
 # Make facet plots of RE values for some example genes
-# List of genes for plotting
-genelist <- c("WUS", "REV", "AP1", "AG", "LFY", "PLT1", "FLC", "PIN1")
 
 
 plotRE <- function(exp_data, genelist) {
@@ -564,14 +561,4 @@ plotRE <- function(exp_data, genelist) {
     }
 
 
-
-# Pairwise correlation plots (facets)
-plotRE(exp_data = devseq_log2_re_vs_atge_log2_re, genelist = genelist)
-
-# Correlation heatmap of merged ATGE-DevSeq data
-makeCorrplot(exp_data=atge_devseq_re_log, coefficient="pearson", clustm="complete")
-
-# hclust dendrogram of ATGE and DevSeq data
-makeDendrogram(atge, coefficient = "pearson", clustm="complete")
-makeDendrogram(devseq, coefficient = "pearson", clustm="complete")
 
