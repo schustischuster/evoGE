@@ -59,6 +59,7 @@ plotRE(exp_data = devseq_log2_re_vs_atge_log2_re, genelist = genelist)
 # Correlation heatmap of combined ATGE-DevSeq data
 makeCorrplot(exp_data=atge_devseq_re_log, coefficient="pearson", clustm="complete")
 
+# Boxplots of pairwise sample and gene correlations
 plotCor(data = gene_sample_cor)
 
 # hclust dendrogram of ATGE and DevSeq data
