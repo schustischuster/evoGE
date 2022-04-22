@@ -1,4 +1,4 @@
-This folder contains files with the raw and normalized expression data. The columns of the files are semicolon-separated and contain headers.
+This folder contains files with the expression data. The columns of the files are semicolon-separated and contain headers.
 
 ### Sample description
 
