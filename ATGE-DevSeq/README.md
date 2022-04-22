@@ -50,11 +50,16 @@ source(file.path("evoGE", "ATGE-DevSeq", "R", "DevSeq_ATGE_plots.R"))
 After loading the data and sourcing the R script, run the following commands to generate the plots:
 
 ```R
+# List of genes for plotting
+genelist <- c("WUS", "REV", "AP1", "AG", "LFY", "PLT1", "FLC", "PIN1")
+
 # Pairwise gene correlation plots
 plotRE(exp_data = devseq_log2_re_vs_atge_log2_re, genelist = genelist)
 
 # Correlation heatmap of combined ATGE-DevSeq data
 makeCorrplot(exp_data=atge_devseq_re_log, coefficient="pearson", clustm="complete")
+
+plotCor(data = gene_sample_cor)
 
 # hclust dendrogram of ATGE and DevSeq data
 makeDendrogram(atge, coefficient = "pearson", clustm="complete")
