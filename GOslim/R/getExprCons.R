@@ -734,7 +734,7 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                 panel.grid.minor.y = element_blank(), 
                 legend.position = "none") 
 
-            q <- q + facet_wrap(~ organ, nrow = 2)
+            q <- q + facet_wrap(~ factor(organ), nrow = 2)
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
                 width = 11.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
