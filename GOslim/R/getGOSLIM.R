@@ -790,7 +790,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
                 panel.grid.minor.y = element_blank(), 
                 legend.position = "none") 
 
-            q <- q + facet_wrap(~ comp_organ, nrow = 1, scales = "free")
+            q <- q + facet_wrap(~ factor(comp_organ), nrow = 1, scales = "free")
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
                 width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE) 
