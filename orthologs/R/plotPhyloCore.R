@@ -165,7 +165,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       fill = "red", size = 3.0, stroke = 0.75) + 
     geom_text(data = dat_text, mapping = aes(x = x, y = y, label=label), color = "red", size = 3.8)
 
-    q <- p + facet_wrap( ~ class, scales='free', ncol = 1) + 
+    q <- p + facet_wrap( ~ factor(class), scales='free', ncol = 1) + 
     theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of pairwise 1-1 orthologs w/ A.thaliana") + 
     scale_color_manual(values = "gray35") + 
     geom_text(data = spec_label, mapping = aes(x = x, y = y, label = label), size=3.75) + 
@@ -201,6 +201,4 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
 }
 
 
-plotPhyloCore("Estimated")
-plotPhyloCore("Median")
 
