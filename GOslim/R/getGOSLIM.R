@@ -35,7 +35,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
     # return_list <- list("orthoTPM" = orthoTPM, "GOSLIM" = GOSLIM, "GOCAT" = GOCAT, "aspect" = aspect, "sample_size" = sample_size)
     # return(return_list)
     # }
-    # return_objects <- getGOSLIM(aspect = "biological_process", sample_size = 293)
+    # return_objects <- getGOSLIM(aspect = "biological_process", sample_size = 412)
     # list2env(return_objects, envir = .GlobalEnv)
 
     # Show message
