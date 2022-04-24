@@ -394,7 +394,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
 
         }
 
-        df$CV_cat <- relevel(df$CV_cat, 'variable genes')
+        df$CV_cat <- relevel(factor(df$CV_cat), 'variable genes')
 
         # Create df for FDR p-value mapping
         FDR_df <- data.frame(x = df[seq(1, nrow(df), 2), "GO_term"], 
@@ -409,7 +409,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         coord_flip(ylim = c(0, 1.2985)) + 
         geom_text(aes(label=n_genes), position = position_fill(vjust = 0.5), size = 6.71, fontface = "bold") + 
         labs(x = NULL, y = "Fraction of Genes              ") + 
-        scale_fill_manual(values=c("#e5b75a", "#6888bd"), breaks=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
+        scale_fill_manual(values=c("#6888bd", "#e5b75a"), limits=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
         guides(fill = guide_legend(keywidth = 0.35, keyheight = 0.35, default.unit="inch")) + 
         ggtitle(plt_title) +  
         geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 6.71, parse=TRUE, hjust = 0) + 
