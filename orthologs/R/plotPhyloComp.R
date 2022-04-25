@@ -35,7 +35,7 @@ plotPhyloComp <- function(div_times = c("Median", "Estimated")) {
   plotTree <- function(t) {
 
     # Make marker species phylogeny plot
-    fname <- sprintf('%s.png', paste(deparse(substitute(t)), div_times , sep="_"))
+    fname <- sprintf('%s.png', paste(deparse(substitute(t)), div_times , sep = "_"))
 
     # Set label col
     if (deparse(substitute(t)) == "devseq_tree") {
@@ -48,17 +48,16 @@ plotPhyloComp <- function(div_times = c("Median", "Estimated")) {
     # Convert ape phylogeny object to dendextend dendrogram object
     png(file = file.path(out_dir, "output", "plots", fname), 
     width = 2200, height = 3700, res = 800)
-    par(mar = c(0.5, 5, 0, 0.25), bg=NA)
+    par(mar = c(0.5, 5, 0, 0.25), bg = NA)
 
     p <- ggtree(t, size = 0.8) + theme_tree2(plot.margin = margin(40, 2, 5, -2.85), text = element_text(size = 17.7), 
         line = element_line(size = 0.8), axis.ticks.length = unit(0.2, "cm")) + geom_tiplab(color = cols, size = 5.35) + 
     ggplot2::scale_x_continuous(limits = c(0, 325), breaks = c(0,50,100,150)) + 
     ggplot2::scale_y_discrete(expand = c(0.1, 0)) + labs(caption = "Divergence time (Myr)        ") + 
     ggplot2::theme(
-      axis.line=element_line(colour = "black", size = 0.8), 
-      axis.ticks=element_line(colour = "black", size = 0.8), 
+      axis.line = element_line(colour = "black", size = 0.8), 
+      axis.ticks = element_line(colour = "black", size = 0.8), 
       axis.text.x = element_text(size = 14.25, margin = margin(3, 0, 2.5, 0), color = "black"))
-    # geom_text(aes(label=node), hjust=-.3)
 
     if (deparse(substitute(t)) == "devseq_tree") {
       p <- rotate(p, 13)
