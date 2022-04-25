@@ -70,13 +70,12 @@ plotPhyloComp <- function(div_times = c("Median", "Estimated")) {
 
   }
 
-  plotTree(devseq_tree)
-  plotTree(tetra_tree)
+  suppressMessages(plotTree(devseq_tree))
+  suppressMessages(plotTree(tetra_tree))
 
 
 }
 
 
-plotPhyloComp("Estimated")
-plotPhyloComp("Median")
+
 
