@@ -114,18 +114,18 @@ sessionInfo()
 #> [1] de_DE.UTF-8/de_DE.UTF-8/de_DE.UTF-8/C/de_DE.UTF-8/de_DE.UTF-8
 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> [1] stats     graphics     grDevices utils     datasets     methods     base     
 
 #> other attached packages:
-#> [1] dendextend_1.15.2 factoextra_1.0.7  ggplot2_3.3.5     gplots_3.1.1      dplyr_1.0.8      
+#> [1] dendextend_1.15.2     factoextra_1.0.7     ggplot2_3.3.5     gplots_3.1.1     dplyr_1.0.8      
 
 #> loaded via a namespace (and not attached):
-#> [1]  Rcpp_1.0.8.2       magrittr_2.0.2     tidyselect_1.1.2   munsell_0.5.0      viridisLite_0.4.0 
-#> [6]  colorspace_2.0-3   R6_2.5.1           rlang_1.0.2        fansi_1.0.2        caTools_1.18.2    
+#> [1] Rcpp_1.0.8.2        magrittr_2.0.2     tidyselect_1.1.2   munsell_0.5.0      viridisLite_0.4.0 
+#> [6] colorspace_2.0-3    R6_2.5.1           rlang_1.0.2        fansi_1.0.2        caTools_1.18.2    
 #> [11] tools_4.1.3        grid_4.1.3         gtable_0.3.0       KernSmooth_2.23-20 utf8_1.2.2        
 #> [16] cli_3.2.0          withr_2.5.0        ellipsis_0.3.2     gtools_3.9.2       tibble_3.1.6      
 #> [21] lifecycle_1.0.1    crayon_1.5.0       gridExtra_2.3      purrr_0.3.4        viridis_0.6.2     
 #> [26] vctrs_0.3.8        bitops_1.0-7       ggrepel_0.9.1      glue_1.6.2         compiler_4.1.3    
-#> [31] pillar_1.7.0       generics_0.1.2     scales_1.1.1       pkgconfig_2.0.3
+#> [31] pillar_1.7.0       generics_0.1.2     scales_1.1.1       pkgconfig_2.0.3  
 
 ```
