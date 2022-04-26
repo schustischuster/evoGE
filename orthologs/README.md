@@ -117,3 +117,34 @@ sessionInfo()
 #>[21] bindr_0.1.1      tibble_1.3.4     
  
 ```
+
+```R
+#> R version 4.1.3 (2022-03-10)
+#> Platform: x86_64-apple-darwin17.0 (64-bit)
+#> Running under: macOS Monterey 12.3
+
+#> Matrix products: default
+#> BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+#> LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+#> locale:
+#> [1] de_DE.UTF-8/de_DE.UTF-8/de_DE.UTF-8/C/de_DE.UTF-8/de_DE.UTF-8
+
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+
+#> other attached packages:
+#> [1] ggtree_3.2.1        gtable_0.3.0        scales_1.1.1        ape_5.6-2          
+#> [5] ggplot2_3.3.5       dplyr_1.0.8         BiocManager_1.30.16
+
+#> loaded via a namespace (and not attached):
+#> [1]  Rcpp_1.0.8.2       pillar_1.7.0       compiler_4.1.3     yulab.utils_0.0.4  tools_4.1.3       
+#> [6]  aplot_0.1.2        jsonlite_1.8.0     tidytree_0.3.9     lifecycle_1.0.1    tibble_3.1.6      
+#> [11] nlme_3.1-155       lattice_0.20-45    pkgconfig_2.0.3    rlang_1.0.2        cli_3.2.0         
+#> [16] ggplotify_0.1.0    patchwork_1.1.1    parallel_4.1.3     treeio_1.18.1      withr_2.5.0       
+#> [21] generics_0.1.2     vctrs_0.3.8        gridGraphics_0.5-1 grid_4.1.3         tidyselect_1.1.2  
+#> [26] glue_1.6.2         R6_2.5.1           fansi_1.0.2        purrr_0.3.4        tidyr_1.2.0       
+#> [31] magrittr_2.0.2     ellipsis_0.3.2     colorspace_2.0-3   utf8_1.2.2         lazyeval_0.2.2    
+#> [36] munsell_0.5.0      ggfun_0.0.5        crayon_1.5.0
+
+```
