@@ -409,13 +409,13 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         geom_bar(position="fill", stat="identity") + 
         scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1), expand = c(0, 0.055)) + 
         scale_x_discrete(expand = x_pand) + 
-        coord_flip(ylim = c(0, 1.304)) + 
-        geom_text(aes(label = n_genes), position = position_fill(vjust = 0.5), size = 6.71, fontface = "bold") + 
+        coord_flip(ylim = c(0, 1.3215)) + 
+        geom_text(aes(label = n_genes), position = position_fill(vjust = 0.5), size = 7, fontface = "bold") + 
         labs(x = NULL, y = "Fraction of Genes              ") + 
         scale_fill_manual(values=c("#698abf", "#f2a72f"), limits=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
         guides(fill = guide_legend(keywidth = 0.35, keyheight = 0.35, default.unit="inch")) + 
         ggtitle(plt_title) +  
-        geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 6.71, parse=TRUE, hjust = 0) + 
+        geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 7, parse=TRUE, hjust = 0, vjust = 0.37) + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.025), 
