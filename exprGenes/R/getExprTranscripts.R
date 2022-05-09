@@ -77,37 +77,37 @@ getExprTranscripts <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", 
 
 	# Set GTF input gtf file
     if (is.element("ATH", species)) {
-        transcriptsTPM = file.path(in_dir, "Expression_data", "AT_transcripts_complete_table_tpm_with_circRNA_sample_names.csv")
+        transcriptsTPM = file.path(in_dir, "Expression_data", "AT_transcripts_complete_table_tpm_sample_names.csv")
         transcriptsPtMt = file.path(in_dir, "Expression_data", "AT_Pt_Mt_Orthologs.csv")
         species_id <- "ATH"
 
     } else if (is.element("AL", species)) {
-		transcriptsTPM = file.path(in_dir, "Expression_data", "AL_transcripts_complete_table_tpm_with_circRNA_sample_names.csv")
+		transcriptsTPM = file.path(in_dir, "Expression_data", "AL_transcripts_complete_table_tpm_sample_names.csv")
 		transcriptsPtMt = file.path(in_dir, "Expression_data", "AL_Pt_Mt_Orthologs.csv")
 		species_id <- "AL"
 
     } else if (is.element("CR", species)) {
-		transcriptsTPM = file.path(in_dir, "Expression_data", "CR_transcripts_complete_table_tpm_with_circRNA_sample_names.csv")
+		transcriptsTPM = file.path(in_dir, "Expression_data", "CR_transcripts_complete_table_tpm_sample_names.csv")
 		transcriptsPtMt = file.path(in_dir, "Expression_data", "CR_Pt_Mt_Orthologs.csv")
 		species_id <- "CR"
 
     } else if (is.element("ES", species)) {
-		transcriptsTPM = file.path(in_dir, "Expression_data", "ES_transcripts_complete_table_tpm_with_circRNA_sample_names.csv")
+		transcriptsTPM = file.path(in_dir, "Expression_data", "ES_transcripts_complete_table_tpm_sample_names.csv")
 		transcriptsPtMt = file.path(in_dir, "Expression_data", "ES_Pt_Mt_Orthologs.csv")
 		species_id <- "ES"
 
     } else if (is.element("TH", species)) {
-		transcriptsTPM = file.path(in_dir, "Expression_data", "TH_transcripts_complete_table_tpm_with_circRNA_sample_names.csv")
+		transcriptsTPM = file.path(in_dir, "Expression_data", "TH_transcripts_complete_table_tpm_sample_names.csv")
 		transcriptsPtMt = file.path(in_dir, "Expression_data", "TH_Pt_Mt_Orthologs.csv")
 		species_id <- "TH"
 
     } else if (is.element("MT", species)) {
-		transcriptsTPM = file.path(in_dir, "Expression_data", "MT_transcripts_complete_table_tpm_with_circRNA_sample_names.csv")
+		transcriptsTPM = file.path(in_dir, "Expression_data", "MT_transcripts_complete_table_tpm_sample_names.csv")
 		transcriptsPtMt = file.path(in_dir, "Expression_data", "MT_Pt_Mt_Orthologs.csv")
 		species_id <- "MT"
 
     } else if (is.element("BD", species)) {
-		transcriptsTPM = file.path(in_dir, "Expression_data", "BD_transcripts_complete_table_tpm_with_circRNA_sample_names.csv")
+		transcriptsTPM = file.path(in_dir, "Expression_data", "BD_transcripts_complete_table_tpm_sample_names.csv")
 		transcriptsPtMt = file.path(in_dir, "Expression_data", "BD_Pt_Mt_Orthologs.csv")
 		species_id <- "BD"
     }
@@ -129,50 +129,50 @@ getExprTranscripts <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", 
     if ((is.element("ATH", species)) && (is.element("comparative", experiment))) {
 
 		all_transcripts_tpm <- dplyr::select(all_transcripts_tpm, c(
-			transcript_id, biotype, source, info, 
-			root_whole_root_5d_.1.,
-			root_whole_root_5d_.2.,
-			root_whole_root_5d_.3.,
-			hypocotyl_10d_.1.,
-			hypocotyl_10d_.2.,
-			hypocotyl_10d_.3.,
-			leaf_1.2_7d_.1.,
-			leaf_1.2_7d_.2.,
-			leaf_1.2_7d_.3.,
-			apex_vegetative_7d_.1.,
-			apex_vegetative_7d_.2.,
-			apex_vegetative_7d_.3.,
-			apex_inflorescence_21d_.1.,
-			apex_inflorescence_21d_.2.,
-			apex_inflorescence_21d_.3.,
-			flower_stg12_21d._.1.,
-			flower_stg12_21d._.2.,
-			flower_stg12_21d._.3.,
-			flower_stg12_stamens_21d._.1.,
-			flower_stg12_stamens_21d._.2.,
-			flower_stg12_stamens_21d._.3.,
-			flowers_mature_pollen_28d_.1.,
-			flowers_mature_pollen_28d_.2.,
-			flowers_mature_pollen_28d_.3.,
-			flower_early_stg12_carpels_21d._.1.,
-			flower_early_stg12_carpels_21d._.2.,
-			flower_early_stg12_carpels_21d._.3.)) #tibble w/o pollen samples
+			"transcript_id", "biotype", "source", "info", 
+			"root_whole_root_5d_1",
+			"root_whole_root_5d_2",
+			"root_whole_root_5d_3",
+			"hypocotyl_10d_1",
+			"hypocotyl_10d_2",
+			"hypocotyl_10d_3",
+			"leaf_1+2_7d_1",
+			"leaf_1+2_7d_2",
+			"leaf_1+2_7d_3",
+			"apex_vegetative_7d_1",
+			"apex_vegetative_7d_2",
+			"apex_vegetative_7d_3",
+			"apex_inflorescence_21d_1",
+			"apex_inflorescence_21d_2",
+			"apex_inflorescence_21d_3",
+			"flower_stg12_21d+_1",
+			"flower_stg12_21d+_2",
+			"flower_stg12_21d+_3",
+			"flower_stg12_stamens_21d+_1",
+			"flower_stg12_stamens_21d+_2",
+			"flower_stg12_stamens_21d+_3",
+			"flowers_mature_pollen_28d_1",
+			"flowers_mature_pollen_28d_2",
+			"flowers_mature_pollen_28d_3",
+			"flower_early_stg12_carpels_21d+_1",
+			"flower_early_stg12_carpels_21d+_2",
+			"flower_early_stg12_carpels_21d+_3")) #tibble w/o pollen samples
 
 		species_id <- "ATH_comparative_samples"
 
 
     } else if ((is.element("AL", species)) && (is.element("comparative", experiment))) {
 
-		all_transcripts_tpm <- dplyr::select(all_transcripts_tpm, -c(
-			flower_stg11_stamens_8w.10w.25d_.1., 
-			flower_stg11_stamens_8w.10w.25d_.2., 
-			flower_stg11_stamens_8w.10w.25d_.3.,
-			flower_early_stg12_stamens_8w.10w.23d_.1.,
-			flower_early_stg12_stamens_8w.10w.23d_.2.,
-			flower_early_stg12_stamens_8w.10w.23d_.3.,
-			flower_late_stg12_stamens_8w.10w.21d_.1.,
-			flower_late_stg12_stamens_8w.10w.21d_.2.,
-			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samples
+		all_transcripts_tpm <- all_transcripts_tpm[, -which(names(all_transcripts_tpm) %in% c(
+			"flower_stg11_stamens_8w.10w.25d_1", 
+			"flower_stg11_stamens_8w.10w.25d_2", 
+			"flower_stg11_stamens_8w.10w.25d_3",
+			"flower_early_stg12_stamens_8w.10w.23d_1",
+			"flower_early_stg12_stamens_8w.10w.23d_2",
+			"flower_early_stg12_stamens_8w.10w.23d_3",
+			"flower_late_stg12_stamens_8w.10w.21d_1",
+			"flower_late_stg12_stamens_8w.10w.21d_2",
+			"flower_late_stg12_stamens_8w.10w.21d_3"))] #tibble w/o pollen samples
 
     }
 
