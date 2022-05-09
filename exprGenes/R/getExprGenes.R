@@ -3,7 +3,7 @@
 # 0.05 (lowest 5% of expressed spike-ins), 0.1 (lowest 10% of expressed spike-ins)
 # Data input: 1) Expression_data WITH spike-in information
 # Analysis can be performed on both whole single species datasets (ATH: 132 samples; AL: 36 samples)
-# OR on comparative data sets (27 samples)
+# OR on comparative data sets (each species: 27 samples)
 # Input sample tables should have the following format:
 # id / biotype / source / DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species)
 
