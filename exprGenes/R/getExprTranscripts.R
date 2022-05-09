@@ -3,7 +3,7 @@
 # 0.01, 0.05, 0.1 ERCC (percentile of detected spike-ins)
 # Data input: Expression_data WITH spike-in information
 # Analysis can be performed on both whole single species datasets (ATH: 132 samples; AL: 36 samples)
-# OR on comparative data sets (27 samples)
+# OR on comparative data sets (each species: 27 samples)
 # Input sample tables should have the following format:
 # id / biotype / source / info / DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species)
 
