@@ -20,8 +20,8 @@ getStats <- function() {
 	list2env(stats_tables, envir = .GlobalEnv)
 
 	# Load sample information
-	samples <- read.table(file=file.path(in_dir, "Mapping_statistics", "Plant samples for profiling_final_list.csv"), 
-		sep=";", dec=".", header=TRUE, stringsAsFactors = FALSE)
+	samples <- read.table(file=file.path(in_dir, "Samples", "Plant samples for profling.csv"), 
+		sep=",", dec=".", header=TRUE, stringsAsFactors = FALSE)
 	samples_repl <- samples[rep(row.names(samples), samples$Replicates), 1:10]
 	comp_sample_names <- as.data.frame(samples_repl[277:303,6])
 	names(comp_sample_names) <- "Comparative_Sample"
