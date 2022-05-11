@@ -79,6 +79,3 @@ getStats <- function() {
 
 }
 
-# Execute getStats function
-getStats()
-
