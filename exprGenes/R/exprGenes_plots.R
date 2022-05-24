@@ -2,7 +2,7 @@
 # genes, coding isoforms, lncRNAs and LTRs and generates the plots for the DevSeq transcriptome  
 # single-species expression figures
 
-
+# NOTES: Add lines 84+85, 102 (colors), 108-109, 115-116, 162 (colors), 168+169, 175+176, 139+140, 229, 245 (colors), 248, 252+253, 260-262, update lines 364-366 + 400-402 (ylim), 425-430 (domain color, add geom_point), lines 420+429 (line size), 541+542, 548, 549, 553 (colors) 710-798, delete 802-853, 804ff (ATH hclust dendrogram), delete 976ff (hclust dendrogram non-ATH species)
 #------------------------------------ Read sample tables ------------------------------------
 
 
@@ -14,6 +14,9 @@ readTable <- function(path, pattern = "*.csv") {
 
 stats_tables <- readTable(file.path(out_dir, "output", "mapping_statistics"))
 expr_genes_tables <- readTable(file.path(out_dir, "output", "expr_genes"))
+ATH_th_genes_repl_inter_counts <- read.table(file.path(in_dir, "Expression_data", "AT_genes_inter_norm_count_mat_vsd_sample_names.csv"), sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+ATH_th_genes_repl_intra_counts <- read.table(file.path(in_dir, "Expression_data", "AT_genes_intra_norm_count_mat_vsd_sample_names.csv"), sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+ATH_genes_complete_tpm <- read.table(file.path(in_dir, "Expression_data", "AT_genes_complete_table_tpm_sample_names.csv"), sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
 
 
 # Get file names and save them in character vector
@@ -79,6 +82,8 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
 	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
 
+	data$class <- factor(data$class, levels = unique(data$class))
+
 	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
 
 	p <- ggplot(data, aes(x=class, y=reads, fill=class)) + 
@@ -94,20 +99,21 @@ makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
 		 	color="black", size=1.35) + 
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
 
-	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
+	q <- p + scale_fill_manual(values=c("#b2b2b2", "goldenrod2", "#5bb1e2")) + theme_minimal() + 
 	xlab("") + ylab("Number of PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
 		text=element_text(size=20.75), 
   		axis.ticks.length = unit(.2, "cm"),
-  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
+  		axis.ticks = element_line(colour = "gray10", size = 0.8), 
+  		axis.line = element_line(colour = "gray10", size = 0.5), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size=18.0, angle=45, 
   			margin = margin(t = 1.5, r = 0, b = 3.0, l = 0), hjust = 1, vjust = 1),
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
-  		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 20, r = 0, b = 12.5, l = 0), hjust = 0.5), 
+  		plot.title = element_text(colour = "black", size = 21.5, face = "italic", 
+  			margin = margin(t = 21.5, r = 0, b = 11.0, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 15, 13.55, 16.1), "points"))
 	
 
@@ -131,6 +137,8 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
 	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
 
+	data$class <- factor(data$class, levels = unique(data$class))
+
 	# separate outliers with low reads from violin plot data and plot them individually as dots
 	data_wo_outl <- data[c(-505:-507),]
 	data_outl <- data[c(505:507),]
@@ -151,20 +159,21 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 		 	color="black", size=1.35) + 
 		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
 
-	q <- p + scale_fill_manual(values=c("#b2b2b2", "#d8a900", "#35bceb")) + theme_minimal() + 
+	q <- p + scale_fill_manual(values=c("#b2b2b2", "goldenrod2", "#5bb1e2")) + theme_minimal() + 
 	xlab("") + ylab("Number of PE reads") + ggtitle(plot_title) + 
 	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
 	theme(legend.position = "none", 
 		text=element_text(size=20.75), 
   		axis.ticks.length = unit(.2, "cm"),
-  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
+  		axis.ticks = element_line(colour = "gray10", size = 0.8), 
+  		axis.line = element_line(colour = "gray10", size = 0.5), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size=18.0, angle=45, 
   			margin = margin(t = 1.5, r = 0, b = 3.0, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
-  		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 20, r = 0, b = 10.25, l = 0), hjust = 0.5), 
+  		plot.title = element_text(colour = "black", size = 21.5, 
+  			margin = margin(t = 21.5, r = 0, b = 8.75, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 5.0, 13.55, 26.1), "points"))
 	
 
@@ -217,7 +226,7 @@ plotDedupReads <- function(data, plot_title) {
 		"Leaf.1",".2",".3","Apex.v.1",".2",".3","Apex.i.1",
 		".2",".3","Flower.1",".2",".3","Carpel.1",".2",
 		".3","Stamen.1",".2",".3","Pollen.1",".2",".3")
-
+	data$Species <- factor(data$Species, levels = unique(data$Species))
 	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
@@ -233,23 +242,24 @@ plotDedupReads <- function(data, plot_title) {
   	labs(color="Species")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of PE dedupl. reads") + 
-	scale_color_manual(values=c("#dea80c","#a8a8a8","#ea6965","#46ae12","#069870","#4fb6f0","#0770ab"), 
+	scale_color_manual(values = c("#b2b2b2","#e8a215","#f0d737","#069870","#0770ab","#4fb6f0","#ea6965") 
 		# Order of color vector is in alphabetical order of species (AL/AT/BD/CR/ES/MT/TH)
 		# It uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
-		breaks=species_order) + 
+		) + 
 		guides(colour = guide_legend(nrow = 1)) +  
   		theme(text=element_text(size=21), 
   		axis.ticks.length = unit(.2, "cm"),
-  		axis.ticks = element_line(colour = "gray15", size = 0.7), 
+  		axis.ticks = element_line(colour = "gray10", size = 0.9), 
+  		axis.line = element_line(colour = "gray10", size = 0.9), 
   		panel.grid = element_blank(), 
   		axis.title.y = element_text(colour = "black", size=20, 
   			margin = margin(t = 0, r = 5.85, b = 0, l = 28.5)), 
   		axis.text.x = element_text(colour = "black", size=16.5, angle=45, 
   			margin = margin(t = 0.25, r = 0, b = 0.75, l = 0), hjust = 1, vjust = 1), 
   		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.95, b = 0, l = 2)), 
-  		plot.title = element_text(colour = "black", size=22, 
-  			margin = margin(t = 20, r = 0, b = 10.95, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(5.5, -3.5, 37.55, 0), "points"),
+  		plot.title = element_text(colour = "black", size = 21.5, 
+  			margin = margin(t = 21.5, r = 0, b = 9.45, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(5.5, -3.5, 37.25, 0), "points"),
 		legend.position = c(0.331, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
@@ -351,9 +361,9 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 	y_depl_pos <- data.frame(x=c(5, 9, 18, 24, 28, 37))
 
 	if (is.element("coding", biotype)) {
-		breaksY <- c(1e4,1.5e4,2e4,2.5e4)
-		pltymin <- 0.62e4
-		pltymax <- 2.65e4
+		breaksY <- c(1.2e4,1.5e4,1.8e4,2.1e4,2.4e4)
+		pltymin <- 1.09e4
+		pltymax <- 2.55e4
 		xtepos <- 21.75
 		y_margin <- margin(t = 0, r = 9, b = 0, l = 1.5)
 		y_axs_title <- "Number of Genes"
@@ -387,9 +397,9 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		y_labels <- yLabelsB
 	
 	} else if (is.element("iso", biotype)) {
-		breaksY <- c(1.5e4,2.5e4,3.5e4,4.5e4)
-		pltymin <- 1.325e4
-		pltymax <- 4.53e4
+		breaksY <- c(1.5e4,2e4,2.5e4,3.0e4,3.5e4,4.0e4)
+		pltymin <- 1.47e4
+		pltymax <- 4.35e4
 		xtepos <- 21.75
 		y_margin <- margin(t = 0, r = 6.65, b = 0, l = 1.55)
 		y_axs_title <- "Number of Transcripts"
@@ -407,16 +417,17 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 
 	p <- ggplot(data, aes(x = factor(Sample, level= level_order), y = Expressed, color = Threshold, group = Threshold)) + 
 
-	geom_line(aes(x = factor(Sample, level= level_order)), size=2) + 
+	geom_line(aes(x = factor(Sample, level= level_order)), size=2.15) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = y_labels) +
   	annotate("rect", xmin=0.25, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="white", alpha=1, 
 		 	color="black", size=0.7) + 
-  	annotate("rect", xmin=0.25, xmax=6.5, ymin=pltymin, ymax=pltymax, fill="#d4d4d4", alpha=1) + 
-  	annotate("rect", xmin=10.5, xmax=19.5, ymin=pltymin, ymax=pltymax, fill="#cee5c3", alpha=1) + 
-  	annotate("rect", xmin=25.5, xmax=29.5, ymin=pltymin, ymax=pltymax, fill="#d4d4d4", alpha=1) + 
-  	annotate("rect", xmin=38.5, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="#f2c9b8", alpha=1) +
-  	geom_line(aes(x = factor(Sample, level= level_order)), size=2) + 
+  	annotate("rect", xmin=0.25, xmax=6.5, ymin=pltymin, ymax=pltymax, fill="#d7d7d7", alpha=1) + 
+  	annotate("rect", xmin=10.5, xmax=19.5, ymin=pltymin, ymax=pltymax, fill="#d2ebc7", alpha=1) + 
+  	annotate("rect", xmin=25.5, xmax=29.5, ymin=pltymin, ymax=pltymax, fill="#d7d7d7", alpha=1) + 
+  	annotate("rect", xmin=38.5, xmax=44.75, ymin=pltymin, ymax=pltymax, fill="#fad0c8", alpha=1) +
+  	geom_line(aes(x = factor(Sample, level= level_order)), size=2.15) + 
+  	geom_point(aes(x = factor(Sample, level= level_order)), size=2.75) + 
   	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.9, size=7.01, label = total_expr) + 
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size=7.01, label = "Threshold", fontface = 2) + 
   	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 30.9, size=5.75, label = "I", col="gray15") + 
@@ -529,15 +540,17 @@ makePlotReplCorr <- function(data, plot_title) {
 
 	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
+	data$Species <- factor(data$Species, levels = unique(data$Species))
+
 	p <- ggplot(data, aes(x=Species, y=Correlation, fill=Species)) + 
 	     stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
 		 geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
 		 	outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
-		 scale_y_continuous(limits = c(0.9695, 1.0007), expand = c(0, 0)) + 
-		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9695, ymax=1.0007, fill="white", alpha=0,  
+		 scale_y_continuous(limits = c(0.9692, 1.0007), expand = c(0, 0)) + 
+		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9692, ymax=1.0007, fill="white", alpha=0,  
 		 	color="black", size=1.35)
 
-	q <- p + scale_fill_manual(values=c("#b2b2b2","#dea80c","#46ae12","#069870","#0770ab","#4fb6f0","#ea6965")) + 
+	q <- p + scale_fill_manual(values=c("#b2b2b2","#e8a215","#f0d737","#069870","#0770ab","#4fb6f0","#ea6965")) + 
 	# Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
 	theme_minimal() + 
 	xlab("Species") + ylab("Pearson's r") + ggtitle(plot_title) + 
@@ -594,27 +607,27 @@ prepareExprGenesOS <- function(species=c("AL","CR","ES","TH","MT","BD"),
 	getNumExpr <- function(df, trans_type) {
 
 		if (trans_type == "Genes") {
-			sel_col <- 1
+			sel_row <- 1
 		} else if (trans_type == "NATs") {
-			sel_col <- 2
+			sel_row <- 2
 		} else if (trans_type == "lincRNAs") {
-			sel_col <- 3
+			sel_row <- 3
 		} else if (trans_type == "LTR TEs") {
-			sel_col <- 4
+			sel_row <- 4
 		} else if (trans_type == "Transcripts") {
-			sel_col <- 5
+			sel_row <- 5
 		}
 
-		n_expr <- df[sel_col, 3:ncol(df)]
+		n_expr <- df[sel_row, 3:ncol(df)]
 		colnames(n_expr) <- NULL
 		n_expr <- as.data.frame(t(n_expr))
 		colnames(n_expr) <- "expressed"
-		total_expressed <- df[sel_col, 2]
+		total_expressed <- df[sel_row, 2]
 		total_expressed <- as.data.frame(rep(c(total_expressed), 9))
 		colnames(total_expressed) <- "total_expressed"
 		transcript_class <- as.data.frame(rep(c(trans_type), 9))
 		colnames(transcript_class) <- "class"
-		biotype <- df[sel_col, 1]
+		biotype <- df[sel_row, 1]
 		biotype <- as.data.frame(rep(c(biotype), 9))
 		colnames(biotype) <- "biotype"
 		value_class <- cbind(n_expr, total_expressed, biotype, transcript_class)
@@ -698,172 +711,92 @@ expr_genes_OS <- rbind(expr_genes_AL, expr_genes_CR, expr_genes_ES, expr_genes_T
 # Plot number of expressed genes for each species
 plotExprGenesOS <- function(data) {
 
-	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+    trans_class <- unique(data$class)
 
-	level_order <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", 
-		"Flower", "Carpel", "Stamen", "Pollen")
+    if (unique(data$class) == "Genes") {
+        y_scale_factor <- 1
+        th_label <- "Total expressed:"
+    } else if (unique(data$class) == "Transcripts") {
+        y_scale_factor <- 1
+        th_label <- "Total expressed:"
+    } else if (unique(data$class) == "NATs") {
+        y_scale_factor <- 0.8
+        th_label <- ""
+    } else {
+        y_scale_factor <- 0.68
+        th_label <- ""
+    }
 
-	y_label_form <- function(l) { 
-		ifelse(l<1000, l, paste0(round(l/1e3,1),"K"))
-	}
+    expr_genes_df <- subset(data, data$Threshold == 0.05)
+    expr_genes_df <- expr_genes_df[seq(1, nrow(expr_genes_df), 
+        nrow(expr_genes_df)/length(unique(expr_genes_df$species))), ]
+    expr_genes_df <- subset(expr_genes_df[c("species", "class", "Threshold", "total_expressed")])
+    expr_genes_df$x <- rep(1.25)
+    expr_genes_df$y <- rep(y_scale_factor*sapply(
+        split(data$expressed, rep(1:length(unique(data$species)), each = nrow(data)/length(unique(data$species)))), min), 
+    each=length(unique(expr_genes_df$Threshold)))
+    expr_genes_df$value <- paste0("n = ", expr_genes_df$total_expressed, " (0.05)")
+    expr_genes_df$th_value <- c(th_label, rep( "", nrow(expr_genes_df)-1))
 
+    fname <- paste0("other_species_", trans_class, ".jpg")
 
-	p <- ggplot(data, aes(x = factor(sample_names), y = expressed, color = Threshold, group = Threshold)) + 
-  	geom_line(aes(x = factor(sample_names, level= level_order)), size=0.62) + 
-	scale_y_continuous(expand = c(0.14, 0.15), breaks= pretty_breaks(), 
-		 	labels = y_label_form)
+    y_label_form <- function(l) { 
+        ifelse(l<100, l, paste0(round(l/1e3,1),"K"))
+    }
 
-	q <- p + facet_wrap(class ~ species, scales='free_y', ncol = 6) + 
-	theme_bw() + xlab("") + ylab("Count") + 
-	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
-		guides(colour = guide_legend(nrow = 1)) + 
-  		theme(
-  		strip.text = element_blank(), 
-  		strip.background = element_blank(),
-  		plot.margin = unit(c(15, -6.25, 0, 1), "points"),
-  		axis.ticks.length = unit(.053, "cm"),
-  		axis.ticks = element_line(colour = "gray15", size = 0.2), 
-  		panel.grid.major = element_line(size = 0.2, colour = "grey95"), 
-  		panel.grid.minor = element_line(size = 0.15, colour = "white"),  
-  		axis.title.x = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
-  		axis.title.y = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 0, r = 7, b = 0, l = 2.9)), 
-  		axis.text.x = element_text(colour = "black", size=5.3, angle=45, 
-  			margin = margin(t = 0.59, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
-  		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
-		legend.position = "bottom",
-		legend.margin = margin(6, 0, 16.32, 0), 
-		legend.title = element_text(colour = "black", size=6.15, face ="bold"),
-		legend.text = element_text(size=6.1), 
-		legend.key.size = unit(0.5, "cm"),
-		legend.key.height = unit(0.4, "cm"),
-		legend.background = element_rect(fill = NA),
-		legend.key = element_rect(fill = NA),
-  		panel.border = element_rect(colour = "grey68", fill=NA, size=0.7))
+    data$sample_names <- case_when(data$sample_names == "Root" ~ "Root", data$sample_names == "Hypocotyl" ~ "Hypoc", 
+        data$sample_names == "Leaf" ~ "Leaf ", data$sample_names == "Apex veg" ~ "Apex.v", data$sample_names == "Apex inf" ~ "Apex.i", 
+        data$sample_names == "Flower" ~ "Flower", data$sample_names == "Carpel" ~ "Carpel", data$sample_names == "Stamen" ~ "Stamen", 
+        data$sample_names == "Pollen" ~ "Pollen")
 
+    data$species <- factor(data$species, levels = unique(data$species))
+    data$sample_names <- factor(data$sample_names, levels = unique(data$sample_names))
+    p <- ggplot(data = data, color = Threshold, aes(x = sample_names, y = expressed)) + 
+            geom_line(size = 2.2, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
+            geom_point(size = 3.8, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
+            scale_y_continuous(expand = c(0.1, 0), breaks = pretty_breaks(n = 5), labels= y_label_form) + 
+            scale_color_manual(values = c("gray35","#fe5651","#967cee","#dea80c")) + 
+            scale_x_discrete(expand = c(0.05, 0)) + 
+            guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
-  	pg <- ggplot(data, aes(x = factor(sample_names), y = expressed, color = Threshold, group = Threshold)) + 
-  	geom_line(aes(x = factor(sample_names, level= level_order)), size=0.62) + 
-	scale_y_continuous(expand = c(0.14, 0.15), breaks= pretty_breaks(), 
-		 	labels = y_label_form)
+            q <- p + theme_classic() + xlab("") + ylab(paste(gsub('.{1}$', '', trans_class), "count", sep=" ")) + 
+            geom_text(data = expr_genes_df, mapping = aes(x = x, y = y, label = value), 
+                size = 8.0, vjust = 0.28, hjust = 0, color = "grey25") + 
+            geom_text(data = expr_genes_df, mapping = aes(x = x, y = y, label = th_value), 
+                size = 8.0, vjust = -1.35, hjust = 0, color = "grey25") + 
+            theme(text=element_text(size = 16), 
+                strip.text = element_text(size = 22.75), 
+                strip.text.x = element_text(margin = margin(0.385, 0, 0.385, 0, "cm")), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.35), 
+                axis.ticks.length = unit(0.25, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.1), 
+                axis.line = element_line(colour = 'black', size = 1.1), 
+                plot.margin = unit(c(0.75, 4.15, 4.0, 3.7),"cm"), 
+                axis.title.y = element_text(size = 24.0, margin = margin(t = 0, r = 7, b = 0, l = 12.5), 
+                    colour="black", face = "plain"), 
+                axis.title.x = element_text(size = 24.0, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+                    colour="black", face = "plain"), 
+                axis.text.x = element_text(size=20.75, margin = margin(t = -42, b = 7.75), colour="grey25", 
+                    angle = 45, vjust = 0.25, hjust = 1), 
+                axis.text.y = element_text(size = 20.75, angle = 0, margin = margin(l = 0.75, r = 2.0), colour="grey25"), 
+                plot.title = element_text(size = 27.35, margin = margin(t = 0, b = 15), face = "plain"), 
+                panel.spacing = unit(0.4, "cm"), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor.x = element_blank(), 
+                panel.grid.minor.y = element_blank(), 
+                legend.position = "none") 
 
-	qg <- pg + facet_grid(class ~ species, scales='free') + 
-	theme_bw() + xlab("") + ylab("Count") + 
-	scale_color_manual(values=c("gray35","#fe5651","#967cee","#dea80c")) + 
-		guides(colour = guide_legend(nrow = 1)) + 
-  		theme(
-  		strip.text.x = element_text(margin = margin(0.088, 0, 0.088, 0, "cm"), size = 5.5), 
-        strip.text.y = element_text(margin = margin(0, 0.088, 0, 0.088, "cm"), size = 5.5),
-        strip.background = element_rect(colour="grey68", size=0.7), 
-  		plot.margin = unit(c(15, 0, 0, 1), "points"),
-  		axis.ticks.length = unit(.053, "cm"),
-  		panel.grid.major = element_line(size = 0.2, colour = "grey95"), 
-  		panel.grid.minor = element_line(size = 0.15, colour = "white"),  
-  		axis.ticks = element_line(colour = "gray15", size = 0.2), 
-  		axis.title.x = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 4.75, r = 0, b = -24.5, l = 0)), 
-  		axis.title.y = element_text(colour = "black", size=6.55, 
-  			margin = margin(t = 0, r = 7, b = 0, l = 2.9)), 
-  		axis.text.x = element_text(colour = "black", size=5.3, angle=45, 
-  			margin = margin(t = 0.59, r = 0, b = 0, l = 0), hjust = 1, vjust = 1), 
-  		axis.text.y = element_text(colour = "black", size=5.0, margin = margin(t = 0, r = 0.4, b = 0, l = -3.25)),  
-		legend.position = "bottom",
-		legend.margin = margin(6, 0, 16.32, 0), 
-		legend.title = element_text(colour = "black", size=6.15, face ="bold"),
-		legend.text = element_text(size=6.1), 
-		legend.key.size = unit(0.5, "cm"),
-		legend.key.height = unit(0.4, "cm"),
-		legend.background = element_rect(fill = NA),
-		legend.key = element_rect(fill = NA),
-  		panel.border = element_rect(colour = "grey68", fill=NA, size=0.7))
+            q <- q + facet_wrap(~ factor(species, levels = c("AL", "CR", "ES", "TH", "MT", "BD")) , nrow = 1, scales = "free")
 
+            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+                width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
 
-	gt1 = ggplot_gtable(ggplot_build(q))
-	gt2 = ggplot_gtable(ggplot_build(qg))
-
-	gt1 <- gtable_add_rows(gt1, heights = unit(0.125, 'cm'), pos = 2)
-	gt1 <- gtable_add_grob(gt1, grobs = gt2$grobs[grep('strip-t', gt2$layout$name)], t = 2, l = gt1$layout[grep('strip-t.+1$', gt1$layout$name),]$l)
-
-    gt.side1 = gtable_filter(gt2, 'strip-r-1')
-    gt.side2 = gtable_filter(gt2, 'strip-r-2')
-    gt.side3 = gtable_filter(gt2, 'strip-r-3')
-    gt.side4 = gtable_filter(gt2, 'strip-r-4')
-    gt.side5 = gtable_filter(gt2, 'strip-r-5')
-
-    gt1 = gtable_add_cols(gt1, widths = unit(0.7, 'cm'), pos = -1)
-    gt1 = gtable_add_grob(gt1, zeroGrob(), t = 1, l = ncol(gt1), b=nrow(gt1))
-
-    panel_id <- gt1$layout[grep('panel-.+1$', gt1$layout$name),]
-    gt1 = gtable_add_grob(gt1, gt.side1, t = panel_id$t[1], l = ncol(gt1))
-    gt1 = gtable_add_grob(gt1, gt.side2, t = panel_id$t[2], l = ncol(gt1))
-    gt1 = gtable_add_grob(gt1, gt.side3, t = panel_id$t[3], l = ncol(gt1))
-    gt1 = gtable_add_grob(gt1, gt.side4, t = panel_id$t[4], l = ncol(gt1))
-    gt1 = gtable_add_grob(gt1, gt.side5, t = panel_id$t[5], l = ncol(gt1))
-
-
-	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = gt1,
-		scale = 1, width = 6.65, height = 5.57, units = c("in"), 
-		dpi = 800, limitsize = FALSE)
 }
+trans_class <- c("Genes", "Transcripts", "NATs", "lincRNAs") # split expr_genes_OS df into transcript class list
+trans_class_ls <- setNames(as.list(trans_class), trans_class)
+trans_class_ls <- lapply(trans_class_ls, function(x){dplyr::filter(expr_genes_OS, grepl(x, class))})
 
-
-plotExprGenesOS(data = expr_genes_OS)
-
-
-
-# Generate blank plot and add annotations (workaround to add number of expressed genes 
-# per species and transcript class for non-ATH species, since this was not possible to add 
-# directly to the plot generated by facet_wrap/grid followed by gtable function...)
-# This plot has same dimensions as "plotExprGenesOS", but features complete transparency
-# with added text annotations
-
-df_blank <- data.frame()
-
-AT_total_cod <- paste("Total:", expr_genes_OS[10,2], sep=" ")
-CR_total_cod <- paste("Total:", expr_genes_OS[190,2], sep=" ")
-ES_total_cod <- paste("Total:", expr_genes_OS[370,2], sep=" ")
-TH_total_cod <- paste("Total:", expr_genes_OS[550,2], sep=" ")
-MT_total_cod <- paste("Total:", expr_genes_OS[730,2], sep=" ")
-BD_total_cod <- paste("Total:", expr_genes_OS[910,2], sep=" ")
-
-
-dat_text <- data.frame(
-    label = c(AT_total_cod, CR_total_cod, ES_total_cod, TH_total_cod, MT_total_cod, BD_total_cod, 
-    	expr_genes_OS[46,2], expr_genes_OS[226,2], expr_genes_OS[406,2], expr_genes_OS[586,2], 
-    	expr_genes_OS[766,2], expr_genes_OS[946,2], expr_genes_OS[82,2], expr_genes_OS[262,2], 
-    	expr_genes_OS[442,2], expr_genes_OS[622,2], expr_genes_OS[802,2], expr_genes_OS[982,2], 
-    	expr_genes_OS[118,2], expr_genes_OS[298,2], expr_genes_OS[478,2], expr_genes_OS[658,2], 
-    	expr_genes_OS[838,2], expr_genes_OS[1018,2], expr_genes_OS[154,2], expr_genes_OS[334,2], 
-    	expr_genes_OS[514,2], expr_genes_OS[694,2], expr_genes_OS[874,2], expr_genes_OS[1054,2]),
-    x = c(0.312, 1.364, 2.415, 3.466, 4.517, 5.568, 0.209, 1.261, 2.312, 3.363, 4.414, 5.465, 
-    	0.187, 1.239, 2.29, 3.341, 4.392, 5.443, 0.187, 1.239, 2.29, 3.341, 4.392, 5.443, 
-    	0.167, 1.219, 2.272, 3.320, 4.39, 5.425),
-    y = c(33.89, 33.89, 33.89, 33.89, 33.89, 33.89, 26.44, 26.44, 26.44, 26.44, 26.44, 26.44, 
-    	24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 16.95, 16.95, 16.95, 16.95, 16.95, 16.95, 
-    	9.528, 9.528, 9.528, 9.528, 9.528, 9.528)
-    )
-
-p <- ggplot(df_blank) + geom_point() + xlim(0, 6) + ylim(0, 40) + theme_void() + 
-theme(
-    panel.background = element_rect(fill = "transparent"), # bg of the panel
-    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
-    panel.grid.major = element_blank(), # get rid of major grid
-    panel.grid.minor = element_blank(), # get rid of minor grid
-    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
-    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
-)
-
-q <- p + geom_text(
-    data = dat_text,
-    colour = "black",
-    mapping = aes(x = x, y = y, label = label), 
-    size=1.95
-    )
-
-ggsave(file = file.path(out_dir, "output", "plots", "non-ATH_annotation_layer.png"), plot = q,
-	scale = 1, width = 6.65, height = 5.57, units = c("in"), dpi = 800, limitsize = FALSE, 
-	bg = "transparent")
+lapply(trans_class_ls, plotExprGenesOS)
 
 
 
@@ -872,6 +805,17 @@ ggsave(file = file.path(out_dir, "output", "plots", "non-ATH_annotation_layer.pn
 
 
 # General settings
+# Get pollen samples from intra count table
+AT_intra_count_pollen <- select(ATH_th_genes_repl_intra_counts, 
+	"flowers_mature_pollen_28d_.1.", "flowers_mature_pollen_28d_.2.", "flowers_mature_pollen_28d_.3.")
+AT_intra_count_pollen <- tibble::rownames_to_column(AT_intra_count_pollen, "gene_id")
+ATH_th_genes_repl_inter_counts <- tibble::rownames_to_column(ATH_th_genes_repl_inter_counts, "gene_id")
+ATH_th_genes_repl_counts <- merge(ATH_th_genes_repl_inter_counts, AT_intra_count_pollen, by = "gene_id")
+
+# Get biotypes
+ATH_genes_complete_tpm <- select(ATH_genes_complete_tpm, "id", "biotype", "source")
+colnames(ATH_genes_complete_tpm)[which(names(ATH_genes_complete_tpm) == "id")] <- "gene_id"
+ATH_th_genes_repl_counts <- merge(ATH_genes_complete_tpm, ATH_th_genes_repl_counts, by = "gene_id")
 
 # Create shorter sample descriptions
 AT_names <- rep(c("root_root tip 5d", "root mat.zone 5d", "root whole rt 5d", "root whole rt 7d",
@@ -880,23 +824,24 @@ AT_names <- rep(c("root_root tip 5d", "root mat.zone 5d", "root whole rt 5d", "r
  "leaf tip 10d", "leaf 5+6 17d", "leaf 9+10 27d", "leaf senesc 35d", "cauline leaf 24d", 
  "apex veg 7d", "apex veg 10d", "apex veg 14d", "apex inf 21d", "apex inf clv1 21d", "apex inf 28d", 
  "flower st9", "flower st10/11", "flower st12", "flower st15", "sepals st12", "sepals st15", 
- "petals st12", "petals st15", "stamen st12", "stamen st15", "pollen mature", "carpel early st12", 
+ "petals st12", "petals st15", "stamen st12", "stamen st15", "carpel early st12", 
  "carpel late st12", "fruit st15", "fruit st16", "fruit st17a", "seeds st16", "seeds st17a", 
- "seeds st18"), each=3)
+ "seeds st18", "pollen mature"), each=3)
 
 replicate_tag <- rep(c(" 1"," 2"," 3"), times=44)
 
 AT_names <- paste0(AT_names,replicate_tag)
 
-names(ATH_th_genes_repl_tpm_0.05)[4:ncol(ATH_th_genes_repl_tpm_0.05)] <- AT_names
+names(ATH_th_genes_repl_counts)[4:ncol(ATH_th_genes_repl_counts)] <- AT_names
 
 
 # Define colors based on sample name
-label_col <- c(roo="#52428c", hyp="#808dc2", int="#0c703d", lea="#00994f", cot="#00994f", 
-	cau="#00994f", ape="#f4dc28", flo="#de6daf", sep="#84cd6a", pet="#ead1c7", 
-	sta="#f23d29", pol="#a63126", car="#f2a529", fru="#b54185", see="#e9a3b3")
+label_col <- c(roo="#5d4a95", hyp="#5bb1e2", int="#0c703d", lea="#00994f", cot="#00994f", 
+	cau="#00994f", ape="#f0d737", flo="#de6daf", sep="#84cd6a", pet="#ead1c7", 
+	sta="#f23d29", pol="#a63126", car="#e8a215", fru="#b54185", see="#e9a3b3")
 
-# apex color for Fig1
+
+# apex color for hclust dendrogram
 # ape="#f4dc28"
 
 # color setting for comparative heatmap and PCA: 
@@ -905,9 +850,7 @@ label_col <- c(roo="#52428c", hyp="#808dc2", int="#0c703d", lea="#00994f", cot="
 
 
 # Generate hclust dendrogram using relative expression data
-makeDendrogram <- function(x, coefficient = c("pearson", "spearman"), 
-	biotype = c("protein_coding", "antisense" , "lnc_intergenic"), label_col, d_leaf, 
-	cby_shift, cby_scale) {
+makeDendrogram <- function(x, coefficient = c("pearson", "spearman"), label_col) {
 
 	# Show error message if no scaling is chosen
 	if (missing(coefficient))
@@ -918,47 +861,60 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
 			call. = TRUE
 			)
 
-	if (missing(biotype))
-
-		stop(
-			"Please choose one of the following biotypes: 
-			'protein_coding', 'antisense', 'lnc_intergenic'",
-			call. = TRUE
-			)
-
 	# Set filename
     dfname <- deparse(substitute(x))
     coefficient_tag <- match.arg(coefficient)
-    fname <- sprintf('%s_dend.png', paste(dfname, biotype, coefficient_tag, sep="_"))
-    species <- substr(dfname, start = 1, stop = 2)
+    fname <- sprintf('%s_dend.jpg', paste(dfname, coefficient_tag, sep="_"))
 
-	if (is.element("protein_coding", biotype)) {
 
-		x <- subset(x, biotype=="protein_coding")
+	x_cd <- subset(x, biotype == "protein_coding")
+	x_as <- x[x$biotype %like% "antisense", ]
+	x_li <- subset(x, biotype == "lnc_intergenic")
 
-	} else if (is.element("antisense", biotype)) {
-
-		x <- x[x$biotype %like% "antisense", ]
-
-	} else if (is.element("lnc_intergenic", biotype)) {
-
-		x <- subset(x, biotype=="lnc_intergenic")
-	}
-
-    df_t <- t(x[, 4:ncol(x)]) # transposes data frame so rows become columns and vice versa
-    df_t[is.na(df_t)] <- 0 # replaces NAs by 0
+    df_t_cd <- t(x_cd[, 4:ncol(x_cd)]) # transposes data frame so rows become columns and vice versa
+    df_t_cd[is.na(df_t_cd)] <- 0 # replaces NAs by 0
+    df_t_as <- t(x_as[, 4:ncol(x_as)]) # transposes data frame so rows become columns and vice versa
+    df_t_as[is.na(df_t_as)] <- 0 # replaces NAs by 0
+    df_t_li <- t(x_li[, 4:ncol(x_li)]) # transposes data frame so rows become columns and vice versa
+    df_t_li[is.na(df_t_li)] <- 0 # replaces NAs by 0
 
     # Build distance matrix
     if (is.element(coefficient, c("pearson"))) {
-        df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "pearson")
+        df_t_cd_dist.mat <- get_dist(df_t_cd, stand = FALSE, method = "pearson")
+        df_t_as_dist.mat <- get_dist(df_t_as, stand = FALSE, method = "pearson")
+        df_t_li_dist.mat <- get_dist(df_t_li, stand = FALSE, method = "pearson")
 
     } else if (is.element(coefficient, c("spearman"))) {
-      df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "spearman")
+      df_t_cd_dist.mat <- get_dist(df_t_cd, stand = FALSE, method = "spearman")
+      df_t_as_dist.mat <- get_dist(df_t_as, stand = FALSE, method = "spearman")
+      df_t_li_dist.mat <- get_dist(df_t_li, stand = FALSE, method = "spearman")
     } 
 
-    df_clust.res <- hclust(df_t_dist.mat, method = "average") # agglomerate clustering using average linkage
+    df_cd_clust.res <- hclust(df_t_cd_dist.mat, method = "average") # agglomerate clustering using average linkage
+    df_as_clust.res <- hclust(df_t_as_dist.mat, method = "average") # agglomerate clustering using average linkage
+    df_li_clust.res <- hclust(df_t_li_dist.mat, method = "average") # agglomerate clustering using average linkage
   
-    df_dend <- dendrapply(as.dendrogram(df_clust.res), function(n){
+    df_dend_cd <- dendrapply(as.dendrogram(df_cd_clust.res), function(n){
+    
+    if (is.leaf(n)){
+      dend_col <- label_col[substr(attr(n,"label"),1,3)]
+      attr(n, "nodePar") <- list(pch = NA, lab.col = dend_col) # to define label color
+      attr(n, "edgePar") <- list(col = dend_col) # to color branch
+      }
+    return(n)
+    })
+
+    df_dend_as <- dendrapply(as.dendrogram(df_as_clust.res), function(n){
+    
+    if (is.leaf(n)){
+      dend_col <- label_col[substr(attr(n,"label"),1,3)]
+      attr(n, "nodePar") <- list(pch = NA, lab.col = dend_col) # to define label color
+      attr(n, "edgePar") <- list(col = dend_col) # to color branch
+      }
+    return(n)
+    })
+
+    df_dend_li <- dendrapply(as.dendrogram(df_li_clust.res), function(n){
     
     if (is.leaf(n)){
       dend_col <- label_col[substr(attr(n,"label"),1,3)]
@@ -969,240 +925,55 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     })
 
     # make branch colors extend to last common node
-    brc_col <- label_col[substr(colnames(x[, 4:ncol(x)]),1,3)]
-    brc_col <- brc_col[order.dendrogram(df_dend)]
-    brc_col <- factor(brc_col, unique(brc_col))
+    brc_col_cd <- label_col[substr(colnames(x_cd[, 4:ncol(x_cd)]),1,3)]
+    brc_col_cd <- brc_col_cd[order.dendrogram(df_dend_cd)]
+    brc_col_cd <- factor(brc_col_cd, unique(brc_col_cd))
+    brc_col_as <- label_col[substr(colnames(x_as[, 4:ncol(x_as)]),1,3)]
+    brc_col_as <- brc_col_as[order.dendrogram(df_dend_as)]
+    brc_col_as <- factor(brc_col_as, unique(brc_col_as))
+    brc_col_li <- label_col[substr(colnames(x_li[, 4:ncol(x_li)]),1,3)]
+    brc_col_li <- brc_col_li[order.dendrogram(df_dend_li)]
+    brc_col_li <- factor(brc_col_li, unique(brc_col_li))
 
-    png(height = 725, width = 2600, pointsize = 10, 
+    jpeg(height = 7.3, width = 10.25, pointsize = 10, units = c("in"), res = 300,  
     	file = file.path(out_dir, "output", "plots", fname))
-    par(mar = c(10, 3.5, 0.5, 0), lwd = 6.5, cex = 2.025, cex.axis = 1)
-    df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
+    par(mar = c(5.0, 3.5, 5.3, 8.8), lwd = 5, cex = 0.1, cex.axis = 3.5, cex.main = 3.5)
+    df_dend_cd = color_branches(df_dend_cd, clusters = as.numeric(brc_col_cd), col = levels(brc_col_cd))
+    df_dend_as = color_branches(df_dend_as, clusters = as.numeric(brc_col_as), col = levels(brc_col_as))
+    df_dend_li = color_branches(df_dend_li, clusters = as.numeric(brc_col_li), col = levels(brc_col_li))
 
-    if ((species == "AT") && (biotype == "protein_coding") && (coefficient == "pearson")) { 
-    	df_dend <- rotate(df_dend,c(1:15,19:33,16:18,34:39,55:75,46:54,40:45,76:78,82:87,79:81,88:132))
-    }
+    df_dend_cd <- rotate(df_dend_cd, c(1:15,19:33,16:18,34:93,106:114,100:105,94:99,115:120,124:132,121:123))
+    df_dend_as <- rotate(df_dend_as, c(130:132,127:129,1:24,28:36,25:27,37:90,99:107,96:98,91:95,108:120,124:126,121:123))
+    df_dend_li <- rotate(df_dend_li, c(124:132,1:3,7:12,4:6,13:30,85:123,31:45,67:84,58:66,46:57))
 
-    else if ((species == "AT") && (biotype == "antisense") && (coefficient == "pearson")) { 
-    	df_dend <- rotate(df_dend,c(4:6,1:3,7:33,37:45,34:36,76:87,112:117,109:111,103:108,88:102,130:132,124:129,121:123,118:120,46:75))
-    }
-
-    else if ((species == "AT") && (biotype == "lnc_intergenic") && (coefficient == "pearson")) { 
-    	df_dend <- rotate(df_dend,c(124:132,1:3,7:9,4:6,64:69,73:84,70:73,13:30,34:39,46:48,40:45,31:33,55:63,49:54,85:123))
-    }
-
-    else if ((species == "AT") && (biotype == "protein_coding") && (coefficient == "spearman")) { 
-    	df_dend <- rotate(df_dend,c(1:9,13:27,10:12,28:30,34:36,31:33,37:45,49:54,46:48,91:105,112:126,106:111,127:132,55:90))
-    }
-
-    else if ((species == "AT") && (biotype == "antisense") && (coefficient == "spearman")) { 
-    	df_dend <- rotate(df_dend,c(4:6,1:3,7:12,16:30,13:15,31:36,46:51,40:45,37:39,127:132,109:111,115:117,112:114,103:108,88:102,118:126,85:87,82:84,55:57,58:81,52:54))
-    }
-
-    else if ((species == "AT") && (biotype == "lnc_intergenic") && (coefficient == "spearman")) { 
-    	df_dend <- rotate(df_dend,c(7:9,4:6,1:3,10:24,28:42,25:27,43:51,58:66,52:57,73:78,67:72,79:90,121:132,91:120))
-    }
 
     # Get color vector for reordered dendrogram
-    brc_col <- label_col[substr(colnames(x[, 4:ncol(x)]),1,3)]
-    brc_col <- brc_col[order.dendrogram(df_dend)]
-    brc_col <- factor(brc_col, unique(brc_col))
+    brc_col_cd <- label_col[substr(colnames(x_cd[, 4:ncol(x_cd)]),1,3)]
+    brc_col_cd <- brc_col_cd[order.dendrogram(df_dend_cd)]
+    brc_col_cd <- factor(brc_col_cd, unique(brc_col_cd))
+    brc_col_as <- label_col[substr(colnames(x_as[, 4:ncol(x_as)]),1,3)]
+    brc_col_as <- brc_col_as[order.dendrogram(df_dend_as)]
+    brc_col_as <- factor(brc_col_as, unique(brc_col_as))
+    brc_col_li <- label_col[substr(colnames(x_li[, 4:ncol(x_li)]),1,3)]
+    brc_col_li <- brc_col_li[order.dendrogram(df_dend_li)]
+    brc_col_li <- factor(brc_col_li, unique(brc_col_li))
 
-    plot(df_dend, dLeaf = d_leaf)
-    df_dend = colored_bars(colors = brc_col, dend = df_dend, add=TRUE, sort_by_labels_order=FALSE, 
-    	y_shift = cby_shift, y_scale = cby_scale, rowLabels = "")
+
+    par(mfrow = c(3,1))
+
+    df_dend_cd %>% set("labels_cex", 0.1) %>% plot(main = "Protein-coding")
+    colored_bars(colors = brc_col_cd, dend = df_dend_cd, sort_by_labels_order = FALSE, y_shift = -0.035, y_scale = 0.340, rowLabels = "")
+    par(mfrow = c(3,1), new = TRUE, mfg = c(2, 1))
+    df_dend_as %>% set("labels_cex", 0.1) %>% plot(main = "NATs")
+    colored_bars(colors = brc_col_as, dend = df_dend_as, sort_by_labels_order = FALSE, y_shift = -0.0225, y_scale = 0.253, rowLabels = "")
+    par(mfrow = c(3,1), new = TRUE)
+    df_dend_li %>% set("labels_cex", 0.1) %>% plot(main = "lincRNAs")
+    colored_bars(colors = brc_col_li, dend = df_dend_li, sort_by_labels_order = FALSE, y_shift = -0.0175, y_scale = 0.2025, rowLabels = "")
+
     dev.off()
 }
 
-makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
-	label_col = label_col, d_leaf = 0.111, cby_shift = -0.01125, cby_scale=0.094)
-makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "antisense", 
-	label_col = label_col, d_leaf = 0.098, cby_shift = -0.01, cby_scale=0.083)
-makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "lnc_intergenic", 
-	label_col = label_col,  d_leaf = 0.084, cby_shift = -0.0085, cby_scale=0.0705)
-makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
-	label_col = label_col, d_leaf = 0.074, cby_shift = -0.0075, cby_scale=0.0625)
-makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "antisense", 
-	label_col = label_col, d_leaf = 0.115, cby_shift = -0.01175, cby_scale=0.0965)
-makeDendrogram(ATH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "lnc_intergenic", 
-	label_col = label_col, d_leaf = 0.1085, cby_shift = -0.01135, cby_scale=0.091)
-
-
-
-# -------- non-ATH species -------- 
-
-# Create shorter sample descriptions
-brass_names <- rep(c("root, whole root", "hypocotyl", "leaf 1+2", "vegetative apex", "inflorescence apex", 
-	"flower stg12", "mature pollen", "carpel stg12", "stamen stg12"), each=3)
-TH_names <- rep(c("root, whole root", "hypocotyl", "leaf 1+2", "vegetative apex", "inflorescence apex", 
-	"flower stg12 equiv", "mature pollen", "carpel stg12 equiv", "stamen stg12 equiv"), each=3)
-MT_names <- rep(c("root, whole root", "hypocotyl", "leaf 2", "vegetative apex", "inflorescence apex", 
-	"flower stg8", "mature pollen", "carpel stg8", "stamen stg8"), each=3)
-BD_names <- rep(c("root, whole root", "mesocotyl", "leaf 1", "vegetative apex", "spikelet meristem", "floret stg12 equiv", "mature pollen", 
-	"carpel stg12 equiv", "stamen stg12 equiv"), each=3)
-
-replicate_tag_comp_samples <- rep(c(" 1"," 2"," 3"), times=9)
-
-brass_names <- paste0(brass_names,replicate_tag_comp_samples)
-TH_names <- paste0(TH_names,replicate_tag_comp_samples)
-MT_names <- paste0(MT_names,replicate_tag_comp_samples)
-BD_names <- paste0(BD_names,replicate_tag_comp_samples)
-
-names(AL_th_genes_repl_tpm_0.05)[4:ncol(AL_th_genes_repl_tpm_0.05)] <- brass_names
-names(CR_th_genes_repl_tpm_0.05)[4:ncol(CR_th_genes_repl_tpm_0.05)] <- brass_names
-names(ES_th_genes_repl_tpm_0.05)[4:ncol(ES_th_genes_repl_tpm_0.05)] <- brass_names
-names(TH_th_genes_repl_tpm_0.05)[4:ncol(TH_th_genes_repl_tpm_0.05)] <- TH_names
-names(MT_th_genes_repl_tpm_0.05)[4:ncol(MT_th_genes_repl_tpm_0.05)] <- MT_names
-names(BD_th_genes_repl_tpm_0.05)[4:ncol(BD_th_genes_repl_tpm_0.05)] <- BD_names
-
-
-# Define colors based on sample name
-label_col_c <- c(roo="#52428c", hyp="#808dc2", mes="#808dc2", lea="#00994f", veg="#95b73a", 
-	inf="#eed410", spi="#eed410", flo="#de6daf", sta="#f23d29", mat="#a63126", car="#f2a529")
-
-
-# Generate hclust dendrogram for non-ATH species
-makeDendrogramC <- function(x, coefficient = c("pearson", "spearman"), 
-	biotype = c("protein_coding", "antisense" , "lnc_intergenic"), label_col, d_leaf, 
-	cby_shift, cby_scale) {
-
-	# Show error message if no scaling is chosen
-	if (missing(coefficient))
-
-		stop(
-			"Please choose one of the following coefficients: 
-			'pearson', 'spearman'",
-			call. = TRUE
-			)
-
-	if (missing(biotype))
-
-		stop(
-			"Please choose one of the following biotypes: 
-			'protein_coding', 'antisense', 'lnc_intergenic'",
-			call. = TRUE
-			)
-
-	# Set filename
-    dfname <- deparse(substitute(x))
-    coefficient_tag <- match.arg(coefficient)
-    fname <- sprintf('%s_dend.png', paste(dfname, biotype, coefficient_tag, sep="_"))
-    species <- substr(dfname, start = 1, stop = 2)
-
-	if (is.element("protein_coding", biotype)) {
-
-		x <- subset(x, biotype=="protein_coding")
-
-	} else if (is.element("antisense", biotype)) {
-
-		x <- x[x$biotype %like% "antisense", ]
-
-	} else if (is.element("lnc_intergenic", biotype)) {
-
-		x <- subset(x, biotype=="lnc_intergenic")
-	}
-
-    df_t <- t(x[, 4:ncol(x)]) # transposes data frame so rows become columns and vice versa
-    df_t[is.na(df_t)] <- 0 # replaces NAs by 0
-
-    # Build distance matrix
-    if (is.element(coefficient, c("pearson"))) {
-        df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "pearson")
-
-    } else if (is.element(coefficient, c("spearman"))) {
-      df_t_dist.mat <- get_dist(df_t, stand = FALSE, method = "spearman")
-    } 
-
-    df_clust.res <- hclust(df_t_dist.mat, method = "average") # agglomerate clustering using average linkage
-  
-    df_dend <- dendrapply(as.dendrogram(df_clust.res), function(n){
-    
-    if (is.leaf(n)){
-      dend_col <- label_col[substr(attr(n,"label"),1,3)]
-      attr(n, "nodePar") <- list(pch = NA, lab.col = dend_col) # to define label color
-      attr(n, "edgePar") <- list(col = dend_col) # to color branch
-      }
-    return(n)
-    })
-
-    # make branch colors extend to last common node
-    brc_col <- label_col[substr(colnames(x[, 4:ncol(x)]),1,3)]
-    brc_col <- brc_col[order.dendrogram(df_dend)]
-    brc_col <- factor(brc_col, unique(brc_col))
-
-    png(height = 1580, width = 1400, pointsize = 10, 
-    	file = file.path(out_dir, "output", "plots", fname))
-    par(mar = c(10, 2.5, 0.5, 0), lwd = 13, cex = 4.8, cex.axis = 0.8)
-    df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
-
-    if ((species == "AL") && (biotype == "protein_coding")) { 
-    	df_dend <- rotate(df_dend,c(1:3,7:9,4:6,22:27,10:21))
-    }
-    if (((species == "CR")|(species == "ES")) && (biotype == "protein_coding") && (coefficient == "pearson")) { 
-    	df_dend <- rotate(df_dend,c(1:3,7:9,4:6,10:15,25:27,22:24,19:21,16:18))
-    }
-    if (((species == "CR")|(species == "ES")) && (biotype == "protein_coding") && (coefficient == "spearman")) { 
-    	df_dend <- rotate(df_dend,c(1:3,7:9,4:6,10:15,25:27,22:24,16:21))
-    }
-    if ((species == "TH") && (biotype == "protein_coding")) { 
-    	df_dend <- rotate(df_dend,c(1:12,25:27,22:24,13:21))
-    }
-    if ((species == "MT") && (biotype == "protein_coding") && (coefficient == "pearson")) { 
-    	df_dend <- rotate(df_dend,c(1:6,10:12,7:9,25:27,22:24,13:15,19:21,16:18))
-    }
-    if ((species == "MT") && (biotype == "protein_coding") && (coefficient == "spearman")) { 
-    	df_dend <- rotate(df_dend,c(1:12,25:27,22:24,13:15,19:21,16:18))
-    }
-    if ((species == "BD") && (biotype == "protein_coding") && (coefficient == "pearson")) { 
-    	df_dend <- rotate(df_dend,c(4:6,1:3,7:12,22:27,13:15,16:21))
-    }
-    if ((species == "BD") && (biotype == "protein_coding") && (coefficient == "spearman")) { 
-    	df_dend <- rotate(df_dend,c(25:27,22:24,1:6,19:21,16:18,7:15))
-    }
-
-    # Get color vector for reordered dendrogram
-    brc_col <- label_col[substr(colnames(x[, 4:ncol(x)]),1,3)]
-    brc_col <- brc_col[order.dendrogram(df_dend)]
-    brc_col <- factor(brc_col, unique(brc_col))
-
-    plot(df_dend, dLeaf = d_leaf)
-    df_dend = colored_bars(colors = brc_col, dend = df_dend, add=TRUE, sort_by_labels_order=FALSE, 
-    	y_shift = cby_shift, y_scale = cby_scale, rowLabels = "")
-    dev.off()
-}
-
-# Make Pearson cor dendrograms
-makeDendrogramC(AL_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.067, cby_shift = -0.01125, cby_scale=0.05)
-makeDendrogramC(CR_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.0675, cby_shift = -0.01125, cby_scale=0.0501)
-makeDendrogramC(ES_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.0678, cby_shift = -0.01125, cby_scale=0.0507)
-makeDendrogramC(TH_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.065, cby_shift = -0.011, cby_scale=0.0484)
-makeDendrogramC(MT_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.0638, cby_shift = -0.0098, cby_scale=0.0485)
-makeDendrogramC(BD_th_genes_repl_tpm_0.05, coefficient = "pearson", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.052625, cby_shift = -0.008, cby_scale=0.04)
-
-# Make Spearman cor dendrograms
-makeDendrogramC(AL_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.047, cby_shift = -0.008, cby_scale=0.035)
-makeDendrogramC(CR_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.0355, cby_shift = -0.00575, cby_scale=0.0268)
-makeDendrogramC(ES_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.048, cby_shift = -0.0075, cby_scale=0.036)
-makeDendrogramC(TH_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.047, cby_shift = -0.0076, cby_scale=0.035)
-makeDendrogramC(MT_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.0415, cby_shift = -0.0068, cby_scale=0.031)
-makeDendrogramC(BD_th_genes_repl_tpm_0.05, coefficient = "spearman", biotype = "protein_coding", 
-	label_col = label_col_c, d_leaf = 0.0455, cby_shift = -0.0077, cby_scale=0.034)
-
-
-
-
-
-
+makeDendrogram(ATH_th_genes_repl_counts, coefficient = "pearson", label_col = label_col)
 
 
 
