@@ -7,12 +7,10 @@
 # Input sample tables should have the following format:
 # DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species), rownames = gene_id
 
-# Copy files for conserved coding and lncRNAs from "./20200527_CS_comparative/data/Expression_data" into "./20200401_CS_exprGenes/data/Expression_data"
-# in_dir for conserved lncRNAs: 
-# in_dir_cons_lncRNAs <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20200527_CS_comparative/data"
+
 #------------------- Load packages, set directories and read sample tables ---------------------
 
-# Updated lines 10-12, 45+46, 135, 159, added 162-166
+
 # Define function to get expressed genes
 
 getMaxExpr <- function(species = c("AT", "all"), ...) {
@@ -42,8 +40,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    pathBD = file.path(in_dir, "Expression_data", "BD_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
 
    # Ortholog tables
-   pathCore = file.path(in_dir_cons_lncRNAs, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
-   pathBrass = file.path(in_dir_cons_lncRNAs, "Expression_data", "lnc_AT_brass_inter_combined_tpm_mat_deseq_sample_names.csv")
+   pathCore = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
+   pathBrass = file.path(in_dir, "Expression_data", "lnc_AT_brass_inter_combined_tpm_mat_deseq_sample_names.csv")
 
    # A.thaliana table containing raw expression values and biotype annotation
    pathAT_compl <- file.path(in_dir, "Expression_data", "AT_genes_complete_table_tpm_sample_names.csv")
@@ -153,10 +151,10 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    		} else if ((c_level == "all") && (scripttype == "lncRNA")) {
 
    			df <- df[rownames(df) %in% AT_lncRNA_ids, ]
-   		}
-
+   		
    		# Reduce data to core orthologs if core set is chosen
-   		else if ((c_level == "core") && (scripttype == "coding")) {
+
+   		} else if ((c_level == "core") && (scripttype == "coding")) {
 
    			df <- df[rownames(df) %in% core_ids,]
    		
@@ -205,6 +203,18 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
 
+   	# Show message
+   	message("Writing output...")
+
+   	# Set filename
+   	fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
+
+   	# Write final data tables to csv files and store them in /out_dir/output/data_tables
+   	if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
+   	dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
+
+   	write.table(at_stats, file = file.path(out_dir, "output", "max_expr", fname_max_expr), 
+   		sep=";", dec=".", row.names = FALSE, col.names = TRUE)
 
 
    }
