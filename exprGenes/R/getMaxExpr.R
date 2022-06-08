@@ -41,7 +41,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
    # Ortholog tables
    pathCore = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
-   pathBrass = file.path(in_dir, "Expression_data", "lnc_AT_brass_inter_combined_tpm_mat_deseq_sample_names.csv")
+   pathPcBrass = file.path(in_dir, "Expression_data", "AT_brass_inter_tpm_mat_deseq_sample_names.csv")
+   pathNcBrass = file.path(in_dir, "Expression_data", "lnc_AT_brass_inter_tpm_mat_deseq_sample_names.csv")
 
    # A.thaliana table containing raw expression values and biotype annotation
    pathAT_compl <- file.path(in_dir, "Expression_data", "AT_genes_complete_table_tpm_sample_names.csv")
@@ -51,12 +52,12 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    if (species == "all") {
 
    	expr_table_ls <- list(AT_tpm = pathAT, AL_tpm = pathAL, CR_tpm = pathCR, ES_tpm = pathES, 
-   		TH_tpm = pathTH, MT_tpm = pathMT, BD_tpm = pathBD, Core_tpm = pathCore, Brass_tpm = pathBrass,
-   		AT_tpm_compl = pathAT_compl)
+   		TH_tpm = pathTH, MT_tpm = pathMT, BD_tpm = pathBD, Core_tpm = pathCore, Brass_pc_tpm = pathPcBrass, 
+      Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
 
    } else if (species == "AT") {
 
-   	expr_table_ls <- list(AT_tpm = pathAT, Core_tpm = pathCore, Brass_tpm = pathBrass, AT_tpm_compl = pathAT_compl)
+   	expr_table_ls <- list(AT_tpm = pathAT, Core_tpm = pathCore, Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
    }
 
 
@@ -130,7 +131,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    	# Extract all A.thaliana lncRNAs
    	AT_lncRNA_ids <- subset(AT_tpm_compl, subset = biotype %in% c("lnc_exonic_antisense", 
    		"lnc_intronic_antisense", "lnc_intergenic"))[,1]
-   	core_lnc_ids <- sub("\\:.*", "", Brass_tpm[,1])
+   	core_lnc_ids <- sub("\\:.*", "", Brass_nc_tpm[,1])
 
 
    	# Get number of genes with maximum expression for each organ
