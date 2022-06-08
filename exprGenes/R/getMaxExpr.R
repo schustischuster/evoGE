@@ -67,7 +67,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    	})
 
 
-   # Stop function here to allow specific analysis of a single species
+   # Stop function here to run tests
    # return_list <- list("species_id" = species_id, "expr_tables" = expr_tables)
    # return(return_list)
    # }
@@ -226,44 +226,44 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
    else if (species_id == "all") {
 
-    tpm_table_ls <- list(AT_tpm = AT_tpm, AL_tpm = AL_tpm, CR_tpm = CR_tpm, ES_tpm = ES_tpm, 
-      TH_tpm = TH_tpm, MT_tpm = MT_tpm, BD_tpm = BD_tpm)
+      tpm_table_ls <- list(AT_tpm = AT_tpm, AL_tpm = AL_tpm, CR_tpm = CR_tpm, ES_tpm = ES_tpm, 
+         TH_tpm = TH_tpm, MT_tpm = MT_tpm, BD_tpm = BD_tpm)
 
-    # log-transform data
-    tpm_table_ls <- lapply(tpm_table_ls, function(t) log2(t + 1))
+      # log-transform data
+      tpm_table_ls <- lapply(tpm_table_ls, function(t) log2(t + 1))
 
-    
-    # Get replicate expression
-    calculateAvgExpr <- function(df) {
+      
+      # Get replicate expression
+      calculateAvgExpr <- function(df) {
 
-       # Split data frame by sample replicates into a list and get rowMeans for each subset
-       averaged_replicates <- do.call(cbind, lapply(split.default(df, 
-        rep(seq_along(df), 
-          each = 3, 
-          length.out = ncol(df))
-        ), rowMeans)
-       )
+         # Split data frame by sample replicates into a list and get rowMeans for each subset
+         averaged_replicates <- do.call(cbind, lapply(split.default(df, 
+            rep(seq_along(df), 
+               each = 3, 
+               length.out = ncol(df))
+            ), rowMeans)
+         )
 
-       averaged_replicates <- as.data.frame(averaged_replicates)
+         averaged_replicates <- as.data.frame(averaged_replicates)
 
-       # Get replicate names
-       getReplNames <- function(n) {
+         # Get replicate names
+         getReplNames <- function(n) {
 
-        df_names <- names(n)
-        df_names <- unique(substring(df_names, 1, nchar(df_names)-4))
-        df_names <- gsub('[.]', '', df_names)
+            df_names <- names(n)
+            df_names <- unique(substring(df_names, 1, nchar(df_names)-4))
+            df_names <- gsub('[.]', '', df_names)
 
-        return(df_names)
-       }
+            return(df_names)
+         }
 
-       repl_names <- getReplNames(df)
+         repl_names <- getReplNames(df)
 
-       colnames(averaged_replicates) <- repl_names
+         colnames(averaged_replicates) <- repl_names
 
-       return(averaged_replicates)
-    }
+         return(averaged_replicates)
+      }
 
-    tpm_table_repl_ls <- lapply(tpm_table_ls, calculateAvgExpr)
+      tpm_table_repl_ls <- lapply(tpm_table_ls, calculateAvgExpr)
 
 
       # Select comparative organs for AT and AL
@@ -445,10 +445,18 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
 
+      # Show message
+      message("Writing output...")
 
+      # Set filename
+      fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
 
+      # Write final data tables to csv files and store them in /out_dir/output/max_expr
+      if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
+      dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
 
-
+      write.table(at_stats, file = file.path(out_dir, "output", "max_expr", fname_max_expr), 
+         sep=";", dec=".", row.names = FALSE, col.names = TRUE)
 
 
    }
