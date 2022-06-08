@@ -14,15 +14,15 @@
 # Define function to get expressed genes
 
 getMaxExpr <- function(species = c("AT", "all"), ...) {
-	
+   
    # Show error message if no species is chosen
    if (missing(species))
 
    stop(
-   	"Please choose one of the available species: 
-   	'AT', 'all'",
-   	call. = TRUE
-   	)
+      "Please choose one of the available species: 
+      'AT', 'all'",
+      call. = TRUE
+      )
 
    species_id <- species
 
@@ -51,20 +51,20 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    # Set up list of expression tables
    if (species == "all") {
 
-   	expr_table_ls <- list(AT_tpm = pathAT, AL_tpm = pathAL, CR_tpm = pathCR, ES_tpm = pathES, 
-   		TH_tpm = pathTH, MT_tpm = pathMT, BD_tpm = pathBD, Core_tpm = pathCore, Brass_pc_tpm = pathPcBrass, 
+      expr_table_ls <- list(AT_tpm = pathAT, AL_tpm = pathAL, CR_tpm = pathCR, ES_tpm = pathES, 
+         TH_tpm = pathTH, MT_tpm = pathMT, BD_tpm = pathBD, Core_tpm = pathCore, Brass_pc_tpm = pathPcBrass, 
       Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
 
    } else if (species == "AT") {
 
-   	expr_table_ls <- list(AT_tpm = pathAT, Core_tpm = pathCore, Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
+      expr_table_ls <- list(AT_tpm = pathAT, Core_tpm = pathCore, Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
    }
 
 
    # Read expression data
    expr_tables <- lapply(expr_table_ls, function(x) {
-   	read.table(x, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
-   	})
+      read.table(x, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
+      })
 
 
    # Stop function here to run tests
@@ -85,137 +85,137 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
    if (species_id == "AT") {
 
-   	# log-transform data
-   	AT_tpm_log <- log2(AT_tpm + 1)
+      # log-transform data
+      AT_tpm_log <- log2(AT_tpm + 1)
 
 
-   	# Get replicate expression
-   	calculateAvgExpr <- function(df) {
+      # Get replicate expression
+      calculateAvgExpr <- function(df) {
 
-   	   # Split data frame by sample replicates into a list and get rowMeans for each subset
-   	   averaged_replicates <- do.call(cbind, lapply(split.default(df, 
-   	   	rep(seq_along(df), 
-   	   		each = 3, 
-   	   		length.out = ncol(df))
-   	   	), rowMeans)
-   	   )
+         # Split data frame by sample replicates into a list and get rowMeans for each subset
+         averaged_replicates <- do.call(cbind, lapply(split.default(df, 
+            rep(seq_along(df), 
+               each = 3, 
+               length.out = ncol(df))
+            ), rowMeans)
+         )
 
-   	   averaged_replicates <- as.data.frame(averaged_replicates)
+         averaged_replicates <- as.data.frame(averaged_replicates)
 
-   	   return(averaged_replicates)
-   	}
+         return(averaged_replicates)
+      }
 
-   	AT_tpm_repl <- calculateAvgExpr(AT_tpm_log)
-
-
-   	# Get replicate names
-   	getReplNames <- function(n) {
-
-   		df_names <- names(n)
-   		df_names <- unique(substring(df_names, 1, nchar(df_names)-4))
-   		df_names <- gsub('[.]', '', df_names)
-
-   		return(df_names)
-   	}
-
-   	repl_names <- getReplNames(AT_tpm_log)
-
-   	colnames(AT_tpm_repl) <- repl_names
+      AT_tpm_repl <- calculateAvgExpr(AT_tpm_log)
 
 
-   	# Extract protein-coding core ortholog and Brassicaceae lncRNA ortholog gene IDs
-   	core_ids <- sub("\\:.*", "", Core_tpm[,1])
-   	core_ids <- core_ids[!grepl("ERCC", core_ids)]
+      # Get replicate names
+      getReplNames <- function(n) {
+
+         df_names <- names(n)
+         df_names <- unique(substring(df_names, 1, nchar(df_names)-4))
+         df_names <- gsub('[.]', '', df_names)
+
+         return(df_names)
+      }
+
+      repl_names <- getReplNames(AT_tpm_log)
+
+      colnames(AT_tpm_repl) <- repl_names
 
 
-   	# Extract all A.thaliana lncRNAs
-   	AT_lncRNA_ids <- subset(AT_tpm_compl, subset = biotype %in% c("lnc_exonic_antisense", 
-   		"lnc_intronic_antisense", "lnc_intergenic"))[,1]
-   	core_lnc_ids <- sub("\\:.*", "", Brass_nc_tpm[,1])
+      # Extract protein-coding core ortholog and Brassicaceae lncRNA ortholog gene IDs
+      core_ids <- sub("\\:.*", "", Core_tpm[,1])
+      core_ids <- core_ids[!grepl("ERCC", core_ids)]
 
 
-   	# Get number of genes with maximum expression for each organ
-   	# "Merge" dev stages for each organ by calculating average number of genes w/ max expression
-
-   	getNumGenes <- function(df, scripttype = c("coding", "lncRNA"), c_level = c("all", "core")) {
-
-   		if ((c_level == "all") && (scripttype == "coding")) {
-
-   			df_at1 <- df[rownames(df) %like% "AT1G", ]
-   			df_at2 <- df[rownames(df) %like% "AT2G", ]
-   			df_at3 <- df[rownames(df) %like% "AT3G", ]
-   			df_at4 <- df[rownames(df) %like% "AT4G", ]
-   			df_at5 <- df[rownames(df) %like% "AT5G", ]
-
-   			df <- rbind(df_at1, df_at2, df_at3, df_at4, df_at5)
-
-   		} else if ((c_level == "all") && (scripttype == "lncRNA")) {
-
-   			df <- df[rownames(df) %in% AT_lncRNA_ids, ]
-   		
-   		# Reduce data to core orthologs if core set is chosen
-
-   		} else if ((c_level == "core") && (scripttype == "coding")) {
-
-   			df <- df[rownames(df) %in% core_ids,]
-   		
-   		} else if ((c_level == "core") && (scripttype == "lncRNA")) {
-
-   			df <- df[rownames(df) %in% core_lnc_ids, ]
-   		}
+      # Extract all A.thaliana lncRNAs
+      AT_lncRNA_ids <- subset(AT_tpm_compl, subset = biotype %in% c("lnc_exonic_antisense", 
+         "lnc_intronic_antisense", "lnc_intergenic"))[,1]
+      core_lnc_ids <- sub("\\:.*", "", Brass_nc_tpm[,1])
 
 
-   		# Create group names
-   		groups <- c(rep("Root", 6), "Hypocotyl" ,rep("Stem", 3), rep("Leaf", 9), rep("Apex", 6), 
-   			rep("Flower", 4), rep("Sepals", 2), rep("Petals", 2), rep("Stamen", 2), rep("Carpel", 2), 
-   			rep("Fruit", 3), rep("Seed", 3))
+      # Get number of genes with maximum expression for each organ
+      # "Merge" dev stages for each organ by calculating average number of genes w/ max expression
 
-   		df$max <- colnames(df)[apply(df, 1, which.max)]
+      getNumGenes <- function(df, scripttype = c("coding", "lncRNA"), c_level = c("all", "core")) {
 
-   		x_max <- df$max
-   		sample_count <- do.call(rbind, lapply(colnames(df)[1:(length(df)-1)], function(x) {
-   			length(grep(x, x_max))}))
+         if ((c_level == "all") && (scripttype == "coding")) {
 
-   		# Calculate average maximum expression per organ group
-   		avg_n_max <- c(rep(mean(sample_count[1:6]),6), sample_count[7], rep(mean(sample_count[8:10]),3), 
-   			rep(mean(sample_count[11:19]),9), rep(mean(sample_count[20:25]),6), rep(mean(sample_count[26:29]),4), 
-   			rep(mean(sample_count[30:31]),2), rep(mean(sample_count[32:33]),2), rep(mean(sample_count[34:35]),2), 
-   			rep(mean(sample_count[36:37]),2), rep(mean(sample_count[38:40]),3), rep(mean(sample_count[41:43]),3))
+            df_at1 <- df[rownames(df) %like% "AT1G", ]
+            df_at2 <- df[rownames(df) %like% "AT2G", ]
+            df_at3 <- df[rownames(df) %like% "AT3G", ]
+            df_at4 <- df[rownames(df) %like% "AT4G", ]
+            df_at5 <- df[rownames(df) %like% "AT5G", ]
 
-   		df_out <- data.frame(
-   			biotype = rep(scripttype), 
-   			conservation = rep(c_level),
-   			organ = colnames(df)[1:(length(df)-1)], 
-   			group = groups, 
-   			count = sample_count, 
-   			average_count = avg_n_max
-   			)
+            df <- rbind(df_at1, df_at2, df_at3, df_at4, df_at5)
 
-   		return(df_out)
+         } else if ((c_level == "all") && (scripttype == "lncRNA")) {
 
-   	}
+            df <- df[rownames(df) %in% AT_lncRNA_ids, ]
+         
+         # Reduce data to core orthologs if core set is chosen
 
-   	cd_all <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "all")
-   	cd_core <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "core")
-   	nc_all <- getNumGenes(AT_tpm_repl, scripttype = "lncRNA", c_level = "all")
-   	nc_core <- getNumGenes(AT_tpm_repl, scripttype = "lncRNA", c_level = "core")
+         } else if ((c_level == "core") && (scripttype == "coding")) {
 
-   	at_stats <- rbind(cd_all, cd_core, nc_all, nc_core)
+            df <- df[rownames(df) %in% core_ids,]
+         
+         } else if ((c_level == "core") && (scripttype == "lncRNA")) {
+
+            df <- df[rownames(df) %in% core_lnc_ids, ]
+         }
 
 
+         # Create group names
+         groups <- c(rep("Root", 6), "Hypocotyl" ,rep("Stem", 3), rep("Leaf", 9), rep("Apex", 6), 
+            rep("Flower", 4), rep("Sepals", 2), rep("Petals", 2), rep("Stamen", 2), rep("Carpel", 2), 
+            rep("Fruit", 3), rep("Seed", 3))
 
-   	# Show message
-   	message("Writing output...")
+         df$max <- colnames(df)[apply(df, 1, which.max)]
 
-   	# Set filename
-   	fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
+         x_max <- df$max
+         sample_count <- do.call(rbind, lapply(colnames(df)[1:(length(df)-1)], function(x) {
+            length(grep(x, x_max))}))
 
-   	# Write final data tables to csv files and store them in /out_dir/output/max_expr
-   	if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
-   	dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
+         # Calculate average maximum expression per organ group
+         avg_n_max <- c(rep(mean(sample_count[1:6]),6), sample_count[7], rep(mean(sample_count[8:10]),3), 
+            rep(mean(sample_count[11:19]),9), rep(mean(sample_count[20:25]),6), rep(mean(sample_count[26:29]),4), 
+            rep(mean(sample_count[30:31]),2), rep(mean(sample_count[32:33]),2), rep(mean(sample_count[34:35]),2), 
+            rep(mean(sample_count[36:37]),2), rep(mean(sample_count[38:40]),3), rep(mean(sample_count[41:43]),3))
 
-   	write.table(at_stats, file = file.path(out_dir, "output", "max_expr", fname_max_expr), 
-   		sep=";", dec=".", row.names = FALSE, col.names = TRUE)
+         df_out <- data.frame(
+            biotype = rep(scripttype), 
+            conservation = rep(c_level),
+            organ = colnames(df)[1:(length(df)-1)], 
+            group = groups, 
+            count = sample_count, 
+            average_count = avg_n_max
+            )
+
+         return(df_out)
+
+      }
+
+      cd_all <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "all")
+      cd_core <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "core")
+      nc_all <- getNumGenes(AT_tpm_repl, scripttype = "lncRNA", c_level = "all")
+      nc_core <- getNumGenes(AT_tpm_repl, scripttype = "lncRNA", c_level = "core")
+
+      at_stats <- rbind(cd_all, cd_core, nc_all, nc_core)
+
+
+
+      # Show message
+      message("Writing output...")
+
+      # Set filename
+      fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
+
+      # Write final data tables to csv files and store them in /out_dir/output/max_expr
+      if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
+      dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
+
+      write.table(at_stats, file = file.path(out_dir, "output", "max_expr", fname_max_expr), 
+         sep=";", dec=".", row.names = FALSE, col.names = TRUE)
 
 
    }
