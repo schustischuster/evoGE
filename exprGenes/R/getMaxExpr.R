@@ -210,7 +210,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    	# Set filename
    	fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
 
-   	# Write final data tables to csv files and store them in /out_dir/output/data_tables
+   	# Write final data tables to csv files and store them in /out_dir/output/max_expr
    	if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
    	dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
 
