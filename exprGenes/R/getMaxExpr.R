@@ -57,7 +57,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
    } else if (species == "AT") {
 
-      expr_table_ls <- list(AT_tpm = pathAT, Core_tpm = pathCore, Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
+      expr_table_ls <- list(AT_tpm = pathAT, Core_tpm = pathCore, Brass_pc_tpm = pathPcBrass, 
+         Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
    }
 
 
@@ -76,6 +77,9 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
    list2env(expr_tables, envir = .GlobalEnv)
+
+   # Show message
+   message("Starting analysis...")
 
 
 
@@ -128,16 +132,17 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       core_ids <- core_ids[!grepl("ERCC", core_ids)]
 
 
-      # Extract all A.thaliana lncRNAs
+      # Extract all A.thaliana lncRNAs and get orthologs
       AT_lncRNA_ids <- subset(AT_tpm_compl, subset = biotype %in% c("lnc_exonic_antisense", 
          "lnc_intronic_antisense", "lnc_intergenic"))[,1]
+      core_brass_ids <- sub("\\:.*", "", Brass_pc_tpm[,1])
       core_lnc_ids <- sub("\\:.*", "", Brass_nc_tpm[,1])
 
 
       # Get number of genes with maximum expression for each organ
       # "Merge" dev stages for each organ by calculating average number of genes w/ max expression
 
-      getNumGenes <- function(df, scripttype = c("coding", "lncRNA"), c_level = c("all", "core")) {
+      getNumGenes <- function(df, scripttype = c("coding", "lncRNA"), c_level = c("all", "brass", "core")) {
 
          if ((c_level == "all") && (scripttype == "coding")) {
 
@@ -158,6 +163,10 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          } else if ((c_level == "core") && (scripttype == "coding")) {
 
             df <- df[rownames(df) %in% core_ids,]
+
+         } else if ((c_level == "brass") && (scripttype == "coding")) {
+
+            df <- df[rownames(df) %in% core_brass_ids,]
          
          } else if ((c_level == "core") && (scripttype == "lncRNA")) {
 
@@ -196,11 +205,12 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       }
 
       cd_all <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "all")
+      cd_brass <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "brass")
       cd_core <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "core")
       nc_all <- getNumGenes(AT_tpm_repl, scripttype = "lncRNA", c_level = "all")
       nc_core <- getNumGenes(AT_tpm_repl, scripttype = "lncRNA", c_level = "core")
 
-      at_stats <- rbind(cd_all, cd_core, nc_all, nc_core)
+      at_stats <- rbind(cd_all, cd_brass, cd_core, nc_all, nc_core)
 
 
 
