@@ -53,7 +53,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
       expr_table_ls <- list(AT_tpm = pathAT, AL_tpm = pathAL, CR_tpm = pathCR, ES_tpm = pathES, 
          TH_tpm = pathTH, MT_tpm = pathMT, BD_tpm = pathBD, Core_tpm = pathCore, Brass_pc_tpm = pathPcBrass, 
-      Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
+         Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
 
    } else if (species == "AT") {
 
