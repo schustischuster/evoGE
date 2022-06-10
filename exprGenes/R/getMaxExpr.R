@@ -200,6 +200,17 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             average_count = avg_n_max
             )
 
+         total_avg <- sum(unique(avg_n_max[1:6]), avg_n_max[7], unique(avg_n_max[8:10]), unique(avg_n_max[11:19]), 
+            unique(avg_n_max[20:25]), unique(avg_n_max[26:29]), unique(avg_n_max[30:31]), unique(avg_n_max[32:33]), 
+            unique(avg_n_max[34:35]), unique(avg_n_max[36:37]), unique(avg_n_max[38:40]), unique(avg_n_max[41:43]))
+
+         df_out$average_perc <- c(rep(mean(sample_count[1:6])/total_avg,6), avg_n_max[7]/total_avg, 
+            rep(mean(sample_count[8:10])/total_avg,3), rep(mean(sample_count[11:19])/total_avg,9), 
+            rep(mean(sample_count[20:25])/total_avg,6), rep(mean(sample_count[26:29])/total_avg,4), 
+            rep(mean(sample_count[30:31])/total_avg,2), rep(mean(sample_count[32:33])/total_avg,2), 
+            rep(mean(sample_count[34:35])/total_avg,2), rep(mean(sample_count[36:37])/total_avg,2), 
+            rep(mean(sample_count[38:40])/total_avg,3), rep(mean(sample_count[41:43])/total_avg,3))
+
          return(df_out)
 
       }
@@ -226,6 +237,76 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
       write.table(at_stats, file = file.path(out_dir, "output", "max_expr", fname_max_expr), 
          sep=";", dec=".", row.names = FALSE, col.names = TRUE)
+
+
+
+      # Prepare data for plotting
+      at_stats_red <- at_stats[c(1,7,8,11,20,26,30,32,34,36,38,41,44,50,51,54,63,69,73,75,
+         77,79,81,84,87,93,94,97,106,112,116,118,120,122,124,127,130,136,137,140,149,155,159,
+         161,163,165,167,170,173,179,180,183,192,198,202,204,206,208,210,213),]
+
+      at_stats_pc <- at_stats[at_stats$biotype == "coding",]
+      at_stats_nc <- at_stats[at_stats$biotype == "lncRNA",]
+
+
+      
+      # Generate plots
+      plotMaxExprAT <- function(data, biotype) {
+
+         if (biotype == "coding") {
+
+            p_title <- "Protein-coding genes"
+         
+         } else if (biotype == "lncRNA") {
+
+            p_title <- "lncRNAs"         
+         }
+
+         fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+         data$biotype <- factor(data$biotype, levels = unique(data$biotype))
+         data$conservation <- factor(data$conservation, levels = unique(data$conservation))
+         data$group <- factor(data$group, levels = unique(data$group))
+
+         p <- ggplot(data, aes(x = conservation, y = average_perc, color = organ)) + 
+         geom_point(size = 5.0, position = position_dodge(width = 0.75), aes(color = group)) + 
+         geom_linerange(size = 0.75, aes(x = conservation, ymin = 0, ymax = average_perc, 
+            colour = group), position = position_dodge(width = 0.75)) + 
+         scale_x_discrete(expand = c(0.05, 0)) + 
+         scale_y_continuous(limits = c(0, 0.4), expand = c(0, 0))
+
+
+         q <- p + 
+         # scale_color_manual(values=c("#b2b2b2","#e8a215","#f0d737","#069870","#0770ab","#4fb6f0","#ea6965")) + 
+         # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
+         theme_classic() + 
+         xlab("") + ylab("Percentage") + ggtitle("") + 
+         theme(text = element_text(size = 23.5), 
+            panel.grid.major = element_line(colour = "white"), 
+            panel.grid.minor = element_line(colour = "white"),  
+            axis.ticks.length = unit(.2, "cm"),
+            axis.ticks = element_line(colour = "gray15", size = 0.7),
+            axis.title.x = element_text(colour = "black", size = 21.55, 
+               margin = margin(t = 12.5, r = 0, b = 50.2, l = 0)),  
+            axis.title.y = element_text(colour = "black", size = 21.5, 
+               margin = margin(t = 0, r = 5.8, b = 0, l = 1.5)), 
+            axis.text.x = element_text(colour = "black", margin = margin(t = 3.5, r = 0, b = 1.6, l = 0), size = 20.5), 
+            axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.25, b = 0, l = 4), size = 18.55), 
+            plot.title = element_text(colour = "black", size = 23.5, 
+               margin = margin(t = 35.8, r = 0, b = 11.5, l = 0), hjust = 0.5), 
+            plot.margin = unit(c(0, 0.5, 0, 1), "points"),
+            legend.position = "right",
+            legend.title = element_text(colour = "black", size = 20, face = "bold"),
+            legend.text = element_text(size = 20), 
+            legend.background = element_rect(fill = NA))
+
+         ggsave(file = file.path(out_dir2, "output", "plots", fname), plot = q,
+            scale = 1, width = 10.25, height = 7.3, units = c("in"), 
+            dpi = 600, limitsize = FALSE)
+      }
+
+      plotMaxExprAT(data = at_stats_pc, biotype = "coding")
+      plotMaxExprAT(data = at_stats_nc, biotype = "lncRNA")
 
 
    }
