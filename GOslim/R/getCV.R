@@ -378,7 +378,10 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             plt_title <- "GO categories with larger fraction of stable genes   "
             plot_mar = unit(c(0.75, -0.25, 1.5, -0.325), "cm")
             legend_pos <- "none"
-            x_pand <- c(0.04, 0)
+            y_pand <- c(0.115, 0)
+            x_dat_pos <- 587
+            x_lim <- c(109.5, 722.5)
+            x_breaks <- c(100, 200, 300, 400, 500)
 
         } else if (cat == "variable") {
 
@@ -392,27 +395,29 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             plt_title <- "GO categories with larger fraction of variable genes"
             plot_mar = unit(c(0.75, 1.9, 1.5, -0.11), "cm")
             legend_pos <- "top"
-            x_pand <- c(0.0452, 0)
+            y_pand <- c(0.1335, 0)
+            x_dat_pos <- 692
+            x_lim <- c(170, 839)
+            x_breaks <- c(200, 300, 400, 500, 600)
 
         }
 
         df$CV_cat <- relevel(factor(df$CV_cat), 'variable genes')
 
         # Create df for FDR p-value mapping
-        FDR_df <- data.frame(x = df[seq(1, nrow(df), 2), "GO_term"], 
-            y = rep(1.025, nrow(df)/2), 
+        FDR_df <- data.frame(x = rep(x_dat_pos, nrow(df)/2),  
+            y = df[seq(1, nrow(df), 2), "GO_term"], 
             p_val = c(paste("italic('P =')~", set_scientific(df[seq(1, nrow(df), 2), "chisq_FDR"]))), 
             CV_cat = df[seq(1, nrow(df), 2), "CV_cat"]
             )
 
-        p <- ggplot(df, aes(fill = CV_cat, y = n_genes, x = GO_term, width = 0.85)) +
-        geom_bar(position="fill", stat="identity") + 
-        scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1), expand = c(0, 0.055)) + 
-        scale_x_discrete(expand = x_pand) + 
-        coord_flip(ylim = c(0, 1.3215)) + 
-        geom_text(aes(label = n_genes), position = position_fill(vjust = 0.5), size = 7, fontface = "bold") + 
-        labs(x = NULL, y = "Fraction of Genes              ") + 
-        scale_fill_manual(values=c("#5f8bc7", "#f2a72f"), limits=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
+        p <- ggplot(df, aes(x = n_genes, y = reorder(GO_term, n_genes))) + 
+        geom_line(size = 0.8, colour = "grey20") + 
+        geom_point(aes(color = CV_cat), size = 8) + 
+        scale_x_continuous(breaks = x_breaks, limits = x_lim) + 
+        scale_y_discrete(expand = y_pand) + 
+        labs(x = "Number of Genes                    " , y = NULL) + 
+        scale_color_manual(values=c("#5f8bc7", "#f2a72f"), limits=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
         guides(fill = guide_legend(keywidth = 0.35, keyheight = 0.35, default.unit="inch")) + 
         ggtitle(plt_title) +  
         geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 7, parse=TRUE, hjust = 0, vjust = 0.375) + 
@@ -422,7 +427,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             axis.line = element_line(colour = 'black', size = 1.025), 
             plot.margin = plot_mar, 
             plot.title = element_text(size = 21.25, margin = margin(t = 0, r = 0, b = 4, l = 0), hjust = 1.775), 
-            legend.box.margin = margin(4.5, 82, -13.5, 0), 
+            legend.box.margin = margin(5.5, 82, -13.5, 0), 
             legend.text = element_text(size = 21.25), 
             legend.title = element_blank(), 
             legend.direction = "horizontal", 
