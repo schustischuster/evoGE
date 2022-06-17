@@ -371,38 +371,36 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
                 "Cellular component organization", "Transport", 
                 "Nucleobase compound metabolic process", "Embryo and post-embryonic development", 
                 "Protein metabolic process")
-            
             df <- df[df$GO_term %in% gene_list,]
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
             plt_title <- "GO categories with larger fraction of stable genes   "
             plot_mar = unit(c(0.75, -0.25, 1.5, -0.325), "cm")
             legend_pos <- "none"
-            y_pand <- c(0.115, 0)
-            x_dat_pos <- 587
-            x_lim <- c(109.5, 722.5)
-            x_breaks <- c(100, 200, 300, 400, 500)
+            y_pand <- c(0.05, 0)
+            x_dat_pos <- 575
+            x_lim <- c(0, 767)
+            x_breaks <- c(0, 100, 200, 300, 400, 500)
+            df$CV_cat <- factor(df$CV_cat, levels = c('variable genes', 'stable genes'))
 
         } else if (cat == "variable") {
 
             gene_list <- c("Response to abiotic stimulus", "Response to chemical", 
                 "Response to external stimulus", "Response to biotic stimulus", 
                 "Response to endogenous stimulus", "Response to stress")
-            
             df <- df[df$GO_term %in% gene_list,]
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
             plt_title <- "GO categories with larger fraction of variable genes"
             plot_mar = unit(c(0.75, 1.9, 1.5, -0.11), "cm")
             legend_pos <- "top"
-            y_pand <- c(0.1335, 0)
-            x_dat_pos <- 692
-            x_lim <- c(170, 839)
-            x_breaks <- c(200, 300, 400, 500, 600)
+            y_pand <- c(0.0555, 0)
+            x_dat_pos <- 683
+            x_lim <- c(0, 910)
+            x_breaks <- c(0, 200, 400, 600)
+            df$CV_cat <- factor(df$CV_cat, levels = c('stable genes', 'variable genes'))
 
         }
-
-        df$CV_cat <- relevel(factor(df$CV_cat), 'variable genes')
 
         # Create df for FDR p-value mapping
         FDR_df <- data.frame(x = rep(x_dat_pos, nrow(df)/2),  
@@ -411,23 +409,22 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             CV_cat = df[seq(1, nrow(df), 2), "CV_cat"]
             )
 
-        p <- ggplot(df, aes(x = n_genes, y = reorder(GO_term, n_genes))) + 
-        geom_line(size = 0.8, colour = "grey20") + 
-        geom_point(aes(color = CV_cat), size = 8) + 
-        scale_x_continuous(breaks = x_breaks, limits = x_lim) + 
-        scale_y_discrete(expand = y_pand) + 
-        labs(x = "Number of Genes                    " , y = NULL) + 
-        scale_color_manual(values=c("#5f8bc7", "#f2a72f"), limits=c("stable genes", "variable genes"), labels=c("stable  ", "variable  ")) + 
-        guides(fill = guide_legend(keywidth = 0.35, keyheight = 0.35, default.unit="inch")) + 
+        p <- ggplot(df, aes(x = reorder(GO_term, n_genes), y = n_genes, fill = CV_cat)) + 
+        geom_bar(position = "dodge", stat = "identity", width = 0.7, size = 0.25, col="grey20") + coord_flip() + 
+        scale_y_continuous(breaks = x_breaks, limits = x_lim, expand = c(0, 0)) + 
+        scale_x_discrete(expand = y_pand) + 
+        labs(y = "Number of Genes                    " , x = NULL) + 
+        scale_fill_manual(values=c("#4b71ae", "#dbcc74"), limits=c("stable genes", "variable genes"), labels=c(" Stable  ", " Variable  ")) + 
+        guides(fill = guide_legend(keywidth = 0.305, keyheight = 0.305, default.unit="inch")) + 
         ggtitle(plt_title) +  
-        geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 7, parse=TRUE, hjust = 0, vjust = 0.375) + 
+        geom_text(data = FDR_df, aes(y = x, x = y, label = p_val), size = 7, parse=TRUE, hjust = 0, vjust = 0.375) + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.025), 
             axis.line = element_line(colour = 'black', size = 1.025), 
             plot.margin = plot_mar, 
             plot.title = element_text(size = 21.25, margin = margin(t = 0, r = 0, b = 4, l = 0), hjust = 1.775), 
-            legend.box.margin = margin(5.5, 82, -13.5, 0), 
+            legend.box.margin = margin(4.5, 82, -15.0, 0), 
             legend.text = element_text(size = 21.25), 
             legend.title = element_blank(), 
             legend.direction = "horizontal", 
@@ -437,8 +434,8 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
                 colour="black", face = "plain"), 
             axis.title.x = element_text(size = 20.25, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
                 colour="black", face = "plain"), 
-            axis.text.x = element_text(size = 18.9, margin = margin(t = 3.5, b = 8), colour="grey20"), 
-            axis.text.y = element_text(size = 20.28, angle=0, margin = margin(l = 10, r = 2.5), colour="grey20")
+            axis.text.x = element_text(size = 18.9, margin = margin(t = 3.5, b = 8), colour="black"), 
+            axis.text.y = element_text(size = 20.28, angle=0, margin = margin(l = 10, r = 2.5), colour="black")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
