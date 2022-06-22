@@ -241,12 +241,12 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
       # Prepare data for plotting
-      at_stats_red <- at_stats[c(1,7,8,11,20,26,30,32,34,36,38,41,44,50,51,54,63,69,73,75,
-         77,79,81,84,87,93,94,97,106,112,116,118,120,122,124,127,130,136,137,140,149,155,159,
-         161,163,165,167,170,173,179,180,183,192,198,202,204,206,208,210,213),]
+      at_stats_red <- at_stats[c(1,7,8,11,20,26,30,32,34,36,38,41,87,93,94,97,106,112,116,
+         118,120,122,124,127,130,136,137,140,149,155,159,161,163,165,167,170,173,179,180,
+         183,192,198,202,204,206,208,210,213),]
 
-      at_stats_pc <- at_stats[at_stats$biotype == "coding",]
-      at_stats_nc <- at_stats[at_stats$biotype == "lncRNA",]
+      at_stats_pc <- at_stats_red[at_stats_red$biotype == "coding",]
+      at_stats_nc <- at_stats_red[at_stats_red$biotype == "lncRNA",]
 
 
       
@@ -307,6 +307,74 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
       plotMaxExprAT(data = at_stats_pc, biotype = "coding")
       plotMaxExprAT(data = at_stats_nc, biotype = "lncRNA")
+
+
+
+
+
+      # Generate stacked bar charts
+      plotMaxExpAT <- function(data, biotype) {
+
+         if (biotype == "coding") {
+
+            p_title <- "Protein-coding"
+         
+         } else if (biotype == "lncRNA") {
+
+            p_title <- "lncRNAs"         
+         }
+
+         fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), "bc", sep="_"))
+
+         data$conservation <- factor(data$conservation, levels = unique(data$conservation))
+         data$group <- factor(data$group, levels = c("Stamen", "Carpel", 
+            "Petals", "Sepals", "Seed", "Fruit", "Flower", "Apex", "Leaf", "Stem", "Hypocotyl", "Root"))
+
+         p <- ggplot(data, aes(fill = group, x = conservation, y = average_perc)) + 
+         geom_bar(position = "stack", stat = "identity", width = 0.725) + 
+         scale_x_discrete(expand = c(0.07, 0), labels = c(
+            "all" = expression(atop(NA, atop(textstyle('All'), textstyle('Genes')))), 
+            "core" = expression(atop(NA, atop(textstyle('Core'), textstyle('Orthologs')))))) + 
+         scale_y_continuous(expand = c(0, 0), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1), 
+            limits = c(0, 1.0))
+
+         q <- p + 
+         scale_fill_manual(values = c("Root" = "#5d4a95", "Hypocotyl" = "#5bb1e2", 
+            "Stem" = "#0c703d", "Leaf" = "#00994f", "Apex" = "#f0d737", "Flower" = "#de6daf", 
+            "Sepals" = "#84cd6a", "Petals" = "#ead1c7", "Stamen" = "#f23d29", 
+            "Carpel" = "#e8a215", "Fruit" = "#b54185", "Seed" = "#e9a3b3")) + 
+         # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
+         theme_classic() + 
+         guides(fill = guide_legend(override.aes = list(size = 7.5))) + 
+         xlab("") + ylab("Fraction") + ggtitle(p_title) + 
+         theme(text = element_text(size = 22.5), 
+            panel.grid.major = element_line(colour = "white"), 
+            panel.grid.minor = element_line(colour = "white"),  
+            axis.ticks.length = unit(0.26, "cm"), 
+            axis.line = element_line(colour = "black", size = 0.8), 
+            axis.ticks = element_line(colour = "black", size = 0.8),
+            axis.title.x = element_text(colour = "black", size = 21.0, 
+               margin = margin(t = 12.5, r = 0, b = 10, l = 0)),  
+            axis.title.y = element_text(colour = "black", size = 21.0, 
+               margin = margin(t = 0, r = 5.0, b = 0, l = 1.5)), 
+            axis.text.x = element_text(colour = "black", margin = margin(t = -8.5, r = 0, b = 1.6, l = 0), size = 19.5), 
+            axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.25, b = 0, l = 4), size = 18.7), 
+            plot.title = element_text(colour = "black", size = 21.0, 
+               margin = margin(t = 10, r = 0, b = 10, l = 0), hjust = 0.5), 
+            plot.margin = unit(c(74, 350, 74, 10), "points"),
+            legend.position = "right",
+            legend.box.margin = margin(-4, 0, 0, -14), 
+            legend.title = element_blank(),
+            legend.text = element_text(size = 19.5), 
+            legend.background = element_rect(fill = NA))
+
+         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
+            scale = 1, width = 10.25, height = 7.3, units = c("in"), 
+            dpi = 600, limitsize = FALSE)
+      }
+
+      plotMaxExpAT(data = at_stats_pc, biotype = "coding")
+      plotMaxExpAT(data = at_stats_nc, biotype = "lncRNA")
 
 
    }
