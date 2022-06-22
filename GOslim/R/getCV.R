@@ -371,53 +371,56 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
                 "Cellular component organization", "Transport", 
                 "Nucleobase compound metabolic process", "Embryo and post-embryonic development", 
                 "Protein metabolic process")
+
             df <- df[df$GO_term %in% gene_list,]
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
             plt_title <- "GO categories with larger fraction of stable genes   "
             plot_mar = unit(c(0.75, -0.25, 1.5, -0.325), "cm")
             legend_pos <- "none"
-            y_pand <- c(0.05, 0)
-            x_dat_pos <- 575
-            x_lim <- c(0, 767)
-            x_breaks <- c(0, 100, 200, 300, 400, 500)
-            df$CV_cat <- factor(df$CV_cat, levels = c('variable genes', 'stable genes'))
+            x_pand <- c(0.05, 0)
+            y_dat_pos <- 575
+            y_lim <- c(0, 767)
+            y_breaks <- c(0, 100, 200, 300, 400, 500)
 
         } else if (cat == "variable") {
 
             gene_list <- c("Response to abiotic stimulus", "Response to chemical", 
                 "Response to external stimulus", "Response to biotic stimulus", 
                 "Response to endogenous stimulus", "Response to stress")
+
             df <- df[df$GO_term %in% gene_list,]
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
             plt_title <- "GO categories with larger fraction of variable genes"
             plot_mar = unit(c(0.75, 1.9, 1.5, -0.11), "cm")
             legend_pos <- "top"
-            y_pand <- c(0.0555, 0)
-            x_dat_pos <- 683
-            x_lim <- c(0, 910)
-            x_breaks <- c(0, 200, 400, 600)
-            df$CV_cat <- factor(df$CV_cat, levels = c('stable genes', 'variable genes'))
+            x_pand <- c(0.0555, 0)
+            y_dat_pos <- 683
+            y_lim <- c(0, 910)
+            y_breaks <- c(0, 200, 400, 600)
 
         }
 
         # Create df for FDR p-value mapping
-        FDR_df <- data.frame(x = rep(x_dat_pos, nrow(df)/2),  
-            y = df[seq(1, nrow(df), 2), "GO_term"], 
+        FDR_df <- data.frame(x = df[seq(1, nrow(df), 2), "GO_term"], 
+            y = rep(y_dat_pos, nrow(df)/2), 
             p_val = c(paste("italic('P =')~", set_scientific(df[seq(1, nrow(df), 2), "chisq_FDR"]))), 
             CV_cat = df[seq(1, nrow(df), 2), "CV_cat"]
             )
 
+        df$CV_cat <- factor(df$CV_cat, levels = c('variable genes', 'stable genes'))
+
         p <- ggplot(df, aes(x = reorder(GO_term, n_genes), y = n_genes, fill = CV_cat)) + 
-        geom_bar(position = "dodge", stat = "identity", width = 0.7, size = 0.25, col="grey20") + coord_flip() + 
-        scale_y_continuous(breaks = x_breaks, limits = x_lim, expand = c(0, 0)) + 
-        scale_x_discrete(expand = y_pand) + 
+        geom_bar(position = "dodge", stat = "identity", width = 0.7, size = 0.5, col = "black") + 
+        coord_flip() + 
+        scale_y_continuous(breaks = y_breaks, limits = y_lim, expand = c(0, 0)) + 
+        scale_x_discrete(expand = x_pand) + 
         labs(y = "Number of Genes                    " , x = NULL) + 
-        scale_fill_manual(values=c("#4b71ae", "#dbcc74"), limits=c("stable genes", "variable genes"), labels=c(" Stable  ", " Variable  ")) + 
+        scale_fill_manual(values=c("#4b71ae", "#e0cb50"), limits=c("stable genes", "variable genes"), labels=c(" Stable  ", " Variable  ")) + 
         guides(fill = guide_legend(keywidth = 0.305, keyheight = 0.305, default.unit="inch")) + 
         ggtitle(plt_title) +  
-        geom_text(data = FDR_df, aes(y = x, x = y, label = p_val), size = 7, parse=TRUE, hjust = 0, vjust = 0.375) + 
+        geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 7, parse=TRUE, hjust = 0, vjust = 0.375) + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
             axis.ticks = element_line(colour = "black", size = 1.025), 
