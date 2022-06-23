@@ -417,7 +417,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         scale_y_continuous(breaks = y_breaks, limits = y_lim, expand = c(0, 0)) + 
         scale_x_discrete(expand = x_pand) + 
         labs(y = "Number of Genes                    " , x = NULL) + 
-        scale_fill_manual(values=c("#4b71ae", "#e0cb50"), limits=c("stable genes", "variable genes"), labels=c(" Stable  ", " Variable  ")) + 
+        scale_fill_manual(values=c("#4b71ae", "#fdc842"), limits=c("stable genes", "variable genes"), labels=c(" Stable  ", " Variable  ")) + 
         guides(fill = guide_legend(keywidth = 0.305, keyheight = 0.305, default.unit="inch")) + 
         ggtitle(plt_title) +  
         geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 7, parse=TRUE, hjust = 0, vjust = 0.375) + 
