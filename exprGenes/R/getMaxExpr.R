@@ -318,10 +318,26 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          if (biotype == "coding") {
 
             p_title <- "Protein-coding"
+
+            p_title_mar <- margin(t = 10, r = 0, b = 10, l = 0)
+
+            x_text_mar <- margin(t = -8.5, r = 0, b = 1.6, l = 0)
+
+            x_labels = c(
+            "all" = expression(atop(NA, atop(textstyle('All'), textstyle('Genes')))), 
+            "core" = expression(atop(NA, atop(textstyle('Core'), textstyle('Orthologs')))))
          
          } else if (biotype == "lncRNA") {
 
-            p_title <- "lncRNAs"         
+            p_title <- "lncRNAs"
+
+            p_title_mar <- margin(t = 10, r = 0, b = 12.45, l = 0)
+
+            x_text_mar <- margin(t = -8.35, r = 0, b = 1.6, l = 0)
+
+            x_labels = c(
+            "all" = expression(atop(NA, atop(textstyle('All'), textstyle('lncRNAs')))), 
+            "core" = expression(atop(NA, atop(textstyle('Brassicaceae'), textstyle('Orthologs')))))       
          }
 
          fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), "bc", sep="_"))
@@ -332,17 +348,15 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
          p <- ggplot(data, aes(fill = group, x = conservation, y = average_perc)) + 
          geom_bar(position = "stack", stat = "identity", width = 0.725) + 
-         scale_x_discrete(expand = c(0.07, 0), labels = c(
-            "all" = expression(atop(NA, atop(textstyle('All'), textstyle('Genes')))), 
-            "core" = expression(atop(NA, atop(textstyle('Core'), textstyle('Orthologs')))))) + 
+         scale_x_discrete(expand = c(0.07, 0), labels = x_labels) + 
          scale_y_continuous(expand = c(0, 0), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1), 
             limits = c(0, 1.0))
 
          q <- p + 
-         scale_fill_manual(values = c("Root" = "#5d4a95", "Hypocotyl" = "#5bb1e2", 
-            "Stem" = "#0c703d", "Leaf" = "#00994f", "Apex" = "#f0d737", "Flower" = "#de6daf", 
-            "Sepals" = "#84cd6a", "Petals" = "#ead1c7", "Stamen" = "#f23d29", 
-            "Carpel" = "#e8a215", "Fruit" = "#b54185", "Seed" = "#e9a3b3")) + 
+         scale_fill_manual(values = c("Root" = "#5d4a95", "Hypocotyl" = "#53b0db", 
+            "Stem" = "#0c703d", "Leaf" = "#0a9955", "Apex" = "#f0d737", "Flower" = "#e075af", 
+            "Sepals" = "#84cd6a", "Petals" = "#ead1c7", "Stamen" = "#ee412e", 
+            "Carpel" = "#f2a72f", "Fruit" = "#b54185", "Seed" = "#e9a3b3")) + 
          # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
          theme_classic() + 
          guides(fill = guide_legend(override.aes = list(size = 7.5))) + 
@@ -357,10 +371,10 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
                margin = margin(t = 12.5, r = 0, b = 10, l = 0)),  
             axis.title.y = element_text(colour = "black", size = 21.0, 
                margin = margin(t = 0, r = 5.0, b = 0, l = 1.5)), 
-            axis.text.x = element_text(colour = "black", margin = margin(t = -8.5, r = 0, b = 1.6, l = 0), size = 19.5), 
+            axis.text.x = element_text(colour = "black", margin = x_text_mar, size = 19.5), 
             axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.25, b = 0, l = 4), size = 18.7), 
             plot.title = element_text(colour = "black", size = 21.0, 
-               margin = margin(t = 10, r = 0, b = 10, l = 0), hjust = 0.5), 
+               margin = p_title_mar, hjust = 0.5), 
             plot.margin = unit(c(74, 350, 74, 10), "points"),
             legend.position = "right",
             legend.box.margin = margin(-4, 0, 0, -14), 
