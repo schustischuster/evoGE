@@ -231,11 +231,11 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       # Set filename
       fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
 
-      # Write final data tables to csv files and store them in /out_dir/output/max_expr
-      if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
-      dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
+      # Write final data tables to csv files and store them in /out_dir/output/max_expr_tables
+      if (!dir.exists(file.path(out_dir, "output", "max_expr_tables"))) 
+      dir.create(file.path(out_dir, "output", "max_expr_tables"), recursive = TRUE)
 
-      write.table(at_stats, file = file.path(out_dir, "output", "max_expr", fname_max_expr), 
+      write.table(at_stats, file = file.path(out_dir, "output", "max_expr_tables", fname_max_expr), 
          sep=";", dec=".", row.names = FALSE, col.names = TRUE)
 
 
@@ -618,17 +618,84 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
 
+      # Generate plots
+      plotMaxExprOS <- function(data, biotype) {
+
+         if (biotype == "coding") {
+
+            p_title <- "Organ with highest expression of protein-coding genes"
+         
+         } else if (biotype == "lncRNA") {
+
+            p_title <- "lncRNAs"         
+         }
+
+         fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+         x_lab <- c(Root = "Rt", Hypocotyl = "Hc", Leaf = "Lf", Apex_veg = "Av", 
+            Apex_inf = "Ai", Flower = "Fl", Stamen = "St", Carpel = "Ca")
+
+         data$biotype <- factor(data$biotype, levels = unique(data$biotype))
+         data$conservation <- factor(data$conservation, levels = unique(data$conservation))
+         data$group <- factor(data$group, levels = unique(data$group))
+         data$species <- factor(data$species, levels = unique(data$species))
+
+         p <- ggplot(data, aes(x = group, y = fraction, color = group)) + 
+         geom_segment(aes(y = 0, yend = fraction, xend = group), size = 2.5, colour = "grey77") + 
+         geom_point(size = 7.7, position = position_dodge(width = 0.75), aes(color = group)) +
+         scale_x_discrete(expand = c(0.05, 0), labels = x_lab) + 
+         scale_y_continuous(limits = c(0, 0.3125), expand = c(0, 0))
+         q <- p + 
+         scale_color_manual(values = c("Root" = "#6a54a9", "Hypocotyl" = "#53b0db", 
+            "Leaf" = "#0a9955", "Apex_veg" = "#96ba37", "Apex_inf" = "#f0d737", 
+            "Flower" = "#e075af", "Stamen" = "#ed311c", "Carpel" = "#f2a72f")) + 
+         # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
+         theme_classic() + 
+         xlab("") + ylab("Fraction") + ggtitle(p_title) + 
+         theme(text = element_text(size = 23.5), 
+            strip.text = element_text(size = 24.5, face = "plain"), 
+                strip.text.x = element_text(margin = margin(0.45, 0, 0.45, 0, "cm")), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 3.125), 
+                axis.ticks.length = unit(0.25, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.5), 
+                axis.line = element_line(colour = 'black', size = 1.5), 
+                plot.margin = unit(c(0.5, 1.75, 1.75, 1.75),"cm"), 
+                axis.title.y = element_text(size = 25, margin = margin(t = 0, r = 8, b = 0, l = 1), 
+                    colour = "black", face = "bold"), 
+                axis.title.x = element_text(size = 25, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+                    colour = "black", face = "bold"), 
+                axis.text.x = element_text(size=21.5, margin = margin(t = 4, b = 7.75), colour = "grey35", 
+                    angle = 0, vjust = 1, hjust = 0.5), 
+                axis.text.y = element_text(size = 21.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
+                plot.title = element_text(size = 25.5, margin = margin(t = 5.5, b = 15.3), face = "plain"), 
+                panel.spacing = unit(0.55, "cm"), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor.x = element_blank(), 
+                panel.grid.minor.y = element_blank(),  
+                legend.position ="none")
+
+         q <- q + facet_wrap(~ factor(species, levels = c("AT", "AL", "CR", "ES", "TH", "MT", "BD")) , nrow = 1, scales = "free_x")
+
+            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+                width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+      }
+
+      plotMaxExprOS(data = cd_all, biotype = "coding")
+      plotMaxExprOS(data = nc_stats, biotype = "lncRNA")
+
+
+
       # Show message
       message("Writing output...")
 
       # Set filename
       fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
 
-      # Write final data tables to csv files and store them in /out_dir/output/max_expr
-      if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
-      dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
+      # Write final data tables to csv files and store them in /out_dir/output/max_expr_tables
+      if (!dir.exists(file.path(out_dir, "output", "max_expr_tables"))) 
+      dir.create(file.path(out_dir, "output", "max_expr_tables"), recursive = TRUE)
 
-      write.table(at_stats, file = file.path(out_dir, "output", "max_expr", fname_max_expr), 
+      write.table(at_stats, file = file.path(out_dir, "output", "max_expr_tables", fname_max_expr), 
          sep=";", dec=".", row.names = FALSE, col.names = TRUE)
 
 
