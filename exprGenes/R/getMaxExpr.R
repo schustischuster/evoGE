@@ -7,7 +7,7 @@
 # Input sample tables should have the following format:
 # DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species), rownames = gene_id
 
-# Added lines 49-54 + 62-64, added 416-519, 617ff
+
 #------------------- Load packages, set directories and read sample tables ---------------------
 
 
@@ -241,10 +241,10 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
 
       # Write final data tables to csv files and store them in /out_dir/output/max_expr
-      if (!dir.exists(file.path(out_dir, "output", "max_expr_tables"))) 
-      dir.create(file.path(out_dir, "output", "max_expr_tables"), recursive = TRUE)
+      if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
+      dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
 
-      write.table(at_stats, file = file.path(out_dir, "output", "max_expr_tables", fname_max_expr), 
+      write.table(at_stats, file = file.path(out_dir, "output", "max_expr", fname_max_expr), 
          sep=";", dec=".", row.names = FALSE, col.names = TRUE)
 
 
@@ -411,8 +411,6 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       tpm_table_ls <- list(AT_tpm = AT_tpm, AL_tpm = AL_tpm, CR_tpm = CR_tpm, ES_tpm = ES_tpm, 
          TH_tpm = TH_tpm, MT_tpm = MT_tpm, BD_tpm = BD_tpm)
 
-      # log-transform data
-      # tpm_table_ls <- lapply(tpm_table_ls, function(t) log2(t + 1))
 
 
       # Calculate threshold and get expressed genes for AT
@@ -824,13 +822,13 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       fname_max_nc <- sprintf('%s.csv', paste(species_id, "max_expr_nc_stats", sep = "_"))
 
       # Write final data tables to csv files and store them in /out_dir/output/max_expr
-      if (!dir.exists(file.path(out_dir, "output", "max_expr_tables"))) 
-      dir.create(file.path(out_dir, "output", "max_expr_tables"), recursive = TRUE)
+      if (!dir.exists(file.path(out_dir, "output", "max_expr"))) 
+      dir.create(file.path(out_dir, "output", "max_expr"), recursive = TRUE)
 
-      write.table(pc_stats, file = file.path(out_dir, "output", "max_expr_tables", fname_max_pc), 
+      write.table(pc_stats, file = file.path(out_dir, "output", "max_expr", fname_max_pc), 
          sep=";", dec=".", row.names = FALSE, col.names = TRUE)
 
-      write.table(nc_stats, file = file.path(out_dir, "output", "max_expr_tables", fname_max_nc), 
+      write.table(nc_stats, file = file.path(out_dir, "output", "max_expr", fname_max_nc), 
          sep=";", dec=".", row.names = FALSE, col.names = TRUE)
 
 
