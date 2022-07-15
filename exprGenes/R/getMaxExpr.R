@@ -7,7 +7,7 @@
 # Input sample tables should have the following format:
 # DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species), rownames = gene_id
 
-
+# Added lines 49-54 + 62-64, added 416-519, 617ff
 #------------------- Load packages, set directories and read sample tables ---------------------
 
 
@@ -31,21 +31,27 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    message("Reading data...")
 
    # Set file path to expression data
-   pathAT = file.path(in_dir, "Expression_data", "AT_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-   pathAL = file.path(in_dir, "Expression_data", "AL_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-   pathCR = file.path(in_dir, "Expression_data", "CR_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-   pathES = file.path(in_dir, "Expression_data", "ES_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-   pathTH = file.path(in_dir, "Expression_data", "TH_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-   pathMT = file.path(in_dir, "Expression_data", "MT_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-   pathBD = file.path(in_dir, "Expression_data", "BD_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
+   pathAT = file.path(in_dir, "Expression_data", "AT_genes_inter_norm_count_mat_vsd_sample_names.csv")
+   pathAL = file.path(in_dir, "Expression_data", "AL_genes_inter_norm_count_mat_vsd_sample_names.csv")
+   pathCR = file.path(in_dir, "Expression_data", "CR_genes_inter_norm_count_mat_vsd_sample_names.csv")
+   pathES = file.path(in_dir, "Expression_data", "ES_genes_inter_norm_count_mat_vsd_sample_names.csv")
+   pathTH = file.path(in_dir, "Expression_data", "TH_genes_inter_norm_count_mat_vsd_sample_names.csv")
+   pathMT = file.path(in_dir, "Expression_data", "MT_genes_inter_norm_count_mat_vsd_sample_names.csv")
+   pathBD = file.path(in_dir, "Expression_data", "BD_genes_inter_norm_count_mat_vsd_sample_names.csv")
 
    # Ortholog tables
    pathCore = file.path(in_dir, "Expression_data", "AT_core_inter_tpm_mat_deseq_sample_names.csv")
    pathPcBrass = file.path(in_dir, "Expression_data", "AT_brass_inter_tpm_mat_deseq_sample_names.csv")
    pathNcBrass = file.path(in_dir, "Expression_data", "lnc_AT_brass_inter_tpm_mat_deseq_sample_names.csv")
 
-   # A.thaliana table containing raw expression values and biotype annotation
+   # Tables containing raw expression values and biotype annotation
    pathAT_compl <- file.path(in_dir, "Expression_data", "AT_genes_complete_table_tpm_sample_names.csv")
+   pathAL_compl <- file.path(in_dir, "Expression_data", "AL_genes_complete_table_tpm_sample_names.csv")
+   pathCR_compl <- file.path(in_dir, "Expression_data", "CR_genes_complete_table_tpm_sample_names.csv")
+   pathES_compl <- file.path(in_dir, "Expression_data", "ES_genes_complete_table_tpm_sample_names.csv")
+   pathTH_compl <- file.path(in_dir, "Expression_data", "TH_genes_complete_table_tpm_sample_names.csv")
+   pathMT_compl <- file.path(in_dir, "Expression_data", "MT_genes_complete_table_tpm_sample_names.csv")
+   pathBD_compl <- file.path(in_dir, "Expression_data", "BD_genes_complete_table_tpm_sample_names.csv")
 
 
    # Set up list of expression tables
@@ -53,7 +59,9 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
       expr_table_ls <- list(AT_tpm = pathAT, AL_tpm = pathAL, CR_tpm = pathCR, ES_tpm = pathES, 
          TH_tpm = pathTH, MT_tpm = pathMT, BD_tpm = pathBD, Core_tpm = pathCore, Brass_pc_tpm = pathPcBrass, 
-         Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
+         Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl, AL_tpm_compl = pathAL_compl, 
+         CR_tpm_compl = pathCR_compl, ES_tpm_compl = pathES_compl, TH_tpm_compl = pathTH_compl, 
+         MT_tpm_compl = pathMT_compl, BD_tpm_compl = pathBD_compl)
 
    } else if (species == "AT") {
 
@@ -186,6 +194,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             length(grep(x, x_max))}))
 
          # Calculate average maximum expression per organ group
+         # This is the Weighted Arithmetic Mean (mean of organ weighted by number of stages)
          avg_n_max <- c(rep(mean(sample_count[1:6]),6), sample_count[7], rep(mean(sample_count[8:10]),3), 
             rep(mean(sample_count[11:19]),9), rep(mean(sample_count[20:25]),6), rep(mean(sample_count[26:29]),4), 
             rep(mean(sample_count[30:31]),2), rep(mean(sample_count[32:33]),2), rep(mean(sample_count[34:35]),2), 
@@ -231,7 +240,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       # Set filename
       fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
 
-      # Write final data tables to csv files and store them in /out_dir/output/max_expr_tables
+      # Write final data tables to csv files and store them in /out_dir/output/max_expr
       if (!dir.exists(file.path(out_dir, "output", "max_expr_tables"))) 
       dir.create(file.path(out_dir, "output", "max_expr_tables"), recursive = TRUE)
 
@@ -403,7 +412,111 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          TH_tpm = TH_tpm, MT_tpm = MT_tpm, BD_tpm = BD_tpm)
 
       # log-transform data
-      tpm_table_ls <- lapply(tpm_table_ls, function(t) log2(t + 1))
+      # tpm_table_ls <- lapply(tpm_table_ls, function(t) log2(t + 1))
+
+
+      # Calculate threshold and get expressed genes for AT
+      # Need to do this because less samples are used for analysis than in normalized tables
+      # This will filter out genes that are expressed below threshold
+
+      # First select comparative organs
+      AT_tpm_compl <- dplyr::select(AT_tpm_compl, c("id", "biotype", "source", "root_whole_root_5d_1", 
+         "root_whole_root_5d_2", "root_whole_root_5d_3", "hypocotyl_10d_1", "hypocotyl_10d_2", 
+         "hypocotyl_10d_3", "leaf_1.2_10d_1", "leaf_1.2_10d_2", "leaf_1.2_10d_3", "apex_vegetative_7d_1", 
+         "apex_vegetative_7d_2", "apex_vegetative_7d_3", "apex_inflorescence_21d_1", "apex_inflorescence_21d_2", 
+         "apex_inflorescence_21d_3", "flower_stg12_21d._1", "flower_stg12_21d._2", "flower_stg12_21d._3", 
+         "flower_stg12_stamens_21d._1", "flower_stg12_stamens_21d._2", "flower_stg12_stamens_21d._3", 
+         "flower_early_stg12_carpels_21d._1", "flower_early_stg12_carpels_21d._2", "flower_early_stg12_carpels_21d._3"))
+
+
+      getTH <- function(x) {
+
+         # Extract ERCC data
+         ERCC <- x[x$id %like% "ERCC", ]
+
+         # Get sample-specific TPM threshold
+         ERCC_cutoff <- cbind(
+            data.frame(id = "TPM_cutoff"), data.frame(biotype = "<NA>"), data.frame(source = "<NA>"), 
+            as.data.frame(t(data.frame(
+               TPM_cutoff = apply(ERCC[,4:ncol(ERCC)], 2, function(i)quantile(i[i>0], 0.05)))
+            ))
+         )
+
+         # Bind sample-specific threshold to expression table
+         all_genes_tpm_cutoff <- rbind(x, ERCC_cutoff)
+
+
+         applyThreshold <- function(express_df) {
+
+            # Add keys to data frame
+            key <- seq(1, nrow(express_df), 1)
+            express_kdf <- cbind(as.data.frame(key),express_df)
+
+            # Replace all values with "0" that are below sample threshold (either 0 or ERCC)
+            getSampleTH <- function(df) {
+
+            # Split data frame by sample replicates into a list then apply threshold for each subset
+
+               th_replicates <- do.call(cbind, lapply(split.default(df[5:ncol(df)], #adjust columns
+                        rep(seq_along(df), each = 1, length.out = ncol(df)-4)),
+                        function(x) {
+                           x[x <= x[nrow(df),], ] <- 0;
+                           x
+                        }
+                     ))
+
+               # Bind key/id/prt_id/symbol/biotype/source columns to thresholded data frame
+               th_replicates <- cbind(df[1:4], th_replicates)
+
+               return(th_replicates)
+            }
+
+            df_exp <- getSampleTH(express_kdf)
+
+            # Define threshold function
+            # This function will remove all rows that do not show expression in at least two of three
+            # replicates in at least one sample type
+            getThreshold <- function(df) {
+
+            # Split data frame by sample replicates into a list then apply threshold for each subset
+
+               th_replicates <- do.call(cbind, lapply(split.default(df[5:ncol(df)], #adjust columns
+                        rep(seq_along(df), each = 3, length.out = ncol(df)-4)), #adjust columns
+                        function(x) {
+                           x[rowSums(x > 0) < 2, ] <- 0; 
+                           x
+                        }
+                     ))
+
+               # Bind key/id/prt_id/symbol/biotype/source columns to thresholded data frame
+               th_replicates <- cbind(df[1:4], th_replicates)
+
+               # Remove all rows that only contain "0"
+               th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-4, drop = FALSE] > 0) > 0),]
+
+               return(th_replicates)
+            }
+
+            # Apply threshold to data and extract keys ("key")
+            keys_data_repl <- getThreshold(df_exp)
+            keys_data <- keys_data_repl[,1:2]
+            names(keys_data) <- c("key","ID")
+
+            # Generate thresholded data frame based on keys
+            th_df <- merge(keys_data, express_kdf, by="key")
+            th_df <- th_df[order(th_df$key),]
+            th_df <- th_df[-1:-2]
+
+            return(th_df)
+         }
+
+         return_objects_th <- applyThreshold(all_genes_tpm_cutoff)
+
+         return(return_objects_th)
+
+      }
+
+      AT_tpm_compl <- getTH(AT_tpm_compl)
 
       
       # Get replicate expression
@@ -614,7 +727,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       nc_brass <- do.call(rbind, lapply(tpm_table_repl_ls[1:4], getNumGenes, scripttype = "lncRNA", 
          c_level = "core")) # Ortholog lncRNA dataset is limited to Brassicaceae
 
-      at_stats <- rbind(cd_all, cd_brass, cd_core, nc_all, nc_brass)
+      pc_stats <- rbind(cd_all, cd_core)
+      nc_stats <- rbind(nc_all, nc_brass)
 
 
 
@@ -624,10 +738,26 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          if (biotype == "coding") {
 
             p_title <- "Organ with highest expression of protein-coding genes"
+
+            y_scale <- c(0, 0.3125)
+
+            plt_mar <- c(0.5, 1.75, 1.75, 1.75)
          
          } else if (biotype == "lncRNA") {
 
-            p_title <- "lncRNAs"         
+            p_title <- "Organ with highest expression of lncRNAs" 
+
+            y_scale <- c(0, 0.44)
+
+            plt_mar <- c(0.5, 1.75, 1.75, 1.75)
+         
+         } else if (biotype == "BrlncRNA") {
+
+            p_title <- "Organ with highest expression of lncRNAs (n = 307)" 
+
+            y_scale <- c(0, 0.34)
+
+            plt_mar <- c(0.5, 30.52, 1.75, 1.75)
          }
 
          fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
@@ -644,7 +774,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          geom_segment(aes(y = 0, yend = fraction, xend = group), size = 2.5, colour = "grey77") + 
          geom_point(size = 7.7, position = position_dodge(width = 0.75), aes(color = group)) +
          scale_x_discrete(expand = c(0.05, 0), labels = x_lab) + 
-         scale_y_continuous(limits = c(0, 0.3125), expand = c(0, 0))
+         scale_y_continuous(limits = y_scale, expand = c(0, 0))
          q <- p + 
          scale_color_manual(values = c("Root" = "#6a54a9", "Hypocotyl" = "#53b0db", 
             "Leaf" = "#0a9955", "Apex_veg" = "#96ba37", "Apex_inf" = "#f0d737", 
@@ -659,7 +789,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
                 axis.ticks.length = unit(0.25, "cm"), 
                 axis.ticks = element_line(colour = "black", size = 1.5), 
                 axis.line = element_line(colour = 'black', size = 1.5), 
-                plot.margin = unit(c(0.5, 1.75, 1.75, 1.75),"cm"), 
+                plot.margin = unit(plt_mar, "cm"), 
                 axis.title.y = element_text(size = 25, margin = margin(t = 0, r = 8, b = 0, l = 1), 
                     colour = "black", face = "bold"), 
                 axis.title.x = element_text(size = 25, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
@@ -681,7 +811,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       }
 
       plotMaxExprOS(data = cd_all, biotype = "coding")
-      plotMaxExprOS(data = nc_stats, biotype = "lncRNA")
+      plotMaxExprOS(data = nc_all, biotype = "lncRNA")
+      plotMaxExprOS(data = nc_brass, biotype = "BrlncRNA")
 
 
 
@@ -689,14 +820,329 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       message("Writing output...")
 
       # Set filename
-      fname_max_expr <- sprintf('%s.csv', paste(species_id, "max_expr_stats", sep = "_"))
+      fname_max_pc <- sprintf('%s.csv', paste(species_id, "max_expr_pc_stats", sep = "_"))
+      fname_max_nc <- sprintf('%s.csv', paste(species_id, "max_expr_nc_stats", sep = "_"))
 
-      # Write final data tables to csv files and store them in /out_dir/output/max_expr_tables
+      # Write final data tables to csv files and store them in /out_dir/output/max_expr
       if (!dir.exists(file.path(out_dir, "output", "max_expr_tables"))) 
       dir.create(file.path(out_dir, "output", "max_expr_tables"), recursive = TRUE)
 
-      write.table(at_stats, file = file.path(out_dir, "output", "max_expr_tables", fname_max_expr), 
+      write.table(pc_stats, file = file.path(out_dir, "output", "max_expr_tables", fname_max_pc), 
          sep=";", dec=".", row.names = FALSE, col.names = TRUE)
+
+      write.table(nc_stats, file = file.path(out_dir, "output", "max_expr_tables", fname_max_nc), 
+         sep=";", dec=".", row.names = FALSE, col.names = TRUE)
+
+
+
+
+      # ---- Make heatmap showing relative expression of lncRNAs (NATs+lincRNAs) in AT ----
+
+      
+      # Get AT replicate expresssion
+      AT_tpm_avg <- calculateAvgExpr(AT_tpm)
+
+
+      # Scale data to the unit interval
+      scaleTPM <- function(x){(x-min(x))/(max(x)-min(x))}
+      AT_tpm_re <- as.data.frame(t(apply(AT_tpm_avg, 1, scaleTPM)))
+
+      
+      # Reduce data to lncRNAs
+      AT_lncRNA_ids <- subset(AT_tpm_compl, subset = biotype %in% c("lnc_exonic_antisense", 
+               "lnc_intronic_antisense", "lnc_intergenic"))[,1]
+
+      AT_lnc_tpm_re <- AT_tpm_re[rownames(AT_tpm_re) %in% AT_lncRNA_ids, ] # 4557 lncRNAs
+
+
+
+      color.palette <- function(steps, n.steps.between=NULL, ...) {
+
+         if (is.null(n.steps.between)) 
+            n.steps.between <- rep(0, (length(steps)-1))
+
+         if (length(n.steps.between) != length(steps)-1)
+            stop("Must have one less n.steps.between value than steps")
+
+         fill.steps <- cumsum(rep(1, length(steps)) + c(0,n.steps.between))
+         RGB <- matrix(NA, nrow = 3, ncol = fill.steps[length(fill.steps)])
+         RGB[,fill.steps] <- col2rgb(steps)
+
+         for (i in which(n.steps.between > 0)) {
+            col.start = RGB[,fill.steps[i]]
+            col.end = RGB[,fill.steps[i + 1]]
+
+            for (j in seq(3)) {
+               vals <-seq(col.start[j], col.end[j], length.out=n.steps.between[i]+2)[2:(2+n.steps.between[i]-1)]  
+               RGB[j,(fill.steps[i] + 1):(fill.steps[i + 1] - 1)] <- vals
+            }
+         }
+
+         new.steps <- rgb(RGB[1, ], RGB[2, ], RGB[3, ], maxColorValue = 255)
+         pal <- colorRampPalette(new.steps, ...)
+
+         return(pal)
+      }
+
+      # Define colors and number of steps for the plot
+      steps <- c("#fae85a", "#f7ea40", "#fdc91c", "#ffa700", "#fe8300", "#f85b17", 
+                 "#ea2828", "#ea285a")
+
+      pal <- color.palette(steps, c(2, 10, 11, 12, 13, 14, 5), space = "rgb")
+
+
+    # Create heatmap with reversed RowSideColors
+    png(height = 880, width = 1250, pointsize = 10, file = file.path(out_dir, "output", "plots", "at_embr_dev_scaled.png"))
+    cc <- c(rep("#5d4a95",6), "#53b0db", rep("#0c703d",3), rep("#0a9955",9), rep("#f0d737",6), rep("#e075af",4), rep("#84cd6a",2), rep("#ead1c7",2), rep("#ee412e",2), 
+            rep("#f2a72f",2) , rep("#b54185",3), rep("#e9a3b3",3))
+
+    heatmap.2(as.matrix(AT_lnc_tpm_re), 
+        density.info = "none",
+        labRow = FALSE, 
+        labCol = FALSE,
+        dendrogram = "none", 
+        col = pal(100), 
+        scale = "none",
+        trace = "none",
+        lmat = rbind(c(0,0,0,0,0), c(0,5,0,4,0), c(0,3,0,2,0), c(0,0,0,1,0), c(0,0,0,0,0)), 
+        lhei = c(0,2.5,5,0.325,0.1),
+        lwid = c(0.1,2.4,0.25,5,0.5),
+        key.par = list(cex = 2.8), 
+        ColSideColors = cc, 
+        margins = c(2, 2),
+        key = TRUE,
+        key.xlab = "",
+        key.title = "",
+        distfun = function(x) as.dist(sqrt(1/2*(1-cor(t(x))))),
+        hclustfun = function(x) hclust(x, method = "average"),
+        Rowv = TRUE, 
+        Colv = FALSE
+        )
+
+    dev.off()
+
+
+
+
+
+
+
+
+      #-- Analyse distribution of max expression for coding+non-coding genes across species --
+
+
+      tpm_table_ls_br <- tpm_table_ls[c(1:4)]
+
+      tpm_table_repl_ls <- lapply(tpm_table_ls_br, calculateAvgExpr)
+
+
+      # Select comparative organs for AT and AL
+      tpm_table_repl_ls$AT_tpm <- dplyr::select(tpm_table_repl_ls$AT_tpm, c("root_whole_root_5d", 
+         "hypocotyl_10d", "leaf_12_7d", "apex_vegetative_7d", "apex_inflorescence_21d", 
+         "flower_stg12_21d", "flower_stg12_stamens_21d", "flower_early_stg12_carpels_21d"))
+
+
+      # Add dataset identifier to list elements
+      spec_exp_names <- lapply(seq_along(tpm_table_repl_ls), function(i) { 
+         paste(names(tpm_table_repl_ls)[[i]])
+      })
+
+      for (i in seq_along(tpm_table_repl_ls)) {
+         tpm_table_repl_ls[[i]]$dataset <- rep(spec_exp_names[i], nrow(tpm_table_repl_ls[[i]]))
+      }
+
+
+      
+      # Get maximum expression values for coding and non-coding genes for Brassicaceae species
+
+      getMaxExprDist <- function(df, scripttype = c("coding", "lncRNA"), c_level = c("all", "non-core" , "core")) {
+
+         spec_id <- unique(sub("\\_.*", "", df$dataset))
+         df <- within(df, rm(dataset))
+
+         Core_tpm <- Core_tpm[!grepl("ERCC", Core_tpm[,1]),]
+
+         `%nin%` = Negate(`%in%`)
+
+
+         # Get protein-coding and non-coding core IDs for non-AT species
+
+         if (spec_id == "AT") {
+
+            compl_table <- AT_tpm_compl
+            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[1]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[1]))
+
+         } else if (spec_id == "AL") {
+
+            compl_table <- AL_tpm_compl
+            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
+
+         } else if (spec_id == "CR") {
+
+            compl_table <- CR_tpm_compl
+            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
+
+         } else if (spec_id == "ES") {
+
+            compl_table <- ES_tpm_compl
+            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
+
+         }
+
+         # -------------------------- Process protein-coding data --------------------------
+
+         if ((c_level == "all") && (scripttype == "coding")) {
+
+            df <- df[rownames(df) %in% compl_table[compl_table$biotype == "protein_coding",]$id, ]
+
+
+         # ------------------------------ Process lncRNA data ------------------------------
+
+         } else if ((c_level == "all") && (scripttype == "lncRNA")) {
+
+            df <- df[rownames(df) %in% subset(compl_table, subset = biotype %in% c(
+               "lnc_exonic_antisense", "lnc_intronic_antisense", "lnc_intergenic"))$id, ]
+
+
+         # ----------------- Process non-core ortholog protein-coding data -----------------
+
+         } else if ((c_level == "non-core") && (scripttype == "coding")) {
+
+            df <- df[rownames(df) %in% compl_table[compl_table$biotype == "protein_coding",]$id, ]
+            df <- df[rownames(df) %nin% as.character(core_ids[,1]),]
+
+
+         # --------------------- Process non-core ortholog lncRNA data ---------------------
+         
+         } else if ((c_level == "non-core") && (scripttype == "lncRNA")) {
+
+            df <- df[rownames(df) %in% subset(compl_table, subset = biotype %in% c(
+               "lnc_exonic_antisense", "lnc_intronic_antisense", "lnc_intergenic"))$id, ]
+            df <- df[rownames(df) %nin% as.character(core_lnc_ids[,1]), ]
+
+
+         # ------------------- Process core ortholog protein-coding data -------------------
+
+         } else if ((c_level == "core") && (scripttype == "coding")) {
+
+            df <- df[rownames(df) %in% as.character(core_ids[,1]),]
+
+
+         # ----------------------- Process core ortholog lncRNA data -----------------------
+         
+         } else if ((c_level == "core") && (scripttype == "lncRNA")) {
+
+            df <- df[rownames(df) %in% as.character(core_lnc_ids[,1]), ]
+         }
+
+
+         # Get max expression value per gene
+         df$max <- apply(df, 1, max)
+
+         df_out <- data.frame(
+            species = rep(spec_id), 
+            biotype = rep(scripttype), 
+            conservation = rep(c_level), 
+            class = rep(paste(scripttype, c_level, sep = "_")),
+            max_expr = df$max
+            )
+
+         return(df_out)
+
+      }
+
+      cd_expr_dist_all <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "coding", 
+         c_level = "all"))
+      cd_expr_dist_n_core <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "coding", 
+         c_level = "non-core"))
+      cd_expr_dist_core <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "coding", 
+         c_level = "core"))
+      nc_expr_dist_all <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "lncRNA", 
+         c_level = "all"))
+      nc_expr_dist_n_core <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "lncRNA", 
+         c_level = "non-core"))
+      nc_expr_dist_brass <- do.call(rbind, lapply(tpm_table_repl_ls[1:4], getMaxExprDist, scripttype = "lncRNA", 
+         c_level = "core")) # Ortholog lncRNA dataset is limited to Brassicaceae
+
+
+      # Combine data
+      max_expr_dist <- rbind(cd_expr_dist_all, cd_expr_dist_n_core, cd_expr_dist_core, nc_expr_dist_all, 
+         nc_expr_dist_n_core, nc_expr_dist_brass)
+
+
+
+
+      # Generate plots
+      plotMaxExprDist <- function(data) {
+
+         #if (biotype == "coding") {
+
+           # p_title <- "Organ with highest expression of protein-coding genes"
+
+           y_scale <- c(-0.5, 13.75)
+
+           plt_mar <- c(0.1, 2.75, 1.5, 1.75)
+         
+        # } else if (biotype == "lncRNA") {
+
+
+         fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+
+         x_lab <- c(Root = "Rt", Hypocotyl = "Hc", Leaf = "Lf", Apex_veg = "Av", 
+            Apex_inf = "Ai", Flower = "Fl", Stamen = "St", Carpel = "Ca")
+
+         data$class <- factor(data$class, levels = unique(data$class))
+         data$conservation <- factor(data$conservation, levels = unique(data$conservation))
+         data$species <- factor(data$species, levels = unique(data$species))
+
+         p <- ggplot(data, aes(x = class, y = max_expr, color = class)) + 
+         geom_boxplot(aes(fill = class), colour = "black", width = 0.85) +
+         scale_x_discrete(expand = c(0.055, 0)) + 
+         scale_y_continuous(limits = y_scale, expand = c(0, 0), breaks = c(0,2.5,5,7.5,10,12.5))
+         q <- p + 
+         #scale_color_manual(values = c("Root" = "#6a54a9", "Hypocotyl" = "#53b0db", 
+         #   "Leaf" = "#0a9955", "Apex_veg" = "#96ba37")) + 
+         # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
+         theme_classic() + 
+         xlab("") + ylab("Maximum expression") + ggtitle("") + 
+         theme(text = element_text(size = 23.5), 
+            strip.text = element_text(size = 24.5, face = "plain"), 
+                strip.text.x = element_text(margin = margin(0.25, 0, 0.25, 0, "cm")), 
+                strip.background = element_rect(colour = 'white', fill = NA, size = 0.1), 
+                axis.ticks.length = unit(0.25, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.5), 
+                axis.line = element_line(colour = 'black', size = 1.5), 
+                plot.margin = unit(plt_mar, "cm"), 
+                axis.title.y = element_text(size = 25, margin = margin(t = 0, r = 8, b = 0, l = 1), 
+                    colour = "black", face = "bold"), 
+                axis.title.x = element_text(size = 25, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+                    colour = "black", face = "bold"), 
+                axis.text.x = element_text(size=21.5, margin = margin(t = 4, b = 7.75), colour = "grey35", 
+                    angle = 0, vjust = 1, hjust = 0.5), 
+                axis.text.y = element_text(size = 21.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
+                panel.spacing = unit(0.8, "cm"), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor.x = element_blank(), 
+                panel.grid.minor.y = element_blank(),  
+                legend.position ="none")
+
+         q <- q + facet_wrap(~ factor(species, levels = c("AT", "AL", "CR", "ES")) , nrow = 1, scales = "free_x")
+
+            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+                width = 20, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+      }
+
+      plotMaxExprDist(data = max_expr_dist)
+
+
+      # Wilcoxon rank sum test with continuity correction (all genes vs core genes)
+      # W = 1729000, p-value < 2.2e-16 for comparison cd/lnc for all species
+
+
 
 
    }
@@ -704,6 +1150,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
 }
+
+
 
 
 
