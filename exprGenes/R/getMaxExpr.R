@@ -1,7 +1,7 @@
 # Count number of genes with maximum expression in each organ in Arabidopsis thaliana for all organs,
 # and additionally for only the comparative organs; do the same for all the other species
 # The comparative organs are: root, hypocotyl, leaf, apex veg, apex inf, flower, stamen, carpel
-# Data input: Normalized TPM expression data containing protein-coding genes, NATs and lincRNAs
+# Data input: Normalized expr expression data containing protein-coding genes, NATs and lincRNAs
 # Classification: (1) All protein-coding genes, (2) 7003 core orthologous protein-coding genes, 
 # (3) all NATs, (4) all lincRNAs, (5) orthologous lncRNAs (Brassicaceae)
 # Input sample tables should have the following format:
@@ -57,16 +57,16 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    # Set up list of expression tables
    if (species == "all") {
 
-      expr_table_ls <- list(AT_tpm = pathAT, AL_tpm = pathAL, CR_tpm = pathCR, ES_tpm = pathES, 
-         TH_tpm = pathTH, MT_tpm = pathMT, BD_tpm = pathBD, Core_tpm = pathCore, Brass_pc_tpm = pathPcBrass, 
-         Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl, AL_tpm_compl = pathAL_compl, 
-         CR_tpm_compl = pathCR_compl, ES_tpm_compl = pathES_compl, TH_tpm_compl = pathTH_compl, 
-         MT_tpm_compl = pathMT_compl, BD_tpm_compl = pathBD_compl)
+      expr_table_ls <- list(AT_expr = pathAT, AL_expr = pathAL, CR_expr = pathCR, ES_expr = pathES, 
+         TH_expr = pathTH, MT_expr = pathMT, BD_expr = pathBD, Core_expr = pathCore, Brass_pc_expr = pathPcBrass, 
+         Brass_nc_expr = pathNcBrass, AT_expr_compl = pathAT_compl, AL_expr_compl = pathAL_compl, 
+         CR_expr_compl = pathCR_compl, ES_expr_compl = pathES_compl, TH_expr_compl = pathTH_compl, 
+         MT_expr_compl = pathMT_compl, BD_expr_compl = pathBD_compl)
 
    } else if (species == "AT") {
 
-      expr_table_ls <- list(AT_tpm = pathAT, Core_tpm = pathCore, Brass_pc_tpm = pathPcBrass, 
-         Brass_nc_tpm = pathNcBrass, AT_tpm_compl = pathAT_compl)
+      expr_table_ls <- list(AT_expr = pathAT, Core_expr = pathCore, Brass_pc_expr = pathPcBrass, 
+         Brass_nc_expr = pathNcBrass, AT_expr_compl = pathAT_compl)
    }
 
 
@@ -80,7 +80,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    # return_list <- list("species_id" = species_id, "expr_tables" = expr_tables)
    # return(return_list)
    # }
-   # return_objects <- getMaxExpr(species="AT") # read in TPM expression data
+   # return_objects <- getMaxExpr(species="AT") # read in expr expression data
    # list2env(return_objects, envir = .GlobalEnv)
 
 
@@ -96,9 +96,6 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
    if (species_id == "AT") {
-
-      # log-transform data
-      AT_tpm_log <- log2(AT_tpm + 1)
 
 
       # Get replicate expression
@@ -117,7 +114,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          return(averaged_replicates)
       }
 
-      AT_tpm_repl <- calculateAvgExpr(AT_tpm_log)
+      AT_expr_repl <- calculateAvgExpr(AT_expr)
 
 
       # Get replicate names
@@ -130,21 +127,21 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          return(df_names)
       }
 
-      repl_names <- getReplNames(AT_tpm_log)
+      repl_names <- getReplNames(AT_expr)
 
-      colnames(AT_tpm_repl) <- repl_names
+      colnames(AT_expr_repl) <- repl_names
 
 
       # Extract protein-coding core ortholog and Brassicaceae lncRNA ortholog gene IDs
-      core_ids <- sub("\\:.*", "", Core_tpm[,1])
+      core_ids <- sub("\\:.*", "", Core_expr[,1])
       core_ids <- core_ids[!grepl("ERCC", core_ids)]
 
 
       # Extract all A.thaliana lncRNAs and get orthologs
-      AT_lncRNA_ids <- subset(AT_tpm_compl, subset = biotype %in% c("lnc_exonic_antisense", 
+      AT_lncRNA_ids <- subset(AT_expr_compl, subset = biotype %in% c("lnc_exonic_antisense", 
          "lnc_intronic_antisense", "lnc_intergenic"))[,1]
-      core_brass_ids <- sub("\\:.*", "", Brass_pc_tpm[,1])
-      core_lnc_ids <- sub("\\:.*", "", Brass_nc_tpm[,1])
+      core_brass_ids <- sub("\\:.*", "", Brass_pc_expr[,1])
+      core_lnc_ids <- sub("\\:.*", "", Brass_nc_expr[,1])
 
 
       # Get number of genes with maximum expression for each organ
@@ -224,11 +221,11 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
       }
 
-      cd_all <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "all")
-      cd_brass <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "brass")
-      cd_core <- getNumGenes(AT_tpm_repl, scripttype = "coding", c_level = "core")
-      nc_all <- getNumGenes(AT_tpm_repl, scripttype = "lncRNA", c_level = "all")
-      nc_core <- getNumGenes(AT_tpm_repl, scripttype = "lncRNA", c_level = "core")
+      cd_all <- getNumGenes(AT_expr_repl, scripttype = "coding", c_level = "all")
+      cd_brass <- getNumGenes(AT_expr_repl, scripttype = "coding", c_level = "brass")
+      cd_core <- getNumGenes(AT_expr_repl, scripttype = "coding", c_level = "core")
+      nc_all <- getNumGenes(AT_expr_repl, scripttype = "lncRNA", c_level = "all")
+      nc_core <- getNumGenes(AT_expr_repl, scripttype = "lncRNA", c_level = "core")
 
       at_stats <- rbind(cd_all, cd_brass, cd_core, nc_all, nc_core)
 
@@ -309,7 +306,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             legend.text = element_text(size = 20), 
             legend.background = element_rect(fill = NA))
 
-         ggsave(file = file.path(out_dir2, "output", "plots", fname), plot = q,
+         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
             scale = 1, width = 10.25, height = 7.3, units = c("in"), 
             dpi = 600, limitsize = FALSE)
       }
@@ -408,8 +405,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
    else if (species_id == "all") {
 
-      tpm_table_ls <- list(AT_tpm = AT_tpm, AL_tpm = AL_tpm, CR_tpm = CR_tpm, ES_tpm = ES_tpm, 
-         TH_tpm = TH_tpm, MT_tpm = MT_tpm, BD_tpm = BD_tpm)
+      expr_table_ls <- list(AT_expr = AT_expr, AL_expr = AL_expr, CR_expr = CR_expr, ES_expr = ES_expr, 
+         TH_expr = TH_expr, MT_expr = MT_expr, BD_expr = BD_expr)
 
 
 
@@ -418,7 +415,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       # This will filter out genes that are expressed below threshold
 
       # First select comparative organs
-      AT_tpm_compl <- dplyr::select(AT_tpm_compl, c("id", "biotype", "source", "root_whole_root_5d_1", 
+      AT_expr_compl <- dplyr::select(AT_expr_compl, c("id", "biotype", "source", "root_whole_root_5d_1", 
          "root_whole_root_5d_2", "root_whole_root_5d_3", "hypocotyl_10d_1", "hypocotyl_10d_2", 
          "hypocotyl_10d_3", "leaf_1.2_10d_1", "leaf_1.2_10d_2", "leaf_1.2_10d_3", "apex_vegetative_7d_1", 
          "apex_vegetative_7d_2", "apex_vegetative_7d_3", "apex_inflorescence_21d_1", "apex_inflorescence_21d_2", 
@@ -432,16 +429,16 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          # Extract ERCC data
          ERCC <- x[x$id %like% "ERCC", ]
 
-         # Get sample-specific TPM threshold
+         # Get sample-specific expr threshold
          ERCC_cutoff <- cbind(
-            data.frame(id = "TPM_cutoff"), data.frame(biotype = "<NA>"), data.frame(source = "<NA>"), 
+            data.frame(id = "expr_cutoff"), data.frame(biotype = "<NA>"), data.frame(source = "<NA>"), 
             as.data.frame(t(data.frame(
-               TPM_cutoff = apply(ERCC[,4:ncol(ERCC)], 2, function(i)quantile(i[i>0], 0.05)))
+               expr_cutoff = apply(ERCC[,4:ncol(ERCC)], 2, function(i)quantile(i[i>0], 0.05)))
             ))
          )
 
          # Bind sample-specific threshold to expression table
-         all_genes_tpm_cutoff <- rbind(x, ERCC_cutoff)
+         all_genes_expr_cutoff <- rbind(x, ERCC_cutoff)
 
 
          applyThreshold <- function(express_df) {
@@ -508,13 +505,13 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             return(th_df)
          }
 
-         return_objects_th <- applyThreshold(all_genes_tpm_cutoff)
+         return_objects_th <- applyThreshold(all_genes_expr_cutoff)
 
          return(return_objects_th)
 
       }
 
-      AT_tpm_compl <- getTH(AT_tpm_compl)
+      AT_expr_compl <- getTH(AT_expr_compl)
 
       
       # Get replicate expression
@@ -547,26 +544,26 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          return(averaged_replicates)
       }
 
-      tpm_table_repl_ls <- lapply(tpm_table_ls, calculateAvgExpr)
+      expr_table_repl_ls <- lapply(expr_table_ls, calculateAvgExpr)
 
 
       # Select comparative organs for AT and AL
-      tpm_table_repl_ls$AT_tpm <- dplyr::select(tpm_table_repl_ls$AT_tpm, c("root_whole_root_5d", 
+      expr_table_repl_ls$AT_expr <- dplyr::select(expr_table_repl_ls$AT_expr, c("root_whole_root_5d", 
          "hypocotyl_10d", "leaf_12_7d", "apex_vegetative_7d", "apex_inflorescence_21d", 
          "flower_stg12_21d", "flower_stg12_stamens_21d", "flower_early_stg12_carpels_21d"))
 
-      tpm_table_repl_ls$AL_tpm <- tpm_table_repl_ls$AL_tpm[, -which(names(tpm_table_repl_ls$AL_tpm) %in% c(
+      expr_table_repl_ls$AL_expr <- expr_table_repl_ls$AL_expr[, -which(names(expr_table_repl_ls$AL_expr) %in% c(
          "flower_stg11_stamens_8w10w25d", "flower_early_stg12_stamens_8w10w23d", 
          "flower_late_stg12_stamens_8w10w21d"))]
 
 
       # Add dataset identifier to list elements
-      spec_exp_names <- lapply(seq_along(tpm_table_repl_ls), function(i) { 
-         paste(names(tpm_table_repl_ls)[[i]])
+      spec_exp_names <- lapply(seq_along(expr_table_repl_ls), function(i) { 
+         paste(names(expr_table_repl_ls)[[i]])
       })
 
-      for (i in seq_along(tpm_table_repl_ls)) {
-         tpm_table_repl_ls[[i]]$dataset <- rep(spec_exp_names[i], nrow(tpm_table_repl_ls[[i]]))
+      for (i in seq_along(expr_table_repl_ls)) {
+         expr_table_repl_ls[[i]]$dataset <- rep(spec_exp_names[i], nrow(expr_table_repl_ls[[i]]))
       }
 
 
@@ -580,42 +577,42 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          spec_id <- unique(sub("\\_.*", "", df$dataset))
          df <- within(df, rm(dataset))
 
-         Core_tpm <- Core_tpm[!grepl("ERCC", Core_tpm[,1]),]
+         Core_expr <- Core_expr[!grepl("ERCC", Core_expr[,1]),]
 
-         AT_lncRNA_ids <- subset(AT_tpm_compl, subset = biotype %in% c("lnc_exonic_antisense", 
+         AT_lncRNA_ids <- subset(AT_expr_compl, subset = biotype %in% c("lnc_exonic_antisense", 
                "lnc_intronic_antisense", "lnc_intergenic"))[,1]
 
          # Get protein-coding core IDs for non-AT species
 
          if (spec_id == "AL") {
 
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
-            core_brass_ids <- as.data.frame(sapply(Brass_pc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
-            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
+            core_brass_ids <- as.data.frame(sapply(Brass_pc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
 
          } else if (spec_id == "CR") {
 
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
-            core_brass_ids <- as.data.frame(sapply(Brass_pc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
-            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
+            core_brass_ids <- as.data.frame(sapply(Brass_pc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
 
          } else if (spec_id == "ES") {
 
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
-            core_brass_ids <- as.data.frame(sapply(Brass_pc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
-            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
+            core_brass_ids <- as.data.frame(sapply(Brass_pc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
 
          } else if (spec_id == "TH") {
 
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[5]))
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[5]))
 
          } else if (spec_id == "MT") {
 
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[6]))
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[6]))
 
          } else if (spec_id == "BD") {
 
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[7]))
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[7]))
          }
 
          # ---------------------------- Process AT data ----------------------------
@@ -639,7 +636,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          } else if ((spec_id == "AT") && (c_level == "core") && (scripttype == "coding")) {
 
             # Extract AT protein-coding core IDs
-            core_ids <- sub("\\:.*", "", Core_tpm[,1])
+            core_ids <- sub("\\:.*", "", Core_expr[,1])
 
             df <- df[rownames(df) %in% core_ids,]
 
@@ -647,7 +644,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
             # Get Brassicaceae protein-coding orthologs
 
-            core_brass_ids <- sub("\\:.*", "", Brass_pc_tpm[,1])
+            core_brass_ids <- sub("\\:.*", "", Brass_pc_expr[,1])
 
             df <- df[rownames(df) %in% core_brass_ids, ]
          
@@ -655,7 +652,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
             # Extract AT lncRNA IDs and get Brassicaceae core lncRNAs
 
-            core_lnc_ids <- sub("\\:.*", "", Brass_nc_tpm[,1])
+            core_lnc_ids <- sub("\\:.*", "", Brass_nc_expr[,1])
 
             df <- df[rownames(df) %in% core_lnc_ids, ]
 
@@ -714,15 +711,15 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
       }
 
-      cd_all <- do.call(rbind, lapply(tpm_table_repl_ls, getNumGenes, scripttype = "coding", 
+      cd_all <- do.call(rbind, lapply(expr_table_repl_ls, getNumGenes, scripttype = "coding", 
          c_level = "all"))
-      cd_brass <- do.call(rbind, lapply(tpm_table_repl_ls[1:4], getNumGenes, scripttype = "coding", 
+      cd_brass <- do.call(rbind, lapply(expr_table_repl_ls[1:4], getNumGenes, scripttype = "coding", 
          c_level = "brass"))
-      cd_core <- do.call(rbind, lapply(tpm_table_repl_ls, getNumGenes, scripttype = "coding", 
+      cd_core <- do.call(rbind, lapply(expr_table_repl_ls, getNumGenes, scripttype = "coding", 
          c_level = "core"))
-      nc_all <- do.call(rbind, lapply(tpm_table_repl_ls, getNumGenes, scripttype = "lncRNA", 
+      nc_all <- do.call(rbind, lapply(expr_table_repl_ls, getNumGenes, scripttype = "lncRNA", 
          c_level = "all"))
-      nc_brass <- do.call(rbind, lapply(tpm_table_repl_ls[1:4], getNumGenes, scripttype = "lncRNA", 
+      nc_brass <- do.call(rbind, lapply(expr_table_repl_ls[1:4], getNumGenes, scripttype = "lncRNA", 
          c_level = "core")) # Ortholog lncRNA dataset is limited to Brassicaceae
 
       pc_stats <- rbind(cd_all, cd_core)
@@ -837,24 +834,24 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       #-- Analyse distribution of max expression for coding+non-coding genes across species --
 
 
-      tpm_table_ls_br <- tpm_table_ls[c(1:4)]
+      expr_table_ls_br <- expr_table_ls[c(1:4)]
 
-      tpm_table_repl_ls <- lapply(tpm_table_ls_br, calculateAvgExpr)
+      expr_table_repl_ls <- lapply(expr_table_ls_br, calculateAvgExpr)
 
 
       # Select comparative organs for AT and AL
-      tpm_table_repl_ls$AT_tpm <- dplyr::select(tpm_table_repl_ls$AT_tpm, c("root_whole_root_5d", 
+      expr_table_repl_ls$AT_expr <- dplyr::select(expr_table_repl_ls$AT_expr, c("root_whole_root_5d", 
          "hypocotyl_10d", "leaf_12_7d", "apex_vegetative_7d", "apex_inflorescence_21d", 
          "flower_stg12_21d", "flower_stg12_stamens_21d", "flower_early_stg12_carpels_21d"))
 
 
       # Add dataset identifier to list elements
-      spec_exp_names <- lapply(seq_along(tpm_table_repl_ls), function(i) { 
-         paste(names(tpm_table_repl_ls)[[i]])
+      spec_exp_names <- lapply(seq_along(expr_table_repl_ls), function(i) { 
+         paste(names(expr_table_repl_ls)[[i]])
       })
 
-      for (i in seq_along(tpm_table_repl_ls)) {
-         tpm_table_repl_ls[[i]]$dataset <- rep(spec_exp_names[i], nrow(tpm_table_repl_ls[[i]]))
+      for (i in seq_along(expr_table_repl_ls)) {
+         expr_table_repl_ls[[i]]$dataset <- rep(spec_exp_names[i], nrow(expr_table_repl_ls[[i]]))
       }
 
 
@@ -866,7 +863,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          spec_id <- unique(sub("\\_.*", "", df$dataset))
          df <- within(df, rm(dataset))
 
-         Core_tpm <- Core_tpm[!grepl("ERCC", Core_tpm[,1]),]
+         Core_expr <- Core_expr[!grepl("ERCC", Core_expr[,1]),]
 
          `%nin%` = Negate(`%in%`)
 
@@ -875,27 +872,27 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
          if (spec_id == "AT") {
 
-            compl_table <- AT_tpm_compl
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[1]))
-            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[1]))
+            compl_table <- AT_expr_compl
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[1]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[1]))
 
          } else if (spec_id == "AL") {
 
-            compl_table <- AL_tpm_compl
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
-            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
+            compl_table <- AL_expr_compl
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[2]))
 
          } else if (spec_id == "CR") {
 
-            compl_table <- CR_tpm_compl
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
-            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
+            compl_table <- CR_expr_compl
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[3]))
 
          } else if (spec_id == "ES") {
 
-            compl_table <- ES_tpm_compl
-            core_ids <- as.data.frame(sapply(Core_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
-            core_lnc_ids <- as.data.frame(sapply(Brass_nc_tpm[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
+            compl_table <- ES_expr_compl
+            core_ids <- as.data.frame(sapply(Core_expr[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
+            core_lnc_ids <- as.data.frame(sapply(Brass_nc_expr[,1], function(x) unlist(strsplit(x, "\\:"))[4]))
 
          }
 
@@ -961,17 +958,17 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
       }
 
-      cd_expr_dist_all <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "coding", 
+      cd_expr_dist_all <- do.call(rbind, lapply(expr_table_repl_ls, getMaxExprDist, scripttype = "coding", 
          c_level = "all"))
-      cd_expr_dist_n_core <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "coding", 
+      cd_expr_dist_n_core <- do.call(rbind, lapply(expr_table_repl_ls, getMaxExprDist, scripttype = "coding", 
          c_level = "non-core"))
-      cd_expr_dist_core <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "coding", 
+      cd_expr_dist_core <- do.call(rbind, lapply(expr_table_repl_ls, getMaxExprDist, scripttype = "coding", 
          c_level = "core"))
-      nc_expr_dist_all <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "lncRNA", 
+      nc_expr_dist_all <- do.call(rbind, lapply(expr_table_repl_ls, getMaxExprDist, scripttype = "lncRNA", 
          c_level = "all"))
-      nc_expr_dist_n_core <- do.call(rbind, lapply(tpm_table_repl_ls, getMaxExprDist, scripttype = "lncRNA", 
+      nc_expr_dist_n_core <- do.call(rbind, lapply(expr_table_repl_ls, getMaxExprDist, scripttype = "lncRNA", 
          c_level = "non-core"))
-      nc_expr_dist_brass <- do.call(rbind, lapply(tpm_table_repl_ls[1:4], getMaxExprDist, scripttype = "lncRNA", 
+      nc_expr_dist_brass <- do.call(rbind, lapply(expr_table_repl_ls[1:4], getMaxExprDist, scripttype = "lncRNA", 
          c_level = "core")) # Ortholog lncRNA dataset is limited to Brassicaceae
 
 
