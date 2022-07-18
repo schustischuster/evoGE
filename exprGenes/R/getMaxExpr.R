@@ -144,8 +144,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       core_lnc_ids <- sub("\\:.*", "", Brass_nc_expr[,1])
 
 
-      # Select each two distant dev stages per organ so that all organs have same numbers
-      # Do this because a number of organs (all floral organs) only have 2 stages
+      # Select each three distant dev stages per organ so that all organs have same numbers
+      # Do this because organs have very different amount of developmental samples for AT
       AT_expr_repl <- AT_expr_repl[,c("root_whole_root_5d", "root_whole_root_14d", "root_whole_root_21d", "hypocotyl_10d", 
          "third_internode_24d", "second_internode_24d", "first_internode_28d", "leaf_12_7d", "leaf_56_17d", "leaf_senescing_35d", 
          "apex_vegetative_7d", "apex_inflorescence_21d", "apex_inflorescence_28d", "flower_stg9_21d", "flower_stg10_11_21d", "flower_stg12_21d", 
