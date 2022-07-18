@@ -1,7 +1,7 @@
 # Count number of genes with maximum expression in each organ in Arabidopsis thaliana for all organs,
 # and additionally for only the comparative organs; do the same for all the other species
 # The comparative organs are: root, hypocotyl, leaf, apex veg, apex inf, flower, stamen, carpel
-# Data input: Normalized expr expression data containing protein-coding genes, NATs and lincRNAs
+# Data input: Normalized VST expression data containing protein-coding genes, NATs and lincRNAs
 # Classification: (1) All protein-coding genes, (2) 7003 core orthologous protein-coding genes, 
 # (3) all NATs, (4) all lincRNAs, (5) orthologous lncRNAs (Brassicaceae)
 # Input sample tables should have the following format:
@@ -80,7 +80,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
    # return_list <- list("species_id" = species_id, "expr_tables" = expr_tables)
    # return(return_list)
    # }
-   # return_objects <- getMaxExpr(species="AT") # read in expr expression data
+   # return_objects <- getMaxExpr(species="AT") # read in expression data
    # list2env(return_objects, envir = .GlobalEnv)
 
 
@@ -144,6 +144,17 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       core_lnc_ids <- sub("\\:.*", "", Brass_nc_expr[,1])
 
 
+      # Select each two distant dev stages per organ so that all organs have same numbers
+      # Do this because a number of organs (all floral organs) only have 2 stages
+      AT_expr_repl <- AT_expr_repl[,c("root_whole_root_5d", "root_whole_root_14d", "root_whole_root_21d", "hypocotyl_10d", 
+         "third_internode_24d", "second_internode_24d", "first_internode_28d", "leaf_12_7d", "leaf_56_17d", "leaf_senescing_35d", 
+         "apex_vegetative_7d", "apex_inflorescence_21d", "apex_inflorescence_28d", "flower_stg9_21d", "flower_stg10_11_21d", "flower_stg12_21d", 
+         "flower_stg12_sepals_21d", "flower_stg15_sepals_21d", "flower_stg12_petals_21d", 
+         "flower_stg15_petals_21d", "flower_stg12_stamens_21d", "flower_stg15_stamens_21d", 
+         "flower_early_stg12_carpels_21d", "flower_late_stg12_carpels_21d", "flower_stg15_carpels_21d", "fruit_stg16_siliques_28d", 
+         "fruit_stg17a_siliques_28d", "fruit_stg16_seeds_28d", "fruit_stg17a_seeds_28d", "fruit_stg18_seeds_28d")]
+
+
       # Get number of genes with maximum expression for each organ
       # "Merge" dev stages for each organ by calculating average number of genes w/ max expression
 
@@ -180,8 +191,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
          # Create group names
-         groups <- c(rep("Root", 6), "Hypocotyl" ,rep("Stem", 3), rep("Leaf", 9), rep("Apex", 6), 
-            rep("Flower", 4), rep("Sepals", 2), rep("Petals", 2), rep("Stamen", 2), rep("Carpel", 2), 
+         groups <- c(rep("Root", 3), "Hypocotyl" ,rep("Stem", 3), rep("Leaf", 3), rep("Apex", 3), 
+            rep("Flower", 3), rep("Sepals", 2), rep("Petals", 2), rep("Stamen", 2), rep("Carpel", 2), 
             rep("Fruit", 3), rep("Seed", 3))
 
          df$max <- colnames(df)[apply(df, 1, which.max)]
@@ -191,11 +202,10 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             length(grep(x, x_max))}))
 
          # Calculate average maximum expression per organ group
-         # This is the Weighted Arithmetic Mean (mean of organ weighted by number of stages)
-         avg_n_max <- c(rep(mean(sample_count[1:6]),6), sample_count[7], rep(mean(sample_count[8:10]),3), 
-            rep(mean(sample_count[11:19]),9), rep(mean(sample_count[20:25]),6), rep(mean(sample_count[26:29]),4), 
-            rep(mean(sample_count[30:31]),2), rep(mean(sample_count[32:33]),2), rep(mean(sample_count[34:35]),2), 
-            rep(mean(sample_count[36:37]),2), rep(mean(sample_count[38:40]),3), rep(mean(sample_count[41:43]),3))
+         avg_n_max <- c(rep(mean(sample_count[1:3]),3), sample_count[4], rep(mean(sample_count[5:7]),3), 
+            rep(mean(sample_count[8:10]),3), rep(mean(sample_count[11:13]),3), rep(mean(sample_count[14:16]),3), 
+            rep(mean(sample_count[17:18]),2), rep(mean(sample_count[19:20]),2), rep(mean(sample_count[21:22]),2), 
+            rep(mean(sample_count[23:24]),2), rep(mean(sample_count[25:27]),3), rep(mean(sample_count[28:30]),3))
 
          df_out <- data.frame(
             biotype = rep(scripttype), 
@@ -206,16 +216,16 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             average_count = avg_n_max
             )
 
-         total_avg <- sum(unique(avg_n_max[1:6]), avg_n_max[7], unique(avg_n_max[8:10]), unique(avg_n_max[11:19]), 
-            unique(avg_n_max[20:25]), unique(avg_n_max[26:29]), unique(avg_n_max[30:31]), unique(avg_n_max[32:33]), 
-            unique(avg_n_max[34:35]), unique(avg_n_max[36:37]), unique(avg_n_max[38:40]), unique(avg_n_max[41:43]))
+         total_avg <- sum(unique(avg_n_max[1:3]), avg_n_max[4], unique(avg_n_max[5:7]), unique(avg_n_max[8:10]), 
+            unique(avg_n_max[11:13]), unique(avg_n_max[14:16]), unique(avg_n_max[17:18]), unique(avg_n_max[19:20]), 
+            unique(avg_n_max[21:22]), unique(avg_n_max[23:24]), unique(avg_n_max[25:27]), unique(avg_n_max[28:30]))
 
-         df_out$average_perc <- c(rep(mean(sample_count[1:6])/total_avg,6), avg_n_max[7]/total_avg, 
-            rep(mean(sample_count[8:10])/total_avg,3), rep(mean(sample_count[11:19])/total_avg,9), 
-            rep(mean(sample_count[20:25])/total_avg,6), rep(mean(sample_count[26:29])/total_avg,4), 
-            rep(mean(sample_count[30:31])/total_avg,2), rep(mean(sample_count[32:33])/total_avg,2), 
-            rep(mean(sample_count[34:35])/total_avg,2), rep(mean(sample_count[36:37])/total_avg,2), 
-            rep(mean(sample_count[38:40])/total_avg,3), rep(mean(sample_count[41:43])/total_avg,3))
+         df_out$average_perc <- c(rep(mean(sample_count[1:3])/total_avg,3), avg_n_max[4]/total_avg, 
+            rep(mean(sample_count[5:7])/total_avg,3), rep(mean(sample_count[8:10])/total_avg,3), 
+            rep(mean(sample_count[11:13])/total_avg,3), rep(mean(sample_count[14:16])/total_avg,3), 
+            rep(mean(sample_count[17:18])/total_avg,2), rep(mean(sample_count[19:20])/total_avg,2), 
+            rep(mean(sample_count[21:22])/total_avg,2), rep(mean(sample_count[23:24])/total_avg,2), 
+            rep(mean(sample_count[25:27])/total_avg,3), rep(mean(sample_count[28:30])/total_avg,3))
 
          return(df_out)
 
@@ -247,9 +257,9 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
       # Prepare data for plotting
-      at_stats_red <- at_stats[c(1,7,8,11,20,26,30,32,34,36,38,41,87,93,94,97,106,112,116,
-         118,120,122,124,127,130,136,137,140,149,155,159,161,163,165,167,170,173,179,180,
-         183,192,198,202,204,206,208,210,213),]
+      at_stats_red <- at_stats[c(1,4,5,8,11,14,17,19,21,23,25,28,61,64,65,68,71,74,77,
+         79,81,83,85,88,91,94,95,98,101,104,107,109,111,113,115,118,121,124,125,
+         128,131,134,137,139,141,143,145,148),]
 
       at_stats_pc <- at_stats_red[at_stats_red$biotype == "coding",]
       at_stats_nc <- at_stats_red[at_stats_red$biotype == "lncRNA",]
@@ -355,8 +365,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          p <- ggplot(data, aes(fill = group, x = conservation, y = average_perc)) + 
          geom_bar(position = "stack", stat = "identity", width = 0.725) + 
          scale_x_discrete(expand = c(0.07, 0), labels = x_labels) + 
-         scale_y_continuous(expand = c(0, 0), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1), 
-            limits = c(0, 1.0))
+         scale_y_continuous(expand = c(0, 0), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1))
 
          q <- p + 
          scale_fill_manual(values = c("Root" = "#5d4a95", "Hypocotyl" = "#53b0db", 
