@@ -11,7 +11,7 @@
 #------------------- Load packages, set directories and read sample tables ---------------------
 
 
-# Define function to get max expressed genes
+# Define function to get organ with maximum expression
 
 getMaxExpr <- function(species = c("AT", "all"), ...) {
    
