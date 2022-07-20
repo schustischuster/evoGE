@@ -11,7 +11,7 @@
 #------------------- Load packages, set directories and read sample tables ---------------------
 
 
-# Define function to get expressed genes
+# Define function to get max expressed genes
 
 getMaxExpr <- function(species = c("AT", "all"), ...) {
    
@@ -1073,6 +1073,20 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
 
+      # Split data AT/non-AT
+      max_expr_dist_non_AT <- max_expr_dist[!grepl("AT", max_expr_dist$species),]
+      max_expr_dist_AT <- max_expr_dist[max_expr_dist$species == "AT", ]
+
+
+      x_labels = c("coding_all" = expression(atop(NA, atop(textstyle('All'), textstyle('PC')))), 
+         "coding_non-core" = expression(atop(NA, atop(textstyle('PC w/o'), textstyle('Ortho')))), 
+         "coding_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('PC')))), 
+         "lncRNA_all" = expression(atop(NA, atop(textstyle('All'), textstyle('lnc')))), 
+         "lncRNA_non-core" = expression(atop(NA, atop(textstyle('lnc w/o'), textstyle('Ortho')))), 
+         "lncRNA_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('lnc')))))
+
+
+
 
       # Generate plots
       plotMaxExprDist <- function(data) {
@@ -1081,60 +1095,63 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
            # p_title <- "Organ with highest expression of protein-coding genes"
 
-           y_scale <- c(-0.5, 13.75)
+           y_scale <- c(2.9, 20.8)
 
-           plt_mar <- c(0.1, 2.75, 1.5, 1.75)
-         
+           plt_mar <- c(0.1, 0.75, 0.5, 0.5)
         # } else if (biotype == "lncRNA") {
-
-
          fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
 
          x_lab <- c(Root = "Rt", Hypocotyl = "Hc", Leaf = "Lf", Apex_veg = "Av", 
             Apex_inf = "Ai", Flower = "Fl", Stamen = "St", Carpel = "Ca")
 
+         data$species <- gsub("AT", "A.thaliana", data$species)
+         data$species <- gsub("AL", "A.lyrata", data$species)
+         data$species <- gsub("CR", "C.rubella", data$species)
+         data$species <- gsub("ES", "E.salsugineum", data$species)
+
          data$class <- factor(data$class, levels = unique(data$class))
          data$conservation <- factor(data$conservation, levels = unique(data$conservation))
          data$species <- factor(data$species, levels = unique(data$species))
 
-         p <- ggplot(data, aes(x = class, y = max_expr, color = class)) + 
-         geom_boxplot(aes(fill = class), colour = "black", width = 0.85) +
-         scale_x_discrete(expand = c(0.055, 0)) + 
-         scale_y_continuous(limits = y_scale, expand = c(0, 0), breaks = c(0,2.5,5,7.5,10,12.5))
+         p <- ggplot(data, aes(x = class, y = max_expr, color = class)) + geom_flat_violin(aes(fill = class), colour = "black", position = position_nudge(x = -0.037, y = 0), alpha = 1, size = 0.85) + 
+         geom_boxplot(aes(fill = class), colour = "black", width = 0.44, outlier.shape = NA, position = position_hnudge(x = 0.25), size = 0.85, notch = TRUE) +
+         scale_x_discrete(expand = c(0.005, 0), labels = x_labels) + 
+         scale_y_continuous(limits = y_scale, expand = c(0, 0), breaks = c(5,7.5,10,12.5,15,17.5))
          q <- p + 
-         #scale_color_manual(values = c("Root" = "#6a54a9", "Hypocotyl" = "#53b0db", 
-         #   "Leaf" = "#0a9955", "Apex_veg" = "#96ba37")) + 
-         # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
+         scale_fill_manual(values = c("coding_all" = "#f7f1d0", "coding_non-core" = "#e3cd77", 
+            "coding_core" = "#cfa200", "lncRNA_all" = "#91c7e5", "lncRNA_non-core" = "#6a54a9", 
+            "lncRNA_core" = "#3195cf")) + 
          theme_classic() + 
-         xlab("") + ylab("Maximum expression") + ggtitle("") + 
+         xlab("") + ylab("Maximum expression     ") + ggtitle("") + 
          theme(text = element_text(size = 23.5), 
-            strip.text = element_text(size = 24.5, face = "plain"), 
+            strip.text = element_text(size = 21, face = "plain"), 
                 strip.text.x = element_text(margin = margin(0.25, 0, 0.25, 0, "cm")), 
                 strip.background = element_rect(colour = 'white', fill = NA, size = 0.1), 
                 axis.ticks.length = unit(0.25, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.5), 
-                axis.line = element_line(colour = 'black', size = 1.5), 
+                axis.ticks = element_line(colour = "black", size = 1.1), 
+                axis.line = element_line(colour = 'black', size = 1.1), 
                 plot.margin = unit(plt_mar, "cm"), 
-                axis.title.y = element_text(size = 25, margin = margin(t = 0, r = 8, b = 0, l = 1), 
+                axis.title.y = element_text(size = 21, margin = margin(t = 0, r = 8, b = 0, l = 1), 
+                    colour = "black", face = "plain"), 
+                axis.title.x = element_text(size = 21, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
                     colour = "black", face = "bold"), 
-                axis.title.x = element_text(size = 25, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
-                    colour = "black", face = "bold"), 
-                axis.text.x = element_text(size=21.5, margin = margin(t = 4, b = 7.75), colour = "grey35", 
+                axis.text.x = element_text(size=17.5, margin = margin(t = -7, b = 2), colour = "black", 
                     angle = 0, vjust = 1, hjust = 0.5), 
-                axis.text.y = element_text(size = 21.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
-                panel.spacing = unit(0.8, "cm"), 
+                axis.text.y = element_text(size = 17.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "black"), 
+                panel.spacing = unit(0.7, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
                 panel.grid.minor.y = element_blank(),  
                 legend.position ="none")
 
-         q <- q + facet_wrap(~ factor(species, levels = c("AT", "AL", "CR", "ES")) , nrow = 1, scales = "free_x")
+         q <- q + facet_wrap(~ factor(species, levels = c("A.thaliana", "A.lyrata", "C.rubella", "E.salsugineum")) , nrow = 1, scales = "free_x")
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
                 width = 20, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
       }
 
-      plotMaxExprDist(data = max_expr_dist)
+      plotMaxExprDist(data = max_expr_dist_non_AT)
+      # plotMaxExprDist(data = max_expr_dist_AT)
 
 
       # Wilcoxon rank sum test with continuity correction (all genes vs core genes)
