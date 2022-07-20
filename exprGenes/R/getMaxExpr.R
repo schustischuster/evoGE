@@ -1078,15 +1078,6 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       max_expr_dist_AT <- max_expr_dist[max_expr_dist$species == "AT", ]
 
 
-      x_labels = c("coding_all" = expression(atop(NA, atop(textstyle('All'), textstyle('PC')))), 
-         "coding_non-core" = expression(atop(NA, atop(textstyle('PC w/o'), textstyle('Ortho')))), 
-         "coding_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('PC')))), 
-         "lncRNA_all" = expression(atop(NA, atop(textstyle('All'), textstyle('lnc')))), 
-         "lncRNA_non-core" = expression(atop(NA, atop(textstyle('lnc w/o'), textstyle('Ortho')))), 
-         "lncRNA_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('lnc')))))
-
-
-
 
       # Generate plots
       plotMaxExprDist <- function(data) {
@@ -1103,6 +1094,13 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
          x_lab <- c(Root = "Rt", Hypocotyl = "Hc", Leaf = "Lf", Apex_veg = "Av", 
             Apex_inf = "Ai", Flower = "Fl", Stamen = "St", Carpel = "Ca")
+
+         x_labels = c("coding_all" = expression(atop(NA, atop(textstyle('All'), textstyle('PC')))), 
+            "coding_non-core" = expression(atop(NA, atop(textstyle('PC w/o'), textstyle('Ortho')))), 
+            "coding_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('PC')))), 
+            "lncRNA_all" = expression(atop(NA, atop(textstyle('All'), textstyle('lnc')))), 
+            "lncRNA_non-core" = expression(atop(NA, atop(textstyle('lnc w/o'), textstyle('Ortho')))), 
+            "lncRNA_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('lnc')))))
 
          data$species <- gsub("AT", "A.thaliana", data$species)
          data$species <- gsub("AL", "A.lyrata", data$species)
