@@ -31,18 +31,18 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
 
   if (is.element("Median", div_times)) {
 
-    treename <- sprintf('%s.png', paste("Marker_species_phylogeny", "median_times" , sep="_"))
+    treename <- sprintf('%s.pdf', paste("Marker_species_phylogeny", "median_times" , sep="_"))
 
   } else if (is.element("Estimated", div_times)) {
 
-    treename <- sprintf('%s.png', paste("Marker_species_phylogeny", "estimated_times" , sep="_"))
+    treename <- sprintf('%s.pdf', paste("Marker_species_phylogeny", "estimated_times" , sep="_"))
   }
 
      
   # Make marker species phylogeny plot
-  png(file = file.path(out_dir, "output", "plots", treename), 
-    width = 3250, height = 3700, res = 800)
-  par(mar = c(0.88, 0.25, 0, 0.25), bg=NA)
+  pdf(file = file.path(out_dir, "output", "plots", treename), 
+    width = 4.01, height = 4.5825)
+  par(mar = c(0.88, 0.225, 0, 0.25), bg = NA)
 
   plot(vert_tree, type = "phylogram", use.edge.length = TRUE, show.node.label = FALSE, 
     edge.width = 1.55, edge.lty = 1, font = 3, root.edge = FALSE, label.offset = 2, 
