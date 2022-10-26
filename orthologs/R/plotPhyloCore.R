@@ -101,7 +101,7 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
   # Plot number of deduplicated reads for each species
   plotOrthologs <- function(data) {
 
-    fname <- sprintf('%s.png', paste(deparse(substitute(data)), div_times, sep="_"))
+    fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), div_times, sep="_"))
 
     if (is.element("Median", div_times)) {
 
@@ -147,36 +147,29 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       x     = c(18.5, 46, 106, 157, 18.5, 46, 106),
       y     = c(1200, 1200, 1200, 1200, 85.4, 85.4, 85.4)
       )
-
-
     p <- ggplot(transform(data, class=factor(class, levels=c("Protein-coding", "lncRNA"))), 
       aes(x = div_time, y = expressed)) + 
     geom_line(aes(x = div_time), size = 1.0) + expand_limits(y=0) + 
     scale_x_continuous(breaks = species_time, labels = time_labels) + 
     scale_y_continuous(expand = c(0.05, 0.15), breaks= pretty_breaks(), labels = y_labels) + 
     geom_text(aes(y = expressed * 1.077, label = "")) + 
-    geom_segment(x = AL, xend = AL, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
-    geom_segment(x = CR, xend = CR, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
-    geom_segment(x = ES, xend = ES, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
-    geom_segment(x = TH, xend = TH, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
-    geom_segment(x = MT, xend = MT, y = -1000, yend = 0, color = "gray15", size = 0.45) + 
-    geom_hline(yintercept = 0, colour = "grey95", size = 0.5) + 
+        geom_hline(yintercept = 0, colour = "grey95", size = 0.5) + 
     geom_point(data = dat_circle, mapping = aes(x = x, y = y), shape = 21, colour = "black", 
-      fill = "red", size = 3.0, stroke = 0.75) + 
+      fill = "red", size = 3.0, stroke = 0.5) + 
     geom_text(data = dat_text, mapping = aes(x = x, y = y, label=label), color = "red", size = 3.8)
 
-    q <- p + facet_wrap( ~ factor(class), scales = 'free', ncol = 1) + 
+    q <- p + facet_wrap( ~ class, scales = 'free', ncol = 1) + 
     theme_bw() + xlab("Divergence time (Myr)") + ylab("Number of pairwise 1-1 orthologs w/ A.thaliana") + 
     scale_color_manual(values = "gray35") + 
     geom_text(data = spec_label, mapping = aes(x = x, y = y, label = label), size=3.75) + 
     theme(
       panel.background = element_rect(fill = "transparent"), 
       plot.background = element_rect(fill = "transparent", color = NA), 
-      strip.background = element_rect(colour="grey55", size=1), 
+      strip.background = element_rect(fill = "grey81",colour = "grey47", size=1.0), 
       strip.text.x = element_text(size=12, margin = margin(t = 0.1875,r = 0,b = 0.1525,l = 0,"cm")),
-      plot.margin = unit(c(1, 2, 0.5, 0.25), "points"),
+      plot.margin = unit(c(1, 2.085, 0.25, 0.295), "points"),
       axis.ticks.length = unit(0.15, "cm"),
-      axis.ticks = element_line(colour = "gray15", size = 0.45), 
+      axis.ticks = element_line(colour = "gray15", size = 0.5), 
       panel.grid.major = element_line(size = 0.5, colour = "grey95"), 
       panel.grid.minor = element_blank(), 
       panel.spacing = unit(0.125, "lines"), 
@@ -184,13 +177,11 @@ plotPhyloCore <- function(div_times = c("Median", "Estimated")) {
       axis.title.x = element_text(colour = "black", size = 12, 
         margin = margin(t = 1.0, r = 0, b = 10.75, l = 0)), 
       axis.title.y = element_text(colour = "black", size = 12, 
-        margin = margin(t = 0, r = 3.125, b = 0, l = 0)), 
-      axis.text.x = element_text(colour = "black", size = 10.6, 
+        margin = margin(t = 0, r = 4.5, b = 0, l = 0)), 
+      axis.text.x = element_text(colour = "black", size = 10.45, 
         margin = margin(t = 2, r = 0, b = 5.0, l = 0), vjust = 0.5), 
-      axis.text.y = element_text(colour = "black", size = 10.6, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
-      panel.border = element_rect(colour = "grey55", fill = NA, size = 1))
-
-
+      axis.text.y = element_text(colour = "black", size = 10.45, margin = margin(t = 0, r = 0.75, b = 0, l = 0)), 
+      panel.border = element_rect(colour = "grey47", fill = NA, size = 1.0))
     ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
       scale = 1, width = 3, height = 4.475, units = c("in"), 
       dpi = 800, limitsize = FALSE, bg = "transparent")
