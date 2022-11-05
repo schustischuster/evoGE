@@ -107,7 +107,7 @@ plotCor <- function(data) {
 
     x_labels <- c("Pearson" = "Pearson", "Spearman" = "Spearman")
 
-    fname <- sprintf('%s.jpg', paste("Parwise correlations"))
+    fname <- sprintf('%s.pdf', paste("Parwise correlations"))
 
     p <- ggplot(data=data, aes(x=Method, y=Cor_value)) + 
     stat_boxplot(geom ='errorbar', width = 0, size=1.125, color="black") + 
@@ -201,7 +201,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
     }
 
     # Define colors and number of steps for the plot
-    steps <- c("#800e0e", "#b41414", "#e11b1b", "#ffff1f", "#fcfce4")
+    steps <- c("#8f1b2b", "#bd2525", "#e02828", "#ffff1f", "#fcfce4")
     pal <- color.palette(steps, c(10, 24, 39, 4), space = "rgb")
 
     # Set filename
@@ -348,7 +348,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     # Set filename
     dfname <- deparse(substitute(x))
     fname <- file.path(out_dir, "output", "plots",
-              sprintf('%s_dend.png', paste(dfname, coefficient, sep="_"))
+              sprintf('%s_dend.pdf', paste(dfname, coefficient, sep="_"))
               )
 
     colnames(x)[colnames(x) == "flower_stg15_carpels_ATGE"] <- "fruit_stg15_carpels_ATGE"
@@ -358,7 +358,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
 
     # Define colors based on sample name
     label_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#1d2f55", fl="#e40000", ro="#3d62b4", 
-      le="#00d200", co="#00d200", ca="#00d200", fr="#8a0000")
+      le="#00d200", co="#00d200", ca="#00d200", fr="#800000")
 
     x_df <- x[, 7:ncol(x)]
     x_df[is.na(x_df)] <- 0 # replaces NAs by 0
@@ -395,8 +395,8 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"),
     brc_col <- brc_col[order.dendrogram(df_dend)]
     brc_col <- factor(brc_col, unique(brc_col))
 
-    png(height = 1195, width = 1200, pointsize = 10.94, file = fname)
-    par(mar = c(17.1, 4, 3.15, 1.5), mgp = c(3, 0.525, 0), lwd = 8.8, cex = 3, cex.axis = 0.85)
+    pdf(height = 119.5, width = 120.0, file = fname)
+    par(mar = c(17.1, 4.12, 3.15, 1.5), mgp = c(3, 0.525, 0), lwd = 56.95, cex = 19, cex.axis = 0.89, col.axis = "grey5")
     df_dend = color_branches(df_dend, clusters = as.numeric(brc_col), col = levels(brc_col))
     plot(df_dend)
     axis(side = 2, lwd = 3.5)
@@ -440,7 +440,7 @@ plotRE <- function(exp_data, genelist) {
     }
     p_value <- c(do.call(rbind, lst))
 
-    fname <- sprintf('%s.jpg', paste("pairwise_re_values", sep = "_"))
+    fname <- sprintf('%s.pdf', paste("pairwise_re_values", sep = "_"))
 
     samples <- data.frame(samples=rep(colnames(data[7:ncol(data)]), nrow(data)))
     experiment <- data.frame(experiment=rep(rep(data$experiment[1:2], 
@@ -470,7 +470,7 @@ plotRE <- function(exp_data, genelist) {
         y = -0.135,
         xend = c(3.5, 4.5, 5.5, 10.5, 13.5, 24.5, 26.5),
         yend = -0.135,
-        colour = c("#3d62b4", "#243968", "#009700", "#00d200", "#ff9100", "#e40000", "#8a0000")
+        colour = c("#3d62b4", "#243968", "#009700", "#00d200", "#ff9100", "#e40000", "#800000")
         )
 
     peacor = unique(data$Pearson) #cor value label
@@ -534,8 +534,8 @@ plotRE <- function(exp_data, genelist) {
             strip.text.x = element_text(margin = margin(0.3485, 0, 0.3485, 0, "cm")), 
             strip.background = element_rect(colour = 'black', fill = NA, size = 1.95), 
             axis.ticks.length = unit(0.2, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.9), 
-            axis.line = element_line(colour = 'black', size = 0.9), 
+            axis.ticks = element_line(colour = "black", size = 0.88), 
+            axis.line = element_line(colour = 'black', size = 0.88), 
             plot.margin = unit(c(0.1, 0.2, 0.1, 0.4), "cm"),  
             axis.title.y = element_text(size=18.9, margin = margin(t = 0, r = 5.5, b = 0, l = 11.5), colour="black", 
                 face = "plain"), 
