@@ -153,6 +153,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
     # Show error message if no coefficient is chosen
     if (missing(coefficient))
+   
        stop(
            "Please choose one of the following coefficients: 
            'pearson', 'spearman'",
@@ -161,6 +162,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
     # Show error message if no clustering method is chosen
     if (missing(clustm))
+   
        stop(
            "Please choose one of the following hclust algorithms: 
            'average', 'complete'",
@@ -178,6 +180,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
         if (length(n.steps.between) != length(steps)-1)
         stop("Must have one less n.steps.between value than steps")
+        
         fill.steps <- cumsum(rep(1, length(steps)) + c(0,n.steps.between))
         RGB <- matrix(NA, nrow = 3, ncol = fill.steps[length(fill.steps)])
         RGB[,fill.steps] <- col2rgb(steps)
@@ -210,6 +213,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
     species_col <- c(se="#009700", fi="#009700", ap="#ff9100", hy="#1d2f55", fl="#e40000", ro="#3d62b4", 
       le="#00d200", co="#00d200", ca="#00d200")
+    
     exp_col <- c(GE="#d9b800", eq="#b82e90") # last two letters of experiment string
 
     exp_data[is.na(exp_data)] <- 0 # replaces NAs by 0
@@ -223,6 +227,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
     # Get dendrogram w/ species colors
     col_dend <- dendrapply(as.dendrogram(df_clust.res), function(y){
+        
         if (is.leaf(y)){
             dend_col <- species_col[substr(attr(y, "label"), 1, 2)]
             attr(y, "edgePar") <- list(col = dend_col) # color branch
@@ -235,6 +240,7 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
     # Get dendrogram w/ experiment colors
     row_dend <- dendrapply(as.dendrogram(df_clust.res), function(z){
+        
         if (is.leaf(z)){
             name_string <- attr(z, "label")
             dend_col <- exp_col[substr(name_string, (nchar(name_string))-1, nchar(name_string))]
@@ -245,6 +251,8 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
 
     row_labels <- get_leaves_branches_col(row_dend) # get branch colors
     row_cols <- row_labels[order(order.dendrogram(row_dend))] # order color vector
+
+
     # Re-order (rotate) some of the clusters to make the colorbar colors more distinguishable 
     if (is.element("pearson", coefficient) && is.element("average", clustm)) {
 
@@ -255,6 +263,8 @@ makeCorrplot <- function(exp_data, coefficient = c("pearson", "spearman"),
       dend_order = dendextend::rotate(as.dendrogram(df_clust.res),c(1:4,7:8,5:6,13:15,10:12,9,18:19,16:17,20:52))
 
     } else dend_order = as.dendrogram(df_clust.res)
+
+
     # Make corrplots
         png(height = 3500, width = 3500, pointsize = 20, file = file.path(out_dir, "output", "plots", fname))
         par(lwd = 17.5) # dendrogram line width
