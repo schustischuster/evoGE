@@ -107,7 +107,7 @@ plotCor <- function(data) {
 
     x_labels <- c("Pearson" = "Pearson", "Spearman" = "Spearman")
 
-    fname <- sprintf('%s.pdf', paste("Parwise correlations"))
+    fname <- sprintf('%s.pdf', paste("Pairwise correlations"))
 
     p <- ggplot(data=data, aes(x=Method, y=Cor_value)) + 
     stat_boxplot(geom ='errorbar', width = 0, size=1.125, color="black") + 
