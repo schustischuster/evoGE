@@ -369,12 +369,12 @@ estimatePOS <- function(nbootstrap, coswidth, clevel, ...) {
         annotate("text", x=797.5, y=y095posntxt, label=pos095_ntxt, size=7.5, col="grey65") +
         geom_segment(aes(x = 751, y = pos095segpos, xend = 721, yend = pos095segpos), arrow = arrow(length = unit(0.5, "cm")), 
             size=1.1, col="grey65") +
-        geom_segment(aes(x=74.0, xend=86.2, y=0.0405, yend=0.0405), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=98.5, xend=110.7, y=0.0405, yend=0.0405), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=74.0, xend=86.2, y=0.0659, yend=0.0659), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=98.5, xend=110.7, y=0.0659, yend=0.0659), colour = "black", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=th09, xend=th09, y=0.205, yend=0.89), colour = "grey50", show.legend = FALSE, size = 1.1) + 
-        geom_segment(aes(x=th095, xend=th095, y=0.4, yend=0.8), colour = "grey65", show.legend = FALSE, size = 1.1) + 
+        geom_segment(aes(x=74.0, xend=86.2, y=0.0405, yend=0.0405), colour = "black", show.legend = FALSE, size = 1.0) + 
+        geom_segment(aes(x=98.5, xend=110.7, y=0.0405, yend=0.0405), colour = "black", show.legend = FALSE, size = 1.0) + 
+        geom_segment(aes(x=74.0, xend=86.2, y=0.0659, yend=0.0659), colour = "black", show.legend = FALSE, size = 1.0) + 
+        geom_segment(aes(x=98.5, xend=110.7, y=0.0659, yend=0.0659), colour = "black", show.legend = FALSE, size = 1.0) + 
+        geom_segment(aes(x=th09, xend=th09, y=0.205, yend=0.89), colour = "grey50", show.legend = FALSE, size = 1.0) + 
+        geom_segment(aes(x=th095, xend=th095, y=0.4, yend=0.8), colour = "grey65", show.legend = FALSE, size = 1.0) + 
         annotate("text", x=238, y=0.0535, label = "Corridor of Stability", size=7.5) + 
         annotate("text", x=167.5, y=-0.0215, label = cos_txt, size=7.5) + 
         annotate("text", x=791.5, y=0.935, label = cor_txt, size=7.5) + 
@@ -383,8 +383,8 @@ estimatePOS <- function(nbootstrap, coswidth, clevel, ...) {
         labs(x = "Sample size", y = "Correlation") +
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.22, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.25), 
-            axis.line = element_line(colour = 'black', size = 1.25), 
+            axis.ticks = element_line(colour = "black", size = 1.0), 
+            axis.line = element_line(colour = 'black', size = 1.0), 
             plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
             axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "bold"), 
