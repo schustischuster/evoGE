@@ -621,13 +621,13 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
 
             if (qtype == "base_mean") {
 
-                fname <- sprintf('%s.jpg', paste("expr_cons_base_mean", quant_num, sep="_"))
+                fname <- sprintf('%s.pdf', paste("expr_cons_base_mean", quant_num, sep="_"))
                 x_title <- "Inter-organ inter-species quantiles of expression level"
                 ycoord <- c(0.775,2.17)
 
             } else if (qtype == "organ_spec") {
 
-                fname <- sprintf('%s.jpg', paste("expr_cons_organ_spec", quant_num, sep="_"))
+                fname <- sprintf('%s.pdf', paste("expr_cons_organ_spec", quant_num, sep="_"))
                 x_title <- "Intra-organ inter-species quantiles of expression level"
                 ycoord <- c(0.9,2.225)
             }
@@ -710,24 +710,24 @@ getExprCons <- function(nquant, qtype = c("base_mean", "organ_spec"), ...) {
                 size=7.25, hjust = 0) + 
             geom_segment(data = q1_arw, aes(x = x, y = y, xend = xend, yend = yend), 
                 arrow = arrow(length = unit(0.55, "cm"), type = "closed"), 
-                size=1.1, col="red4", alpha = q_alpha) + 
+                size=1.1, col = "red4", alpha = q_alpha) + 
             geom_segment(data = q14_arw, aes(x = x, y = y, xend = xend, yend = yend), 
                 arrow = arrow(length = unit(0.55, "cm"), type = "closed"), 
-                size=1.1, col="red4", alpha = q_alpha) +
+                size=1.1, col = "red4", alpha = q_alpha) +
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 19.85), 
                 strip.text.x = element_text(margin = margin(0.38, 0, 0.38, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.05), 
                 axis.ticks.length = unit(0.22, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.25), 
-                axis.line = element_line(colour = 'black', size = 1.25), 
+                axis.ticks = element_line(colour = "black", size = 1.0), 
+                axis.line = element_line(colour = 'black', size = 1.0), 
                 plot.margin = unit(c(0.2, 0.1, 0, 0),"cm"), 
-                axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 6.4, b = 0, l = 10), 
-                    colour="black", face = "bold"), 
-                axis.title.x = element_text(size=22.75, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
-                    colour="black", face = "bold"), 
-                axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
-                axis.text.y = element_text(size=18.8, angle=0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
+                axis.title.y = element_text(size = 22.75, margin = margin(t = 0, r = 6.1, b = 0, l = 9.7), 
+                    colour = "black", face = "bold"), 
+                axis.title.x = element_text(size = 22.75, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
+                    colour = "black", face = "bold"), 
+                axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
+                axis.text.y = element_text(size = 18.8, angle = 0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
                 panel.spacing = unit(0.5, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
