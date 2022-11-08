@@ -665,7 +665,7 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
         # Plot pea distances and slopes of goslim and control data
         plotGOSLIM.pea.NLM <- function(data, data2) {
 
-            fname <- sprintf('%s.jpg', paste(unique(x_df$goslim), "nlm_regression_slopes", sep="_"))
+            fname <- sprintf('%s.pdf', paste(unique(x_df$goslim), "nlm_regression_slopes", sep="_"))
 
             # Define goslim colors for selected categories
             gocat <- as.character(unique(x_df$goslim))
@@ -772,10 +772,10 @@ getGOSLIM <- function(aspect = c("biological_process", "molecular_function"), sa
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 23.75), 
                 strip.text.x = element_text(margin = margin(0.46, 0, 0.46, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 2.75), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.41), 
                 axis.ticks.length = unit(0.265, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.45), 
-                axis.line = element_line(colour = 'black', size = 1.45), 
+                axis.ticks = element_line(colour = "black", size = 1.21), 
+                axis.line = element_line(colour = 'black', size = 1.21), 
                 plot.margin = unit(c(1, 0.1225, 3.0, 0),"cm"), 
                 axis.title.y = element_text(size=27.35, margin = margin(t = 0, r = 12.6, b = 0, l = 12), 
                     colour="black", face = "bold"), 
