@@ -1,6 +1,6 @@
-# Plot mean expression of orthologs from all GOslim categories that show a significant
-# different proportion of evolutionarily stable and variable genes
-# Make plots for both matched and all genes for each GOslim category
+# Plot mean expression of functionally related protein-coding orthologs (GOslim categories)
+# that show a higher or lower rate of expression evolution compared to controls
+# Make plots for both expression-matched (treatment/control) and all genes for each GOslim category
 # Also show distribution of mean coefficient of variation (CV) before and after matching
 # GOslim categories retrieved from TAIR version 20211101
 
@@ -223,7 +223,7 @@ plotGroupEx <- function(sample_size, ...) {
             if (plotclass == "mCV") {
 
                 data <- data.frame(value = data$CV_averaged, class = data$sign, group = data$group)
-                fname <- sprintf('%s.jpg', paste("mean_coeff_var_VST", sample_size, sep="_"))
+                fname <- sprintf('%s.pdf', paste("mean_coeff_var_VST", sample_size, sep="_"))
                 x_title <- "Orthologous genes"
                 y_title <- "Mean coefficient of variation"
                 y_title_mar <- c(t = 0, r = 6.4, b = 0, l = 10)
@@ -232,7 +232,7 @@ plotGroupEx <- function(sample_size, ...) {
             } else if (plotclass == "express") {
 
                 data <- data.frame(value = data$base_averaged, class = data$sign, group = data$group)
-                fname <- sprintf('%s.jpg', paste("coeff_var_expr_VST", sample_size, sep="_"))
+                fname <- sprintf('%s.pdf', paste("coeff_var_expr_VST", sample_size, sep="_"))
                 x_title <- "Orthologous genes"
                 y_title <- "Expression (VST counts)"
                 y_title_mar <- c(t = 0, r = 2.4, b = 0, l = 14)
@@ -250,7 +250,7 @@ plotGroupEx <- function(sample_size, ...) {
                 )
 
             p <- ggplot(data = data, color = class, aes(x=class, y=value)) + 
-            geom_boxplot(colour = "black", size = 1.15, fatten = 2.5, notch = TRUE, 
+            geom_boxplot(colour = "black", size = 1.0, fatten = 2.41, notch = TRUE, 
                 outlier.shape = 21, outlier.size = 3.5, fill = c("#ffd280", "#fca80a", "#91c7e5", "#3195cf"), 
                 outlier.color = "grey25", outlier.alpha = 0.28, outlier.fill = "grey25") + 
             scale_y_continuous(expand = c(0.035, 0), limits = y_lim) + 
@@ -262,17 +262,17 @@ plotGroupEx <- function(sample_size, ...) {
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 19.85), 
                 strip.text.x = element_text(margin = margin(0.375, 0, 0.375, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 2.35), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.05), 
                 axis.ticks.length = unit(0.24, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.15), 
-                axis.line = element_line(colour = 'black', size = 1.15), 
+                axis.ticks = element_line(colour = "black", size = 1.0), 
+                axis.line = element_line(colour = 'black', size = 1.0), 
                 plot.margin = unit(c(0.5, 15.75, 1.25, 0), "cm"), 
                 axis.title.y = element_text(size = 22.0, margin = margin(y_title_mar), 
                     colour="black", face = "bold"), 
                 axis.title.x = element_text(size = 22.0, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
                     colour="black", face = "bold"), 
-                axis.text.x = element_text(size = 19.0, margin = margin(t = 3.5, b = 8), colour="grey5"), 
-                axis.text.y = element_text(size = 18.8, angle = 0, margin = margin(l = 2.5, r = 2.5), colour="grey20"), 
+                axis.text.x = element_text(size = 19.0, margin = margin(t = 3.5, b = 8), colour="grey25"), 
+                axis.text.y = element_text(size = 18.8, angle = 0, margin = margin(l = 2.5, r = 2.5), colour="grey25"), 
                 panel.spacing = unit(0.5, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
@@ -414,7 +414,7 @@ plotGroupEx <- function(sample_size, ...) {
     # Plot mean expression of GOslim groups across samples
     plotGOEx <- function(data) {
 
-        fname <- sprintf('%s.jpg', paste("mean_expr_across_samples", sample_size, sep="_"))
+        fname <- sprintf('%s.pdf', paste("mean_expr_across_samples", sample_size, sep="_"))
 
         # Capitalize first string of each GO term category name
         CapStr <- function(y) {
@@ -465,7 +465,7 @@ plotGroupEx <- function(sample_size, ...) {
                     )
 
         p <- ggplot(data = data, color = group, aes(x=reorder(category, base_averaged, .fun='median'), y=base_averaged)) + 
-        geom_boxplot(colour = "black", size = 1.15, fatten = 2.5, notch = TRUE, 
+        geom_boxplot(colour = "black", size = 1.0, fatten = 2.25, notch = TRUE, 
             outlier.shape = NA, fill = rep(c("#f7ba1e", "#46a0d4"), each = 13)) + 
         coord_flip(ylim = quantile(data$base_averaged, c(0.0025, 0.9975))) + 
         scale_x_discrete(expand = c(0.025, 0)) + 
@@ -477,17 +477,17 @@ plotGroupEx <- function(sample_size, ...) {
         theme(text=element_text(size = 16), 
             strip.text = element_text(size = 19.85), 
             strip.text.x = element_text(margin = margin(0.375, 0, 0.375, 0, "cm")), 
-            strip.background = element_rect(colour = 'black', fill = NA, size = 2.35), 
+            strip.background = element_rect(colour = 'black', fill = NA, size = 2.05), 
             axis.ticks.length = unit(0.24, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.15), 
-            axis.line = element_line(colour = 'black', size = 1.15), 
+            axis.ticks = element_line(colour = "black", size = 1.0), 
+            axis.line = element_line(colour = 'black', size = 1.0), 
             plot.margin = unit(c(0.5, 0.5, 1.25, 0.5), "cm"), 
             axis.title.y = element_text(size = 22.0, margin = margin(t = 0, r = 0, b = 0, l = 0), 
                 colour="black", face = "bold"), 
             axis.title.x = element_text(size = 22.0, margin = margin(t = 4.0, r = 0, b = 7.0, l = 0), 
                 colour="black", face = "bold"), 
-            axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 8), colour="grey20"), 
-            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 0, r = 2.5), colour="grey5"), 
+            axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 8), colour = "grey25"), 
+            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 0, r = 2.5), colour = "black"), 
             panel.spacing = unit(0.5, "cm"), 
             panel.grid.major = element_blank(),
             panel.grid.minor.x = element_blank(), 
