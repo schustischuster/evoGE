@@ -215,18 +215,18 @@ plotGOs <- function(...) {
             axis.ticks = element_line(colour = "black", size = 1.0), 
             axis.line = element_line(colour = 'black', size = 1.0), 
             plot.margin = unit(plot_mar, "cm"), 
-            plot.title = element_text(size = 22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
-            legend.text = element_text(size = 17.5), 
-            legend.title = element_text(size = 18.0),
+            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
+            legend.text=element_text(size=17.5), 
+            legend.title=element_text(size=18.0),
             legend.direction = "vertical", 
             legend.box = leg_b,
             legend.key = element_rect(colour = "transparent", fill = "white"),
-            axis.title.y = element_text(size = 22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
-                colour = "black", face = "bold"), 
-            axis.title.x = element_text(size = 22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
-                colour = "black", face = "bold"), 
-            axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 7), colour = "grey20"), 
-            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 10, r = -2), colour = "black")
+            axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+                colour="black", face = "bold"), 
+            axis.title.x = element_text(size=22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
+                colour="black", face = "bold"), 
+            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7), colour="grey20"), 
+            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 10, r = -2), colour="black")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -281,20 +281,20 @@ plotGOs <- function(...) {
             axis.ticks = element_line(colour = "black", size = 1.0), 
             axis.line = element_line(colour = 'black', size = 1.0), 
             plot.margin = unit(c(7.25, 0.15, 0, 1.28), "cm"), 
-            plot.title = element_text(size = 22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
-            legend.text = element_text(size = 17.5), 
-            legend.title = element_text(size = 18.0),
+            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
+            legend.text=element_text(size=17.5), 
+            legend.title=element_text(size=18.0),
             legend.direction = "vertical", 
             legend.box = "vertical",
             legend.key.size = unit(1.75,"line"),
             legend.key = element_rect(colour = "transparent", fill = "white"),
-            legend.margin = margin(t = 0.228, l = 0.41, b = -0.25, unit='cm'),
-            axis.title.y = element_text(size = 22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
-                colour = "black", face = "bold"), 
-            axis.title.x = element_text(size = 22.75, margin = margin(t = 0, r = 0, b = 1, l = 0), 
-                colour = "black", face = "bold"), 
-            axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 7.15), colour = "grey20"), 
-            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 8.8, r = 3.25), colour = "black")
+            legend.margin=margin(t = 0.228, l = 0.41, b = -0.25, unit='cm'),
+            axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+                colour="black", face = "bold"), 
+            axis.title.x = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 1, l = 0), 
+                colour="black", face = "bold"), 
+            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7.15), colour="grey20"), 
+            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 8.8, r = 3.25), colour="black")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -526,4 +526,9 @@ plotGOs <- function(...) {
 
 }
 
-
+# changed lines 151, 247 and 482 to .pdf extension
+# changed font color line 229
+# changed line thickness lines 215, 216, 281, 282, 506, 507
+# changed plot margin line 283
+# changed font color line 297
+# Changed lines 309-379 (plot aes)
