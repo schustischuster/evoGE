@@ -148,7 +148,7 @@ plotGOs <- function(...) {
 
     plotGOCat <- function(df) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), sep="_"))
+        fname <- sprintf('%s.pdf', paste(deparse(substitute(df)), sep="_"))
 
         if (deparse(substitute(df)) == "glob_q1_go"){
 
@@ -212,21 +212,21 @@ plotGOs <- function(...) {
         ggtitle(plt_title) + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.25, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.25), 
-            axis.line = element_line(colour = 'black', size = 1.25), 
+            axis.ticks = element_line(colour = "black", size = 1.0), 
+            axis.line = element_line(colour = 'black', size = 1.0), 
             plot.margin = unit(plot_mar, "cm"), 
-            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
-            legend.text=element_text(size=17.5), 
-            legend.title=element_text(size=18.0),
+            plot.title = element_text(size = 22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.5),
+            legend.text = element_text(size = 17.5), 
+            legend.title = element_text(size = 18.0),
             legend.direction = "vertical", 
             legend.box = leg_b,
             legend.key = element_rect(colour = "transparent", fill = "white"),
-            axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
-                colour="black", face = "bold"), 
-            axis.title.x = element_text(size=22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
-                colour="black", face = "bold"), 
-            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7), colour="grey20"), 
-            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 10, r = -2), colour="grey5")
+            axis.title.y = element_text(size = 22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+                colour = "black", face = "bold"), 
+            axis.title.x = element_text(size = 22.75, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
+                colour = "black", face = "bold"), 
+            axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 7), colour = "grey20"), 
+            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 10, r = -2), colour = "black")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -244,7 +244,7 @@ plotGOs <- function(...) {
     # Plot results of permutation test for SI
     plotGOslimSts <- function(df) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), sep="_"))
+        fname <- sprintf('%s.pdf', paste(deparse(substitute(df)), sep="_"))
 
         # Capitalize first string of each GO term category name
         CapStr <- function(y) {
@@ -278,23 +278,23 @@ plotGOs <- function(...) {
         ggtitle("Expression divergence across functional groups") + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.25, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.25), 
-            axis.line = element_line(colour = 'black', size = 1.25), 
-            plot.margin = unit(c(7.25, 0.15, 0, 1.37), "cm"), 
-            plot.title = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
-            legend.text=element_text(size=17.5), 
-            legend.title=element_text(size=18.0),
+            axis.ticks = element_line(colour = "black", size = 1.0), 
+            axis.line = element_line(colour = 'black', size = 1.0), 
+            plot.margin = unit(c(7.25, 0.15, 0, 1.28), "cm"), 
+            plot.title = element_text(size = 22.75, margin = margin(t = 0, r = 0, b = 9, l = 0), hjust = 0.62),
+            legend.text = element_text(size = 17.5), 
+            legend.title = element_text(size = 18.0),
             legend.direction = "vertical", 
             legend.box = "vertical",
             legend.key.size = unit(1.75,"line"),
             legend.key = element_rect(colour = "transparent", fill = "white"),
-            legend.margin=margin(t = 0.228, l = 0.41, b = -0.25, unit='cm'),
-            axis.title.y = element_text(size=22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
-                colour="black", face = "bold"), 
-            axis.title.x = element_text(size=22.75, margin = margin(t = 0, r = 0, b = 1, l = 0), 
-                colour="black", face = "bold"), 
-            axis.text.x = element_text(size=18.8, margin = margin(t = 3.5, b = 7.15), colour="grey20"), 
-            axis.text.y = element_text(size=19.0, angle=0, margin = margin(l = 8.8, r = 3.25), colour="grey20")
+            legend.margin = margin(t = 0.228, l = 0.41, b = -0.25, unit='cm'),
+            axis.title.y = element_text(size = 22.75, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+                colour = "black", face = "bold"), 
+            axis.title.x = element_text(size = 22.75, margin = margin(t = 0, r = 0, b = 1, l = 0), 
+                colour = "black", face = "bold"), 
+            axis.text.x = element_text(size = 18.8, margin = margin(t = 3.5, b = 7.15), colour = "grey20"), 
+            axis.text.y = element_text(size = 19.0, angle = 0, margin = margin(l = 8.8, r = 3.25), colour = "black")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -309,7 +309,7 @@ plotGOs <- function(...) {
     # Plot results of GOslim rank sum test for Fig4
     plotGOslimStsM <- function(df) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), sep="_"))
+        fname <- sprintf('%s.pdf', paste(deparse(substitute(df)), sep="_"))
 
         # Capitalize first string of each GO term category name
         CapStr <- function(y) {
@@ -328,7 +328,7 @@ plotGOs <- function(...) {
         df$goslim_term <- gsub("Embryo development", "Embryo and post-embryonic development", df$goslim_term)
         df$goslim_term <- reorder(df$goslim_term, desc(df$p_value_FDR))
         df$p_value_FDR <- -log(df$p_value_FDR, 10)
-        df$color = ifelse(df$delta_slope < 0, "#4b71ae", "#dc580c")
+        df$color = ifelse(df$delta_slope < 0, "#1e77d1", "#dc580c")
 
         # Get number of control gene sets
         if (nrow(df) == 9) {
@@ -341,34 +341,34 @@ plotGOs <- function(...) {
         scale_x_continuous(expand = c(0.05, 0), limits = c(2, 5.025), breaks = c(2, 2.5, 3, 3.5, 4, 4.5, 5), 
             labels = c("2", "", "3", "", "4", "", "5")) + 
         scale_y_discrete(expand = c(0.075, 0)) + 
-        scale_color_identity(breaks = c("#dc580c", "#4b71ae"), labels = c("High", "Low"), 
+        scale_color_identity(breaks = c("#dc580c", "#1e77d1"), labels = c("High", "Low"), 
             guide = "legend", name = "Divergence") + 
-        scale_size_continuous(range = c(5.9, 12.0), breaks = c(415, 700, 1100, 1600), 
-            labels = c("415", "700", "1100", "1600"), name = "Gene count") + 
+        scale_size_continuous(range = c(4.5, 12.70), breaks = c(400, 600, 800, 1000, 1200), 
+            labels = c("400", "600", "800", "1000", "1200"), limits = c(400, max(df$ortho_genes)), name = "Gene count") + 
         guides(size = guide_legend(order = 2), colour = guide_legend(order = 1, override.aes=list(size = 8))) + 
         labs(x = expression(-log[10]*"(FDR)"), y = NULL) + 
         ggtitle("Gene expression divergence \nacross functional groups") + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.025), 
-            axis.line = element_line(colour = 'black', size = 1.025), 
+            axis.ticks = element_line(colour = "black", size = 0.91), 
+            axis.line = element_line(colour = 'black', size = 0.91), 
             plot.margin = unit(c(1.1225, 1.75, 0, 2.25), "cm"), 
-            plot.title = element_text(size=21.25, margin = margin(t = 8, r = 0, b = 11, l = 0), 
+            plot.title = element_text(size = 21.5, margin = margin(t = 8, r = 0, b = 11, l = 0), 
                 hjust = 0.5, lineheight = 1),
             legend.position = c(0.815, 0.42), 
-            legend.text = element_text(size=19.25), 
-            legend.title = element_text(size=19.75),
+            legend.text = element_text(size = 19.25), 
+            legend.title = element_text(size = 19.75),
             legend.direction = "vertical", 
-            legend.box = "vertical",
-            legend.key.size = unit(1.75,"line"),
+            legend.box = "vertical", legend.spacing.y = unit(0.28, "cm"), 
+            legend.key.size = unit(1.8,"line"),
             legend.key = element_rect(colour = "transparent", fill = "white"),
-            legend.margin=margin(t = 0.228, l = 0.41, b = 0, unit='cm'),
+            legend.margin = margin(t = 0.25, l = 0.41, b = 0, unit = 'cm'),
             axis.title.y = element_text(size=21.25, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
-                colour="black", face = "bold"), 
-            axis.title.x = element_text(size=21.25, margin = margin(t = 0, r = 0, b = 1, l = 0), 
-                colour="black", face = "bold"), 
-            axis.text.x = element_text(size=18.95, margin = margin(t = 4.25, b = 7.15), colour="grey20"), 
-            axis.text.y = element_text(size=20.28, angle=0, margin = margin(l = 8.8, r = 4), colour="grey20")
+                colour = "black", face = "bold"), 
+            axis.title.x = element_text(size=21.25, margin = margin(t = 2, r = 0, b = -1.28, l = 0), 
+                colour = "black", face = "bold"), 
+            axis.text.x = element_text(size = 19.35, margin = margin(t = 4.5, b = 7.0), colour = "black"), 
+            axis.text.y = element_text(size = 20.28, angle = 0, margin = margin(l = 8.8, r = 4), colour = "black")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
@@ -479,7 +479,7 @@ plotGOs <- function(...) {
     # Plot GO categories present in embryo and post-embryonic development GOslim parent term
     plotEDCat <- function(df) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), "child_terms" , sep="_"))
+        fname <- sprintf('%s.pdf', paste(deparse(substitute(df)), "child_terms" , sep="_"))
 
         # Remove some GO categories
         go_rm_ls <- c("Developmental process ", "Anatomical structure development ", 
@@ -503,8 +503,8 @@ plotGOs <- function(...) {
         ggtitle("Embryo and post-embryonic development") + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.24, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.1), 
-            axis.line = element_line(colour = 'black', size = 1.1), 
+            axis.ticks = element_line(colour = "black", size = 1.0), 
+            axis.line = element_line(colour = 'black', size = 1.0), 
             plot.margin = unit(c(0.5, 0.5, 1.0, 0.5), "cm"), 
             plot.title = element_text(size = 19.85, margin = margin(t = 1, r = 0, b = 4, l = 0), hjust = 0.5),
             axis.title.y = element_text(size = 22.0, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
