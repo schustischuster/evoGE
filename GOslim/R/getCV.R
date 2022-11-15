@@ -345,7 +345,7 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
     # Plot results of CV analysis
     plotCV <- function(df, cat) {
 
-        fname <- sprintf('%s.jpg', paste(deparse(substitute(df)), cat, sep="_"))
+        fname <- sprintf('%s.pdf', paste(deparse(substitute(df)), cat, sep="_"))
 
         # Capitalize first string of each GO term category name
         CapStr <- function(y) {
@@ -376,11 +376,11 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
             plt_title <- "GO categories with larger fraction of stable genes   "
-            plot_mar = unit(c(0.75, -0.25, 1.5, -0.325), "cm")
+            plot_mar = unit(c(0.9, -0.25, 0.47, -0.325), "cm")
             legend_pos <- "none"
-            x_pand <- c(0.05, 0)
-            y_dat_pos <- 575
-            y_lim <- c(0, 767)
+            x_pand <- c(0.0435, 0)
+            y_dat_pos <- 567
+            y_lim <- c(0, 755)
             y_breaks <- c(0, 100, 200, 300, 400, 500)
 
         } else if (cat == "variable") {
@@ -393,11 +393,11 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
             df$GO_term <- factor(df$GO_term, levels = gene_list)
 
             plt_title <- "GO categories with larger fraction of variable genes"
-            plot_mar = unit(c(0.75, 1.9, 1.5, -0.11), "cm")
+            plot_mar = unit(c(0.9, 1.9, 0.47, -0.11), "cm")
             legend_pos <- "top"
-            x_pand <- c(0.0555, 0)
-            y_dat_pos <- 683
-            y_lim <- c(0, 910)
+            x_pand <- c(0.048, 0)
+            y_dat_pos <- 675
+            y_lim <- c(0, 900)
             y_breaks <- c(0, 200, 400, 600)
 
         }
@@ -412,33 +412,33 @@ getCV <- function(aspect = c("biological_process", "molecular_function"), estima
         df$CV_cat <- factor(df$CV_cat, levels = c('variable genes', 'stable genes'))
 
         p <- ggplot(df, aes(x = reorder(GO_term, n_genes), y = n_genes, fill = CV_cat)) + 
-        geom_bar(position = "dodge", stat = "identity", width = 0.7, size = 0.5, col = "black") + 
+        geom_bar(position = "dodge", stat = "identity", width = 0.725, size = 0.7, col = "black") + 
         coord_flip() + 
         scale_y_continuous(breaks = y_breaks, limits = y_lim, expand = c(0, 0)) + 
         scale_x_discrete(expand = x_pand) + 
         labs(y = "Number of Genes                    " , x = NULL) + 
-        scale_fill_manual(values=c("#4b71ae", "#fdc842"), limits=c("stable genes", "variable genes"), labels=c(" Stable  ", " Variable  ")) + 
+        scale_fill_manual(values = c("#1e77d1", "#fbc11a"), limits = c("stable genes", "variable genes"), labels=c(" Stable  ", " Variable  ")) + 
         guides(fill = guide_legend(keywidth = 0.305, keyheight = 0.305, default.unit="inch")) + 
         ggtitle(plt_title) +  
         geom_text(data = FDR_df, aes(x = x, y = y, label = p_val), size = 7, parse=TRUE, hjust = 0, vjust = 0.375) + 
         theme(panel.background = element_blank(), 
             axis.ticks.length = unit(0.26, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 1.025), 
-            axis.line = element_line(colour = 'black', size = 1.025), 
+            axis.ticks = element_line(colour = "black", size = 0.91), 
+            axis.line = element_line(colour = 'black', size = 0.91), 
             plot.margin = plot_mar, 
-            plot.title = element_text(size = 21.25, margin = margin(t = 0, r = 0, b = 4, l = 0), hjust = 1.775), 
-            legend.box.margin = margin(4.5, 82, -15.0, 0), 
-            legend.text = element_text(size = 21.25), 
+            plot.title = element_text(size = 21.5, margin = margin(t = 0, r = 0, b = 2, l = 0), hjust = 2.0), 
+            legend.box.margin = margin(2.95, 82, -17.05, 0), 
+            legend.text = element_text(size = 20.5), 
             legend.title = element_blank(), 
             legend.direction = "horizontal", 
             legend.position = legend_pos, 
             legend.key = element_rect(colour = "transparent", fill = "white"),
-            axis.title.y = element_text(size = 20.25, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
+            axis.title.y = element_text(size = 20.5, margin = margin(t = 0, r = 7.0, b = 0, l = 10), 
                 colour="black", face = "plain"), 
-            axis.title.x = element_text(size = 20.25, margin = margin(t = 0.5, r = 0, b = 8.15, l = 0), 
+            axis.title.x = element_text(size = 20.5, margin = margin(t = 2.5, r = 0, b = 8.15, l = 0), 
                 colour="black", face = "plain"), 
-            axis.text.x = element_text(size = 18.9, margin = margin(t = 3.5, b = 8), colour="black"), 
-            axis.text.y = element_text(size = 20.28, angle=0, margin = margin(l = 10, r = 2.5), colour="black")
+            axis.text.x = element_text(size = 19.35, margin = margin(t = 4.5, b = 8), colour = "black"), 
+            axis.text.y = element_text(size = 20.28, angle=0, margin = margin(l = 10, r = 2.5), colour = "black")
         )
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = p, 
