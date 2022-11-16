@@ -598,8 +598,8 @@ prepareExprGenesOS <- function(species=c("AL","CR","ES","TH","MT","BD"),
 	th_0 <- th_0[,c(1:8,10:11,9)]
 
 
-	species <- as.data.frame(rep(c(species), 180))
-	colnames(species) <- "species"
+	species_df <- as.data.frame(rep(c(species), 180))
+	colnames(species_df) <- "species"
 
 
 	th_list <- list(th_0.01=th_0_01, th_0.05=th_0_05, th_0.1=th_0_1, th_0.5=th_0)
@@ -664,12 +664,18 @@ prepareExprGenesOS <- function(species=c("AL","CR","ES","TH","MT","BD"),
 	sample_names <- c("Root", "Hypocotyl", "Leaf", "Apex veg", "Apex inf", 
 		"Flower", "Carpel", "Stamen", "Pollen")
 
+	if (species == "BD") {
+
+		sample_names <- c("Root_b", "Mesocotyl_b", "Leaf_b", "Apex veg_b", "Spikelet m_b", 
+		"Floret_b", "Carpel_b", "Stamen_b", "Pollen_b")
+	}
+
 	sample_names <- as.data.frame(rep(sample_names, times = 20))
 	colnames(sample_names) <- "sample_names"
 
 
 	expr_df <- rbind(cd_value_class, iso_value_class, NAT_value_class, linc_value_class, circ_value_class) 
-	expr_df_ext <- cbind(expr_df, species, sample_names, detailed_sample_name)
+	expr_df_ext <- cbind(expr_df, species_df, sample_names, detailed_sample_name)
 
 	return(expr_df_ext)
 }
@@ -718,12 +724,12 @@ plotExprGenesOS <- function(data) {
         th_label <- "Total expressed:"
     } else if (unique(data$class) == "Transcripts") {
         y_scale_factor <- 1
-        th_label <- "Total expressed:"
+        th_label <- ""
     } else if (unique(data$class) == "NATs") {
-        y_scale_factor <- 0.8
+        y_scale_factor <- 0.85
         th_label <- ""
     } else {
-        y_scale_factor <- 0.68
+        y_scale_factor <- 0.74
         th_label <- ""
     }
 
@@ -744,47 +750,51 @@ plotExprGenesOS <- function(data) {
         ifelse(l<100, l, paste0(round(l/1e3,1),"K"))
     }
 
-    data$sample_names <- case_when(data$sample_names == "Root" ~ "Root", data$sample_names == "Hypocotyl" ~ "Hypoc", 
-        data$sample_names == "Leaf" ~ "Leaf ", data$sample_names == "Apex veg" ~ "Apex.v", data$sample_names == "Apex inf" ~ "Apex.i", 
-        data$sample_names == "Flower" ~ "Flower", data$sample_names == "Carpel" ~ "Carpel", data$sample_names == "Stamen" ~ "Stamen", 
-        data$sample_names == "Pollen" ~ "Pollen")
+    data$sample_names <- case_when(data$sample_names == "Root" ~ "Rt", data$sample_names == "Root_b" ~ "Rt ", data$sample_names == "Hypocotyl" ~ "Hy", data$sample_names == "Mesocotyl_b" ~ "Me ", 
+        data$sample_names == "Leaf" ~ "Lf", data$sample_names == "Leaf_b" ~ "Lf ", data$sample_names == "Apex veg" ~ "Av", data$sample_names == "Apex veg_b" ~ "Av ", data$sample_names == "Apex inf" ~ "Ai", data$sample_names == "Spikelet m_b" ~ "Sm ", 
+        data$sample_names == "Flower" ~ "Fl", data$sample_names == "Floret_b" ~ "Fl ", data$sample_names == "Carpel" ~ "Ca", data$sample_names == "Carpel_b" ~ "Ca ", data$sample_names == "Stamen" ~ "St", data$sample_names == "Stamen_b" ~ "St ", 
+        data$sample_names == "Pollen" ~ "Pl", data$sample_names == "Pollen_b" ~ "Pl ")
 
     data$species <- factor(data$species, levels = unique(data$species))
     data$sample_names <- factor(data$sample_names, levels = unique(data$sample_names))
     p <- ggplot(data = data, color = Threshold, aes(x = sample_names, y = expressed)) + 
-            geom_line(size = 2.2, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
-            geom_point(size = 3.8, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
-            scale_y_continuous(expand = c(0.1, 0), breaks = pretty_breaks(n = 5), labels= y_label_form) + 
-            scale_color_manual(values = c("gray35","#fe5651","#967cee","#dea80c")) + 
+            geom_line(size = 2.45, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
+            geom_point(size = 3.25, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
+            scale_y_continuous(expand = c(0.1, 0), breaks = pretty_breaks(n = 4), labels= y_label_form) + 
+            scale_color_manual(values = c("gray35", "#fe5651", "#967cee", "#dea80c")) + 
             scale_x_discrete(expand = c(0.05, 0)) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
             q <- p + theme_classic() + xlab("") + ylab(paste(gsub('.{1}$', '', trans_class), "count", sep=" ")) + 
             geom_text(data = expr_genes_df, mapping = aes(x = x, y = y, label = value), 
-                size = 8.0, vjust = 0.28, hjust = 0, color = "grey25") + 
+                size = 7.9, vjust = 0.28, hjust = 0, color = "grey35") + 
             geom_text(data = expr_genes_df, mapping = aes(x = x, y = y, label = th_value), 
-                size = 8.0, vjust = -1.35, hjust = 0, color = "grey25") + 
+                size = 7.9, vjust = -1.45, hjust = 0.02, color = "grey35") + 
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 22.75), 
-                strip.text.x = element_text(margin = margin(0.385, 0, 0.385, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 2.35), 
+                strip.text.x = element_text(margin = margin(0.4, 0, 0.4, 0, "cm")), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
                 axis.ticks.length = unit(0.25, "cm"), 
                 axis.ticks = element_line(colour = "black", size = 1.1), 
                 axis.line = element_line(colour = 'black', size = 1.1), 
-                plot.margin = unit(c(0.75, 4.15, 4.0, 3.7),"cm"), 
-                axis.title.y = element_text(size = 24.0, margin = margin(t = 0, r = 7, b = 0, l = 12.5), 
-                    colour="black", face = "plain"), 
-                axis.title.x = element_text(size = 24.0, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
-                    colour="black", face = "plain"), 
-                axis.text.x = element_text(size=20.75, margin = margin(t = -42, b = 7.75), colour="grey25", 
-                    angle = 45, vjust = 0.25, hjust = 1), 
-                axis.text.y = element_text(size = 20.75, angle = 0, margin = margin(l = 0.75, r = 2.0), colour="grey25"), 
+                plot.margin = unit(c(0.75, 4.5, 1.07, 4.05),"cm"), 
+                axis.title.y = element_text(size = 24.25, margin = margin(t = 0, r = 7, b = 0, l = 12.5), 
+                    colour = "black", face = "plain"), 
+                axis.title.x = element_text(size = 24.25, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+                    colour = "black", face = "plain"), 
+                axis.text.x = element_text(size=20.9, margin = margin(t = 4, b = 7.75), colour = "grey35", 
+                    angle = 0, vjust = 1, hjust = 0.5), 
+                axis.text.y = element_text(size = 20.9, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
                 plot.title = element_text(size = 27.35, margin = margin(t = 0, b = 15), face = "plain"), 
-                panel.spacing = unit(0.4, "cm"), 
+                panel.spacing = unit(0.2, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
                 panel.grid.minor.y = element_blank(), 
-                legend.position = "none") 
+                legend.margin = margin(t = -1.0, b = 2.0, unit = "cm"), 
+                legend.text = element_text(size = 25.0), 
+                legend.title = element_text(size = 25.0), 
+                legend.key.size = unit(2, "line"), 
+                legend.position = "bottom") 
 
             q <- q + facet_wrap(~ factor(species, levels = c("AL", "CR", "ES", "TH", "MT", "BD")) , nrow = 1, scales = "free")
 
