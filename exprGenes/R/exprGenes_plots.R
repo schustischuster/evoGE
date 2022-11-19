@@ -355,8 +355,6 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		 		ifelse(l==0, 0, paste0(round(l/1e3,1),"K"))
 		 	}
 
-	yLabelsB = function(l) return(l)
-
 	y_tick_pos <- data.frame(x=c(6.315,10.315,19.315,25.315,29.315,38.315))
 	y_depl_pos <- data.frame(x=c(5, 9, 18, 24, 28, 37))
 
@@ -392,17 +390,6 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		y_axs_title <- "Number of lincRNAs"
 		y_labels <- yLabelsK
 		x_v_adj <- 0.008
-
-	} else if (is.element("LTR", biotype)) {
-		breaksY <- c(0,1e2,2e2,3e2)
-		pltymin <- -80
-		pltymax <- 0.34e3
-		xtepos <- 32.18
-		x_axt_mar <- 25.55
-		y_margin <- margin(t = 0, r = 11.0, b = 0, l = 1.55)
-		y_axs_title <- "Number of LTR TEs"
-		y_labels <- yLabelsB
-		x_v_adj <- 0
 
 	} else if (is.element("iso", biotype)) {
 		breaksY <- c(1.5e4,2e4,2.5e4,3.0e4,3.5e4,4.0e4)
@@ -489,7 +476,6 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 plotExprGenes(data=expr_coding_genes_ATH, plot_title=expression(paste("Expressed protein-coding genes in ", italic("A.thaliana"))), biotype = "coding", texpr=ATH_expr_genes_0.05[1,2])
 plotExprGenes(data=expr_NATs_ATH, plot_title=expression(paste("Expressed NATs in ", italic("A.thaliana"))), biotype = "NAT", texpr=ATH_expr_genes_0.05[2,2])
 plotExprGenes(data=expr_lincRNAs_ATH, plot_title=expression(paste("Expressed lincRNAs in ", italic("A.thaliana"))), biotype = "linc", texpr=ATH_expr_genes_0.05[3,2])
-plotExprGenes(data=expr_LTRs_ATH, plot_title=expression(paste("Expressed LTR TEs in ", italic("A.thaliana"))), biotype = "LTR", texpr=ATH_expr_genes_0.05[4,2])
 plotExprGenes(data=expr_transcripts_ATH, plot_title=expression(paste("Expressed protein-coding transcripts in ", italic("A.thaliana"))), biotype = "iso", texpr=ATH_expr_coding_transcripts_0.05[1,2])
 
 
