@@ -73,105 +73,114 @@ non_ATH_stats_df <- prepareStats(non_ATH_stats)
 
 
 # Make stats violin plot for ATH
-makePlotStatsATH <- function(data, lim_y, medw, plot_title) {
+makePlotStatsATH <- function(data, lim_y, plot_title) {
 
-	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+	fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep = "_"))
 
 	dedupl <- subset(data, class=="Dedupl.")
-	n_dedupl <- paste("n=", nrow(dedupl), sep="")
+	n_dedupl <- paste("n=", nrow(dedupl), sep = "")
 	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
-	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
+	total_dedupl = paste(n_dedupl, total_dedupl, sep = "\n")
 
 	data$class <- factor(data$class, levels = unique(data$class))
 
 	ylabels = function(l) {paste0(round(l/1e6,1),"M")}
 
-	p <- ggplot(data, aes(x=class, y=reads, fill=class)) + 
-		 geom_violin(trim=TRUE, width = 1.5, size=1.25, scale="area", color="gray15") + 
-		 geom_boxplot(aes(x=class, y=reads),alpha=0, color="gray15", fill="white", width=medw, 
-		 	size=0.0005, fatten = 5000) + 
+	stat_sum_single <- function(fun, geom = "crossbar", ...) {
+
+		stat_summary(fun.y = fun, colour = "gray15", geom = geom, size = 1, 
+			mapping = aes(ymin = ..y.., ymax = ..y..), width = 0.26, ...)
+	}
+
+	p <- ggplot(data, aes(x = class, y = reads, fill = class)) + 
+		 geom_violin(trim = TRUE, width = 1.5, size = 1.25, scale = "area", color = "gray15") +
+		 stat_sum_single(fun = median) + 
 		 scale_y_continuous(limits = c(0,lim_y), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
 		 scale_x_discrete(labels = c("Dedupl." = "Mapped\n+dedupl")) + 
-		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
-		 	color="black", size=1.35) + 
-		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
+		 annotate("rect", xmin = 0.25, xmax = 3.85, ymin = 0, ymax = lim_y, fill = "white", alpha = 0, 
+		 	color = "black", size = 1.35) + 
+		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size = 6.5, label = total_dedupl)
 
-	q <- p + scale_fill_manual(values=c("#b2b2b2", "goldenrod2", "#5bb1e2")) + theme_minimal() + 
+	q <- p + scale_fill_manual(values = c("#b2b2b2", "#eeb722", "#5bb1e2")) + theme_minimal() + 
 	xlab("") + ylab("Number of PE reads") + ggtitle(plot_title) + 
-	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
+	geom_hline(yintercept = 30e6, linetype = "dashed", color = "red", size = 1) + 
 	theme(legend.position = "none", 
-		text=element_text(size=20.75), 
+		text = element_text(size = 20.75), 
   		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray10", size = 0.8), 
-  		axis.line = element_line(colour = "gray10", size = 0.5), 
-  		axis.title.y = element_text(colour = "black", size=20, 
+  		axis.line = element_line(colour = "gray10", size = 0.38), 
+  		axis.title.y = element_text(colour = "black", size = 20, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
-  		axis.text.x = element_text(colour = "black", size=18.0, angle=45, 
-  			margin = margin(t = 1.5, r = 0, b = 3.0, l = 0), hjust = 1, vjust = 1),
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
+  		axis.text.x = element_text(colour = "black", size=18.0, angle = 45, 
+  			margin = margin(t = 2.0, r = 0, b = 2.5, l = 0), hjust = 1, vjust = 1),
+  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
   		plot.title = element_text(colour = "black", size = 21.5, face = "italic", 
   			margin = margin(t = 21.5, r = 0, b = 11.0, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 15, 13.55, 16.1), "points"))
 	
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 5.0, height = 6.95, units = c("in"), 
-		dpi = 600, limitsize = FALSE)
+		scale = 1, width = 5.0, height = 6.95, units = c("in"), limitsize = FALSE)
 }
 
-makePlotStatsATH(data=ATH_stats_df, lim_y=226000000, medw = 0.277, plot_title="A.thaliana") 
+makePlotStatsATH(data = ATH_stats_df, lim_y = 226000000, plot_title = "A.thaliana") 
 # 1 data point for trimmed raw reads above lim_y
 
 
 
 # Make stats violin plot for other species
-makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
+makePlotStatsOS <- function(data, lim_y, plot_title) {
 
-	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+	fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep = "_"))
 
 	dedupl <- subset(data, class=="Dedupl.")
-	n_dedupl <- paste("n=", nrow(dedupl), sep="")
+	n_dedupl <- paste("n=", nrow(dedupl), sep = "")
 	total_dedupl <- paste0(round(sum(as.numeric(dedupl[,2]))/1e9,2),"B")
-	total_dedupl = paste(n_dedupl, total_dedupl, sep="\n")
+	total_dedupl = paste(n_dedupl, total_dedupl, sep = "\n")
 
 	data$class <- factor(data$class, levels = unique(data$class))
+
+	stat_sum_single <- function(fun, geom = "crossbar", ...) {
+
+		stat_summary(fun.y = fun, colour = "gray15", geom = geom, size = 1, 
+			mapping = aes(ymin = ..y.., ymax = ..y..), width = 0.4075, ...)
+	}
 
 	# separate outliers with low reads from violin plot data and plot them individually as dots
 	data_wo_outl <- data[c(-505:-507),]
 	data_outl <- data[c(505:507),]
 
-	p <- ggplot(data_wo_outl, aes(x=class, y=reads, fill=class)) + 
-		 geom_violin(trim=TRUE, width = 1.5, size=1.25, scale="area", color="gray15") + 
-		 geom_boxplot(data=data, aes(x=class, y=reads),alpha=0, color="gray15", fill="white", width=medw, 
-		 	size=0.0005, fatten = 5000) +
-		 geom_point(aes(x=3, y=data_outl[1,2]), shape=21, colour="gray35", size=2.25, fill="white", stroke=2) + 
-		 geom_point(aes(x=3, y=data_outl[2,2]), shape=21, colour="gray35", size=2.25, fill="white", stroke=2) + 
-		 geom_point(aes(x=3, y=data_outl[3,2]), shape=21, colour="gray35", size=2.25, fill="white", stroke=2) + 
+	p <- ggplot(data_wo_outl, aes(x = class, y = reads, fill = class)) + 
+		 geom_violin(trim = TRUE, width = 1.5, size = 1.25, scale = "area", color = "gray15") + 
+		 stat_sum_single(fun = median) + 
+		 geom_point(aes(x=3, y=data_outl[1,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
+		 geom_point(aes(x=3, y=data_outl[2,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
+		 geom_point(aes(x=3, y=data_outl[3,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
 		 scale_y_continuous(limits = c(0,lim_y), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
 		 scale_x_discrete(labels = c("Dedupl." = "Mapped\n+dedupl")) + 
-		 annotate("rect", xmin=0.25, xmax=3.85, ymin=0, ymax=lim_y, fill="white", alpha=0, 
-		 	color="black", size=1.35) + 
-		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size=6.5, label = total_dedupl)
+		 annotate("rect", xmin = 0.25, xmax = 3.85, ymin = 0, ymax = lim_y, fill = "white", alpha = 0, 
+		 	color = "black", size = 1.35) + 
+		 annotate("text", x = 2.7, y = Inf, hjust = 0, vjust = 1.55, size = 6.5, label = total_dedupl)
 
-	q <- p + scale_fill_manual(values=c("#b2b2b2", "goldenrod2", "#5bb1e2")) + theme_minimal() + 
+	q <- p + scale_fill_manual(values = c("#b2b2b2", "#eeb722", "#5bb1e2")) + theme_minimal() + 
 	xlab("") + ylab("Number of PE reads") + ggtitle(plot_title) + 
-	geom_hline(yintercept=30e6, linetype="dashed", color = "red", size=1) + 
+	geom_hline(yintercept = 30e6, linetype = "dashed", color = "red", size = 1) + 
 	theme(legend.position = "none", 
-		text=element_text(size=20.75), 
+		text = element_text(size = 20.75), 
   		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray10", size = 0.8), 
-  		axis.line = element_line(colour = "gray10", size = 0.5), 
-  		axis.title.y = element_text(colour = "black", size=20, 
+  		axis.line = element_line(colour = "gray10", size = 0.38), 
+  		axis.title.y = element_text(colour = "black", size = 20, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
-  		axis.text.x = element_text(colour = "black", size=18.0, angle=45, 
-  			margin = margin(t = 1.5, r = 0, b = 3.0, l = 0), hjust = 1, vjust = 1), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
+  		axis.text.x = element_text(colour = "black", size = 18.0, angle = 45, 
+  			margin = margin(t = 2.0, r = 0, b = 2.5, l = 0), hjust = 1, vjust = 1), 
+  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
   		plot.title = element_text(colour = "black", size = 21.5, 
   			margin = margin(t = 21.5, r = 0, b = 8.75, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 5.0, 13.55, 26.1), "points"))
@@ -182,7 +191,7 @@ makePlotStatsOS <- function(data, lim_y, medw, plot_title) {
 		dpi = 600, limitsize = FALSE)
 }
 
-makePlotStatsOS(data=non_ATH_stats_df, lim_y=226000000, medw = 0.415, plot_title="Other species")
+makePlotStatsOS(data = non_ATH_stats_df, lim_y = 226000000, plot_title = "Other species")
 # 10 data point for trimmed raw reads above lim_y
 
 
