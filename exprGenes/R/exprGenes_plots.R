@@ -93,9 +93,9 @@ makePlotStatsATH <- function(data, lim_y, plot_title) {
 	}
 
 	p <- ggplot(data, aes(x = class, y = reads, fill = class)) + 
-		 geom_violin(trim = TRUE, width = 1.5, size = 1.25, scale = "area", color = "gray15") +
+		 geom_violin(trim = TRUE, width = 1.5, size = 1.15, scale = "area", color = "gray15") +
 		 stat_sum_single(fun = median) + 
-		 scale_y_continuous(limits = c(0,lim_y), expand = c(0, 0), 
+		 scale_y_continuous(limits = c(0, lim_y), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
@@ -111,14 +111,14 @@ makePlotStatsATH <- function(data, lim_y, plot_title) {
 		text = element_text(size = 20.75), 
   		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray10", size = 0.8), 
-  		axis.line = element_line(colour = "gray10", size = 0.38), 
-  		axis.title.y = element_text(colour = "black", size = 20, 
+  		axis.line = element_line(colour = "gray10", size = 0.25), 
+  		axis.title.y = element_text(colour = "black", size = 19.5, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
-  		axis.text.x = element_text(colour = "black", size=18.0, angle = 45, 
-  			margin = margin(t = 2.0, r = 0, b = 2.5, l = 0), hjust = 1, vjust = 1),
-  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 3, b = 0, l = 2)), 
-  		plot.title = element_text(colour = "black", size = 21.5, face = "italic", 
-  			margin = margin(t = 21.5, r = 0, b = 11.0, l = 0), hjust = 0.5), 
+  		axis.text.x = element_text(colour = "black", size = 18.0, angle = 45, 
+  			margin = margin(t = 2.0, r = 0, b = 2.25, l = 0), hjust = 1, vjust = 1),
+  		axis.text.y = element_text(colour = "grey50", size = 17.25, margin = margin(t = 0, r = 2.8, b = 0, l = 1.05)), 
+  		plot.title = element_text(colour = "black", size = 21.45, face = "italic", 
+  			margin = margin(t = 22.25, r = 0, b = 10.75, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 15, 13.55, 16.1), "points"))
 	
 
@@ -154,12 +154,12 @@ makePlotStatsOS <- function(data, lim_y, plot_title) {
 	data_outl <- data[c(505:507),]
 
 	p <- ggplot(data_wo_outl, aes(x = class, y = reads, fill = class)) + 
-		 geom_violin(trim = TRUE, width = 1.5, size = 1.25, scale = "area", color = "gray15") + 
+		 geom_violin(trim = TRUE, width = 1.5, size = 1.15, scale = "area", color = "gray15") + 
 		 stat_sum_single(fun = median) + 
-		 geom_point(aes(x=3, y=data_outl[1,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
-		 geom_point(aes(x=3, y=data_outl[2,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
-		 geom_point(aes(x=3, y=data_outl[3,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
-		 scale_y_continuous(limits = c(0,lim_y), expand = c(0, 0), 
+		 geom_point(aes(x = 3, y = data_outl[1,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
+		 geom_point(aes(x = 3, y = data_outl[2,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
+		 geom_point(aes(x = 3, y = data_outl[3,2]), shape = 21, colour = "gray35", size = 2.25, fill = "white", stroke = 2) + 
+		 scale_y_continuous(limits = c(0, lim_y), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
@@ -175,14 +175,14 @@ makePlotStatsOS <- function(data, lim_y, plot_title) {
 		text = element_text(size = 20.75), 
   		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray10", size = 0.8), 
-  		axis.line = element_line(colour = "gray10", size = 0.38), 
-  		axis.title.y = element_text(colour = "black", size = 20, 
+  		axis.line = element_line(colour = "gray10", size = 0.25), 
+  		axis.title.y = element_text(colour = "black", size = 19.5, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size = 18.0, angle = 45, 
-  			margin = margin(t = 2.0, r = 0, b = 2.5, l = 0), hjust = 1, vjust = 1), 
-  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 3, b = 0, l = 2)),  
-  		plot.title = element_text(colour = "black", size = 21.5, 
-  			margin = margin(t = 21.5, r = 0, b = 8.75, l = 0), hjust = 0.5), 
+  			margin = margin(t = 2.0, r = 0, b = 2.25, l = 0), hjust = 1, vjust = 1), 
+  		axis.text.y = element_text(colour = "grey50", size = 17.25, margin = margin(t = 0, r = 2.8, b = 0, l = 1.05)),  
+  		plot.title = element_text(colour = "black", size = 21.45, 
+  			margin = margin(t = 22.25, r = 0, b = 8.5, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 5.0, 13.55, 26.1), "points"))
 	
 
