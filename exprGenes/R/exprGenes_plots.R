@@ -224,7 +224,7 @@ comp_stats_df <- makeRepl(comp_stats)
 # Plot number of deduplicated reads for each species
 plotDedupReads <- function(data, plot_title) {
 
-	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+	fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep = "_"))
 
 	level_order <- c("Root.1","Root.2","Root.3","Hypocotyl.1","Hypocotyl.2","Hypocotyl.3",
 		"Leaf.1","Leaf.2","Leaf.3","Apex.veg.1","Apex.veg.2","Apex.veg.3","Apex.infl.1",
@@ -236,57 +236,56 @@ plotDedupReads <- function(data, plot_title) {
 		".2",".3","Flower.1",".2",".3","Carpel.1",".2",
 		".3","Stamen.1",".2",".3","Pollen.1",".2",".3")
 	data$Species <- factor(data$Species, levels = unique(data$Species))
-	species_order <- c("AT","AL","CR","ES","TH","MT","BD")
+	species_order <- c("AT", "AL", "CR", "ES", "TH", "MT", "BD")
 
-	p <- ggplot(data, aes(x = factor(Sample_repl, level= level_order), y = Deduplicated, color = Species, group = Species)) + 
-	geom_line(aes(x = factor(Sample_repl, level= level_order)), size=1.825) + 
-  	geom_point(aes(x = factor(Sample_repl, level= level_order)), size=3.75) + 
+	p <- ggplot(data, aes(x = factor(Sample_repl, level = level_order), y = Deduplicated, color = Species, group = Species)) + 
+	geom_line(aes(x = factor(Sample_repl, level = level_order)), size = 1.825) + 
+  	geom_point(aes(x = factor(Sample_repl, level = level_order)), size = 3.75) + 
   	scale_y_continuous(limits = c(0,7.07e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
 		 	}) + 
   	scale_x_discrete(labels = samplelabs) + 
-  	annotate("rect", xmin=0.25, xmax=27.85, ymin=0, ymax=7.07e7, fill="white", alpha=0, 
-		 	color="black", size=0.7) + 
-  	labs(color="Species")
+  	annotate("rect", xmin = 0.25, xmax = 27.85, ymin = 0, ymax = 7.07e7, fill = "white", alpha = 0, 
+		 	color = "black", size = 0.7) + 
+  	labs(color = "Species")
 
 	q <- p + ggtitle(plot_title) + theme_bw() + xlab("") + ylab("Number of PE dedupl. reads") + 
-	scale_color_manual(values = c("#b2b2b2","#e8a215","#f0d737","#069870","#0770ab","#4fb6f0","#ea6965") 
+	scale_color_manual(values = c("#b2b2b2", "#e8a215", "#f0d737", "#069870", "#0770ab", "#4fb6f0", "#ea6965") 
 		# Order of color vector is in alphabetical order of species (AL/AT/BD/CR/ES/MT/TH)
 		# It uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
 		) + 
 		guides(colour = guide_legend(nrow = 1)) +  
-  		theme(text=element_text(size=21), 
+  		theme(text = element_text(size = 21), 
   		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray10", size = 0.9), 
-  		axis.line = element_line(colour = "gray10", size = 0.9), 
+  		axis.line = element_line(colour = "gray10", size = 0.81), 
   		panel.grid = element_blank(), 
-  		axis.title.y = element_text(colour = "black", size=20, 
+  		axis.title.y = element_text(colour = "black", size = 20, 
   			margin = margin(t = 0, r = 5.85, b = 0, l = 28.5)), 
-  		axis.text.x = element_text(colour = "black", size=16.5, angle=45, 
-  			margin = margin(t = 0.25, r = 0, b = 0.75, l = 0), hjust = 1, vjust = 1), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.95, b = 0, l = 2)), 
-  		plot.title = element_text(colour = "black", size = 21.5, 
-  			margin = margin(t = 21.5, r = 0, b = 9.45, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(5.5, -3.5, 37.25, 0), "points"),
+  		axis.text.x = element_text(colour = "black", size = 17.0, angle = 45, 
+  			margin = margin(t = 0.25, r = 0, b = 0.435, l = 0), hjust = 1, vjust = 1), 
+  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 3.1, b = 0, l = 2.85)), 
+  		plot.title = element_text(colour = "black", size = 21.0, 
+  			margin = margin(t = 22.35, r = 0, b = 8.75, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(5.5, -3.5, 35.75, 0), "points"),
 		legend.position = c(0.331, 0.115),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
-		legend.title = element_text(colour = "black", size=19.5, face ="bold"),
-		legend.text=element_text(size=19.5), 
+		legend.title = element_text(colour = "black", size = 19.5, face = "bold"),
+		legend.text = element_text(size = 19.5), 
 		legend.spacing.x = unit(0.25, 'cm'),
 		legend.key.size = unit(0.775, "cm"),
-  		panel.border = element_rect(colour = "black", fill=NA, size=0.5))
+  		panel.border = element_rect(colour = "black", fill = NA, size = 0.5))
 
 	r <- ggplotGrob(q)
 	r$layout$clip[r$layout$name=="panel"] <- "off"
 
 	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = r,
-		scale = 1, width = 9.8, height = 7.09, units = c("in"), 
-		dpi = 600, limitsize = FALSE)
+		scale = 1, width = 9.8, height = 7.09, units = c("in"))
 }
 
-plotDedupReads(data=comp_stats_df, plot_title="Comparative samples")
+plotDedupReads(data = comp_stats_df, plot_title = "Comparative samples")
 
 
 
