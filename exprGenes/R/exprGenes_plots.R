@@ -239,8 +239,8 @@ plotDedupReads <- function(data, plot_title) {
 	species_order <- c("AT", "AL", "CR", "ES", "TH", "MT", "BD")
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level = level_order), y = Deduplicated, color = Species, group = Species)) + 
-	geom_line(aes(x = factor(Sample_repl, level = level_order)), size = 1.5) + 
-  	geom_point(aes(x = factor(Sample_repl, level = level_order)), size = 3.75) + 
+	geom_line(aes(x = factor(Sample_repl, level = level_order)), size = 1.4) + 
+  	geom_point(aes(x = factor(Sample_repl, level = level_order)), size = 3.85) + 
   	scale_y_continuous(limits = c(0,7.07e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
@@ -422,7 +422,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 
 	p <- ggplot(data, aes(x = factor(Sample, level = level_order), y = Expressed, color = Threshold, group = Threshold)) + 
 
-	geom_line(aes(x = factor(Sample, level = level_order)), size = 1.5) + 
+	geom_line(aes(x = factor(Sample, level = level_order)), size = 1.4) + 
 	scale_y_continuous(limits = c(pltymin,pltymax), breaks = breaksY, expand = c(0, 0), 
 		 	labels = y_labels) +
   	annotate("rect", xmin = 0.25, xmax = 44.75, ymin = pltymin, ymax = pltymax, fill = "white", alpha = 1, 
@@ -431,8 +431,8 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
   	annotate("rect", xmin = 10.5, xmax = 19.5, ymin = pltymin, ymax = pltymax, fill = "#d2ebc7", alpha = 1) + 
   	annotate("rect", xmin = 25.5, xmax = 29.5, ymin = pltymin, ymax = pltymax, fill = "#d7d7d7", alpha = 1) + 
   	annotate("rect", xmin = 38.5, xmax = 44.75, ymin = pltymin, ymax = pltymax, fill = "#fad0c8", alpha = 1) +
-  	geom_line(aes(x = factor(Sample, level = level_order)), size = 1.5) + 
-  	geom_point(aes(x = factor(Sample, level = level_order)), size = 3.5) + 
+  	geom_line(aes(x = factor(Sample, level = level_order)), size = 1.4) + 
+  	geom_point(aes(x = factor(Sample, level = level_order)), size = 3.85) + 
   	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.91, size = 7.01, label = total_expr) + 
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size = 7.01, label = "Threshold", fontface = 2) + 
   	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 25.35, size = 7.0, label = "I", col = "gray10") + 
@@ -447,7 +447,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
   	labs(color = "")
 
 	q <- p + theme_bw() + labs(title = plot_title,  x = "Organ", y = y_axs_title) + 
-	scale_color_manual(values = c("gray35", "#fe5651", "#967cee", "#dea80c")) + 
+	scale_color_manual(values = c("gray35", "#fe5651", "#8a8cff", "#dea80c")) + 
 		guides(colour = guide_legend(nrow = 1)) + 
   		theme(text = element_text(size = 23.5), 
         axis.text.x = element_blank(),
