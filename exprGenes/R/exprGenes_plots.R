@@ -540,49 +540,46 @@ all_spec_repl_df <- prepareReplStats(ATH=ATH_repl_corr_counts_0.05, AL=AL_repl_c
 # Make replicate correlation plot
 makePlotReplCorr <- function(data, plot_title) {
 
-	fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+	fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep = "_"))
 
 	data$Species <- factor(data$Species, levels = unique(data$Species))
 
-	p <- ggplot(data, aes(x=Species, y=Correlation, fill=Species)) + 
-	     stat_boxplot(geom ='errorbar', width = 0.45, size=1.0, color="gray15") + 
-		 geom_boxplot(width = 0.75, size=1.0, color="gray15", outlier.shape = 21, 
-		 	outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color="gray35") + 
-		 scale_y_continuous(limits = c(0.9692, 1.0007), expand = c(0, 0)) + 
-		 annotate("rect", xmin=0.35, xmax=7.65, ymin=0.9692, ymax=1.0007, fill="white", alpha=0,  
-		 	color="black", size=1.35)
+	p <- ggplot(data, aes(x = Species, y = Correlation, fill = Species)) + 
+	     stat_boxplot(geom = 'errorbar', width = 0.45, size = 1.0, color = "gray15") + 
+		 geom_boxplot(width = 0.75, size = 1.0, color = "gray15", outlier.shape = 21, 
+		 	outlier.size = 2.5, outlier.stroke = 1.5, outlier.fill = NA, outlier.color = "gray35") + 
+		 scale_y_continuous(limits = c(0.9692, 1.0), expand = c(0, 0))
 
-	q <- p + scale_fill_manual(values=c("#b2b2b2","#e8a215","#f0d737","#069870","#0770ab","#4fb6f0","#ea6965")) + 
+	q <- p + scale_fill_manual(values = c("#b2b2b2", "#e8a215", "#f0d737", "#069870", "#0770ab", "#4fb6f0", "#ea6965")) + 
 	# Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
 	theme_minimal() + 
 	xlab("Species") + ylab("Pearson's r") + ggtitle(plot_title) + 
-	theme(text = element_text(size=23.5), 
+	theme(text = element_text(size = 23.5), 
   		panel.grid.major = element_line(colour = "white"), 
   		panel.grid.minor = element_line(colour = "white"),  
   		axis.ticks.length = unit(.215, "cm"),
-  		axis.ticks = element_line(colour = "gray10", size = 0.9),
-  		axis.line = element_line(colour = "gray10", size = 0.55),
-  		axis.title.x = element_text(colour = "black", size=21.55, 
+  		axis.ticks = element_line(colour = "gray10", size = 1.0),
+  		axis.line = element_line(colour = "black", size = 0.9),
+  		axis.title.x = element_text(colour = "black", size = 21.55, 
   			margin = margin(t = 12.5, r = 0, b = 50.2, l = 0)),  
-  		axis.title.y = element_text(colour = "black", size=21.5, 
+  		axis.title.y = element_text(colour = "black", size = 21.55, 
   			margin = margin(t = 0, r = 5.8, b = 0, l = 1.5)), 
-  		axis.text.x = element_text(colour = "black", margin = margin(t = 3.5, r = 0, b = 1.6, l = 0), size=20.5), 
-  		axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.25, b = 0, l = 4), size=18.55), 
+  		axis.text.x = element_text(colour = "black", margin = margin(t = 4.0, r = 0, b = 1.0, l = 0), size = 20.5), 
+  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 3.25, b = 0, l = 4.2), size = 18.0), 
   		plot.title = element_text(colour = "black", size = 22.85, 
-  			margin = margin(t = 36.25, r = 0, b = 11.05, l = 0), hjust = 0.5), 
-  		plot.margin = unit(c(0, 0.5, 0, 1), "points"),
+  			margin = margin(t = 36.25, r = 0, b = 15.5, l = 0), hjust = 0.5), 
+  		plot.margin = unit(c(0, 2.5, 0, 1), "points"),
 		legend.position = "none",
-		legend.title = element_text(colour = "black", size=20, face ="bold"),
-		legend.text = element_text(size=20), 
+		legend.title = element_text(colour = "black", size = 20, face = "bold"),
+		legend.text = element_text(size = 20), 
 		legend.background = element_rect(fill = NA),
-  		panel.border = element_rect(colour = "gray10", fill = NA, size = 0.5))
+  		panel.border = element_blank())
 
   	ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-		scale = 1, width = 10.25, height = 7.3, units = c("in"), 
-		dpi = 600, limitsize = FALSE)
+		scale = 1, width = 10.25, height = 7.3, units = c("in"))
 }
 
-makePlotReplCorr(data=all_spec_repl_df, plot_title="Replicate correlations")
+makePlotReplCorr(data = all_spec_repl_df, plot_title = "Replicate correlations")
 
 
 
