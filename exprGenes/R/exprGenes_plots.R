@@ -558,7 +558,7 @@ makePlotReplCorr <- function(data, plot_title) {
   		panel.grid.major = element_line(colour = "white"), 
   		panel.grid.minor = element_line(colour = "white"),  
   		axis.ticks.length = unit(.215, "cm"),
-  		axis.ticks = element_line(colour = "gray10", size = 1.0),
+  		axis.ticks = element_line(colour = "gray10", size = 0.9),
   		axis.line = element_line(colour = "black", size = 0.9),
   		axis.title.x = element_text(colour = "black", size = 21.55, 
   			margin = margin(t = 12.5, r = 0, b = 50.2, l = 0)),  
