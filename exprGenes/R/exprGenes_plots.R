@@ -2,7 +2,7 @@
 # genes, coding isoforms, lncRNAs and LTRs and generates the plots for the DevSeq transcriptome  
 # single-species expression figures
 
-# NOTES: Add lines 84+85, 102 (colors), 108-109, 115-116, 162 (colors), 168+169, 175+176, 139+140, 229, 245 (colors), 248, 252+253, 260-262, update lines 364-366 + 400-402 (ylim), 425-430 (domain color, add geom_point), lines 420+429 (line size), 541+542, 548, 549, 553 (colors) 710-798, delete 802-853, 804ff (ATH hclust dendrogram), delete 976ff (hclust dendrogram non-ATH species)
+
 #------------------------------------ Read sample tables ------------------------------------
 
 
@@ -111,12 +111,12 @@ makePlotStatsATH <- function(data, lim_y, plot_title) {
 		text = element_text(size = 20.75), 
   		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray10", size = 0.82), 
-  		axis.line = element_line(colour = "black", size = 0.34),  
+  		axis.line = element_line(colour = "black", size = 0.44),  
   		axis.title.y = element_text(colour = "black", size = 19.5, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size = 18.0, angle = 45, 
   			margin = margin(t = 2.0, r = 0, b = 2.25, l = 0), hjust = 1, vjust = 1),
-  		axis.text.y = element_text(colour = "grey50", size = 17.25, margin = margin(t = 0, r = 2.8, b = 0, l = 1.05)), 
+  		axis.text.y = element_text(colour = "grey50", size = 17.25, margin = margin(t = 0, r = 2.0, b = 0, l = 1.85)), 
   		plot.title = element_text(colour = "black", size = 21.45, face = "italic", 
   			margin = margin(t = 22.25, r = 0, b = 10.75, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 15, 13.55, 16.1), "points"))
@@ -175,12 +175,12 @@ makePlotStatsOS <- function(data, lim_y, plot_title) {
 		text = element_text(size = 20.75), 
   		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray10", size = 0.82), 
-  		axis.line = element_line(colour = "black", size = 0.34),  
+  		axis.line = element_line(colour = "black", size = 0.44),  
   		axis.title.y = element_text(colour = "black", size = 19.5, 
   			margin = margin(t = 0, r = 8.5, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", size = 18.0, angle = 45, 
   			margin = margin(t = 2.0, r = 0, b = 2.25, l = 0), hjust = 1, vjust = 1), 
-  		axis.text.y = element_text(colour = "grey50", size = 17.25, margin = margin(t = 0, r = 2.8, b = 0, l = 1.05)),  
+  		axis.text.y = element_text(colour = "grey50", size = 17.25, margin = margin(t = 0, r = 2.0, b = 0, l = 1.85)),  
   		plot.title = element_text(colour = "black", size = 21.45, 
   			margin = margin(t = 22.25, r = 0, b = 8.5, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(7.0, 5.0, 13.55, 26.1), "points"))
@@ -192,7 +192,7 @@ makePlotStatsOS <- function(data, lim_y, plot_title) {
 }
 
 makePlotStatsOS(data = non_ATH_stats_df, lim_y = 226000000, plot_title = "Other species")
-# 10 data point for trimmed raw reads above lim_y
+# 10 data points for trimmed raw reads above lim_y
 
 
 
@@ -240,7 +240,7 @@ plotDedupReads <- function(data, plot_title) {
 
 	p <- ggplot(data, aes(x = factor(Sample_repl, level = level_order), y = Deduplicated, color = Species, group = Species)) + 
 	geom_line(aes(x = factor(Sample_repl, level = level_order)), size = 1.4) + 
-  	geom_point(aes(x = factor(Sample_repl, level = level_order)), size = 3.85) + 
+  	geom_point(aes(x = factor(Sample_repl, level = level_order)), size = 3.8225) + 
   	scale_y_continuous(limits = c(0,7.07e7), expand = c(0, 0), 
 		 	labels = function(l) { 
 		 		ifelse(l==0, paste0(round(l/1e6,1)),paste0(round(l/1e6,1),"M"))
@@ -259,13 +259,13 @@ plotDedupReads <- function(data, plot_title) {
   		theme(text = element_text(size = 21), 
   		axis.ticks.length = unit(.2, "cm"),
   		axis.ticks = element_line(colour = "gray10", size = 0.9), 
-  		axis.line = element_line(colour = "gray10", size = 0.81), 
+  		axis.line = element_line(colour = "gray10", size = 0.9), 
   		panel.grid = element_blank(), 
   		axis.title.y = element_text(colour = "black", size = 20, 
   			margin = margin(t = 0, r = 5.85, b = 0, l = 28.5)), 
   		axis.text.x = element_text(colour = "black", size = 17.0, angle = 45, 
-  			margin = margin(t = 0.25, r = 0, b = 0.435, l = 0), hjust = 1, vjust = 1), 
-  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 3.1, b = 0, l = 2.85)), 
+  			margin = margin(t = 0.25, r = 0, b = 0.35, l = 0), hjust = 1, vjust = 1), 
+  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 2.5, b = 0, l = 2.85)), 
   		plot.title = element_text(colour = "black", size = 21.0, 
   			margin = margin(t = 22.35, r = 0, b = 8.75, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(5.5, -3.5, 35.75, 0), "points"),
@@ -432,7 +432,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
   	annotate("rect", xmin = 25.5, xmax = 29.5, ymin = pltymin, ymax = pltymax, fill = "#d7d7d7", alpha = 1) + 
   	annotate("rect", xmin = 38.5, xmax = 44.75, ymin = pltymin, ymax = pltymax, fill = "#fad0c8", alpha = 1) +
   	geom_line(aes(x = factor(Sample, level = level_order)), size = 1.4) + 
-  	geom_point(aes(x = factor(Sample, level = level_order)), size = 3.85) + 
+  	geom_point(aes(x = factor(Sample, level = level_order)), size = 3.8225) + 
   	annotate("text", x = xtepos, y = Inf, hjust = 0, vjust = 22.91, size = 7.01, label = total_expr) + 
   	annotate("text", x = 1.675, y = Inf, hjust = 0, vjust = 21.075, size = 7.01, label = "Threshold", fontface = 2) + 
   	annotate("text", x = y_tick_pos$x, y = Inf, hjust = 0, vjust = 25.35, size = 7.0, label = "I", col = "gray10") + 
@@ -454,14 +454,14 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
         axis.ticks.x = element_blank(),
   		panel.grid.major = element_line(colour = "white"), 
   		panel.grid.minor = element_line(colour = "white"),  
-  		axis.ticks.length = unit(.3, "cm"),
-  		axis.ticks = element_line(colour = "gray10", size = 0.925), 
-  		axis.line = element_line(colour = "gray10", size = 0.84),
+  		axis.ticks.length = unit(.28, "cm"),
+  		axis.ticks = element_line(colour = "gray10", size = 0.938), 
+  		axis.line = element_line(colour = "gray10", size = 0.88),
   		axis.title.x = element_text(colour = "black", size = 21.5, 
-  			margin = margin(t = 31.0, r = 0, b = 50, l = 0)),  
+  			margin = margin(t = 31.25, r = 0, b = 50, l = 0)),  
   		axis.title.y = element_text(colour = "black", size = 21.5, 
   			margin = y_margin), 
-  		axis.text.y = element_text(colour = "grey50", size = 18.4, margin = margin(t = 0, r = 3, b = 0, l = 2)), 
+  		axis.text.y = element_text(colour = "grey50", size = 18.4, margin = margin(t = 0, r = 2, b = 0, l = 3)), 
   		plot.title = element_text(colour = "black", size = 22.4, 
   			margin = margin(t = 37.7, r = 0, b = 7.8, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 15, 0, 1), "points"),
@@ -472,7 +472,7 @@ plotExprGenes <- function(data, plot_title, biotype = c("coding","NAT","linc","L
 		legend.key.height = unit(0.4, "cm"),
 		legend.background = element_rect(fill = NA),
 		legend.key = element_rect(fill = NA),
-  		panel.border = element_rect(colour = "gray10", fill = NA, size = 0.9))
+  		panel.border = element_rect(colour = "gray10", fill = NA, size = 0.938))
 
 	r <- ggplotGrob(q)
 	r$layout$clip[r$layout$name=="panel"] <- "off"
@@ -558,14 +558,14 @@ makePlotReplCorr <- function(data, plot_title) {
   		panel.grid.major = element_line(colour = "white"), 
   		panel.grid.minor = element_line(colour = "white"),  
   		axis.ticks.length = unit(.215, "cm"),
-  		axis.ticks = element_line(colour = "gray10", size = 0.9),
-  		axis.line = element_line(colour = "black", size = 0.9),
+  		axis.ticks = element_line(colour = "gray10", size = 0.9425),
+  		axis.line = element_line(colour = "black", size = 0.9425),
   		axis.title.x = element_text(colour = "black", size = 21.55, 
   			margin = margin(t = 12.5, r = 0, b = 50.2, l = 0)),  
   		axis.title.y = element_text(colour = "black", size = 21.55, 
   			margin = margin(t = 0, r = 5.8, b = 0, l = 1.5)), 
   		axis.text.x = element_text(colour = "black", margin = margin(t = 4.0, r = 0, b = 1.0, l = 0), size = 20.5), 
-  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 3.25, b = 0, l = 4.2), size = 18.0), 
+  		axis.text.y = element_text(colour = "grey50", margin = margin(t = 0, r = 2.75, b = 0, l = 4.2), size = 18.0), 
   		plot.title = element_text(colour = "black", size = 22.85, 
   			margin = margin(t = 36.25, r = 0, b = 15.5, l = 0), hjust = 0.5), 
   		plot.margin = unit(c(0, 2.5, 0, 1), "points"),
@@ -726,10 +726,10 @@ plotExprGenesOS <- function(data) {
         y_scale_factor <- 1
         th_label <- ""
     } else if (unique(data$class) == "NATs") {
-        y_scale_factor <- 0.85
+        y_scale_factor <- 0.865
         th_label <- ""
     } else {
-        y_scale_factor <- 0.74
+        y_scale_factor <- 0.755
         th_label <- ""
     }
 
@@ -744,49 +744,49 @@ plotExprGenesOS <- function(data) {
     expr_genes_df$value <- paste0("n = ", expr_genes_df$total_expressed, " (0.05)")
     expr_genes_df$th_value <- c(th_label, rep( "", nrow(expr_genes_df)-1))
 
-    fname <- paste0("other_species_", trans_class, ".jpg")
+    fname <- paste0("other_species_", trans_class, ".pdf")
 
     y_label_form <- function(l) { 
         ifelse(l<100, l, paste0(round(l/1e3,1),"K"))
     }
 
-    data$sample_names <- case_when(data$sample_names == "Root" ~ "Rt", data$sample_names == "Root_b" ~ "Rt ", data$sample_names == "Hypocotyl" ~ "Hy", data$sample_names == "Mesocotyl_b" ~ "Me ", 
+    data$sample_names <- case_when(data$sample_names == "Root" ~ "Rt", data$sample_names == "Root_b" ~ "Rt ", data$sample_names == "Hypocotyl" ~ "Hy", data$sample_names == "Mesocotyl_b" ~ "Me", 
         data$sample_names == "Leaf" ~ "Lf", data$sample_names == "Leaf_b" ~ "Lf ", data$sample_names == "Apex veg" ~ "Av", data$sample_names == "Apex veg_b" ~ "Av ", data$sample_names == "Apex inf" ~ "Ai", data$sample_names == "Spikelet m_b" ~ "Sm ", 
-        data$sample_names == "Flower" ~ "Fl", data$sample_names == "Floret_b" ~ "Fl ", data$sample_names == "Carpel" ~ "Ca", data$sample_names == "Carpel_b" ~ "Ca ", data$sample_names == "Stamen" ~ "St", data$sample_names == "Stamen_b" ~ "St ", 
+        data$sample_names == "Flower" ~ "Fl", data$sample_names == "Floret_b" ~ "Ft ", data$sample_names == "Carpel" ~ "Ca", data$sample_names == "Carpel_b" ~ "Ca ", data$sample_names == "Stamen" ~ "St", data$sample_names == "Stamen_b" ~ "St ", 
         data$sample_names == "Pollen" ~ "Pl", data$sample_names == "Pollen_b" ~ "Pl ")
 
     data$species <- factor(data$species, levels = unique(data$species))
     data$sample_names <- factor(data$sample_names, levels = unique(data$sample_names))
     p <- ggplot(data = data, color = Threshold, aes(x = sample_names, y = expressed)) + 
-            geom_line(size = 2.45, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
-            geom_point(size = 3.25, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
-            scale_y_continuous(expand = c(0.1, 0), breaks = pretty_breaks(n = 4), labels= y_label_form) + 
-            scale_color_manual(values = c("gray35", "#fe5651", "#967cee", "#dea80c")) + 
+            geom_line(size = 1.7, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
+            geom_point(size = 4.37, data = data, aes(x = sample_names, y = expressed, group = Threshold, color = Threshold)) + 
+            scale_y_continuous(expand = c(0.1, 0), breaks = pretty_breaks(n = 4), labels = y_label_form) + 
+            scale_color_manual(values = c("gray35", "#fe5651", "#8a8cff", "#dea80c")) + 
             scale_x_discrete(expand = c(0.05, 0)) + 
             guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
             q <- p + theme_classic() + xlab("") + ylab(paste(gsub('.{1}$', '', trans_class), "count", sep=" ")) + 
             geom_text(data = expr_genes_df, mapping = aes(x = x, y = y, label = value), 
-                size = 7.9, vjust = 0.28, hjust = 0, color = "grey35") + 
+                size = 7.9, vjust = 0.28, hjust = 0, color = "black") + 
             geom_text(data = expr_genes_df, mapping = aes(x = x, y = y, label = th_value), 
-                size = 7.9, vjust = -1.45, hjust = 0.02, color = "grey35") + 
+                size = 7.9, vjust = -1.45, hjust = 0.02, color = "black") + 
             theme(text=element_text(size = 16), 
                 strip.text = element_text(size = 22.75), 
-                strip.text.x = element_text(margin = margin(0.4, 0, 0.4, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 2.5), 
+                strip.text.x = element_text(margin = margin(0.44, 0, 0.44, 0, "cm")), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.8), 
                 axis.ticks.length = unit(0.25, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.1), 
-                axis.line = element_line(colour = 'black', size = 1.1), 
-                plot.margin = unit(c(0.75, 4.5, 1.07, 4.05),"cm"), 
-                axis.title.y = element_text(size = 24.25, margin = margin(t = 0, r = 7, b = 0, l = 12.5), 
+                axis.ticks = element_line(colour = "black", size = 1.28), 
+                axis.line = element_line(colour = 'black', size = 1.28), 
+                plot.margin = unit(c(0.95, 5.5, 0.8, 4.07),"cm"), 
+                axis.title.y = element_text(size = 24.2, margin = margin(t = 0, r = 7, b = 0, l = 12.5), 
                     colour = "black", face = "plain"), 
-                axis.title.x = element_text(size = 24.25, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+                axis.title.x = element_text(size = 24.2, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
                     colour = "black", face = "plain"), 
-                axis.text.x = element_text(size=20.9, margin = margin(t = 4, b = 7.75), colour = "grey35", 
+                axis.text.x = element_text(size = 20.75, margin = margin(t = 4.0, b = 8.75), colour = "grey28", 
                     angle = 0, vjust = 1, hjust = 0.5), 
-                axis.text.y = element_text(size = 20.9, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
+                axis.text.y = element_text(size = 20.75, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey28"), 
                 plot.title = element_text(size = 27.35, margin = margin(t = 0, b = 15), face = "plain"), 
-                panel.spacing = unit(0.2, "cm"), 
+                panel.spacing = unit(0.07, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
                 panel.grid.minor.y = element_blank(), 
@@ -799,7 +799,7 @@ plotExprGenesOS <- function(data) {
             q <- q + facet_wrap(~ factor(species, levels = c("AL", "CR", "ES", "TH", "MT", "BD")) , nrow = 1, scales = "free")
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-                width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+                width = 28.5, height = 6.5, units = c("in"))
 
 }
 trans_class <- c("Genes", "Transcripts", "NATs", "lincRNAs") # split expr_genes_OS df into transcript class list
