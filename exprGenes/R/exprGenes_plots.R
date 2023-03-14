@@ -5,6 +5,7 @@
 
 #------------------------------------ Read sample tables ------------------------------------
 
+plotExpr <- function() {
 
 # Read all csv files in input file path
 readTable <- function(path, pattern = "*.csv") {
@@ -986,7 +987,7 @@ makeDendrogram <- function(x, coefficient = c("pearson", "spearman"), label_col)
 makeDendrogram(ATH_th_genes_repl_counts, coefficient = "pearson", label_col = label_col)
 
 
-
+}
 
 
 
