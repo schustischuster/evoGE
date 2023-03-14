@@ -132,11 +132,9 @@ lapply(thresholds, getExprTranscripts, species = "BD", experiment = "comparative
 ---
 ## Visualization
 
-Set the file path for the data generated in the previous steps and execute the function `plotExpr`:
+To visualize the results from the previous steps, execute the following function:
 
 ```R
-in_dir_stats <- file.path("exprGenes", "output", "mapping_statistics")
-in_dir_expr_genes <- file.path("exprGenes", "output", "expr_genes")
 
 plotExpr()
 
