@@ -116,8 +116,7 @@ getExprTranscripts(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 It takes the same arguments described above. To reproduce the results of this study, execute the following function calls:
 
 ```R
-thresholds <- list(0, 0.01, 0.05, 0.1)  # ERCC threshold values are 0 (static TPM threshold of 0.5)
-                                        # or the 0.01/0.05/0.1 percentile of detected spike-ins
+thresholds <- list(0, 0.01, 0.05, 0.1)
 
 lapply(thresholds, getExprTranscripts, species = "ATH", experiment = "single-species")
 lapply(thresholds, getExprTranscripts, species = "AL", experiment = "comparative")
@@ -133,17 +132,16 @@ lapply(thresholds, getExprTranscripts, species = "BD", experiment = "comparative
 ---
 ## Visualization
 
-Set the file path for the data generated in the previous steps and source the R script:
+Set the file path for the data generated in the previous steps and execute the function `plotExpr`:
 
 ```R
 in_dir_stats <- file.path("exprGenes", "output", "mapping_statistics")
 in_dir_expr_genes <- file.path("exprGenes", "output", "expr_genes")
 
-source(file.path("exprGenes", "R", "exprGenes_plots.R"))
+plotExpr()
 
 ```
 
-The plotting functions will generate the panels for the following figures:
 
 ---
 ## Session info
