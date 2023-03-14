@@ -12,6 +12,7 @@ This code allows to summarize the DevSeq data statistics and to reproduce the re
 * [Data analysis](#data-analysis)
   * [Retrieve mapping statistics](#retrieve-mapping-statistics)
   * [Retrieve number of expressed genes and transcripts](#retrieve-number-of-expressed-genes-and-transcripts)
+  * [Analyse maximum expression of genes](#analyse-maximum-expression-of-genes)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -127,6 +128,10 @@ lapply(thresholds, getExprTranscripts, species = "MT", experiment = "comparative
 lapply(thresholds, getExprTranscripts, species = "BD", experiment = "comparative")
 
 ```
+
+### Analyse maximum expression of genes
+
+...
 
 
 ---
