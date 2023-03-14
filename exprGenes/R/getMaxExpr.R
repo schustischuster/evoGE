@@ -7,7 +7,7 @@
 # Input sample tables should have the following format:
 # DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species), rownames = gene_id
 
-# added line 144, removed 148-158, changed getNumGenes function, removed 231-236, updated plot function line 238ff, removed stacked bar plot function for AT, changed 233-234, updated 637-713, 1045-1132
+
 #------------------- Load packages, set directories and read sample tables ---------------------
 
 
