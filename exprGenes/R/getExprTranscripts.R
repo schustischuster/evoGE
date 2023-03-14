@@ -418,15 +418,4 @@ getExprTranscripts <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", 
 
 
 
-thresholds <- list(0, 0.01, 0.05, 0.1) # ERCC threshold values are 0 (a fixed TPM threshold of 0.5)
-# or perc of expressed spike-ins for 0.01/0.05/0.1
-
-lapply(thresholds, getExprTranscripts, species = "ATH", experiment = "single-species")
-lapply(thresholds, getExprTranscripts, species = "AL", experiment = "comparative")
-lapply(thresholds, getExprTranscripts, species = "CR", experiment = "comparative")
-lapply(thresholds, getExprTranscripts, species = "ES", experiment = "comparative")
-lapply(thresholds, getExprTranscripts, species = "TH", experiment = "comparative")
-lapply(thresholds, getExprTranscripts, species = "MT", experiment = "comparative")
-lapply(thresholds, getExprTranscripts, species = "BD", experiment = "comparative")
-
 
