@@ -11,7 +11,7 @@ This code allows to summarize the DevSeq data statistics and to reproduce the re
   * [Data input](#data-input)
 * [Data analysis](#data-analysis)
   * [Retrieve mapping statistics](#retrieve-mapping-statistics)
-  * [Retrieve number of expressed genes](#retrieve-number-of-expressed-genes)
+  * [Retrieve number of expressed genes and transcripts](#retrieve-number-of-expressed-genes-and-transcripts)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -71,7 +71,7 @@ getStats()
 
 ```
 
-### Retrieve number of expressed genes
+### Retrieve number of expressed genes and transcripts
 
 The following function will apply a threshold based on ERCC spike-ins at different threshold levels. ERCC spike-ins are a common set of external RNA controls that allow to measure  both sensitivity (lower limit of detection) and dynamic range of an RNA-Seq experiment. A gene (protein-coding/lncRNA) is considered to be expressed if it's expression value is above the threshold level in at least two out of three biological replicates. 
 
@@ -105,6 +105,31 @@ lapply(thresholds, getExprGenes, species = "MT", experiment = "comparative")
 lapply(thresholds, getExprGenes, species = "BD", experiment = "comparative")
 
 ```
+
+To retrieve the number of expressed transcripts, the following function can be used:
+
+```R
+getExprTranscripts(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+                   experiment = c("single-species", "comparative"), threshold)
+
+```
+It takes the same arguments described above. To reproduce the results of this study, execute the following function calls:
+
+```R
+thresholds <- list(0, 0.01, 0.05, 0.1)  # ERCC threshold values are 0 (static TPM threshold of 0.5)
+                                        # or the 0.01/0.05/0.1 percentile of detected spike-ins
+
+lapply(thresholds, getExprTranscripts, species = "ATH", experiment = "single-species")
+lapply(thresholds, getExprTranscripts, species = "AL", experiment = "comparative")
+lapply(thresholds, getExprTranscripts, species = "CR", experiment = "comparative")
+lapply(thresholds, getExprTranscripts, species = "ES", experiment = "comparative")
+lapply(thresholds, getExprTranscripts, species = "TH", experiment = "comparative")
+lapply(thresholds, getExprTranscripts, species = "MT", experiment = "comparative")
+lapply(thresholds, getExprTranscripts, species = "BD", experiment = "comparative")
+
+```
+
+
 ---
 ## Visualization
 
