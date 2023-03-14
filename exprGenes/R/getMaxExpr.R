@@ -7,7 +7,7 @@
 # Input sample tables should have the following format:
 # DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species), rownames = gene_id
 
-
+# added line 144, removed 148-158, changed getNumGenes function, removed 231-236, updated plot function line 238ff, removed stacked bar plot function for AT, changed 233-234, updated 637-713, 1045-1132
 #------------------- Load packages, set directories and read sample tables ---------------------
 
 
@@ -141,20 +141,11 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
       AT_lncRNA_ids <- subset(AT_expr_compl, subset = biotype %in% c("lnc_exonic_antisense", 
          "lnc_intronic_antisense", "lnc_intergenic"))[,1]
       core_brass_ids <- sub("\\:.*", "", Brass_pc_expr[,1])
+      core_brass_ids <- core_brass_ids[!grepl("ERCC", core_brass_ids)]
       core_lnc_ids <- sub("\\:.*", "", Brass_nc_expr[,1])
 
 
-      # Select each three distant dev stages per organ so that all organs have same numbers
-      # Do this because organs have very different amount of developmental samples for AT
-      AT_expr_repl <- AT_expr_repl[,c("root_whole_root_5d", "root_whole_root_14d", "root_whole_root_21d", "hypocotyl_10d", 
-         "third_internode_24d", "second_internode_24d", "first_internode_28d", "leaf_12_7d", "leaf_56_17d", "leaf_senescing_35d", 
-         "apex_vegetative_7d", "apex_inflorescence_21d", "apex_inflorescence_28d", "flower_stg9_21d", "flower_stg10_11_21d", "flower_stg12_21d", 
-         "flower_stg12_sepals_21d", "flower_stg15_sepals_21d", "flower_stg12_petals_21d", 
-         "flower_stg15_petals_21d", "flower_stg12_stamens_21d", "flower_stg15_stamens_21d", 
-         "flower_early_stg12_carpels_21d", "flower_late_stg12_carpels_21d", "flower_stg15_carpels_21d", "fruit_stg16_siliques_28d", 
-         "fruit_stg17a_siliques_28d", "fruit_stg16_seeds_28d", "fruit_stg17a_seeds_28d", "fruit_stg18_seeds_28d")]
-
-
+      
       # Get number of genes with maximum expression for each organ
       # "Merge" dev stages for each organ by calculating average number of genes w/ max expression
 
@@ -168,32 +159,31 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             df_at4 <- df[rownames(df) %like% "AT4G", ]
             df_at5 <- df[rownames(df) %like% "AT5G", ]
 
-            df <- rbind(df_at1, df_at2, df_at3, df_at4, df_at5)
+            df <- rbind(df_at1, df_at2, df_at3, df_at4, df_at5) # 27083 AT PC genes
 
          } else if ((c_level == "all") && (scripttype == "lncRNA")) {
 
-            df <- df[rownames(df) %in% AT_lncRNA_ids, ]
+            df <- df[rownames(df) %in% AT_lncRNA_ids, ] # 4693 AT lncRNAs
          
          # Reduce data to core orthologs if core set is chosen
 
          } else if ((c_level == "core") && (scripttype == "coding")) {
 
-            df <- df[rownames(df) %in% core_ids,]
+            df <- df[rownames(df) %in% core_ids,] # 7003 angiosperm PC orthologs
 
          } else if ((c_level == "brass") && (scripttype == "coding")) {
 
-            df <- df[rownames(df) %in% core_brass_ids,]
+            df <- df[rownames(df) %in% core_brass_ids,] # 17445 Brassicaceae PC orthologs
          
          } else if ((c_level == "core") && (scripttype == "lncRNA")) {
 
-            df <- df[rownames(df) %in% core_lnc_ids, ]
+            df <- df[rownames(df) %in% core_lnc_ids, ] # 307 Brassicaceae lncRNA orthologs
          }
 
 
          # Create group names
-         groups <- c(rep("Root", 3), "Hypocotyl" ,rep("Stem", 3), rep("Leaf", 3), rep("Apex", 3), 
-            rep("Flower", 3), rep("Sepals", 2), rep("Petals", 2), rep("Stamen", 2), rep("Carpel", 2), 
-            rep("Fruit", 3), rep("Seed", 3))
+         groups <- c(rep("Root", 6), rep("Stem", 4), rep("Leaf", 9), rep("Apex", 6), 
+            rep("Flower", 4), rep("Floral Organ", 8), rep("Fruit + Seed", 6))
 
          df$max <- colnames(df)[apply(df, 1, which.max)]
 
@@ -201,11 +191,6 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          sample_count <- do.call(rbind, lapply(colnames(df)[1:(length(df)-1)], function(x) {
             length(grep(x, x_max))}))
 
-         # Calculate average maximum expression per organ group
-         avg_n_max <- c(rep(mean(sample_count[1:3]),3), sample_count[4], rep(mean(sample_count[5:7]),3), 
-            rep(mean(sample_count[8:10]),3), rep(mean(sample_count[11:13]),3), rep(mean(sample_count[14:16]),3), 
-            rep(mean(sample_count[17:18]),2), rep(mean(sample_count[19:20]),2), rep(mean(sample_count[21:22]),2), 
-            rep(mean(sample_count[23:24]),2), rep(mean(sample_count[25:27]),3), rep(mean(sample_count[28:30]),3))
 
          df_out <- data.frame(
             biotype = rep(scripttype), 
@@ -213,19 +198,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             organ = colnames(df)[1:(length(df)-1)], 
             group = groups, 
             count = sample_count, 
-            average_count = avg_n_max
+            perc = sample_count/sum(sample_count)
             )
-
-         total_avg <- sum(unique(avg_n_max[1:3]), avg_n_max[4], unique(avg_n_max[5:7]), unique(avg_n_max[8:10]), 
-            unique(avg_n_max[11:13]), unique(avg_n_max[14:16]), unique(avg_n_max[17:18]), unique(avg_n_max[19:20]), 
-            unique(avg_n_max[21:22]), unique(avg_n_max[23:24]), unique(avg_n_max[25:27]), unique(avg_n_max[28:30]))
-
-         df_out$average_perc <- c(rep(mean(sample_count[1:3])/total_avg,3), avg_n_max[4]/total_avg, 
-            rep(mean(sample_count[5:7])/total_avg,3), rep(mean(sample_count[8:10])/total_avg,3), 
-            rep(mean(sample_count[11:13])/total_avg,3), rep(mean(sample_count[14:16])/total_avg,3), 
-            rep(mean(sample_count[17:18])/total_avg,2), rep(mean(sample_count[19:20])/total_avg,2), 
-            rep(mean(sample_count[21:22])/total_avg,2), rep(mean(sample_count[23:24])/total_avg,2), 
-            rep(mean(sample_count[25:27])/total_avg,3), rep(mean(sample_count[28:30])/total_avg,3))
 
          return(df_out)
 
@@ -256,13 +230,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
 
-      # Prepare data for plotting
-      at_stats_red <- at_stats[c(1,4,5,8,11,14,17,19,21,23,25,28,61,64,65,68,71,74,77,
-         79,81,83,85,88,91,94,95,98,101,104,107,109,111,113,115,118,121,124,125,
-         128,131,134,137,139,141,143,145,148),]
-
-      at_stats_pc <- at_stats_red[at_stats_red$biotype == "coding",]
-      at_stats_nc <- at_stats_red[at_stats_red$biotype == "lncRNA",]
+      at_stats_pc <- at_stats[at_stats$biotype == "coding",]
+      at_stats_nc <- at_stats[at_stats$biotype == "lncRNA",]
 
 
       
@@ -271,139 +240,78 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
          if (biotype == "coding") {
 
-            p_title <- "Protein-coding genes"
-         
+            y_title <- paste("Fraction of \n protein-coding genes")
+            ymar <- margin(t = 0, r = 7.52, b = 0, l = 1)
+            mancol <- c("#f7ddb0", "#ad0002", "#e7a007")
+            leglab <- c("all" = "All genes ", "brass" = "Brassicaceae orthologs ", "core" = "Angiosperm orthologs")
+            legbr <- c("all", "brass", "core")
+            legpos <- c(0.6428, 1.216)
+
          } else if (biotype == "lncRNA") {
 
-            p_title <- "lncRNAs"         
+            y_title <- paste("Fraction of \n lncRNAs")
+            ymar <- margin(t = 0, r = 10, b = 0, l = 1)
+            mancol <- c("#cdbee5", "#8055b8")
+            leglab <- c("all" = "All genes ", "core" = "Brassicaceae orthologs ")
+            legbr <- c("all", "core")
+            legpos <- c(0.14, 0.88)
          }
 
-         fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+         fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
 
+         data$organ <- factor(data$organ, levels = unique(data$organ))
          data$biotype <- factor(data$biotype, levels = unique(data$biotype))
-         data$conservation <- factor(data$conservation, levels = unique(data$conservation))
+         data$conservation <- factor(data$conservation, levels = c("all", "brass", "core"))
          data$group <- factor(data$group, levels = unique(data$group))
+         p <- ggplot(data = data, aes(x = organ, y = perc, color = conservation)) + 
+            geom_line(size = 2.0, data = data, aes(x = organ, y = perc, group = conservation, color = conservation)) + 
+            geom_point(size = 5.0, data = data, aes(x = organ, y = perc, group = conservation, color = conservation)) + 
+            scale_y_continuous(expand = c(0.05, 0), breaks = pretty_breaks(n = 4)) + 
+            scale_color_manual(
+              values = mancol, 
+              labels = leglab, 
+              breaks = legbr) + 
+            scale_x_discrete(expand = c(0.05, 0)) + 
+            guides(shape = guide_legend(override.aes = list(stroke = 7.75)))
 
-         p <- ggplot(data, aes(x = conservation, y = average_perc, color = organ)) + 
-         geom_point(size = 5.0, position = position_dodge(width = 0.75), aes(color = group)) + 
-         geom_linerange(size = 0.75, aes(x = conservation, ymin = 0, ymax = average_perc, 
-            colour = group), position = position_dodge(width = 0.75)) + 
-         scale_x_discrete(expand = c(0.05, 0)) + 
-         scale_y_continuous(limits = c(0, 0.4), expand = c(0, 0))
+            q <- p + theme_classic() + 
+            xlab("Samples (organs and developmental stages - early to late)") + 
+            ylab(y_title) + 
+            ggtitle(expression(paste("Organ with maximum expression in ", italic("A.thaliana")))) + 
+            theme(text = element_text(size = 16), 
+                strip.text = element_text(size = 26.0), 
+                strip.text.x = element_text(margin = margin(1.7, 0, 0.275, 0, "cm")), 
+                strip.background = element_rect(colour = NA, fill = NA, size = 2.8), 
+                axis.ticks.length = unit(0.26, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 1.28), 
+                axis.line = element_line(colour = 'black', size = 1.28), 
+                plot.margin = unit(c(0.22, 3.14, 1, 3.14), "cm"), 
+                axis.title.y = element_text(size = 24.5, margin = ymar, 
+                    colour = "black", face = "plain"), 
+                axis.title.x = element_text(size = 24.5, margin = margin(t = 8.25, r = 0, b = 4.0, l = 0), 
+                    colour = "black", face = "plain"), 
+                axis.text.x = element_blank(), 
+                axis.text.y = element_text(size = 22.75, angle = 0, margin = margin(l = 2.5, r = 2.5), colour = "black"), 
+                plot.title = element_text(size = 26.0, margin = margin(t = 1.175, b = -1.175, unit = "cm"), colour = "black", face = "plain"), 
+                panel.spacing = unit(0.5, "cm"), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor.x = element_blank(), 
+                panel.grid.minor.y = element_blank(), 
+                legend.margin = margin(t = 0, b = 0, unit = "cm"), 
+                legend.text = element_text(size = 26.0, colour = "black"), 
+                legend.title = element_blank(), 
+                legend.key.size = unit(2, "line"), 
+                legend.position = legpos,
+                legend.direction = "horizontal") 
 
+            q <- q + facet_wrap(~ factor(group, levels = c("Root", "Stem", "Leaf", "Apex", "Flower", "Floral Organ", "Fruit + Seed" )) , nrow = 1, scales = "free_x")
 
-         q <- p + 
-         # scale_color_manual(values=c("#b2b2b2","#e8a215","#f0d737","#069870","#0770ab","#4fb6f0","#ea6965")) + 
-         # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
-         theme_classic() + 
-         xlab("") + ylab("Percentage") + ggtitle("") + 
-         theme(text = element_text(size = 23.5), 
-            panel.grid.major = element_line(colour = "white"), 
-            panel.grid.minor = element_line(colour = "white"),  
-            axis.ticks.length = unit(.2, "cm"),
-            axis.ticks = element_line(colour = "gray15", size = 0.7),
-            axis.title.x = element_text(colour = "black", size = 21.55, 
-               margin = margin(t = 12.5, r = 0, b = 50.2, l = 0)),  
-            axis.title.y = element_text(colour = "black", size = 21.5, 
-               margin = margin(t = 0, r = 5.8, b = 0, l = 1.5)), 
-            axis.text.x = element_text(colour = "black", margin = margin(t = 3.5, r = 0, b = 1.6, l = 0), size = 20.5), 
-            axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.25, b = 0, l = 4), size = 18.55), 
-            plot.title = element_text(colour = "black", size = 23.5, 
-               margin = margin(t = 35.8, r = 0, b = 11.5, l = 0), hjust = 0.5), 
-            plot.margin = unit(c(0, 0.5, 0, 1), "points"),
-            legend.position = "right",
-            legend.title = element_text(colour = "black", size = 20, face = "bold"),
-            legend.text = element_text(size = 20), 
-            legend.background = element_rect(fill = NA))
-
-         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-            scale = 1, width = 10.25, height = 7.3, units = c("in"), 
-            dpi = 600, limitsize = FALSE)
+            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+                width = 28.5, height = 6.25, units = c("in"))
       }
 
       plotMaxExprAT(data = at_stats_pc, biotype = "coding")
       plotMaxExprAT(data = at_stats_nc, biotype = "lncRNA")
-
-
-
-
-
-      # Generate stacked bar charts
-      plotMaxExpAT <- function(data, biotype) {
-
-         if (biotype == "coding") {
-
-            p_title <- "Protein-coding"
-
-            p_title_mar <- margin(t = 10, r = 0, b = 10, l = 0)
-
-            x_text_mar <- margin(t = -8.5, r = 0, b = 1.6, l = 0)
-
-            x_labels = c(
-            "all" = expression(atop(NA, atop(textstyle('All'), textstyle('Genes')))), 
-            "core" = expression(atop(NA, atop(textstyle('Core'), textstyle('Orthologs')))))
-         
-         } else if (biotype == "lncRNA") {
-
-            p_title <- "lncRNAs"
-
-            p_title_mar <- margin(t = 10, r = 0, b = 12.45, l = 0)
-
-            x_text_mar <- margin(t = -8.35, r = 0, b = 1.6, l = 0)
-
-            x_labels = c(
-            "all" = expression(atop(NA, atop(textstyle('All'), textstyle('lncRNAs')))), 
-            "core" = expression(atop(NA, atop(textstyle('Brassicaceae'), textstyle('Orthologs')))))       
-         }
-
-         fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), "bc", sep="_"))
-
-         data$conservation <- factor(data$conservation, levels = unique(data$conservation))
-         data$group <- factor(data$group, levels = c("Stamen", "Carpel", 
-            "Petals", "Sepals", "Seed", "Fruit", "Flower", "Apex", "Leaf", "Stem", "Hypocotyl", "Root"))
-
-         p <- ggplot(data, aes(fill = group, x = conservation, y = average_perc)) + 
-         geom_bar(position = "stack", stat = "identity", width = 0.725) + 
-         scale_x_discrete(expand = c(0.07, 0), labels = x_labels) + 
-         scale_y_continuous(expand = c(0, 0), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1))
-
-         q <- p + 
-         scale_fill_manual(values = c("Root" = "#5d4a95", "Hypocotyl" = "#53b0db", 
-            "Stem" = "#0c703d", "Leaf" = "#0a9955", "Apex" = "#f0d737", "Flower" = "#e075af", 
-            "Sepals" = "#84cd6a", "Petals" = "#ead1c7", "Stamen" = "#ee412e", 
-            "Carpel" = "#f2a72f", "Fruit" = "#b54185", "Seed" = "#e9a3b3")) + 
-         # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
-         theme_classic() + 
-         guides(fill = guide_legend(override.aes = list(size = 7.5))) + 
-         xlab("") + ylab("Fraction") + ggtitle(p_title) + 
-         theme(text = element_text(size = 22.5), 
-            panel.grid.major = element_line(colour = "white"), 
-            panel.grid.minor = element_line(colour = "white"),  
-            axis.ticks.length = unit(0.26, "cm"), 
-            axis.line = element_line(colour = "black", size = 0.8), 
-            axis.ticks = element_line(colour = "black", size = 0.8),
-            axis.title.x = element_text(colour = "black", size = 21.0, 
-               margin = margin(t = 12.5, r = 0, b = 10, l = 0)),  
-            axis.title.y = element_text(colour = "black", size = 21.0, 
-               margin = margin(t = 0, r = 5.0, b = 0, l = 1.5)), 
-            axis.text.x = element_text(colour = "black", margin = x_text_mar, size = 19.5), 
-            axis.text.y = element_text(colour = "black", margin = margin(t = 0, r = 3.25, b = 0, l = 4), size = 18.7), 
-            plot.title = element_text(colour = "black", size = 21.0, 
-               margin = p_title_mar, hjust = 0.5), 
-            plot.margin = unit(c(74, 350, 74, 10), "points"),
-            legend.position = "right",
-            legend.box.margin = margin(-4, 0, 0, -14), 
-            legend.title = element_blank(),
-            legend.text = element_text(size = 19.5), 
-            legend.background = element_rect(fill = NA))
-
-         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q,
-            scale = 1, width = 10.25, height = 7.3, units = c("in"), 
-            dpi = 600, limitsize = FALSE)
-      }
-
-      plotMaxExpAT(data = at_stats_pc, biotype = "coding")
-      plotMaxExpAT(data = at_stats_nc, biotype = "lncRNA")
 
 
    }
@@ -745,7 +653,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
             y_scale <- c(0, 0.3125)
 
-            plt_mar <- c(0.5, 1.75, 1.75, 1.75)
+            plt_mar <- c(0.5, 1.75, 1.5, 1.75)
          
          } else if (biotype == "lncRNA") {
 
@@ -753,7 +661,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
             y_scale <- c(0, 0.44)
 
-            plt_mar <- c(0.5, 1.75, 1.75, 1.75)
+            plt_mar <- c(0.5, 1.75, 1.5, 1.75)
          
          } else if (biotype == "BrlncRNA") {
 
@@ -761,10 +669,10 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
             y_scale <- c(0, 0.34)
 
-            plt_mar <- c(0.5, 30.52, 1.75, 1.75)
+            plt_mar <- c(0.5, 30.52, 1.5, 1.75)
          }
 
-         fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+         fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
 
          x_lab <- c(Root = "Rt", Hypocotyl = "Hc", Leaf = "Lf", Apex_veg = "Av", 
             Apex_inf = "Ai", Flower = "Fl", Stamen = "St", Carpel = "Ca")
@@ -776,23 +684,23 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
          p <- ggplot(data, aes(x = group, y = fraction, color = group)) + 
          geom_segment(aes(y = 0, yend = fraction, xend = group), size = 2.5, colour = "grey77") + 
-         geom_point(size = 7.7, position = position_dodge(width = 0.75), aes(color = group)) +
-         scale_x_discrete(expand = c(0.05, 0), labels = x_lab) + 
+         geom_point(size = 7.9, position = position_dodge(width = 0.75), aes(color = group)) +
+         scale_x_discrete(labels = x_lab) + 
          scale_y_continuous(limits = y_scale, expand = c(0, 0))
          q <- p + 
          scale_color_manual(values = c("Root" = "#6a54a9", "Hypocotyl" = "#53b0db", 
-            "Leaf" = "#0a9955", "Apex_veg" = "#96ba37", "Apex_inf" = "#f0d737", 
+            "Leaf" = "#2c8654", "Apex_veg" = "#96ba37", "Apex_inf" = "#f0d737", 
             "Flower" = "#e075af", "Stamen" = "#ed311c", "Carpel" = "#f2a72f")) + 
          # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
          theme_classic() + 
          xlab("") + ylab("Fraction") + ggtitle(p_title) + 
          theme(text = element_text(size = 23.5), 
-            strip.text = element_text(size = 24.5, face = "plain"), 
-                strip.text.x = element_text(margin = margin(0.45, 0, 0.45, 0, "cm")), 
-                strip.background = element_rect(colour = 'black', fill = NA, size = 3.125), 
+            strip.text = element_text(size = 24.1, face = "plain"), 
+                strip.text.x = element_text(margin = margin(0.4457, 0, 0.4457, 0, "cm")), 
+                strip.background = element_rect(colour = 'black', fill = NA, size = 2.75), 
                 axis.ticks.length = unit(0.25, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.5), 
-                axis.line = element_line(colour = 'black', size = 1.5), 
+                axis.ticks = element_line(colour = "black", size = 1.175), 
+                axis.line = element_line(colour = 'black', size = 1.175), 
                 plot.margin = unit(plt_mar, "cm"), 
                 axis.title.y = element_text(size = 25, margin = margin(t = 0, r = 8, b = 0, l = 1), 
                     colour = "black", face = "bold"), 
@@ -801,7 +709,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
                 axis.text.x = element_text(size=21.5, margin = margin(t = 4, b = 7.75), colour = "grey35", 
                     angle = 0, vjust = 1, hjust = 0.5), 
                 axis.text.y = element_text(size = 21.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
-                plot.title = element_text(size = 25.5, margin = margin(t = 5.5, b = 15.3), face = "plain"), 
+                plot.title = element_text(size = 25.25, margin = margin(t = 5.5, b = 15.3), face = "plain"), 
                 panel.spacing = unit(0.55, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
@@ -811,7 +719,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          q <- q + facet_wrap(~ factor(species, levels = c("AT", "AL", "CR", "ES", "TH", "MT", "BD")) , nrow = 1, scales = "free_x")
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-                width = 28.5, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+                width = 28.5, height = 6.5, units = c("in"))
       }
 
       plotMaxExprOS(data = cd_all, biotype = "coding")
@@ -1073,6 +981,52 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
 
+      # Wilcoxon rank sum test all genes vs all-ortho// all genes vs ortho
+      getPMWU <- function(z, spec = c("AT", "AL", "CR", "ES")) {
+
+         sp_cd_all <- z[z$species == spec & z$class == "coding_all",]
+         sp_cd_ncore <- z[z$species == spec & z$class == "coding_non-core",]
+         sp_cd_core <- z[z$species == spec & z$class == "coding_core",]
+
+         sp_nc_all <- z[z$species == spec & z$class == "lncRNA_all",]
+         sp_nc_ncore <- z[z$species == spec & z$class == "lncRNA_non-core",]
+         sp_nc_core <- z[z$species == spec & z$class == "lncRNA_core",]
+
+         cd_all_vs_core <- wilcox.test(sp_cd_all$max_expr, sp_cd_core$max_expr)$p.value
+         cd_ncore_vs_core <- wilcox.test(sp_cd_ncore$max_expr, sp_cd_core$max_expr)$p.value
+
+         nc_all_vs_core <- wilcox.test(sp_nc_all$max_expr, sp_nc_core$max_expr)$p.value
+         nc_ncore_vs_core <- wilcox.test(sp_nc_ncore$max_expr, sp_nc_core$max_expr)$p.value
+
+         pmwu <- data.frame(species = rep(spec), 
+            comparison = c("cd_all_vs_core", "cd_ncore_vs_core", "nc_all_vs_core", "nc_ncore_vs_core"), 
+            p_value = c(cd_all_vs_core, cd_ncore_vs_core, nc_all_vs_core, nc_ncore_vs_core))
+
+         return(pmwu)
+      }
+
+      pmwu_at <- getPMWU(z = max_expr_dist, spec = "AT")
+      pmwu_al <- getPMWU(z = max_expr_dist, spec = "AL")
+      pmwu_cr <- getPMWU(z = max_expr_dist, spec = "CR")
+      pmwu_es <- getPMWU(z = max_expr_dist, spec = "ES")
+
+      p_mwu <- rbind(pmwu_at, pmwu_al, pmwu_cr, pmwu_es)
+
+
+      # Define specific notation
+        set_scientific <- function(l) {
+            # turn in to character string in scientific notation
+            l <- formatC(l, format = "e", digits = 0)
+            # quote the part before the exponent to keep all the digits
+            l <- gsub("^(.*)e", "'\\1'e", l)
+            # turn the 'e+' into plotmath format
+            l <- gsub("e", "%*%10^", l)
+            # return this as an expression
+            parse(text=l)
+        }
+
+
+
       # Split data AT/non-AT
       max_expr_dist_non_AT <- max_expr_dist[!grepl("AT", max_expr_dist$species),]
       max_expr_dist_AT <- max_expr_dist[max_expr_dist$species == "AT", ]
@@ -1080,17 +1034,95 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
 
       # Generate plots
-      plotMaxExprDist <- function(data) {
+      plotMaxExprDist <- function(data, species) {
 
-         #if (biotype == "coding") {
+         if (species == "ACE") {
 
-           # p_title <- "Organ with highest expression of protein-coding genes"
+            p_mwu <- p_mwu[!grepl("AT", p_mwu$species),]
 
-           y_scale <- c(2.9, 20.8)
+            # Create df for FDR p-value mapping
+            mwu_df <- data.frame(
+                class = rep(c("coding_non-core", "coding_core", "lncRNA_non-core", "lncRNA_core"), 
+                    times = 3), 
+                y = rep(c(19.68, 18.25), times = 6),
+                label = ifelse(p_mwu$p_value < 1e-07, "****", 
 
-           plt_mar <- c(0.1, 0.75, 0.5, 0.5)
-        # } else if (biotype == "lncRNA") {
-         fname <- sprintf('%s.jpg', paste(deparse(substitute(data)), sep="_"))
+                    c(paste("italic('P =')~", set_scientific(p_mwu$p_value)))), 
+
+                species = rep(c("A.lyrata", "C.rubella", "E.salsugineum"), each = 4)
+            )
+
+            # Create df for gem_segments
+            h_seg_df <- data.frame(
+                x = rep(c(1.105, 2.105, 4.107, 5.107), times = 3), 
+                xend = rep(c(3.105, 3.105, 6.107, 6.107), times = 3), 
+                y = rep(c(20.08, 18.65, 20.08, 18.65), times = 3), 
+                yend = rep(c(20.08, 18.65, 20.08, 18.65), times = 3), 
+                species = rep(c("A.lyrata", "C.rubella", "E.salsugineum"), each = 4)
+            )
+
+            v_seg_df <- data.frame(
+                x = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 3), 
+                xend = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 3), 
+                y = rep(c(19.64, 19.64, 18.2, 18.2, 19.64, 19.64, 18.2, 18.2), times = 3), 
+                yend = rep(c(20.08, 20.08, 18.65, 18.65, 20.08, 20.08, 18.65, 18.65), times = 3), 
+                species = rep(c("A.lyrata", "C.rubella", "E.salsugineum"), each = 4)
+            )
+
+            # Adjust position of p-value labels
+            mwu_df$label <- paste0(mwu_df$label, c("", "              "))
+
+            y_scale <- c(2.9, 21.125)
+
+            plt_mar <- c(0.1, 1.55, 1.7, 0.55)
+
+            stp_mar <- margin(0.25, 0, 0.25, 0, "cm")
+
+         } else if (species == "AT") { 
+
+          p_mwu <- p_mwu[!grepl("AT", p_mwu$species),]
+
+            # Create df for FDR p-value mapping
+            mwu_df <- data.frame(
+                class = rep(c("coding_non-core", "coding_core", "lncRNA_non-core", "lncRNA_core"), 
+                    times = 1), 
+                y = rep(c(18.77, 17.6), times = 2),
+                label = ifelse(p_mwu$p_value < 1e-07, "****", 
+
+                    c(paste("italic('P =')~", set_scientific(p_mwu$p_value)))), 
+
+                species = rep(c("A.thaliana"), each = 4)
+            )
+
+            # Create df for gem_segments
+            h_seg_df <- data.frame(
+                x = rep(c(1.105, 2.105, 4.107, 5.107), times = 1), 
+                xend = rep(c(3.105, 3.105, 6.107, 6.107), times = 1), 
+                y = rep(c(19.08, 17.925, 19.08, 17.925), times = 1), 
+                yend = rep(c(19.08, 17.925, 19.08, 17.925), times = 1), 
+                species = rep(c("A.thaliana"), each = 4)
+            )
+
+            v_seg_df <- data.frame(
+                x = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 1), 
+                xend = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 1), 
+                y = rep(c(18.64, 18.64, 17.45, 17.45, 18.64, 18.64, 17.45, 17.45), times = 1), 
+                yend = rep(c(19.08, 19.08, 17.9, 17.9, 19.08, 19.08, 17.9, 17.9), times = 1), 
+                species = rep(c("A.thaliana"), each = 4)
+            )
+
+            # Adjust position of p-value labels
+            mwu_df$label <- paste0(mwu_df$label, c("", "              "))
+
+            y_scale <- c(5.5, 19.89)
+
+            plt_mar <- c(0.1, 32.475, 1.7, 0.55)
+
+            stp_mar <- margin(0.24, 0, 0.26, 0, "cm")
+
+         }
+
+         fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
 
          x_lab <- c(Root = "Rt", Hypocotyl = "Hc", Leaf = "Lf", Apex_veg = "Av", 
             Apex_inf = "Ai", Flower = "Fl", Stamen = "St", Carpel = "Ca")
@@ -1111,31 +1143,35 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          data$conservation <- factor(data$conservation, levels = unique(data$conservation))
          data$species <- factor(data$species, levels = unique(data$species))
 
-         p <- ggplot(data, aes(x = class, y = max_expr, color = class)) + geom_flat_violin(aes(fill = class), colour = "black", position = position_nudge(x = -0.037, y = 0), alpha = 1, size = 0.85) + 
-         geom_boxplot(aes(fill = class), colour = "black", width = 0.44, outlier.shape = NA, position = position_hnudge(x = 0.25), size = 0.85, notch = TRUE) +
+         p <- ggplot(data, aes(x = class, y = max_expr, color = class)) + geom_flat_violin(aes(fill = class), colour = "black", position = position_nudge(x = -0.037, y = 0), alpha = 1, size = 0.8) + 
+         geom_boxplot(aes(fill = class), colour = "black", width = 0.44, outlier.shape = NA, position = position_hnudge(x = 0.25), size = 0.8, fatten = 2.8, notch = TRUE) +
          scale_x_discrete(expand = c(0.005, 0), labels = x_labels) + 
          scale_y_continuous(limits = y_scale, expand = c(0, 0), breaks = c(5,7.5,10,12.5,15,17.5))
          q <- p + 
-         scale_fill_manual(values = c("coding_all" = "#f7f1d0", "coding_non-core" = "#e3cd77", 
-            "coding_core" = "#cfa200", "lncRNA_all" = "#91c7e5", "lncRNA_non-core" = "#6a54a9", 
-            "lncRNA_core" = "#3195cf")) + 
+         scale_fill_manual(values = c("coding_all" = "#f7ddb0", "coding_non-core" = "#edbb5c", 
+            "coding_core" = "#e7a007", "lncRNA_all" = "#cdbee5", "lncRNA_non-core" = "#A689CE", 
+            "lncRNA_core" = "#8055b8")) + 
+         geom_text(data = mwu_df, mapping = aes(x = class, y = y, label = label), size = 9.275, colour = "black", 
+            parse = FALSE, hjust = 0.325, vjust = 0) + 
+         geom_segment(data = h_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), size = 0.8, colour = "black") + 
+         geom_segment(data = v_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), size = 0.8, colour = "black") + 
          theme_classic() + 
-         xlab("") + ylab("Maximum expression     ") + ggtitle("") + 
+         xlab("") + ylab("Maximum expression    \n (VST-normalized counts)     ") + ggtitle("") + 
          theme(text = element_text(size = 23.5), 
-            strip.text = element_text(size = 21, face = "plain"), 
-                strip.text.x = element_text(margin = margin(0.25, 0, 0.25, 0, "cm")), 
+            strip.text = element_text(size = 19.5, face = "italic"), 
+                strip.text.x = element_text(margin = stp_mar), 
                 strip.background = element_rect(colour = 'white', fill = NA, size = 0.1), 
-                axis.ticks.length = unit(0.25, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.1), 
-                axis.line = element_line(colour = 'black', size = 1.1), 
+                axis.ticks.length = unit(0.2, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 0.95), 
+                axis.line = element_line(colour = 'black', size = 0.95), 
                 plot.margin = unit(plt_mar, "cm"), 
-                axis.title.y = element_text(size = 21, margin = margin(t = 0, r = 8, b = 0, l = 1), 
+                axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 6.4, b = 0, l = 3.38), 
                     colour = "black", face = "plain"), 
-                axis.title.x = element_text(size = 21, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+                axis.title.x = element_text(size = 18.75, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
                     colour = "black", face = "bold"), 
-                axis.text.x = element_text(size=17.5, margin = margin(t = -7, b = 2), colour = "black", 
+                axis.text.x = element_text(size = 16.25, margin = margin(t = -7, b = 2), colour = "black", 
                     angle = 0, vjust = 1, hjust = 0.5), 
-                axis.text.y = element_text(size = 17.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "black"), 
+                axis.text.y = element_text(size = 16.5, angle = 0, margin = margin(l = 0, r = 1.5), colour = "black"), 
                 panel.spacing = unit(0.7, "cm"), 
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
@@ -1145,11 +1181,11 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          q <- q + facet_wrap(~ factor(species, levels = c("A.thaliana", "A.lyrata", "C.rubella", "E.salsugineum")) , nrow = 1, scales = "free_x")
 
             ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
-                width = 20, height = 6.5, dpi = 300, units = c("in"), limitsize = FALSE)
+                width = 20, height = 5.75, units = c("in"))
       }
 
-      plotMaxExprDist(data = max_expr_dist_non_AT)
-      # plotMaxExprDist(data = max_expr_dist_AT)
+      plotMaxExprDist(data = max_expr_dist_non_AT, species = "ACE")
+      plotMaxExprDist(data = max_expr_dist_AT, species = "AT")
 
 
       # Wilcoxon rank sum test with continuity correction (all genes vs core genes)
