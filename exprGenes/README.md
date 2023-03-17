@@ -140,7 +140,7 @@ getMaxExpr(species = c("AT", "all"), ...)
 
 | Arguments  |  |
 | :---  | :---  |
-| species  | A character string that defines the species set to be analyzed. Can be either `"AT"` (`A. thaliana`) or `"all"`. For `"AT"`, the maximum expression level across organs and developmental stages will be analyzed in `A.thaliana`. Choose `"all"` to retrieve the maximum expression for each gene  across the comparative organs in all species (AT, AL, CE, ES, TH, MT, BD). `"all"` will also perform the evolutionary analysis of maximum expression levels across species. |
+| species  | A character string that defines the species set to be analyzed. Can be either `"AT"` (*A. thaliana*) or `"all"`. For `"AT"`, the maximum expression level across organs and developmental stages will be analyzed in *A.thaliana*. Choose `"all"` to retrieve the maximum expression for each gene  across the comparative organs in all species (AT, AL, CE, ES, TH, MT, BD). `"all"` will also perform the evolutionary analysis of maximum expression levels across species. |
 | ...  | Further arguments to be passed to methods. |
 
 </br>
