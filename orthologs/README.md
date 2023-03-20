@@ -47,11 +47,11 @@ invisible(lapply(lib_List, library, character.only = TRUE))
 Download and extract the evoGE repository to the working directory on your computer. Then, set the path for input and output files and source the R scripts: 
 
 ```R
-in_dir <- file.path("evoGE", "orthologs", "data")
-out_dir <- file.path("evoGE", "orthologs")
+in_dir <- file.path("evoGE-master", "orthologs", "data")
+out_dir <- file.path("evoGE-master", "orthologs")
 
-source(file.path("evoGE", "orthologs", "R", "plotPhyloCore.R"))
-source(file.path("evoGE", "orthologs", "R", "plotPhyloComp.R"))
+source(file.path("evoGE-master", "orthologs", "R", "plotPhyloCore.R"))
+source(file.path("evoGE-master", "orthologs", "R", "plotPhyloComp.R"))
 
 ```
 ---
