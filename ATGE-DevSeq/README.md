@@ -38,10 +38,10 @@ invisible(lapply(lib_List, library, character.only = TRUE))
 Download and extract the evoGE repository to the working directory on your computer. Then, set the path for input and output files and source the R script:
 
 ```R
-in_dir <- file.path("evoGE", "ATGE-DevSeq", "data")
-out_dir <- file.path("evoGE", "ATGE-DevSeq")
+in_dir <- file.path("evoGE-master", "ATGE-DevSeq", "data")
+out_dir <- file.path("evoGE-master", "ATGE-DevSeq")
 
-source(file.path("evoGE", "ATGE-DevSeq", "R", "DevSeq_ATGE_plots.R"))
+source(file.path("evoGE-master", "ATGE-DevSeq", "R", "DevSeq_ATGE_plots.R"))
 
 ```
 
