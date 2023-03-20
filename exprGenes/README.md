@@ -75,12 +75,8 @@ getStats()
 
 The following function will apply a threshold based on ERCC spike-ins at different threshold levels. ERCC spike-ins are a common set of external RNA controls that allow to measure  both sensitivity (lower limit of detection) and dynamic range of an RNA-Seq experiment. A gene (protein-coding/lncRNA) is considered to be expressed if it's expression value is above the threshold level in at least two out of three biological replicates. 
 
-```R
-getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-             experiment = c("single-species", "comparative"), threshold)
-
-```
-</br>
+* `getExprGenes(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+                experiment = c("single-species", "comparative"), threshold)`
 
 | Arguments  |  |
 | :---  | :---  |
@@ -108,11 +104,9 @@ lapply(thresholds, getExprGenes, species = "BD", experiment = "comparative")
 
 To retrieve the number of expressed transcripts, the following function can be used:
 
-```R
-getExprTranscripts(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-                   experiment = c("single-species", "comparative"), threshold)
+* `getExprTranscripts(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
+                      experiment = c("single-species", "comparative"), threshold)`
 
-```
 It takes the same arguments described above. To reproduce the results of this study, execute the following function calls:
 
 ```R
