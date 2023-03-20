@@ -43,9 +43,9 @@ invisible(lapply(lib_List, library, character.only = TRUE))
 Download and extract the evoGE repository to the working directory on your computer. Then, set the path for input and output files and source the R scripts:
 
 ```R
-in_dir <- file.path("evoGE", "GOslim", "data")
-out_dir <- file.path("evoGE", "GOslim")
-path_to_R_files <- file.path("evoGE", "GOslim", "R")
+in_dir <- file.path("evoGE-master", "GOslim", "data")
+out_dir <- file.path("evoGE-master", "GOslim")
+path_to_R_files <- file.path("evoGE-master", "GOslim", "R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
