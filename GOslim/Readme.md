@@ -219,9 +219,9 @@ sessionInfo()
 #> [1] scales_1.1.1     ggplot2_3.3.5     gplots_3.1.1     MatchIt_4.3.4     dplyr_1.0.8  
 
 #> loaded via a namespace (and not attached):
-#> [1]  Rcpp_1.0.8.2        pillar_1.7.0        compiler_4.1.3      RColorBrewer_1.1-2
-#> [5]  bitops_1.0-7        tools_4.1.3         digest_0.6.29       lifecycle_1.0.1   
-#> [9]  tibble_3.1.6        gtable_0.3.0        nlme_3.1-155        lattice_0.20-45   
+#>  [1] Rcpp_1.0.8.2        pillar_1.7.0        compiler_4.1.3      RColorBrewer_1.1-2
+#>  [5] bitops_1.0-7        tools_4.1.3         digest_0.6.29       lifecycle_1.0.1   
+#>  [9] tibble_3.1.6        gtable_0.3.0        nlme_3.1-155        lattice_0.20-45   
 #> [13] mgcv_1.8-39         pkgconfig_2.0.3     rlang_1.0.2         Matrix_1.4-0      
 #> [17] cli_3.2.0           withr_2.5.0         generics_0.1.2      vctrs_0.3.8       
 #> [21] gtools_3.9.2        caTools_1.18.2      grid_4.1.3          tidyselect_1.1.2  
