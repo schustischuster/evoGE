@@ -12,8 +12,8 @@ This code allows to summarize the DevSeq data statistics and to reproduce the re
 * [Data analysis](#data-analysis)
   * [Retrieve mapping statistics](#retrieve-mapping-statistics)
   * [Retrieve number of expressed genes and transcripts](#retrieve-number-of-expressed-genes-and-transcripts)
+  * [Visualization of RNA-Seq data characteristics](#visualization-of-rna--seq-data-characteristics)
   * [Analyse maximum expression of genes](#analyse-maximum-expression-of-genes)
-* [Visualization](#visualization)
 * [Session info](#session-info)
 
 ---
@@ -121,6 +121,15 @@ lapply(thresholds, getExprTranscripts, species = "MT", experiment = "comparative
 lapply(thresholds, getExprTranscripts, species = "BD", experiment = "comparative")
 
 ```
+### Visualization of RNA-Seq data characteristics
+
+To visualize the results from the previous steps, execute the following function:
+
+```R
+
+plotExpr()
+
+```
 
 ### Analyse maximum expression of genes
 
@@ -142,18 +151,6 @@ getMaxExpr(species = "AT")
 getMaxExpr(species = "all")
 
 ```
-
----
-## Visualization
-
-To visualize the results from the previous steps, execute the following function:
-
-```R
-
-plotExpr()
-
-```
-
 
 ---
 ## Session info
