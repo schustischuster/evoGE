@@ -43,9 +43,9 @@ invisible(lapply(lib_List, library, character.only = TRUE))
 Download and extract the entire directory to the working directory on your computer. Then, set the path for input and output files and source the R scripts:  
 
 ```R
-in_dir <- file.path("evoGE", "exprGenes", "data")
-out_dir <- file.path("evoGE", "exprGenes")
-path_to_R_files <- file.path("evoGE", "exprGenes", "R")
+in_dir <- file.path("evoGE-master", "exprGenes", "data")
+out_dir <- file.path("evoGE-master", "exprGenes")
+path_to_R_files <- file.path("evoGE-master", "exprGenes", "R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
