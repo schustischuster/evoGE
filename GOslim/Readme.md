@@ -170,6 +170,8 @@ plotGroupEx(sample_size = 412)
 ---
 ## Session info
 
+This code was developed and tested on MacOS X 10.9.5 in R version 3.3.3 and on MacOS 12.3.1 in R version 4.1.3.
+
 ```R
 sessionInfo()
 ```
@@ -201,7 +203,7 @@ sessionInfo()
 ```R
 #> R version 4.1.3 (2022-03-10)
 #> Platform: x86_64-apple-darwin17.0 (64-bit)
-#> Running under: macOS Monterey 12.3
+#> Running under: macOS Monterey 12.3.1
 
 #> Matrix products: default
 #> BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
@@ -217,12 +219,16 @@ sessionInfo()
 #> [1] scales_1.1.1     ggplot2_3.3.5     gplots_3.1.1     MatchIt_4.3.4     dplyr_1.0.8  
 
 #> loaded via a namespace (and not attached):
-#> [1]  Rcpp_1.0.8.2       magrittr_2.0.2     munsell_0.5.0      tidyselect_1.1.2   colorspace_2.0-3  
-#> [6]  R6_2.5.1           rlang_1.0.2        fansi_1.0.2        caTools_1.18.2     tools_4.1.3       
-#> [11] grid_4.1.3         gtable_0.3.0       KernSmooth_2.23-20 utf8_1.2.2         cli_3.2.0         
-#> [16] withr_2.5.0        ellipsis_0.3.2     gtools_3.9.2       tibble_3.1.6       lifecycle_1.0.1   
-#> [21] crayon_1.5.0       purrr_0.3.4        vctrs_0.3.8        bitops_1.0-7       glue_1.6.2        
-#> [26] compiler_4.1.3     pillar_1.7.0       generics_0.1.2     backports_1.4.1    pkgconfig_2.0.3
+#> [1]  Rcpp_1.0.8.2        pillar_1.7.0        compiler_4.1.3      RColorBrewer_1.1-2
+#> [5]  bitops_1.0-7        tools_4.1.3         digest_0.6.29       lifecycle_1.0.1   
+#> [9]  tibble_3.1.6        gtable_0.3.0        nlme_3.1-155        lattice_0.20-45   
+#> [13] mgcv_1.8-39         pkgconfig_2.0.3     rlang_1.0.2         Matrix_1.4-0      
+#> [17] cli_3.2.0           withr_2.5.0         generics_0.1.2      vctrs_0.3.8       
+#> [21] gtools_3.9.2        caTools_1.18.2      grid_4.1.3          tidyselect_1.1.2  
+#> [25] glue_1.6.2          R6_2.5.1            fansi_1.0.2         purrr_0.3.4       
+#> [29] farver_2.1.0        magrittr_2.0.2      backports_1.4.1     ellipsis_0.3.2    
+#> [33] splines_4.1.3       colorspace_2.0-3    labeling_0.4.2      utf8_1.2.2        
+#> [37] KernSmooth_2.23-20  munsell_0.5.0       crayon_1.5.0
 
 ```
 
