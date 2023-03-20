@@ -126,11 +126,7 @@ lapply(thresholds, getExprTranscripts, species = "BD", experiment = "comparative
 
 For each gene, the organ and developmental stage (if applicable) in which the gene shows the highest expressision level was determined. This was done for all protein-coding and long non-coding genes in each species, and for the protein-coding orthologous genes conserved across the Brassicaceae and angiosperm species studied. For long non-coding RNAs, the evolutionary analysis of maximum expression levels was limited to Brassicaceae due to the very low conservation of long non-coding RNAs beyond the family level.
 
-```R
-getMaxExpr(species = c("AT", "all"), ...)
-
-```
-</br>
+* `getMaxExpr(species = c("AT", "all"), ...)`
 
 | Arguments  |  |
 | :---  | :---  |
