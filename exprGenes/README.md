@@ -12,7 +12,7 @@ This code allows to summarize the DevSeq data statistics and to reproduce the re
 * [Data analysis](#data-analysis)
   * [Retrieve mapping statistics](#retrieve-mapping-statistics)
   * [Retrieve number of expressed genes and transcripts](#retrieve-number-of-expressed-genes-and-transcripts)
-  * [Visualization of RNA-Seq data characteristics](#visualization-of-rna--seq-data-characteristics)
+  * [Visualization of RNA-Seq data characteristics](#visualization-of-rna-seq-data-characteristics)
   * [Analyse maximum expression of genes](#analyse-maximum-expression-of-genes)
 * [Session info](#session-info)
 
