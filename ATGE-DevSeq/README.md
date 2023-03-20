@@ -71,7 +71,7 @@ plotRE(exp_data = devseq_log2_re_vs_atge_log2_re, genelist = genelist)
 ---
 ## Session info
 
-This code was developed and tested on MacOS X 10.9.5 in R version 3.3.3 and on MacOS 12.3 in R version 4.1.3. 
+This code was developed and tested on MacOS X 10.9.5 in R version 3.3.3 and on MacOS 12.3.1 in R version 4.1.3. 
 
 ```R
 sessionInfo()
@@ -104,7 +104,7 @@ sessionInfo()
 ```R
 #> R version 4.1.3 (2022-03-10)
 #> Platform: x86_64-apple-darwin17.0 (64-bit)
-#> Running under: macOS Monterey 12.3
+#> Running under: macOS Monterey 12.3.1
 
 #> Matrix products: default
 #> BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
