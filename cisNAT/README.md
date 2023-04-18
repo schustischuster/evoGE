@@ -28,18 +28,17 @@ Install and load the following R packages before running the reproducible script
 
 ```R
 
-# Create list of required packages
-lib_List <- c("plyr", "dplyr", "GenomicRanges", "rtracklayer", "ggplot2", "mgcv", "data.table")
+# Required packages
+lib_List <- c("plyr", "dplyr", "GenomicRanges", "rtracklayer", "ggplot2", "scales", "mgcv", "data.table")
 
-loadLibrary <- function(x) { 
-    if (!require(x, character.only = T)) {
-        install.packages('x')
-        library(x)
-    }
+# Install missing packages
+instpack <- lib_List %in% installed.packages()[,"Package"]
+if (any(instpack == FALSE)) {
+  install.packages(lib_List[!instpack])
 }
 
 # Load packages
-invisible(lapply(lib_List, loadLibrary))
+invisible(lapply(lib_List, library, character.only = TRUE))
 
 ```
   
