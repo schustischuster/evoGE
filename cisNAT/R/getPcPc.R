@@ -201,15 +201,26 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
     } else if ((is.element("AL", species)) && (is.element("comparative", experiment))) {
 
 		all_genes_counts <- dplyr::select(all_genes_counts, -c(
-			flower_stg11_stamens_8w.10w.25d_1, 
-			flower_stg11_stamens_8w.10w.25d_2, 
-			flower_stg11_stamens_8w.10w.25d_3,
-			flower_early_stg12_stamens_8w.10w.23d_1,
-			flower_early_stg12_stamens_8w.10w.23d_2,
-			flower_early_stg12_stamens_8w.10w.23d_3,
-			flower_late_stg12_stamens_8w.10w.21d_1,
-			flower_late_stg12_stamens_8w.10w.21d_2,
-			flower_late_stg12_stamens_8w.10w.21d_3)) #tibble w/o pollen samles
+			flower_stg11_stamens_8w.10w.25d_.1., 
+			flower_stg11_stamens_8w.10w.25d_.2., 
+			flower_stg11_stamens_8w.10w.25d_.3.,
+			flower_early_stg12_stamens_8w.10w.23d_.1.,
+			flower_early_stg12_stamens_8w.10w.23d_.2.,
+			flower_early_stg12_stamens_8w.10w.23d_.3.,
+			flower_late_stg12_stamens_8w.10w.21d_.1.,
+			flower_late_stg12_stamens_8w.10w.21d_.2.,
+			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samles
+
+		all_genes_tpm <- dplyr::select(all_genes_tpm, -c(
+			flower_stg11_stamens_8w.10w.25d_.1., 
+			flower_stg11_stamens_8w.10w.25d_.2., 
+			flower_stg11_stamens_8w.10w.25d_.3.,
+			flower_early_stg12_stamens_8w.10w.23d_.1.,
+			flower_early_stg12_stamens_8w.10w.23d_.2.,
+			flower_early_stg12_stamens_8w.10w.23d_.3.,
+			flower_late_stg12_stamens_8w.10w.21d_.1.,
+			flower_late_stg12_stamens_8w.10w.21d_.2.,
+			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samles
 
 
 		species_id <- "AL_comparative_samples"
@@ -234,7 +245,7 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	GTF_df = as.data.frame(GTF)
 
 
-	# Get all protein-coding genes
+	# Get all protein-coding and long non-coding genes
 	GTF_df_cd_nc <- GTF_df[GTF_df$gene_biotype %in% c("protein_coding","lnc_exonic_antisense","lnc_intronic_antisense"), ]
 
 	# Remove all chloroplast and mito genes
