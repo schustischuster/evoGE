@@ -195,7 +195,7 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			flower_early_stg12_carpels_21d._.3.)) #tibble w/o pollen samles
 
 
-		species_id <- "AT_comparative_samples"
+		species_id <- "AT_comp"
 
 
     } else if ((is.element("AL", species)) && (is.element("comparative", experiment))) {
@@ -223,7 +223,7 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samles
 
 
-		species_id <- "AL_comparative_samples"
+		species_id <- "AL_comp"
 
 
     }
@@ -245,8 +245,8 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	GTF_df = as.data.frame(GTF)
 
 
-	# Get all protein-coding and long non-coding genes
-	GTF_df_cd_nc <- GTF_df[GTF_df$gene_biotype %in% c("protein_coding","lnc_exonic_antisense","lnc_intronic_antisense"), ]
+	# Get all protein-coding genes
+	GTF_df_cd_nc <- GTF_df[GTF_df$gene_biotype %in% c("protein_coding"), ]
 
 	# Remove all chloroplast and mito genes
 	# Reason: RNA-seq prep kit used is Ribo_zero, which incompletely removes Pt and
@@ -364,40 +364,39 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   		call. = TRUE
     		)
 
-		# Add keys to data frame
-		key <- seq(1, nrow(df), 1)
-		df <- cbind(as.data.frame(key),df)
-
 		# Define threshold function
 		getThreshold <- function(df) {
 
 			# Split data frame by sample replicates into a list then apply threshold for each subset
 	
-			th_replicates <- do.call(cbind, lapply(split.default(df[3:ncol(df)], #adjust columns
-								rep(seq_along(df), each = 3, length.out = ncol(df)-2)), #adjust columns
+			th_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], #adjust columns
+								rep(seq_along(df), each = 3, length.out = ncol(df)-1)), #adjust columns
 								function(x) {
 									x[rowSums(x > threshold) < 2, ] <- 0; 
 									x
 								}
 							))
 
-			# Bind key/gene_id/id/gene_source/gene_biotype/seqnames/start/end/strand/width/width_overlap columns to thresholded data frame
-			th_replicates <- cbind(df[1:11], th_replicates)
+			# Get max and mean expression for each gene
+			th_replicates$max <- apply(X = th_replicates, MARGIN = 1, FUN = max)
+			th_replicates$avg <- apply(X = th_replicates, MARGIN = 1, FUN = mean)
+
+			# Bind key and gene_id columns to thresholded data frame
+			th_replicates <- cbind(df[1], th_replicates)
+
+			# Reorder df
+			th_replicates <- cbind(th_replicates[c("gene_id", "max", "avg")], 
+				th_replicates[2:(ncol(th_replicates)-2)])
 
 			# Remove all rows that only contain "0"
-			th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-2, drop = FALSE] > 0) > 0),]
+			th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-3, drop = FALSE] > 0) > 0),]
 
 			return(th_replicates)
 		}
 
 		# Apply threshold to data and extract keys ("key")
-		keys_data <- getThreshold(df)
-		keys_data <- keys_data[, 1:2]
-		names(keys_data) <- c("key", "ID")
-
-		# Generate thresholded data frame based on keys
-		th_df <- merge(keys_data, df, by = "key")
-		th_df <- th_df[-1:-2]
+		data <- getThreshold(df)
+		th_df <- data[1:3]
 
 		return(th_df)
 	}
@@ -407,13 +406,14 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	genes_tpm_th <- applyThreshold(all_genes_tpm, threshold)
 
 
-	strand_plus_overlap_genes_counts_th <- strand_plus_overlap_genes_counts[(
-		strand_plus_overlap_genes_counts$gene_id %in% genes_tpm_th$gene_id),]
-	strand_minus_overlap_genes_counts_th <- strand_minus_overlap_genes_counts[(
-		strand_minus_overlap_genes_counts$gene_id %in% genes_tpm_th$gene_id),]
-
-
 	# Remove all gene pairs that show expression below threshold
+	strand_plus_overlap_genes_counts_th <- merge(
+		genes_tpm_th, strand_plus_overlap_genes_counts, by = "gene_id")
+	strand_minus_overlap_genes_counts_th <- merge(
+		genes_tpm_th, strand_minus_overlap_genes_counts, by = "gene_id")
+
+
+	# Remove all gene pairs where only one partner shows expression above threshold
 	strand_plus_overlap_genes_counts_th <- strand_plus_overlap_genes_counts_th[(
 		strand_plus_overlap_genes_counts_th$id %in% strand_minus_overlap_genes_counts_th$id),]
 	strand_minus_overlap_genes_counts_th <- strand_minus_overlap_genes_counts_th[(
@@ -434,14 +434,12 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 		message("Computing correlation...")
 
 		df1$Spearman <- sapply(1:nrow(df1), function(i) 
-	    	cor(as.numeric(df1[i, 11:df1_col]), as.numeric(df2[i, 11:df2_col]), method=c("spearman")))
+	    	cor(as.numeric(df1[i, 13:df1_col]), as.numeric(df2[i, 13:df2_col]), method = c("spearman")))
 
-		# log2-transform TPM values before computing Pearson
-		df1[, 11:df1_col] <- log2(df1[, 11:df1_col] + 1)
-		df2[, 11:df1_col] <- log2(df2[, 11:df2_col] + 1)
+		# no log-transformation of values required before computing Pearson (VST counts)
 
 		df1$Pearson <- sapply(1:nrow(df1), function(i) 
-	    	cor(as.numeric(df1[i, 11:df1_col]), as.numeric(df2[i, 11:df2_col]), method=c("pearson")))
+	    	cor(as.numeric(df1[i, 13:df1_col]), as.numeric(df2[i, 13:df2_col]), method = c("pearson")))
 
 		return(df1)
 	}
@@ -464,6 +462,8 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 		end1 = strand_plus_overlap_genes$end,
 		strand1 = strand_plus_overlap_genes$strand,
 		width1 = strand_plus_overlap_genes$width,
+		max_expr1 = strand_plus_overlap_genes$max,
+		mean_expr1 = strand_plus_overlap_genes$avg,
 		gene_id2 = strand_minus_overlap_genes$gene_id,
 		gene_source2 = strand_minus_overlap_genes$gene_source,
 		gene_biotype2 = strand_minus_overlap_genes$gene_biotype,
@@ -472,12 +472,14 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 		end2 = strand_minus_overlap_genes$end,
 		strand2 = strand_minus_overlap_genes$strand,
 		width2 = strand_minus_overlap_genes$width,
+		max_expr2 = strand_minus_overlap_genes$max,
+		mean_expr2 = strand_minus_overlap_genes$avg,
 		overlap = strand_minus_overlap_genes$width_overlap,
 		Spearman = strand_plus_overlap_genes$Spearman,
 		Pearson = strand_plus_overlap_genes$Pearson)
 
 
-	# Make table of overlapping protein-coding/protein-coding gene pairs
+	# Make sure that table only contains overlapping protein-coding gene pairs
 	pc_pc_overlap_gene_pairs <- filter(all_overlap_gene_pairs, 
 		gene_biotype1 == "protein_coding" & gene_biotype2 == "protein_coding")
 
