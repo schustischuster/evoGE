@@ -9,8 +9,8 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Required Packages](#required-packages)
   * [Data input](#data-input)
 * [Data analysis](#data-analysis)
-  * [Retrieve coding-coding gene overlapp](#retrieve-coding-coding-gene-overlapp)
-  * [Retrieve non-coding-coding gene overlapp](#retrieve-non-coding-coding-gene-overlapp)
+  * [Retrieve coding-coding gene overlapp and pairwise expression correlation](#retrieve-coding-coding-gene-overlapp-and-pairwise-expression-correlation)
+  * [Calculate pairwise non-coding/protein-coding gene correlation](#calculate-pairwise-non-coding/protein-coding-gene-correlation)
   * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
   * [Get intergenic distance of neighboring genes](#get-intergenic-distance-of-neighboring-genes)
   * [Retrieve expression correlation between randomized protein-coding gene pairs](#retrieve-expression-correlation-between-randomized-protein-coding-gene-pairs)
@@ -65,7 +65,7 @@ sourceDir(path_to_R_files)
 
 ## Data analysis
 
-### Retrieve coding-coding gene overlapp
+### Retrieve coding-coding gene overlapp and pairwise expression correlation
 
 The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, retrieve maximum and mean expression values for each gene, compute pairwise SAS correlations across all samples, and write the results to a CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater than 0.5 TPM in at least two out of three replicates in at least one sample type. 
 
@@ -81,25 +81,19 @@ lapply(species_ls, getPcPc, experiment = "comparative", threshold = 0.5)
 
 ```
 
-### Retrieve non-coding-coding gene overlapp
+### Calculate pairwise non-coding/protein-coding gene correlation
 
-The following function will extract all non-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, compute pairwise SAS correlations across all samples, and write the results to a CSV file. A sense-antisense pair is considered as expressed if both non-coding antisense and coding sense transcript reach the threshold, which can be set to any value, in at least two out of three replicates in at least one sample type. 
+The following function will compute pairwise cis-natural antisense transcript (cisNAT)/protein-coding (PC) gene correlations across all samples, retrieve maximum and mean expression values for each gene, and write the results to a CSV file. A threshold of 0.5 TPM is applied for both cisNAT and PC genes. 
 
-* `getNcPc(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), experiment = c("single-species", "comparative"), threshold)`
+* `getCorNcPc(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"), experiment = c("single-species", "comparative"))`
 
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
-thresholds <- list(0.5, 2, 5, 10) # threshold values are TPM
+species_ls <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
 
-lapply(thresholds, getNcPc, species = "ATH", experiment = "single-species")
-lapply(thresholds, getNcPc, species = "ATH", experiment = "comparative")
-lapply(thresholds, getNcPc, species = "AL", experiment = "comparative")
-lapply(thresholds, getNcPc, species = "CR", experiment = "comparative")
-lapply(thresholds, getNcPc, species = "ES", experiment = "comparative")
-lapply(thresholds, getNcPc, species = "TH", experiment = "comparative")
-lapply(thresholds, getNcPc, species = "MT", experiment = "comparative")
-lapply(thresholds, getNcPc, species = "BD", experiment = "comparative")
+getCorNcPc("AT", "single-species")
+lapply(species_ls, getCorNcPc, experiment = "comparative")
 
 ```
 
