@@ -255,6 +255,8 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	} # Remove all genes that are not expressed in comparative samples
 
+	all_genes_tpm[6:ncol(all_genes_tpm)] <- log2(all_genes_tpm[6:ncol(all_genes_tpm)] + 1)
+
 	# Replace TPM expression values by VST counts
 	all_genes_count <- merge(all_genes_count, all_genes_tpm, by = "gene_id")
 	all_genes_count <- all_genes_count[-30:-53]
@@ -262,13 +264,15 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 		all_genes_count[2:25])
 
 
-	all_genes_tpm_ls <- split(all_genes_tpm, f = all_genes_tpm$prt_id) 
+	all_genes_tpm_ls <- split(all_genes_tpm, f = all_genes_tpm$prt_id)
+	all_genes_count_ls <- split(all_genes_count, f = all_genes_count$prt_id)
 	# Split data by same protein-coding gene id
-	# 4100 protein-coding gene/cisNAT pairs for AT
+	# 4100 protein-coding gene/cisNAT pairs for AT comparative (tpm)
 
 	all_genes_tpm_ls <- Filter(function(dt) nrow(dt) > 1, all_genes_tpm_ls)
+	all_genes_count_ls <- Filter(function(dt) nrow(dt) > 1, all_genes_count_ls)
 	# Remove all list entries that contain unpaired entries
-	# 3843 protein-coding gene/cisNAT pairs for AT
+	# 3843 protein-coding gene/cisNAT pairs for AT comparative (tpm)
 
 	length(all_genes_tpm_ls[purrr::map(all_genes_tpm_ls, nrow) > 2])
 	# check how many genes have more than one NAT overlapping = 150 for AT
@@ -292,7 +296,7 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			cor_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "pearson")$estimate
 			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
 			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-			df_out <- data.frame(df[-1, 1:5], Spearman = cor_spe, Pearson = cor_pea , maxPC = max[1], maxNC = max[2], 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = cor_spe, Pearson = cor_pea , maxPC = max[1], maxNC = max[2], 
 				meanPC = avg[1], meanNC = avg[2], maxRatio = max[2]/max[1], meanRatio = avg[2]/avg[1], 
 				maxSum = max[2]+max[1], meanSum = avg[2]+avg[1])
 		
@@ -304,7 +308,7 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			cor2_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[3, 6:ncol(df)]), method = "pearson")$estimate
 			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
 			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-			df_out <- data.frame(df[-1, 1:5], Spearman = c(cor1_spe, cor2_spe), Pearson = c(cor1_pea, cor2_pea), 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = c(cor1_spe, cor2_spe), Pearson = c(cor1_pea, cor2_pea), 
 				maxPC = rep(max[1], 2), maxNC = c(max[2], max[3]), meanPC = rep(avg[1], 2), meanNC = c(avg[2], avg[3]), 
 				maxRatio = c(max[2]/max[1], max[3]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1]), 
 				maxSum = c(max[2]+max[1], max[3]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1]))
@@ -319,7 +323,7 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			cor3_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[4, 6:ncol(df)]), method = "pearson")$estimate
 			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
 			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-			df_out <- data.frame(df[-1, 1:5], Spearman = c(cor1_spe, cor2_spe, cor3_spe), Pearson = c(cor1_pea, cor2_pea, cor3_pea), 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = c(cor1_spe, cor2_spe, cor3_spe), Pearson = c(cor1_pea, cor2_pea, cor3_pea), 
 				maxPC = rep(max[1], 3), maxNC = c(max[2], max[3], max[4]), meanPC = rep(avg[1], 3), meanNC = c(avg[2], avg[3], avg[4]), 
 				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1]), 
 				maxSum = c(max[2]+max[1], max[3]+max[1], max[4]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1], avg[4]+avg[1]))
@@ -332,10 +336,28 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	# startup message
 	message("Computing correlation...")
 
-	cd_nc_cor_ls <- lapply(all_genes_tpm_ls, getCdNcCor)
-	cd_nc_cor <- do.call("rbind", cd_nc_cor_ls)
+	cd_nc_cor_count <- suppressWarnings(do.call("rbind", lapply(all_genes_count_ls, getCdNcCor)))
+	cd_nc_cor_tpm <- suppressWarnings(do.call("rbind", lapply(all_genes_tpm_ls, getCdNcCor)))
 
-	cd_nc_cor <- cd_nc_cor[cd_nc_cor$biotype != "protein_coding",]
+	cd_nc_cor_count <- cd_nc_cor_count[cd_nc_cor_count$biotype != "protein_coding",]
+	cd_nc_cor_tpm <- cd_nc_cor_tpm[cd_nc_cor_tpm$biotype != "protein_coding",]
+
+
+
+	# Show message
+	message("Write data...")
+
+	# Write final data tables to csv files and store them in /out_dir/output/plots
+	if (!dir.exists(file.path(out_dir, "output", "NAT_expr_cor"))) 
+		dir.create(file.path(out_dir, "output", "NAT_expr_cor"), recursive = TRUE)
+
+	fname_count <- sprintf('%s.csv', paste(species_id, experiment, "cd_nc_cor_count", sep = "_"))
+	fname_tpm <- sprintf('%s.csv', paste(species_id, experiment, "cd_nc_cor_tpm", sep = "_"))
+
+	write.table(cd_nc_cor_count, file = file.path(out_dir, "output", "NAT_expr_cor", fname_count), 
+		sep = ";", dec = ".", row.names = FALSE, col.names = TRUE)
+	write.table(cd_nc_cor_tpm, file = file.path(out_dir, "output", "NAT_expr_cor", fname_tpm), 
+		sep = ";", dec = ".", row.names = FALSE, col.names = TRUE)
 
 
 
@@ -348,9 +370,11 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 		dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
 
 
+	# Generate plots for comparative samples
+	# AT single species correlation plot has to be generated independently, because it also
+	# contains correlations of neighbouring and overlapping protein-coding genes
 
-
-	if (species_id == "AT") {
+	if (species_id != "AT" | species_id != "AL") {
 
 
 		# prepare data for ggplot2
