@@ -351,8 +351,8 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	if (!dir.exists(file.path(out_dir, "output", "NAT_expr_cor"))) 
 		dir.create(file.path(out_dir, "output", "NAT_expr_cor"), recursive = TRUE)
 
-	fname_count <- sprintf('%s.csv', paste(species_id, experiment, "cd_nc_cor_count", sep = "_"))
-	fname_tpm <- sprintf('%s.csv', paste(species_id, experiment, "cd_nc_cor_tpm", sep = "_"))
+	fname_count <- sprintf('%s.csv', paste(species_id, "cd_nc_cor_count", sep = "_"))
+	fname_tpm <- sprintf('%s.csv', paste(species_id, "cd_nc_cor_tpm", sep = "_"))
 
 	write.table(cd_nc_cor_count, file = file.path(out_dir, "output", "NAT_expr_cor", fname_count), 
 		sep = ";", dec = ".", row.names = FALSE, col.names = TRUE)
