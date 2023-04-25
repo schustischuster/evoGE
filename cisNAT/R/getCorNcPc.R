@@ -94,36 +94,43 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
     if (is.element("AT", species)) {
     	GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
         genesTPM = file.path(in_dir, "Expression_data", "AT_lnc_all_antisense_genes_inter_tpm_mat_deseq_sample_ids_extended.csv")
+        genesCount = file.path(in_dir, "Expression_data", "AT_genes_inter_norm_count_mat_vsd_sample_names.csv")
         species_id <- "AT"
 
     } else if (is.element("AL", species)) {
 		GTFfile = file.path(in_dir, "GTF", "AL_final_annotation.gtf")
 		genesTPM = file.path(in_dir, "Expression_data", "AL_lnc_all_antisense_genes_inter_tpm_mat_deseq_sample_ids_extended.csv")
+		genesCount = file.path(in_dir, "Expression_data", "AL_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "AL"
 
     } else if (is.element("CR", species)) {
 		GTFfile = file.path(in_dir, "GTF", "CR_final_annotation.gtf")
 		genesTPM = file.path(in_dir, "Expression_data", "CR_lnc_all_antisense_genes_inter_tpm_mat_deseq_sample_ids_extended.csv")
+		genesCount = file.path(in_dir, "Expression_data", "CR_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "CR"
 
     } else if (is.element("ES", species)) {
 		GTFfile = file.path(in_dir, "GTF", "ES_final_annotation.gtf")
 		genesTPM = file.path(in_dir, "Expression_data", "ES_lnc_all_antisense_genes_inter_tpm_mat_deseq_sample_ids_extended.csv")
+		genesCount = file.path(in_dir, "Expression_data", "ES_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "ES"
 
     } else if (is.element("TH", species)) {
 		GTFfile = file.path(in_dir, "GTF", "TH_final_annotation.gtf")
 		genesTPM = file.path(in_dir, "Expression_data", "TH_lnc_all_antisense_genes_inter_tpm_mat_deseq_sample_ids_extended.csv")
+		genesCount = file.path(in_dir, "Expression_data", "TH_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "TH"
 
     } else if (is.element("MT", species)) {
 		GTFfile = file.path(in_dir, "GTF", "MT_final_annotation.gtf")
 		genesTPM = file.path(in_dir, "Expression_data", "MT_lnc_all_antisense_genes_inter_tpm_mat_deseq_sample_ids_extended.csv")
+		genesCount = file.path(in_dir, "Expression_data", "MT_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "MT"
 
     } else if (is.element("BD", species)) {
 		GTFfile = file.path(in_dir, "GTF", "BD_final_annotation.gtf")
 		genesTPM = file.path(in_dir, "Expression_data", "BD_lnc_all_antisense_genes_inter_tpm_mat_deseq_sample_ids_extended.csv")
+		genesCount = file.path(in_dir, "Expression_data", "BD_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		species_id <- "BD"
     }
 
@@ -133,7 +140,9 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	# Read expression data
 	all_genes_tpm <- read.table(genesTPM, sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
+	all_genes_count <- read.table(genesCount, sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
 	colnames(all_genes_tpm)[1] <- "gene_id"
+	all_genes_count <- tibble::rownames_to_column(all_genes_count, "gene_id")
 
 
 	# Extract expression data for comparative samples (w/o pollen)
@@ -167,6 +176,34 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			Sample_285)) # flower stg12 carpel.3
 		### tibble w/o pollen samles
 
+		all_genes_count <- dplyr::select(all_genes_count, c(
+			gene_id,  
+			root_whole_root_5d_.1., # root 5d.1
+			root_whole_root_5d_.2., # root 5d.2
+			root_whole_root_5d_.3., # root 5d.3
+			hypocotyl_10d_.1., # hypocotyl 10d.1
+			hypocotyl_10d_.2., # hypocotyl 10d.2
+			hypocotyl_10d_.3., # hypocotyl 10d.3
+			leaf_1.2_7d_.1., # leaf 1+2 7d.1
+			leaf_1.2_7d_.2., # leaf 1+2 7d.2
+			leaf_1.2_7d_.3., # leaf 1+2 7d.3
+			apex_vegetative_7d_.1., # apex veg 7d.1
+			apex_vegetative_7d_.2., # apex veg 7d.2
+			apex_vegetative_7d_.3., # apex veg 7d.3
+			apex_inflorescence_21d_.1., # apex inf 21d.1
+			apex_inflorescence_21d_.2., # apex inf 21d.2
+			apex_inflorescence_21d_.3., # apex inf 21d.3
+			flower_stg12_21d._.1., # flower stg12 21d.1
+			flower_stg12_21d._.2., # flower stg12 21d.2
+			flower_stg12_21d._.3., # flower stg12 21d.3
+			flower_stg12_stamens_21d._.1., # flower stg12 stamen.1
+			flower_stg12_stamens_21d._.2., # flower stg12 stamen.2
+			flower_stg12_stamens_21d._.3., # flower stg12 stamen.3
+			flower_early_stg12_carpels_21d._.1., # flower stg12 carpel.1
+			flower_early_stg12_carpels_21d._.2., # flower stg12 carpel.2
+			flower_early_stg12_carpels_21d._.3.)) # flower stg12 carpel.3
+		### tibble w/o pollen samles
+
 		species_id <- "AT_comparative_samples"
 
 
@@ -190,7 +227,7 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
     # Stop function here to allow specific analysis of a single species
-    # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_tpm" = all_genes_tpm, "experiment" = experiment)
+    # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_tpm" = all_genes_tpm, "all_genes_count" = all_genes_count, "experiment" = experiment)
     # return(return_list)
     # }
     # return_objects <- getCorNcPc("AT", "single-species") # read in GTF and expression data for A.thaliana
@@ -206,53 +243,74 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	} # Remove all genes that are not expressed in comparative samples
 
+	# Replace TPM expression values by VST counts
+	all_genes_count <- merge(all_genes_count, all_genes_tpm, by = "gene_id")
+	all_genes_count <- all_genes_count[-30:-53]
+	all_genes_count <- cbind(all_genes_count[c("gene_id", "prt_id", "biotype", "source", "info")], 
+		all_genes_count[2:25])
+
+
 	all_genes_tpm_ls <- split(all_genes_tpm, f = all_genes_tpm$prt_id) 
 	# Split data by same protein-coding gene id
-	# 4103 protein-coding gene/cisNAT pairs for AT
+	# 4100 protein-coding gene/cisNAT pairs for AT
 
 	all_genes_tpm_ls <- Filter(function(dt) nrow(dt) > 1, all_genes_tpm_ls)
 	# Remove all list entries that contain unpaired entries
+	# 3843 protein-coding gene/cisNAT pairs for AT
 
 	length(all_genes_tpm_ls[purrr::map(all_genes_tpm_ls, nrow) > 2])
-	# check how many genes have more than one NAT overlapping = 152 for AT
+	# check how many genes have more than one NAT overlapping = 150 for AT
 
 	length(all_genes_tpm_ls[purrr::map(all_genes_tpm_ls, nrow) > 3])
 	# 7 genes overlapping 3 cisNATs for AT
 
 
+	# Show message
+	message("Calculate correlations...")
+
+
 	# Compute spearman and pearson correlations
 	getCdNcCor <- function(df) {
 
-		df[, 6:ncol(df)] <- log2(df[, 6:ncol(df)] + 1) # log-transform TPM
+		# no log-transformation required for Pearson correlation estimation (VST)
 
 		if (nrow(df) == 2) {
 
-			cor <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]))$estimate
+			cor_spe <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "spearman")$estimate
+			cor_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "pearson")$estimate
 			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
 			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-			df_out <- data.frame(df[-1, 1:5], cor = c(cor), maxPC = max[1], maxNC = max[2], 
-				meanPC = avg[1], meanNC = avg[2], maxRatio = max[2]/max[1], meanRatio = avg[2]/avg[1])
+			df_out <- data.frame(df[-1, 1:5], Spearman = cor_spe, Pearson = cor_pea , maxPC = max[1], maxNC = max[2], 
+				meanPC = avg[1], meanNC = avg[2], maxRatio = max[2]/max[1], meanRatio = avg[2]/avg[1], 
+				maxSum = max[2]+max[1], meanSum = avg[2]+avg[1])
 		
 		} else if (nrow(df) == 3) {
 
-			cor1 <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]))$estimate
-			cor2 <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[3, 6:ncol(df)]))$estimate
+			cor1_spe <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "spearman")$estimate
+			cor2_spe <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[3, 6:ncol(df)]), method = "spearman")$estimate
+			cor1_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "pearson")$estimate
+			cor2_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[3, 6:ncol(df)]), method = "pearson")$estimate
 			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
 			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-			df_out <- data.frame(df[-1, 1:5], cor = c(cor1, cor2), maxPC = rep(max[1], 2), maxNC = c(max[2], max[3]), 
-				meanPC = rep(avg[1], 2), meanNC = c(avg[2], avg[3]), maxRatio = c(max[2]/max[1], max[3]/max[1]), 
-				meanRatio = c(avg[2]/avg[1], avg[3]/avg[1]))
+			df_out <- data.frame(df[-1, 1:5], Spearman = c(cor1_spe, cor2_spe), Pearson = c(cor1_pea, cor2_pea), 
+				maxPC = rep(max[1], 2), maxNC = c(max[2], max[3]), meanPC = rep(avg[1], 2), meanNC = c(avg[2], avg[3]), 
+				maxRatio = c(max[2]/max[1], max[3]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1]), 
+				maxSum = c(max[2]+max[1], max[3]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1]))
 		
 		} else if (nrow(df) == 4) {
 
-			cor1 <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]))$estimate
-			cor2 <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[3, 6:ncol(df)]))$estimate
-			cor3 <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[4, 6:ncol(df)]))$estimate
+			cor1_spe <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "spearman")$estimate
+			cor2_spe <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[3, 6:ncol(df)]), method = "spearman")$estimate
+			cor3_spe <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[4, 6:ncol(df)]), method = "spearman")$estimate
+			cor1_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "pearson")$estimate
+			cor2_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[3, 6:ncol(df)]), method = "pearson")$estimate
+			cor3_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[4, 6:ncol(df)]), method = "pearson")$estimate
 			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
 			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-			df_out <- data.frame(df[-1, 1:5], cor = c(cor1, cor2, cor3), maxPC = rep(max[1], 3), maxNC = c(max[2], max[3], max[4]), 
-				meanPC = rep(avg[1], 3), meanNC = c(avg[2], avg[3], avg[4]), maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1]), 
-				meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1]))
+			df_out <- data.frame(df[-1, 1:5], Spearman = c(cor1_spe, cor2_spe, cor3_spe), Pearson = c(cor1_pea, cor2_pea, cor3_pea), 
+				maxPC = rep(max[1], 3), maxNC = c(max[2], max[3], max[4]), meanPC = rep(avg[1], 3), meanNC = c(avg[2], avg[3], avg[4]), 
+				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1]), 
+				maxSum = c(max[2]+max[1], max[3]+max[1], max[4]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1], avg[4]+avg[1]))
 		
 		}
 
@@ -264,6 +322,270 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	cd_nc_cor_ls <- lapply(all_genes_tpm_ls, getCdNcCor)
 	cd_nc_cor <- do.call("rbind", cd_nc_cor_ls)
+
+	cd_nc_cor <- cd_nc_cor[cd_nc_cor$biotype != "protein_coding",]
+
+
+
+	# Show message
+	message("Generate plots...")
+
+
+	# Write final data tables to csv files and store them in /out_dir/output/plots
+	if (!dir.exists(file.path(out_dir, "output", "plots"))) 
+		dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
+
+
+
+
+	if (species_id == "AT") {
+
+
+		# prepare data for ggplot2
+		cor_AT <- data.frame(
+			class = rep("PC_NC", nrow(cd_nc_cor)), 
+			cor_NC_PC = cd_nc_cor$cor)
+
+
+
+		# Generate plots
+		plotCorAT <- function(data) {
+
+			fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
+
+			x_labels = c("PC_NC" = expression(atop(NA, atop(textstyle('PC/'), textstyle('NC')))))
+
+			#data$cor <- factor(data$class, levels = unique(data$class))
+
+			p <- ggplot(data, aes(x = class, y = cor_NC_PC, color = class)) + 
+			geom_boxplot(aes(fill = class), colour = "black", width = 0.44, outlier.shape = NA, 
+				size = 0.8, fatten = 2.8, notch = TRUE) + 
+			scale_x_discrete(expand = c(0.005, 0), labels = x_labels) + 
+			scale_y_continuous(limits = c(-1.05, 1), expand = c(0, 0), breaks = c(-1, -0.5, 0, 0.5, 1))
+
+			q <- p + 
+			scale_fill_manual(values = c("PC_NC" = "#f7ddb0")) + 
+			theme_classic() + 
+			xlab("Sense-Antisense Pair") + ylab("Correlation") + ggtitle("") + 
+			theme(text = element_text(size = 23.5), 
+				axis.ticks.length = unit(0.2, "cm"), 
+				axis.ticks = element_line(colour = "black", size = 0.95), 
+				axis.line = element_line(colour = 'black', size = 0.95), 
+				plot.margin = unit(c(1, 1, 1, 1), "cm"), 
+				axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 6.4, b = 0, l = 3.38), 
+					colour = "black", face = "plain"), 
+				axis.title.x = element_text(size = 18.75, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+					colour = "black", face = "bold"), 
+				axis.text.x = element_text(size = 16.25, margin = margin(t = -7, b = 2), colour = "black", 
+					angle = 0, vjust = 1, hjust = 0.5), 
+				axis.text.y = element_text(size = 16.5, angle = 0, margin = margin(l = 0, r = 1.5), colour = "black"),   
+				legend.position = "none")
+
+			ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+				width = 7, height = 5.75, units = c("in"))
+		}
+
+      plotCorAT(data = cor_AT)
+
+
+
+
+
+	}
+
+
+
+	#------------------------------------- Generate plots -------------------------------------
+
+
+	
+
+
+	
+
+
+
+
+
+
+
+
+
+
+	# Generate plots
+      plotMaxExprDist <- function(data, species) {
+
+         if (species == "ACE") {
+
+            p_mwu <- p_mwu[!grepl("AT", p_mwu$species),]
+
+            # Create df for FDR p-value mapping
+            mwu_df <- data.frame(
+                class = rep(c("coding_non-core", "coding_core", "lncRNA_non-core", "lncRNA_core"), 
+                    times = 3), 
+                y = rep(c(19.68, 18.25), times = 6),
+                label = ifelse(p_mwu$p_value < 1e-07, "****", 
+
+                    c(paste("italic('P =')~", set_scientific(p_mwu$p_value)))), 
+
+                species = rep(c("A.lyrata", "C.rubella", "E.salsugineum"), each = 4)
+            )
+
+            # Create df for gem_segments
+            h_seg_df <- data.frame(
+                x = rep(c(1.105, 2.105, 4.107, 5.107), times = 3), 
+                xend = rep(c(3.105, 3.105, 6.107, 6.107), times = 3), 
+                y = rep(c(20.08, 18.65, 20.08, 18.65), times = 3), 
+                yend = rep(c(20.08, 18.65, 20.08, 18.65), times = 3), 
+                species = rep(c("A.lyrata", "C.rubella", "E.salsugineum"), each = 4)
+            )
+
+            v_seg_df <- data.frame(
+                x = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 3), 
+                xend = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 3), 
+                y = rep(c(19.64, 19.64, 18.2, 18.2, 19.64, 19.64, 18.2, 18.2), times = 3), 
+                yend = rep(c(20.08, 20.08, 18.65, 18.65, 20.08, 20.08, 18.65, 18.65), times = 3), 
+                species = rep(c("A.lyrata", "C.rubella", "E.salsugineum"), each = 4)
+            )
+
+            # Adjust position of p-value labels
+            mwu_df$label <- paste0(mwu_df$label, c("", "              "))
+
+            y_scale <- c(2.9, 21.125)
+
+            plt_mar <- c(0.1, 1.55, 1.7, 0.55)
+
+            stp_mar <- margin(0.25, 0, 0.25, 0, "cm")
+
+         } else if (species == "AT") { 
+
+          p_mwu <- p_mwu[!grepl("AT", p_mwu$species),]
+
+            # Create df for FDR p-value mapping
+            mwu_df <- data.frame(
+                class = rep(c("coding_non-core", "coding_core", "lncRNA_non-core", "lncRNA_core"), 
+                    times = 1), 
+                y = rep(c(18.77, 17.6), times = 2),
+                label = ifelse(p_mwu$p_value < 1e-07, "****", 
+
+                    c(paste("italic('P =')~", set_scientific(p_mwu$p_value)))), 
+
+                species = rep(c("A.thaliana"), each = 4)
+            )
+
+            # Create df for gem_segments
+            h_seg_df <- data.frame(
+                x = rep(c(1.105, 2.105, 4.107, 5.107), times = 1), 
+                xend = rep(c(3.105, 3.105, 6.107, 6.107), times = 1), 
+                y = rep(c(19.08, 17.925, 19.08, 17.925), times = 1), 
+                yend = rep(c(19.08, 17.925, 19.08, 17.925), times = 1), 
+                species = rep(c("A.thaliana"), each = 4)
+            )
+
+            v_seg_df <- data.frame(
+                x = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 1), 
+                xend = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 1), 
+                y = rep(c(18.64, 18.64, 17.45, 17.45, 18.64, 18.64, 17.45, 17.45), times = 1), 
+                yend = rep(c(19.08, 19.08, 17.9, 17.9, 19.08, 19.08, 17.9, 17.9), times = 1), 
+                species = rep(c("A.thaliana"), each = 4)
+            )
+
+            # Adjust position of p-value labels
+            mwu_df$label <- paste0(mwu_df$label, c("", "              "))
+
+            y_scale <- c(5.5, 19.89)
+
+            plt_mar <- c(0.1, 32.475, 1.7, 0.55)
+
+            stp_mar <- margin(0.24, 0, 0.26, 0, "cm")
+
+         }
+
+         fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
+
+         x_lab <- c(Root = "Rt", Hypocotyl = "Hc", Leaf = "Lf", Apex_veg = "Av", 
+            Apex_inf = "Ai", Flower = "Fl", Stamen = "St", Carpel = "Ca")
+
+         x_labels = c("coding_all" = expression(atop(NA, atop(textstyle('All'), textstyle('PC')))), 
+            "coding_non-core" = expression(atop(NA, atop(textstyle('PC w/o'), textstyle('Ortho')))), 
+            "coding_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('PC')))), 
+            "lncRNA_all" = expression(atop(NA, atop(textstyle('All'), textstyle('lnc')))), 
+            "lncRNA_non-core" = expression(atop(NA, atop(textstyle('lnc w/o'), textstyle('Ortho')))), 
+            "lncRNA_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('lnc')))))
+
+         data$species <- gsub("AT", "A.thaliana", data$species)
+         data$species <- gsub("AL", "A.lyrata", data$species)
+         data$species <- gsub("CR", "C.rubella", data$species)
+         data$species <- gsub("ES", "E.salsugineum", data$species)
+
+         data$class <- factor(data$class, levels = unique(data$class))
+         data$conservation <- factor(data$conservation, levels = unique(data$conservation))
+         data$species <- factor(data$species, levels = unique(data$species))
+
+         p <- ggplot(data, aes(x = class, y = max_expr, color = class)) + geom_flat_violin(aes(fill = class), colour = "black", position = position_nudge(x = -0.037, y = 0), alpha = 1, size = 0.8) + 
+         geom_boxplot(aes(fill = class), colour = "black", width = 0.44, outlier.shape = NA, position = position_hnudge(x = 0.25), size = 0.8, fatten = 2.8, notch = TRUE) +
+         scale_x_discrete(expand = c(0.005, 0), labels = x_labels) + 
+         scale_y_continuous(limits = y_scale, expand = c(0, 0), breaks = c(5,7.5,10,12.5,15,17.5))
+         q <- p + 
+         scale_fill_manual(values = c("coding_all" = "#f7ddb0", "coding_non-core" = "#edbb5c", 
+            "coding_core" = "#e7a007", "lncRNA_all" = "#cdbee5", "lncRNA_non-core" = "#A689CE", 
+            "lncRNA_core" = "#8055b8")) + 
+         geom_text(data = mwu_df, mapping = aes(x = class, y = y, label = label), size = 9.275, colour = "black", 
+            parse = FALSE, hjust = 0.325, vjust = 0) + 
+         geom_segment(data = h_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), size = 0.8, colour = "black") + 
+         geom_segment(data = v_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), size = 0.8, colour = "black") + 
+         theme_classic() + 
+         xlab("") + ylab("Maximum expression    \n (VST-normalized counts)     ") + ggtitle("") + 
+         theme(text = element_text(size = 23.5), 
+            strip.text = element_text(size = 19.5, face = "italic"), 
+                strip.text.x = element_text(margin = stp_mar), 
+                strip.background = element_rect(colour = 'white', fill = NA, size = 0.1), 
+                axis.ticks.length = unit(0.2, "cm"), 
+                axis.ticks = element_line(colour = "black", size = 0.95), 
+                axis.line = element_line(colour = 'black', size = 0.95), 
+                plot.margin = unit(plt_mar, "cm"), 
+                axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 6.4, b = 0, l = 3.38), 
+                    colour = "black", face = "plain"), 
+                axis.title.x = element_text(size = 18.75, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+                    colour = "black", face = "bold"), 
+                axis.text.x = element_text(size = 16.25, margin = margin(t = -7, b = 2), colour = "black", 
+                    angle = 0, vjust = 1, hjust = 0.5), 
+                axis.text.y = element_text(size = 16.5, angle = 0, margin = margin(l = 0, r = 1.5), colour = "black"), 
+                panel.spacing = unit(0.7, "cm"), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor.x = element_blank(), 
+                panel.grid.minor.y = element_blank(),  
+                legend.position ="none")
+
+         q <- q + facet_wrap(~ factor(species, levels = c("A.thaliana", "A.lyrata", "C.rubella", "E.salsugineum")) , nrow = 1, scales = "free_x")
+
+            ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+                width = 20, height = 5.75, units = c("in"))
+      }
+
+      plotMaxExprDist(data = max_expr_dist_non_AT, species = "ACE")
+      plotMaxExprDist(data = max_expr_dist_AT, species = "AT")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
