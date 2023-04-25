@@ -10,7 +10,7 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Data input](#data-input)
 * [Data analysis](#data-analysis)
   * [Retrieve coding-coding gene overlapp and pairwise expression correlation](#retrieve-coding-coding-gene-overlapp-and-pairwise-expression-correlation)
-  * [Calculate pairwise non-coding/protein-coding gene correlation](#calculate-pairwise-non-coding/protein-coding-gene-correlation)
+  * [Calculate pairwise non-coding/protein-coding gene correlation](#calculate-pairwise-non-coding-/-protein-coding-gene-correlation)
   * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
   * [Get intergenic distance of neighboring genes](#get-intergenic-distance-of-neighboring-genes)
   * [Retrieve expression correlation between randomized protein-coding gene pairs](#retrieve-expression-correlation-between-randomized-protein-coding-gene-pairs)
@@ -92,7 +92,7 @@ To generate all data tables used in this study, execute the following function c
 ```R
 species_ls <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
 
-getCorNcPc("AT", "single-species")
+getCorNcPc(species = "AT", experiment = "single-species")
 lapply(species_ls, getCorNcPc, experiment = "comparative")
 
 ```
