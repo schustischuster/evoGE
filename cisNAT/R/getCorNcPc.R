@@ -221,6 +221,18 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			Sample_303)) # flower late stg12 stamen.3
 		### tibble w/o pollen samles
 
+		all_genes_count <- dplyr::select(all_genes_count, -c(
+			flower_stg11_stamens_8w.10w.25d_.1., # flower stg11 stamen.1 
+			flower_stg11_stamens_8w.10w.25d_.2., # flower stg11 stamen.2 
+			flower_stg11_stamens_8w.10w.25d_.3., # flower stg11 stamen.3
+			flower_early_stg12_stamens_8w.10w.23d_.1., # flower early stg12 stamen.1
+			flower_early_stg12_stamens_8w.10w.23d_.2., # flower early stg12 stamen.2
+			flower_early_stg12_stamens_8w.10w.23d_.3., # flower early stg12 stamen.3
+			flower_late_stg12_stamens_8w.10w.21d_.1., # flower late stg12 stamen.1
+			flower_late_stg12_stamens_8w.10w.21d_.2., # flower late stg12 stamen.2
+			flower_late_stg12_stamens_8w.10w.21d_.3.)) # flower late stg12 stamen.3
+		### tibble w/o pollen samles
+
 		species_id <- "AL_comparative_samples"
 
 	}
