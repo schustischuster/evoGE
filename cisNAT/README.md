@@ -81,7 +81,7 @@ lapply(species_ls, getPcPc, experiment = "comparative", threshold = 0.5)
 
 ```
 
-### Calculate pairwise non-coding/protein-coding gene correlation
+### Calculate pairwise non-coding protein-coding gene correlation
 
 The following function will compute pairwise cis-natural antisense transcript (cisNAT)/protein-coding (PC) gene correlations across all samples, retrieve maximum and mean expression values for each gene, and write the results to a CSV file. A threshold of 0.5 TPM is applied for both cisNAT and PC genes. 
 
