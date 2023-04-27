@@ -79,6 +79,24 @@ BD_cd <- BD_cd[- grep("ALlnc", BD_cd$gene_id),] # rm one wrong id from list
 all_spec_ls <- list(AT_cd, AL_cd, CR_cd, ES_cd, TH_cd, MT_cd, BD_cd)
 
 
+
+  # Do correlation test
+  testCor <- function(t) {
+
+    p_val_NC <- cor.test(t$maxNC, t$Pearson, method = "pearson")$estimate
+    t$maxNCPea <- rep(p_val_NC)
+
+    p_val_Ratio <- cor.test(t$maxRatio, t$Pearson, method = "pearson")$estimate
+    t$maxRatioPea <- rep(p_val_Ratio)
+
+    return(t)
+
+  }
+
+  all_spec_ls <- lapply(all_spec_ls, testCor)
+
+
+
 # Define density plot coloursd
 dcols <- colorRampPalette(c(
     "#282e81","#2a3a96","#34489e","#3851a3","#3a54a5","#3d5ba9","#3c65b0","#417abe",
@@ -137,7 +155,17 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
     y_lab <- "NAT expression (log2 TPM)"
 
-    #plt_mar <- c(0.5, 1.75, 1.5, 1.75)
+    plt_mar <- c(0.5, 1.75, 1.5, 1.75)
+
+    p_df1 <- data.frame(Species = unique(data$Species), 
+      x = rep(-0.8, length(unique(data$Species))),
+      y = rep(11.8, length(unique(data$Species))))
+
+    p_df2 <- data.frame(Species = unique(data$Species), 
+      x = rep(-0.53, length(unique(data$Species))),
+      y = rep(12.1, length(unique(data$Species))), 
+      label = c(round(unique(data$maxNCPea), digits = 2)))
+
          
   } else if (feat_type == "maxRatio") {
 
@@ -149,7 +177,17 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
     y_lab <- "Maximum expression ratio"
 
-    #plt_mar <- c(0.5, 1.75, 1.5, 1.75)
+    plt_mar <- c(0.5, 1.75, 1.5, 1.75)
+
+    p_df1 <- data.frame(Species = unique(data$Species), 
+      x = rep(-0.8, length(unique(data$Species))),
+      y = rep(44.0, length(unique(data$Species))))
+
+    p_df2 <- data.frame(Species = unique(data$Species), 
+      x = rep(-0.53, length(unique(data$Species))),
+      y = rep(55.0, length(unique(data$Species))), 
+      label = c(round(unique(data$maxRatioPea), digits = 2)))
+
 
   } else if (feat_type == "overlap") {
 
@@ -159,10 +197,18 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
     fname <- "cd_nc_cor_overlap_length.pdf"
 
-    #y_lab <- "NAT expression (log2 TPM+1)"
+    y_lab <- "NAT expression (log2 TPM+1)"
 
-    #plt_mar <- c(0.5, 30.52, 1.5, 1.75)
+    plt_mar <- c(0.5, 1.75, 1.5, 1.75)
 
+    p_df1 <- data.frame(Species = unique(data$Species), 
+      x = rep(-0.8, length(unique(data$Species))),
+      y = rep(70.5, length(unique(data$Species))))
+
+    p_df2 <- data.frame(Species = unique(data$Species), 
+      x = rep(-0.53, length(unique(data$Species))),
+      y = rep(75.5, length(unique(data$Species))), 
+      label = c(round(unique(data$maxRatioPea), digits = 2)))
   }
 
 
@@ -170,12 +216,18 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
   p <- ggplot(data, aes(x = Pearson, y = feat)) + 
   geom_point(size = 2.7, colour = data$col) + 
+  geom_smooth(method = 'lm', formula = y ~ x, size = 2.5, col = "white") + 
+  geom_text(data = p_df1, mapping = aes(x = x, y = y, 
+    label = as.character(expression(paste(rho, " = ")))
+    ), size = 9.275, colour = "black", parse = TRUE, hjust = 0.325, vjust = 0) + 
+  geom_text(data = p_df2, mapping = aes(x = x, y = y, label = label), size = 9.275, colour = "black", 
+    parse = TRUE, hjust = 0, vjust = 0) + 
   scale_x_continuous(expand = c(0.05, 0), limits = c(-1, 1), 
     labels = function(x) sub(".0+$", "", x)) + 
 
   if (feat_type == "maxNC") {
 
-    scale_y_continuous(expand = c(0.05, 0)) 
+    scale_y_continuous(expand = c(0, 0), limits = c(-0.77, 13.7)) 
 
   } else if (feat_type == "maxRatio") {
 
@@ -195,15 +247,15 @@ plotPC.NAT.feat <- function(data, feat_type) {
     axis.ticks.length = unit(0.25, "cm"), 
     axis.ticks = element_line(colour = "black", size = 1.175), 
     axis.line = element_line(colour = 'black', size = 1.175), 
-    #plot.margin = unit(plt_mar, "cm"), 
+    plot.margin = unit(plt_mar, "cm"), 
     axis.title.y = element_text(size = 25, margin = margin(t = 0, r = 8, b = 0, l = 1), 
       colour = "black", face = "bold"), 
-    axis.title.x = element_text(size = 25, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
+    axis.title.x = element_text(size = 25, margin = margin(t = 4.0, r = 0, b = 8.25, l = 0), 
       colour = "black", face = "bold"), 
-    axis.text.x = element_text(size=21.5, margin = margin(t = 4, b = 7.75), colour = "grey35", 
+    axis.text.x = element_text(size = 21.5, margin = margin(t = 4, b = 7.75), colour = "grey35", 
       angle = 0, vjust = 1, hjust = 0.5), 
     axis.text.y = element_text(size = 21.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
-    plot.title = element_text(size = 25.25, margin = margin(t = 5.5, b = 15.3), face = "plain"), 
+    plot.title = element_text(size = 25.25, margin = margin(t = 5.0, b = 15.8), face = "plain"), 
     panel.spacing = unit(0.55, "cm"), 
     panel.grid.major = element_blank(),
     panel.grid.minor.x = element_blank(), 
@@ -216,7 +268,7 @@ plotPC.NAT.feat <- function(data, feat_type) {
     height = 6.5, units = c("in"))
 }
 
-plotPC.NAT.feat(data = all_cd_nc_cor_max, feat_type = "maxNC")
+suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_max, feat_type = "maxNC"))
 suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_ratio, feat_type = "maxRatio"))
 #plotPC.NAT.feat(data = all_cd_nc_cor, feat_type = "overlap")
 
