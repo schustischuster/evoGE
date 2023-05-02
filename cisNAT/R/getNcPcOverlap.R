@@ -1,7 +1,5 @@
-# Find overlapping protein-coding gene pairs
+# Get overlap length between non-coding/protein-coding gene pairs
 # Data input: 1) GTF file | 2) Expression_data WITHOUT mito and chloroplast genes
-# Analysis can be performed on both whole single species datasets (ATH: 132 samples; AL: 36 samples)
-# OR on comparative data sets (27 samples)
 # Input sample tables should have the following format:
 # id / biotype / source / DEVSEQ_SAMPLE_REPLICATES(between 27 and 132 depending on species)
 # GTF annotation: 
