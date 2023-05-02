@@ -246,18 +246,18 @@ getPcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 	# Get all protein-coding genes
-	GTF_df_cd_nc <- GTF_df[GTF_df$gene_biotype %in% c("protein_coding"), ]
+	GTF_df_cd_cd <- GTF_df[GTF_df$gene_biotype %in% c("protein_coding"), ]
 
 	# Remove all chloroplast and mito genes
 	# Reason: RNA-seq prep kit used is Ribo_zero, which incompletely removes Pt and
 	# Mt transcripts, so expression estimates of those genes are likely to be wrong
-	GTF_df_cd_nc <- subset(GTF_df_cd_nc, seqnames != "Pt")
-	GTF_df_cd_nc <- subset(GTF_df_cd_nc, seqnames != "Mt")
+	GTF_df_cd_cd <- subset(GTF_df_cd_cd, seqnames != "Pt")
+	GTF_df_cd_cd <- subset(GTF_df_cd_cd, seqnames != "Mt")
 
 
 	# Separate genes from plus strand and minus strand
-	strand_plus <- subset(GTF_df_cd_nc, strand == "+")
-	strand_minus <- subset(GTF_df_cd_nc, strand == "-")
+	strand_plus <- subset(GTF_df_cd_cd, strand == "+")
+	strand_minus <- subset(GTF_df_cd_cd, strand == "-")
 
 
 	strand_plus_granges <- makeGRangesFromDataFrame(strand_plus, keep.extra.columns=FALSE, 
