@@ -11,11 +11,9 @@ This code allows to reproduce the results of the protein-coding protein-coding s
 * [Data analysis](#data-analysis)
   * [Retrieve coding-coding gene overlapp and pairwise expression correlation](#retrieve-coding-coding-gene-overlapp-and-pairwise-expression-correlation)
   * [Calculate pairwise non-coding/protein-coding gene correlation](#calculate-pairwise-non-coding-protein-coding-gene-correlation)
-  * [Get DevSeq-ATGE non-coding-coding SAS pairs](#get-devseq-atge-non-coding-coding-sas-pairs)
+  * [Get cisNAT-protein-coding gene overlap length](#get-cisNAT-protein-coding-gene-overlap-length)
   * [Get intergenic distance of neighboring genes](#get-intergenic-distance-of-neighboring-genes)
-  * [Retrieve expression correlation between randomized protein-coding gene pairs](#retrieve-expression-correlation-between-randomized-protein-coding-gene-pairs)
   * [Fetch in-paralog genes from OrthoFinder2 output](#fetch-in-paralog-genes-from-orthoFinder2-output)
-  * [Get expression intensity and ratio of SAS pairs](#get-expression-intensity-and-ratio-of-sas-pairs)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -97,12 +95,14 @@ lapply(species_ls, getCorNcPc, experiment = "comparative")
 
 ```
 
-### Get DevSeq-ATGE non-coding-coding SAS pairs
+### Get cisNAT-protein-coding gene overlap length
 
-The following function will select all non-coding protein-coding sense-antisense pairs from the DevSeq _Arabidopsis thaliana_ data table (single-species, threshold = 0.5) that have previously been identified in the AtGenExpress data set ([Henz et al., 2007](https://www.ncbi.nlm.nih.gov/pubmed/17496106)). The results will be written to a CSV file. 
+The following function will extract the overlap length between cis-natural antisense transcripts (cisNATs) and protein-coding gene pairs from the species GTF files. The results will be written to a CSV file. 
 
 ```R
-getDevSeq_ATGE()
+species_ls <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
+
+lapply(species_ls, getNcPcOverlap)
 
 ```
 
@@ -119,20 +119,6 @@ getPcPcNO("ATH", "single-species")
 
 ```
 
-### Retrieve expression correlation between randomized protein-coding gene pairs
-
-...
-
-* `getRandGeneCor(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), cor_method = c("Pearson", "Spearman"),
-                  experiment = c("single-species", "comparative"), bootstrap_repl)`
-
-To generate the data table for _Arabidopsis thaliana_ used in this study, execute the following function call. It will generate 100 bootstrap replicates of 10.000 randomized protein-coding gene pairs. This code may run for several hours on smaller systems. For shorter running time, reduce the number of bootstrap replicates.  
-
-```R
-getRandGeneCor(species = "ATH", cor_method = "Pearson", experiment = "single-species", bootstrap_repl = 100)
-
-```
-
 ### Fetch in-paralog genes from OrthoFinder2 output
 
 ...
@@ -142,29 +128,17 @@ getInParalogs(species = "ATH")
 
 ```
 
-### Get expression intensity and ratio of SAS pairs
-
-The following function will retrieve the maximum expression level for both coding and non-coding transcripts, and will calculate the ratio between NAT and coding gene expression. The results will be written to CSV files. 
-
-```R
-in_dir <- file.path("cisNAT", "output", "overlap_nc_genes")
-
-getExprRatio()
-
-```
-
 ## Visualization
 
 Set the file path for the data generated in the previous steps and source the R script:
 
 ```R
-in_dir_cd <- file.path("cisNAT", "output", "overlap_cd_genes")
+in_dir_cd <- file.path("cisNAT", "output", "overlap_pc_genes")
 in_dir_nc <- file.path("cisNAT", "output", "overlap_nc_genes")
-in_dir_ATGE <- file.path("cisNAT", "output", "SAS_DevSeq_ATGE")
-in_dir_expr <- file.path("cisNAT", "output", "NAT_expr_cor")
-in_dir_pairs <- file.path("cisNAT", "output", "cd_gene_pairs")
+in_dir_PC_pairs <- file.path("cisNAT", "output", "overlap_nc_genes")
+in_dir_NAT_cor <- file.path("cisNAT", "output", "NAT_expr_cor")
 
-source(file.path("cisNAT", "R", "SAS_plots.R"))
+source(file.path("cisNAT", "R", "plotcisNAT.R"))
 
 ```
 
