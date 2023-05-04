@@ -138,7 +138,7 @@ in_dir_nc <- file.path("evoGE-master", "cisNAT", "output", "overlap_nc_genes")
 in_dir_PC_pairs <- file.path("evoGE-master", "cisNAT", "output", "overlap_nc_genes")
 in_dir_NAT_cor <- file.path("evoGE-master", "cisNAT", "output", "NAT_expr_cor")
 
-source(file.path("cisNAT", "R", "plotcisNAT.R"))
+source(file.path("evoGE-master", "cisNAT", "R", "plotcisNAT.R"))
 
 ```
 
