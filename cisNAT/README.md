@@ -44,9 +44,9 @@ invisible(lapply(lib_List, library, character.only = TRUE))
 Download and extract the entire directory to the working directory on your computer. Then, set the path for input and output files and source the R scripts: 
 
 ```R
-in_dir <- file.path("evoGE", "cisNAT", "data")
-out_dir <- file.path("evoGE", "cisNAT")
-path_to_R_files <- file.path("evoGE", "cisNAT", "R")
+in_dir <- file.path("evoGE-master", "cisNAT", "data")
+out_dir <- file.path("evoGE-master", "cisNAT")
+path_to_R_files <- file.path("evoGE-master", "cisNAT", "R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
@@ -133,10 +133,10 @@ getInParalogs(species = "ATH")
 Set the file path for the data generated in the previous steps and source the R script:
 
 ```R
-in_dir_cd <- file.path("cisNAT", "output", "overlap_pc_genes")
-in_dir_nc <- file.path("cisNAT", "output", "overlap_nc_genes")
-in_dir_PC_pairs <- file.path("cisNAT", "output", "overlap_nc_genes")
-in_dir_NAT_cor <- file.path("cisNAT", "output", "NAT_expr_cor")
+in_dir_cd <- file.path("evoGE-master", "cisNAT", "output", "overlap_pc_genes")
+in_dir_nc <- file.path("evoGE-master", "cisNAT", "output", "overlap_nc_genes")
+in_dir_PC_pairs <- file.path("evoGE-master", "cisNAT", "output", "overlap_nc_genes")
+in_dir_NAT_cor <- file.path("evoGE-master", "cisNAT", "output", "NAT_expr_cor")
 
 source(file.path("cisNAT", "R", "plotcisNAT.R"))
 
