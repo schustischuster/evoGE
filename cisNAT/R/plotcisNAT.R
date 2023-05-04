@@ -1,7 +1,7 @@
 # Plot results of cisNAT analysis
 # Input tables: (1) cisNAT/PC pairwise correlation tables ("output", "NAT_expr_cor"), 
 # (2) overlapping PC/PC pairwise cor and feature tables ("output", "overlap_cd_genes"),
-# (3) cisNAT/PC gene pair feature tables (total length/overlap length/expression), 
+# (3) cisNAT/PC gene pair feature tables (total length/overlap length), 
 # (4) neigbouring PC/PC gene pair tables (pairwise correlation)
 
 
@@ -9,7 +9,9 @@
 
 # Set file path and input files
 in_dir_NAT_cor <- file.path(out_dir, "output", "NAT_expr_cor")
-in_dir_PC_pairs <- file.path(out_dir, "output", "overlap_cd_genes")
+in_dir_PC_pairs <- file.path(out_dir, "output", "overlap_pc_genes")
+in_dir_NCPC_pairs <- file.path(out_dir, "output", "overlap_nc_genes")
+
 
 # Read all csv files in input file path
 readTable <- function(path, pattern = "*.csv") {
@@ -19,6 +21,7 @@ readTable <- function(path, pattern = "*.csv") {
 
 NAT_expr_cor_ls <- readTable(in_dir_NAT_cor)
 overlap_cd_genes_ls <- readTable(in_dir_PC_pairs)
+overlap_nccd_genes_ls <- readTable(in_dir_NCPC_pairs)
 
 
 # Get file names and save them in character vector
@@ -28,6 +31,9 @@ NAT_gene_tables_names <- gsub('\\.csv$', '', NAT_gene_tables_list)
 coding_gene_tables_list <- as.character(list.files(in_dir_PC_pairs, pattern = "*.csv"))
 coding_gene_tables_names <- gsub('\\.csv$', '', coding_gene_tables_list)
 
+nc_cd_gene_tables_list <- as.character(list.files(in_dir_NCPC_pairs, pattern = "*.csv"))
+nc_cd_gene_tables_names <- gsub('\\.csv$', '', nc_cd_gene_tables_list)
+
 
 # Change data frame names in list
 names(NAT_expr_cor_ls) <- NAT_gene_tables_names
@@ -35,6 +41,9 @@ list2env(NAT_expr_cor_ls, envir = .GlobalEnv)
 
 names(overlap_cd_genes_ls) <- coding_gene_tables_names
 list2env(overlap_cd_genes_ls, envir = .GlobalEnv)
+
+names(overlap_nccd_genes_ls) <- nc_cd_gene_tables_names
+list2env(overlap_nccd_genes_ls, envir = .GlobalEnv)
 
 
 
@@ -76,6 +85,33 @@ MT_cd <- MT_cd[- grep("ALlnc", MT_cd$gene_id),] # rm one wrong id from list
 BD_cd <- BD_cd[- grep("ALlnc", BD_cd$gene_id),] # rm one wrong id from list
 
 
+# Add overlap length info to data
+addLength <- function(x, y) {
+
+  y1 <- y[y$gene_biotype1 != "protein_coding",]
+  y1 <- data.frame(gene_id = y1$gene_id1, prt_id = y1$gene_id2, start = y1$start1, end = y1$end1, 
+    strand = y1$strand1, width = y1$width1, overlap = y1$overlap)
+
+  y2 <- y[y$gene_biotype2 != "protein_coding",]
+  y2 <- data.frame(gene_id = y2$gene_id2, prt_id = y2$gene_id1, start = y2$start2, end = y2$end2, 
+    strand = y2$strand2, width = y2$width2, overlap = y2$overlap)
+
+  nc_overlap <- rbind(y1, y2)
+
+  out_df <- merge(x, nc_overlap, by = c("gene_id", "prt_id"))
+
+}
+
+AT_cd <- addLength(AT_cd, AT_nd_cd_overlap)
+AL_cd <- addLength(AL_cd, AL_nd_cd_overlap)
+CR_cd <- addLength(CR_cd, CR_nd_cd_overlap)
+ES_cd <- addLength(ES_cd, ES_nd_cd_overlap)
+TH_cd <- addLength(TH_cd, TH_nd_cd_overlap)
+MT_cd <- addLength(MT_cd, MT_nd_cd_overlap)
+BD_cd <- addLength(BD_cd, BD_nd_cd_overlap)
+
+
+
 all_spec_ls <- list(AT_cd, AL_cd, CR_cd, ES_cd, TH_cd, MT_cd, BD_cd)
 
 
@@ -88,6 +124,9 @@ all_spec_ls <- list(AT_cd, AL_cd, CR_cd, ES_cd, TH_cd, MT_cd, BD_cd)
 
     p_val_Ratio <- cor.test(t$maxRatio, t$Pearson, method = "pearson")$estimate
     t$maxRatioPea <- rep(p_val_Ratio)
+
+    p_val_Overlap <- cor.test(t$overlap, t$Pearson, method = "pearson")$estimate
+    t$OverlapPea <- rep(p_val_Overlap)
 
     return(t)
 
@@ -141,9 +180,31 @@ scatterDensRATIO <- function(x) {
 all_cd_nc_cor_ratio <- do.call("rbind", lapply(all_spec_ls, scatterDensRATIO))
 
 
+# Function to prepare data frame and encode data density as color for NAT/PC expression ratio
+scatterDensOverlap <- function(x) {
+
+  x$col250 <- densCols(x$Pearson, x$overlap, nbin = 1000, colramp = colorRampPalette(c("black", "white")))
+  x$dens <- col2rgb(x$col250)[1,] + 1L
+
+  x$col <- dcols[x$dens]
+  
+  x <- x[order(x$dens),]
+  x <- na.omit(x)
+
+  return(x)
+}
+
+all_cd_nc_cor_overlap <- do.call("rbind", lapply(all_spec_ls, scatterDensOverlap))
+
+
 
 # Generate plots
 plotPC.NAT.feat <- function(data, feat_type) {
+
+  yLabelsK = function(l) { 
+
+    ifelse(l==0, 0, paste0(round(l/1e3,1),"K"))
+  }
 
   if (feat_type == "maxNC") {
 
@@ -165,6 +226,13 @@ plotPC.NAT.feat <- function(data, feat_type) {
       x = rep(-0.53, length(unique(data$Species))),
       y = rep(12.1, length(unique(data$Species))), 
       label = c(round(unique(data$maxNCPea), digits = 2)))
+
+    r_df <- data.frame(Species = unique(data$Species), 
+      start = c(-1, -1, -1, -1, -1, -1, -1),
+      end = c(-1, -1, -1, -1, -1, -1, -1))
+
+    yrmin = -1
+    yrmax = -1
 
          
   } else if (feat_type == "maxRatio") {
@@ -188,27 +256,42 @@ plotPC.NAT.feat <- function(data, feat_type) {
       y = rep(55.0, length(unique(data$Species))), 
       label = c(round(unique(data$maxRatioPea), digits = 2)))
 
+    r_df <- data.frame(Species = unique(data$Species), 
+      start = c(-1, -1, -1, -1, -1, -1, -1),
+      end = c(-1, -1, -1, -1, -1, 0.2, -1))
+
+    yrmin = 1.5
+    yrmax = 1000
+
 
   } else if (feat_type == "overlap") {
 
-    p_title <- "Organ with highest expression of lncRNAs (n = 307)" 
+    p_title <- "NAT-PC overlap length in relation to pairwise NAT/PC gene correlation" 
 
     data$feat <- data$overlap # Adjust column name!
 
     fname <- "cd_nc_cor_overlap_length.pdf"
 
-    y_lab <- "NAT expression (log2 TPM+1)"
+    y_lab <- "NAT-PC overlap length"
 
     plt_mar <- c(0.5, 1.75, 1.5, 1.75)
 
     p_df1 <- data.frame(Species = unique(data$Species), 
       x = rep(-0.8, length(unique(data$Species))),
-      y = rep(70.5, length(unique(data$Species))))
+      y = rep(4250, length(unique(data$Species))))
 
     p_df2 <- data.frame(Species = unique(data$Species), 
       x = rep(-0.53, length(unique(data$Species))),
-      y = rep(75.5, length(unique(data$Species))), 
-      label = c(round(unique(data$maxRatioPea), digits = 2)))
+      y = rep(4350, length(unique(data$Species))), 
+      label = c(round(unique(data$OverlapPea), digits = 2)))
+
+    r_df <- data.frame(Species = unique(data$Species), 
+      start = c(-1, -1, -1, -1, -1, -1, -1),
+      end = c(-0.055, -0.055, -0.055, -0.055, -0.055, -0.5, -0.25))
+
+    yrmin = 4100
+    yrmax = 4800 
+
   }
 
 
@@ -217,6 +300,8 @@ plotPC.NAT.feat <- function(data, feat_type) {
   p <- ggplot(data, aes(x = Pearson, y = feat)) + 
   geom_point(size = 2.7, colour = data$col) + 
   geom_smooth(method = 'lm', formula = y ~ x, size = 2.5, col = "white") + 
+  geom_rect(data = r_df, aes(NULL, NULL, xmin = start, xmax = end, fill = "white"), 
+    ymin = yrmin, ymax = yrmax , colour = "white", fill = "white", alpha = 1) + 
   geom_text(data = p_df1, mapping = aes(x = x, y = y, 
     label = as.character(expression(paste(rho, " = ")))
     ), size = 9.275, colour = "black", parse = TRUE, hjust = 0.325, vjust = 0) + 
@@ -231,12 +316,12 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
   } else if (feat_type == "maxRatio") {
 
-    scale_y_log10(expand = c(0, 0), limits = c(0.015, 150), breaks = c(0.1, 1, 10, 100), 
+    scale_y_log10(expand = c(0, 0), limits = c(0.014, 150), breaks = c(0.1, 1, 10, 100), 
       labels = scales::trans_format("log10", scales::math_format(10^.x)))
 
   } else if (feat_type == "overlap") {
 
-    scale_y_continuous(expand = c(0.05, 0))
+    scale_y_continuous(expand = c(0.05, 0), limits = c(-70, 4700), labels = yLabelsK)
   }
 
   q <- p + theme_classic() + xlab("Pearson's r") + ylab(y_lab) + ggtitle(p_title) + 
@@ -270,7 +355,7 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
 suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_max, feat_type = "maxNC"))
 suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_ratio, feat_type = "maxRatio"))
-#plotPC.NAT.feat(data = all_cd_nc_cor, feat_type = "overlap")
+suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_overlap, feat_type = "overlap"))
 
 
 
