@@ -364,7 +364,7 @@ suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_overlap, feat_type = "over
 
 
 # Generate density info scalebar
-pdf(file = file.path(out_dir, "output", "plots", "density_scalebar"))
+pdf(file = file.path(out_dir, "output", "plots", "density_scalebar.pdf"))
 
 my.colors = colorRampPalette(dcols)
 z = matrix(1:256, nrow = 1)
