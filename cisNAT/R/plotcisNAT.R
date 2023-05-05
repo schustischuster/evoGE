@@ -138,7 +138,7 @@ all_spec_ls <- list(AT_cd, AL_cd, CR_cd, ES_cd, TH_cd, MT_cd, BD_cd)
 
 # Define density plot coloursd
 dcols <- colorRampPalette(c(
-    "#282e81","#2a3a96","#34489e","#3851a3","#3a54a5","#3d5ba9","#3c65b0","#417abe",
+    "#4a3191","#483b97","#47459d","#4650a4","#445aaa","#4365b1","#426fb7","#417abe",
     "#429dd6","#32c6f4","#61cbe6","#70cbd2","#75c9b5","#82ca97","#93cc79","#a7d059",
     "#bfd735","#bfd735", "#dae11e","#e7e71c","#f4ed1a", "#f8e410","#fcdb05","#fdb713","#f7951e","#f47321","#f05323",
     "#ee3523","#ed2224","#e61d25","#c52026","#c52026","#a21d20"))(256)
@@ -214,7 +214,7 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
     fname <- "cd_nc_cor_maxNC.pdf"
 
-    y_lab <- "NAT expression (log2 TPM)"
+    y_lab <- "    Expression level (log2 TPM)"
 
     plt_mar <- c(0.5, 1.75, 1.5, 1.75)
 
@@ -231,10 +231,11 @@ plotPC.NAT.feat <- function(data, feat_type) {
       start = c(-1, -1, -1, -1, -1, -1, -1),
       end = c(-1, -1, -1, -1, -1, -1, -1))
 
+    ytlmar <- margin(t = 0, r = 11.75, b = 0, l = 1)
+
     yrmin = -1
     yrmax = -1
 
-         
   } else if (feat_type == "maxRatio") {
 
     p_title <- "NAT/PC maximum expression ratio in relation to pairwise NAT/PC gene correlation" 
@@ -243,7 +244,7 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
     fname <- "cd_nc_cor_maxRatio.pdf"
 
-    y_lab <- "Maximum expression ratio"
+    y_lab <- " Expression ratio"
 
     plt_mar <- c(0.5, 1.75, 1.5, 1.75)
 
@@ -260,47 +261,49 @@ plotPC.NAT.feat <- function(data, feat_type) {
       start = c(-1, -1, -1, -1, -1, -1, -1),
       end = c(-1, -1, -1, -1, -1, 0.2, -1))
 
+    ytlmar <- margin(t = 0, r = 8, b = 0, l = 1)
+
     yrmin = 1.5
     yrmax = 1000
 
-
   } else if (feat_type == "overlap") {
 
-    p_title <- "NAT-PC overlap length in relation to pairwise NAT/PC gene correlation" 
+    p_title <- "NAT/PC overlap length in relation to pairwise NAT/PC gene correlation" 
 
     data$feat <- data$overlap # Adjust column name!
 
     fname <- "cd_nc_cor_overlap_length.pdf"
 
-    y_lab <- "NAT-PC overlap length"
+    y_lab <- " Overlap length (bp)"
 
     plt_mar <- c(0.5, 1.75, 1.5, 1.75)
 
     p_df1 <- data.frame(Species = unique(data$Species), 
       x = rep(-0.8, length(unique(data$Species))),
-      y = rep(4250, length(unique(data$Species))))
+      y = rep(3800, length(unique(data$Species))))
 
     p_df2 <- data.frame(Species = unique(data$Species), 
       x = rep(-0.53, length(unique(data$Species))),
-      y = rep(4350, length(unique(data$Species))), 
+      y = rep(3900, length(unique(data$Species))), 
       label = c(round(unique(data$OverlapPea), digits = 2)))
 
     r_df <- data.frame(Species = unique(data$Species), 
-      start = c(-1, -1, -1, -1, -1, -1, -1),
-      end = c(-0.055, -0.055, -0.055, -0.055, -0.055, -0.5, -0.25))
+      start = c(-1, -1, -1, -1, -0.4, -1, -1),
+      end = c(-0.055, -0.4, -0.055, -0.055, 0.2, -0.37, -0.05))
 
-    yrmin = 4100
-    yrmax = 4800 
+    ytlmar <- margin(t = 0, r = 9.25, b = 0, l = 1)
+
+    yrmin = 3780
+    yrmax = 4300 
 
   }
-
 
   data$Species <- factor(data$Species, levels = unique(data$Species))
 
   p <- ggplot(data, aes(x = Pearson, y = feat)) + 
-  geom_point(size = 2.7, colour = data$col) + 
+  geom_point(size = 2.5, colour = data$col) + 
   geom_smooth(method = 'lm', formula = y ~ x, size = 2.5, col = "white") + 
-  geom_rect(data = r_df, aes(NULL, NULL, xmin = start, xmax = end, fill = "white"), 
+  geom_rect(data = r_df, aes(NULL, NULL, xmin = start, xmax = end), 
     ymin = yrmin, ymax = yrmax , colour = "white", fill = "white", alpha = 1) + 
   geom_text(data = p_df1, mapping = aes(x = x, y = y, 
     label = as.character(expression(paste(rho, " = ")))
@@ -321,7 +324,7 @@ plotPC.NAT.feat <- function(data, feat_type) {
 
   } else if (feat_type == "overlap") {
 
-    scale_y_continuous(expand = c(0.05, 0), limits = c(-70, 4700), labels = yLabelsK)
+    scale_y_continuous(expand = c(0.05, 0), limits = c(-70, 4200), labels = yLabelsK)
   }
 
   q <- p + theme_classic() + xlab("Pearson's r") + ylab(y_lab) + ggtitle(p_title) + 
@@ -330,13 +333,13 @@ plotPC.NAT.feat <- function(data, feat_type) {
     strip.text.x = element_text(margin = margin(0.4457, 0, 0.4457, 0, "cm")), 
     strip.background = element_rect(colour = 'black', fill = NA, size = 2.75), 
     axis.ticks.length = unit(0.25, "cm"), 
-    axis.ticks = element_line(colour = "black", size = 1.175), 
-    axis.line = element_line(colour = 'black', size = 1.175), 
+    axis.ticks = element_line(colour = "black", size = 1.4), 
+    axis.line = element_line(colour = 'black', size = 1.4), 
     plot.margin = unit(plt_mar, "cm"), 
-    axis.title.y = element_text(size = 25, margin = margin(t = 0, r = 8, b = 0, l = 1), 
-      colour = "black", face = "bold"), 
-    axis.title.x = element_text(size = 25, margin = margin(t = 4.0, r = 0, b = 8.25, l = 0), 
-      colour = "black", face = "bold"), 
+    axis.title.y = element_text(size = 25, margin = ytlmar, 
+      colour = "black", face = "plain"), 
+    axis.title.x = element_text(size = 25, margin = margin(t = 3.5, r = 0, b = 8.75, l = 0), 
+      colour = "black", face = "plain"), 
     axis.text.x = element_text(size = 21.5, margin = margin(t = 4, b = 7.75), colour = "grey35", 
       angle = 0, vjust = 1, hjust = 0.5), 
     axis.text.y = element_text(size = 21.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
@@ -356,6 +359,21 @@ plotPC.NAT.feat <- function(data, feat_type) {
 suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_max, feat_type = "maxNC"))
 suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_ratio, feat_type = "maxRatio"))
 suppressWarnings(plotPC.NAT.feat(data = all_cd_nc_cor_overlap, feat_type = "overlap"))
+
+
+
+
+# Generate density info scalebar
+pdf(file = file.path(out_dir, "output", "plots", "density_scalebar"))
+
+my.colors = colorRampPalette(dcols)
+z = matrix(1:256, nrow = 1)
+x = 1
+y = seq(0, 256, len = 256) # Range of colour data values
+image(x, y, z, col = my.colors(100), axes = FALSE, xlab = "", ylab = "")
+axis(2)
+
+dev.off()
 
 
 
