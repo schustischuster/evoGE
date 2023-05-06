@@ -683,7 +683,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          data$species <- factor(data$species, levels = unique(data$species))
 
          p <- ggplot(data, aes(x = group, y = fraction, color = group)) + 
-         geom_segment(aes(y = 0, yend = fraction, xend = group), size = 2.5, colour = "grey77") + 
+         geom_segment(aes(y = 0, yend = fraction, xend = group), size = 2.5, colour = "grey71") + 
          geom_point(size = 7.9, position = position_dodge(width = 0.75), aes(color = group)) +
          scale_x_discrete(labels = x_lab) + 
          scale_y_continuous(limits = y_scale, expand = c(0, 0))
