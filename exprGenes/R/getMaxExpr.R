@@ -688,7 +688,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          scale_x_discrete(labels = x_lab) + 
          scale_y_continuous(limits = y_scale, expand = c(0, 0))
          q <- p + 
-         scale_color_manual(values = c("Root" = "#6a54a9", "Hypocotyl" = "#53b0db", 
+         scale_color_manual(values = c("Root" = "#3b4086", "Hypocotyl" = "#53b0db", 
             "Leaf" = "#2c8654", "Apex_veg" = "#96ba37", "Apex_inf" = "#f0d737", 
             "Flower" = "#e075af", "Stamen" = "#ed311c", "Carpel" = "#f2a72f")) + 
          # Uses a slightly modified colorblind-friendly palette from Wong (Nature Methods, 2011)
@@ -699,13 +699,13 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
                 strip.text.x = element_text(margin = margin(0.4457, 0, 0.4457, 0, "cm")), 
                 strip.background = element_rect(colour = 'black', fill = NA, size = 2.75), 
                 axis.ticks.length = unit(0.25, "cm"), 
-                axis.ticks = element_line(colour = "black", size = 1.175), 
-                axis.line = element_line(colour = 'black', size = 1.175), 
+                axis.ticks = element_line(colour = "black", size = 1.4), 
+                axis.line = element_line(colour = 'black', size = 1.4), 
                 plot.margin = unit(plt_mar, "cm"), 
                 axis.title.y = element_text(size = 25, margin = margin(t = 0, r = 8, b = 0, l = 1), 
-                    colour = "black", face = "bold"), 
+                    colour = "black", face = "plain"), 
                 axis.title.x = element_text(size = 25, margin = margin(t = 6.5, r = 0, b = 5.75, l = 0), 
-                    colour = "black", face = "bold"), 
+                    colour = "black", face = "plain"), 
                 axis.text.x = element_text(size=21.5, margin = margin(t = 4, b = 7.75), colour = "grey35", 
                     angle = 0, vjust = 1, hjust = 0.5), 
                 axis.text.y = element_text(size = 21.5, angle = 0, margin = margin(l = 0.75, r = 1.5), colour = "grey35"), 
@@ -714,7 +714,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
                 panel.grid.major = element_blank(),
                 panel.grid.minor.x = element_blank(), 
                 panel.grid.minor.y = element_blank(),  
-                legend.position ="none")
+                legend.position = "none")
 
          q <- q + facet_wrap(~ factor(species, levels = c("AT", "AL", "CR", "ES", "TH", "MT", "BD")) , nrow = 1, scales = "free_x")
 
