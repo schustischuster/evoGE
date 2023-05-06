@@ -138,10 +138,11 @@ all_spec_ls <- list(AT_cd, AL_cd, CR_cd, ES_cd, TH_cd, MT_cd, BD_cd)
 
 # Define density plot coloursd
 dcols <- colorRampPalette(c(
-    "#4a3191","#483b97","#47459d","#4650a4","#445aaa","#4365b1","#426fb7","#417abe",
-    "#429dd6","#32c6f4","#61cbe6","#70cbd2","#75c9b5","#82ca97","#93cc79","#a7d059",
-    "#bfd735","#bfd735", "#dae11e","#e7e71c","#f4ed1a", "#f8e410","#fcdb05","#fdb713","#f7951e","#f47321","#f05323",
-    "#ee3523","#ed2224","#e61d25","#c52026","#c52026","#a21d20"))(256)
+    "#3b4086", "#3b458e", "#3b4a95", "#3b4f9d",  "#3a54a5", "#316cb7", "#3083c5", 
+    "#3c9ad1", "#53b0db","#5bbed8","#70cbd2","#75c9b5","#82ca97","#93cc79","#a7d059",
+    "#bfd735","#bfd735", "#dae11e","#e7e71c","#f4ed1a", "#f8e410", "#f0d737" ,"#f3bf2f",
+    "#f2a72f" ,"#f2871a","#f16214","#ed311c","#de2c1e","#cf2820","#c02420","#b12020",
+    "#a21d20"))(256)
 
 
 # Function to prepare data frame and encode data density as color for maxNC expression
