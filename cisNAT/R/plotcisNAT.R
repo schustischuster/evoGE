@@ -378,3 +378,176 @@ dev.off()
 
 
 
+
+
+# Make correlation plots for PC/PC and NAT/PC gene pairs for all species
+
+nc_pc_gene_ls <- list(AT_nc_pc = AT_comparative_samples_cd_nc_cor_count, AL_nc_pc = AL_comparative_samples_cd_nc_cor_count, 
+  CR_nc_pc = CR_cd_nc_cor_count, ES_nc_pc = ES_cd_nc_cor_count, TH_nc_pc = TH_cd_nc_cor_count, 
+  MT_nc_pc = MT_cd_nc_cor_count, BD_nc_pc = BD_cd_nc_cor_count)
+
+pc_pc_gene_ls <- list(AT_pc_pc = AT_comp_cd_cd_SAS_cor_0.5, AL_pc_pc = AL_comp_cd_cd_SAS_cor_0.5, 
+  CR_pc_pc = CR_cd_cd_SAS_cor_0.5, ES_pc_pc = ES_cd_cd_SAS_cor_0.5, TH_pc_pc = TH_cd_cd_SAS_cor_0.5, 
+  MT_pc_pc = MT_cd_cd_SAS_cor_0.5, BD_pc_pc = BD_cd_cd_SAS_cor_0.5)
+
+
+formatNcPc <- function(x) {
+
+  df <- data.frame(species = rep(substr(x[1, 1], start = 1, stop = 2), nrow(x)), 
+    gene_pair = rep("NAT/PC", nrow(x)), 
+    gene_biotype1 = x$biotype, gene_biotype2 = rep("protein_coding", nrow(x)), 
+    Spearman = x$Spearman, Pearson = x$Pearson)
+
+  return(df)
+}
+
+nc_pc_cor_df <- do.call(rbind, lapply(nc_pc_gene_ls, formatNcPc))
+
+
+formatPcPc <- function(y) {
+
+  df <- data.frame(species = rep(substr(y[1, 2], start = 1, stop = 2), nrow(y)), 
+    gene_pair = rep("PC/PC", nrow(y)), 
+    gene_biotype1 = y$gene_biotype1, gene_biotype2 = y$gene_biotype2, 
+    Spearman = y$Spearman, Pearson = y$Pearson)
+
+  # Change species names to fit nomenclature in NAT/PC table
+  df$species <- gsub("Ca", "CR", df$species)
+  df$species <- gsub("Th", "ES", df$species)
+  df$species <- gsub("10", "TH", df$species)
+  df$species <- gsub("Me", "MT", df$species)
+  df$species <- gsub("Br", "BD", df$species)
+
+  return(df)
+}
+
+pc_pc_cor_df <- do.call(rbind, lapply(pc_pc_gene_ls, formatPcPc))
+
+pc_pc_nc_pc_cor <- rbind(pc_pc_cor_df, nc_pc_cor_df)
+
+
+
+# Do Wilcoxon rank sum test between pc/pc and nc/pc of same species
+getMWU <- function(p) {
+
+  nat_pc <- p[p$gene_pair == "NAT/PC",]
+  pc_pc <- p[p$gene_pair == "PC/PC",]
+
+  nat_pc_ls <- split(nat_pc, nat_pc$species)
+  pc_pc_ls <- split(pc_pc, pc_pc$species)
+
+  getPVal <- function(x, y){ 
+
+    p_val <- wilcox.test(x$Pearson, y$Pearson)$p.value
+
+    return(p_val)
+  }
+
+  p_df <- mapply(getPVal, nat_pc_ls, pc_pc_ls)
+
+  mwu_df <- data.frame(species = names(p_df), p_value = p_df)
+
+  return(mwu_df)
+
+  }
+
+p_val_df <- getMWU(pc_pc_nc_pc_cor)
+
+
+
+# Define specific notation
+set_scientific <- function(l) {
+  # turn in to character string in scientific notation
+  l <- formatC(l, format = "e", digits = 0)
+  # quote the part before the exponent to keep all the digits
+  l <- gsub("^(.*)e", "'\\1'e", l)
+  # turn the 'e+' into plotmath format
+  l <- gsub("e", "%*%10^", l)
+  # return this as an expression
+  parse(text=l)
+}
+
+
+
+# Generate plots
+plotCdNcCor <- function(data) {
+
+   # Create df for FDR p-value mapping
+   mwu_df <- data.frame(
+    species = p_val_df$species,
+    p_val = p_val_df$p_value, 
+    y = rep(c(1.155), 7),
+    label = ifelse(p_val_df$p_value < 1e-07, "**** ", 
+
+      c(paste("italic('P =')~", set_scientific(p_val_df$p_value))))
+    )
+   # Create df for gem_segments
+   h_seg_df <- data.frame(
+    x = c(0.75, 1.75, 2.75, 3.75, 4.75, 5.75, 6.75), 
+    xend = c(1.25, 2.25, 3.25, 4.25, 5.25, 6.25, 7.25), 
+    y = rep(1.19, 7), 
+    yend = rep(1.19, 7) 
+    )
+
+   v_seg_df <- data.frame(
+    x = c(0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75, 6.25, 6.75, 7.25), 
+    xend = c(0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75, 6.25, 6.75, 7.25), 
+    y = c(1.12, 1.12, 1.12, 1.12, 1.12, 1.12, 1.12, 1.12, 1.12, 1.12, 1.12, 1.12, 1.12, 1.12), 
+    yend = c(1.19, 1.19, 1.19, 1.19, 1.19, 1.19, 1.19, 1.19, 1.19, 1.19, 1.19, 1.19, 1.19, 1.19)
+    )
+
+   # Adjust position of p-value labels
+   mwu_df$label <- paste0(mwu_df$label, c("", "              "))
+
+   fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
+   data$gene_pair <- factor(data$gene_pair, levels = unique(data$gene_pair))
+   data$species <- factor(data$species, levels = unique(data$species))
+
+   p <- ggplot(data, aes(x = species, y = Pearson, color = gene_pair)) + 
+   geom_boxplot(aes(fill = gene_pair), colour = "black", width = 0.65, outlier.shape = NA, 
+    size = 0.8, fatten = 2.8, notch = TRUE, position = position_dodge(width = 0.83), show.legend = FALSE) + 
+   geom_point(size = -1, ) + 
+   scale_x_discrete(expand = c(0.025, 0)) + 
+   scale_y_continuous(limits = c(-1.05, 1.5), expand = c(0, 0), breaks = c(-1, -0.5, 0, 0.5, 1))
+
+   q <- p + 
+   scale_fill_manual(values = c("PC/PC" = "#f7ddb0", "NAT/PC" = "#cdbee5")) + 
+   scale_colour_manual(values = c("PC/PC" = "#f7ddb0", "NAT/PC" = "#cdbee5")) + 
+   geom_text(data = mwu_df, mapping = aes(x = c(0.775, 1.925, 2.775, 3.925, 4.775, 5.925, 6.775), y = y, label = label), 
+    size = 9.275, colour = "black", parse = FALSE, hjust = 0.1, vjust = 0) + 
+   geom_segment(data = h_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
+    size = 0.8, colour = "black") + 
+   geom_segment(data = v_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
+    size = 0.8, colour = "black") + guides(colour = guide_legend(override.aes = list(size = 7, shape = 15))) + 
+   theme_classic() + 
+   xlab("Species") + ylab("Pearson's r     ") + ggtitle("") + labs(colour = 'Gene pair') + 
+   theme(text = element_text(size = 23.5),  
+        axis.ticks.length = unit(0.2, "cm"), 
+        axis.ticks = element_line(colour = "black", size = 0.95), 
+        axis.line = element_line(colour = 'black', size = 0.95), 
+        plot.margin = unit(c(0.25, 32.14, 1.7, 0.1), "cm"), 
+        axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 4, b = 0, l = 1), 
+          colour = "black", face = "plain"), 
+        axis.title.x = element_text(size = 18.4, margin = margin(t = 2.8, r = 0, b = 23.525, l = 0), 
+          colour = "black", face = "plain"), 
+        axis.text.x = element_text(size = 16.25, margin = margin(t = 3.5, b = 2.0), colour = "black", 
+          angle = 0, vjust = 1, hjust = 0.5), 
+        axis.text.y = element_text(size = 16.5, angle = 0, margin = margin(l = 0, r = 1.5), colour = "black"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.minor.y = element_blank(),  
+        legend.position = "top", 
+        legend.title = element_text(size = 18.4, face = "bold"), 
+        legend.text = element_text(size = 18.4), 
+        legend.margin = margin(t = 4, b = -7))
+
+   ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+    width = 20, height = 5.75, units = c("in"))
+ }
+
+ plotCdNcCor(data = pc_pc_nc_pc_cor)
+
+
+
+
+
