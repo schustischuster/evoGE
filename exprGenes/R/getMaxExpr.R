@@ -1044,7 +1044,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             mwu_df <- data.frame(
                 class = rep(c("coding_non-core", "coding_core", "lncRNA_non-core", "lncRNA_core"), 
                     times = 3), 
-                y = rep(c(19.68, 18.25), times = 6),
+                y = rep(c(19.88, 18.35), times = 6),
                 label = ifelse(p_mwu$p_value < 1e-07, "****", 
 
                     c(paste("italic('P =')~", set_scientific(p_mwu$p_value)))), 
@@ -1056,23 +1056,23 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             h_seg_df <- data.frame(
                 x = rep(c(1.105, 2.105, 4.107, 5.107), times = 3), 
                 xend = rep(c(3.105, 3.105, 6.107, 6.107), times = 3), 
-                y = rep(c(20.08, 18.65, 20.08, 18.65), times = 3), 
-                yend = rep(c(20.08, 18.65, 20.08, 18.65), times = 3), 
+                y = rep(c(20.18, 18.65, 20.18, 18.65), times = 3), 
+                yend = rep(c(20.18, 18.65, 20.18, 18.65), times = 3), 
                 species = rep(c("A.lyrata", "C.rubella", "E.salsugineum"), each = 4)
             )
 
             v_seg_df <- data.frame(
                 x = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 3), 
                 xend = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 3), 
-                y = rep(c(19.64, 19.64, 18.2, 18.2, 19.64, 19.64, 18.2, 18.2), times = 3), 
-                yend = rep(c(20.08, 20.08, 18.65, 18.65, 20.08, 20.08, 18.65, 18.65), times = 3), 
+                y = rep(c(19.73, 19.73, 18.2, 18.2, 19.73, 19.73, 18.2, 18.2), times = 3), 
+                yend = rep(c(20.18, 20.18, 18.65, 18.65, 20.18, 20.18, 18.65, 18.65), times = 3), 
                 species = rep(c("A.lyrata", "C.rubella", "E.salsugineum"), each = 4)
             )
 
             # Adjust position of p-value labels
             mwu_df$label <- paste0(mwu_df$label, c("", "              "))
 
-            y_scale <- c(2.9, 21.125)
+            y_scale <- c(2.9, 21.25)
 
             plt_mar <- c(0.1, 1.55, 1.7, 0.55)
 
@@ -1086,7 +1086,7 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             mwu_df <- data.frame(
                 class = rep(c("coding_non-core", "coding_core", "lncRNA_non-core", "lncRNA_core"), 
                     times = 1), 
-                y = rep(c(18.77, 17.6), times = 2),
+                y = rep(c(18.91, 17.69), times = 2),
                 label = ifelse(p_mwu$p_value < 1e-07, "****", 
 
                     c(paste("italic('P =')~", set_scientific(p_mwu$p_value)))), 
@@ -1098,23 +1098,23 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
             h_seg_df <- data.frame(
                 x = rep(c(1.105, 2.105, 4.107, 5.107), times = 1), 
                 xend = rep(c(3.105, 3.105, 6.107, 6.107), times = 1), 
-                y = rep(c(19.08, 17.925, 19.08, 17.925), times = 1), 
-                yend = rep(c(19.08, 17.925, 19.08, 17.925), times = 1), 
+                y = rep(c(19.15, 17.9285, 19.15, 17.9285), times = 1), 
+                yend = rep(c(19.15, 17.9285, 19.15, 17.9285), times = 1), 
                 species = rep(c("A.thaliana"), each = 4)
             )
 
             v_seg_df <- data.frame(
                 x = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 1), 
                 xend = rep(c(1.107, 3.107, 2.107, 3.107, 4.107, 6.107, 5.107, 6.107), times = 1), 
-                y = rep(c(18.64, 18.64, 17.45, 17.45, 18.64, 18.64, 17.45, 17.45), times = 1), 
-                yend = rep(c(19.08, 19.08, 17.9, 17.9, 19.08, 19.08, 17.9, 17.9), times = 1), 
+                y = rep(c(18.7, 18.7, 17.4785, 17.4785, 18.7, 18.7, 17.4785, 17.4785), times = 1), 
+                yend = rep(c(19.15, 19.15, 17.9285, 17.9285, 19.15, 19.15, 17.9285, 17.9285), times = 1), 
                 species = rep(c("A.thaliana"), each = 4)
             )
 
             # Adjust position of p-value labels
             mwu_df$label <- paste0(mwu_df$label, c("", "              "))
 
-            y_scale <- c(5.5, 19.89)
+            y_scale <- c(5.5, 20.05)
 
             plt_mar <- c(0.1, 32.475, 1.7, 0.55)
 
@@ -1151,8 +1151,8 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
          scale_fill_manual(values = c("coding_all" = "#f7ddb0", "coding_non-core" = "#edbb5c", 
             "coding_core" = "#e7a007", "lncRNA_all" = "#cdbee5", "lncRNA_non-core" = "#A689CE", 
             "lncRNA_core" = "#8055b8")) + 
-         geom_text(data = mwu_df, mapping = aes(x = class, y = y, label = label), size = 9.275, colour = "black", 
-            parse = FALSE, hjust = 0.325, vjust = 0) + 
+         geom_text(data = mwu_df, mapping = aes(x = class, y = y, label = label), size = 8.9, colour = "black", 
+            parse = FALSE, hjust = 0.3275, vjust = 0) + 
          geom_segment(data = h_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), size = 0.8, colour = "black") + 
          geom_segment(data = v_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), size = 0.8, colour = "black") + 
          theme_classic() + 
