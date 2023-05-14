@@ -514,7 +514,7 @@ plotCdNcCor <- function(data) {
    scale_fill_manual(values = c("PC/PC" = "#f7ddb0", "NAT/PC" = "#cdbee5")) + 
    scale_colour_manual(values = c("PC/PC" = "#f7ddb0", "NAT/PC" = "#cdbee5")) + 
    geom_text(data = mwu_df, mapping = aes(x = c(0.775, 1.925, 2.775, 3.925, 4.775, 5.925, 6.775), y = y, label = label), 
-    size = 9.275, colour = "black", parse = FALSE, hjust = 0.1, vjust = 0) + 
+    size = 8.9, colour = "black", parse = FALSE, hjust = 0.1, vjust = 0) + 
    geom_segment(data = h_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
     size = 0.8, colour = "black") + 
    geom_segment(data = v_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
