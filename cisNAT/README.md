@@ -124,7 +124,7 @@ getPcPcNO("ATH", "single-species")
 ...
 
 ```R
-getInParalogs(species = "ATH")
+getInParalogs(species = "AT")
 
 ```
 
