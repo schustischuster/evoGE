@@ -1,5 +1,6 @@
-# Find non-overlapping neighboring protein-coding genes
+# Find non-overlapping neighbouring protein-coding genes
 # Data input: 1) GTF file | 2) Expression_data WITHOUT mito and chloroplast genes
+# 3) List of orthologous protein-coding genes for each species (defined as orthogroups)
 # Analysis can be performed on both whole single species datasets (ATH: 132 samples; AL: 36 samples)
 # OR on comparative data sets (27 samples)
 # Input sample tables should have the following format:
@@ -31,43 +32,23 @@
 # transcript_biotype / exon_number / gene_name
 
 
-
-#------------------- Load packages, set directories and read sample tables ---------------------
-
-
-# Install and load packages
-if (!require(plyr)) install.packages('plyr')
-library(plyr)
-if (!require(dplyr)) install.packages('dplyr')
-library(dplyr)
-if (!require(GenomicRanges)) install.packages('GenomicRanges')
-library(GenomicRanges)
-if (!require(rtracklayer)) install.packages('rtracklayer')
-library(rtracklayer)
+#----------------------------------------- Read data -----------------------------------------
 
 
-# Set file path and input files
-in_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis/data"
-out_dir <- "/Volumes/User/Shared/Christoph_manuscript/DevSeq_paper/Analysis/Analysis_2019/A_thaliana_gene_exression_map/20191121_CS_coding_cisNAT_analysis"
-
-
-
-# Define function to get overlapping protein-coding genes
-
-getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"), 
-	experiment = c("single-species", "comparative")) {
+getPcPcNO <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"), 
+	experiment = c("single-species", "comparative"), threshold) {
 	
 	# Show error message if no species is chosen
     if (missing(species))
    
        stop(
        "Please choose one of the available species: 
-	   'ATH', 'AL', 'CR', 'ES', 'TH', 'MT', 'BD'",
+	   'AT', 'AL', 'CR', 'ES', 'TH', 'MT', 'BD'",
 	   call. = TRUE
        )
 
-   	# Show error message for ATH and AL if no experiment is chosen
-    if (missing(experiment) && (is.element("ATH", species) | is.element("AL", species)))
+   	# Show error message for AT and AL if no experiment is chosen
+    if (missing(experiment) && (is.element("AT", species) | is.element("AL", species)))
    
        stop(
        "Please choose one of the available experiments: 
@@ -76,7 +57,7 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
        )
 
    	if (!is.element(experiment, c("comparative", "single-species")) 
-   		&& (is.element("ATH", species) | is.element("AL", species)))
+   		&& (is.element("AT", species) | is.element("AL", species)))
 
    		stop(
        "Please choose one of the available experiments: 
@@ -89,159 +70,178 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
    
        stop(
        "Please choose one of the available species: 
-	   'ATH', 'AL', 'CR', 'ES', 'TH', 'MT', 'BD'",
+	   'AT', 'AL', 'CR', 'ES', 'TH', 'MT', 'BD'",
 	   call. = TRUE
        )
 
+   	# Add an error if threshold < 0
+  	if (threshold < 0)
+    	stop(
+        "'threshold' must be >= 0",
+	   	call. = TRUE
+    	)
+
 
 	# Set GTF input gtf file
-    if (is.element("ATH", species)) {
+    if (is.element("AT", species)) {
     	GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
-        genesTPM = file.path(in_dir, "Expression_data", "ATH_no_TE_genes_tpm_sample_names.csv")
-        species_id <- "ATH"
+        genesCounts = file.path(in_dir, "Expression_data", "AT_genes_inter_norm_count_mat_vsd_sample_names.csv")
+        genesTPM = file.path(in_dir, "Expression_data", "AT_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
+        inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_AT.csv")
+        species_id <- "AT"
 
     } else if (is.element("AL", species)) {
 		GTFfile = file.path(in_dir, "GTF", "AL_final_annotation.gtf")
-		genesTPM = file.path(in_dir, "Expression_data", "AL_no_TE_genes_tpm_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "AL_genes_inter_norm_count_mat_vsd_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "AL_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
+		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_AL.csv")
 		species_id <- "AL"
 
     } else if (is.element("CR", species)) {
 		GTFfile = file.path(in_dir, "GTF", "CR_final_annotation.gtf")
-		genesTPM = file.path(in_dir, "Expression_data", "CR_no_TE_genes_tpm_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "CR_genes_inter_norm_count_mat_vsd_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "CR_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
+		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_CR.csv")
 		species_id <- "CR"
 
     } else if (is.element("ES", species)) {
 		GTFfile = file.path(in_dir, "GTF", "ES_final_annotation.gtf")
-		genesTPM = file.path(in_dir, "Expression_data", "ES_no_TE_genes_tpm_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "ES_genes_inter_norm_count_mat_vsd_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "ES_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
+		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_ES.csv")
 		species_id <- "ES"
 
     } else if (is.element("TH", species)) {
 		GTFfile = file.path(in_dir, "GTF", "TH_final_annotation.gtf")
-		genesTPM = file.path(in_dir, "Expression_data", "TH_no_TE_genes_tpm_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "TH_genes_inter_norm_count_mat_vsd_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "TH_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
+		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_TH.csv")
 		species_id <- "TH"
 
     } else if (is.element("MT", species)) {
 		GTFfile = file.path(in_dir, "GTF", "MT_final_annotation.gtf")
-		genesTPM = file.path(in_dir, "Expression_data", "MT_no_TE_genes_tpm_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "MT_genes_inter_norm_count_mat_vsd_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "MT_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
+		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_MT.csv")
 		species_id <- "MT"
 
     } else if (is.element("BD", species)) {
 		GTFfile = file.path(in_dir, "GTF", "BD_final_annotation.gtf")
-		genesTPM = file.path(in_dir, "Expression_data", "BD_no_TE_genes_tpm_sample_names.csv")
+		genesCounts = file.path(in_dir, "Expression_data", "BD_genes_inter_norm_count_mat_vsd_sample_names.csv")
+		genesTPM = file.path(in_dir, "Expression_data", "BD_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
+		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_BD.csv")
 		species_id <- "BD"
     }
 
 
 	# Import gtf file
-	GTF = import.gff(GTFfile, format="gtf", feature.type="gene")
+	GTF = import.gff(GTFfile, format = "gtf", feature.type = "gene")
 
 	# Read expression data
-	all_genes_tpm <- read.table(genesTPM, sep=";", dec=".", header=TRUE, stringsAsFactors=FALSE)
-	colnames(all_genes_tpm)[1] <- "gene_id"
+	all_genes_counts <- read.table(genesCounts, sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
+	all_genes_tpm <- read.table(genesTPM, sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
+	all_orthogroups <- read.table(inparalog_ids, sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
+
+	# Save threshold in variable
+	threshold <- threshold
 
 
 	# Format expression data and rename pollen samples
-    if ((is.element("ATH", species)) && (is.element("comparative", experiment))) {
+    if ((is.element("AT", species)) && (is.element("comparative", experiment))) {
+
+		all_genes_counts <- dplyr::select(all_genes_counts, c(
+			root_root_tip_5d_.1.,
+			root_root_tip_5d_.2.,
+			root_root_tip_5d_.3.,
+			hypocotyl_10d_.1.,
+			hypocotyl_10d_.2.,
+			hypocotyl_10d_.3.,
+			leaf_1.2_7d_.1.,
+			leaf_1.2_7d_.2.,
+			leaf_1.2_7d_.3.,
+			apex_vegetative_7d_.1.,
+			apex_vegetative_7d_.2.,
+			apex_vegetative_7d_.3.,
+			apex_inflorescence_21d_.1.,
+			apex_inflorescence_21d_.2.,
+			apex_inflorescence_21d_.3.,
+			flower_stg12_21d._.1.,
+			flower_stg12_21d._.2.,
+			flower_stg12_21d._.3.,
+			flower_stg12_stamens_21d._.1.,
+			flower_stg12_stamens_21d._.2.,
+			flower_stg12_stamens_21d._.3.,
+			flower_early_stg12_carpels_21d._.1.,
+			flower_early_stg12_carpels_21d._.2.,
+			flower_early_stg12_carpels_21d._.3.)) #tibble w/o pollen samles
+
 
 		all_genes_tpm <- dplyr::select(all_genes_tpm, c(
-			gene_id, biotype, source, 
-			root_whole_root_5d_1,
-			root_whole_root_5d_2,
-			root_whole_root_5d_3,
-			hypocotyl_10d_1,
-			hypocotyl_10d_2,
-			hypocotyl_10d_3,
-			leaf_1.2_7d_1,
-			leaf_1.2_7d_2,
-			leaf_1.2_7d_3,
-			apex_vegetative_7d_1,
-			apex_vegetative_7d_2,
-			apex_vegetative_7d_3,
-			apex_inflorescence_21d_1,
-			apex_inflorescence_21d_2,
-			apex_inflorescence_21d_3,
-			flower_stg12_21d._1,
-			flower_stg12_21d._2,
-			flower_stg12_21d._3,
-			flower_stg12_stamens_21d._1,
-			flower_stg12_stamens_21d._2,
-			flower_stg12_stamens_21d._3,
-			flowers_mature_pollen_28d_1,
-			flowers_mature_pollen_28d_2,
-			flowers_mature_pollen_28d_3,
-			flower_early_stg12_carpels_21d._1,
-			flower_early_stg12_carpels_21d._2,
-			flower_early_stg12_carpels_21d._3)) #tibble w/o pollen samles
+			root_root_tip_5d_.1.,
+			root_root_tip_5d_.2.,
+			root_root_tip_5d_.3.,
+			hypocotyl_10d_.1.,
+			hypocotyl_10d_.2.,
+			hypocotyl_10d_.3.,
+			leaf_1.2_7d_.1.,
+			leaf_1.2_7d_.2.,
+			leaf_1.2_7d_.3.,
+			apex_vegetative_7d_.1.,
+			apex_vegetative_7d_.2.,
+			apex_vegetative_7d_.3.,
+			apex_inflorescence_21d_.1.,
+			apex_inflorescence_21d_.2.,
+			apex_inflorescence_21d_.3.,
+			flower_stg12_21d._.1.,
+			flower_stg12_21d._.2.,
+			flower_stg12_21d._.3.,
+			flower_stg12_stamens_21d._.1.,
+			flower_stg12_stamens_21d._.2.,
+			flower_stg12_stamens_21d._.3.,
+			flower_early_stg12_carpels_21d._.1.,
+			flower_early_stg12_carpels_21d._.2.,
+			flower_early_stg12_carpels_21d._.3.)) #tibble w/o pollen samles
 
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_3'] <- 'flowers_mature_pollen_3'
 
-		species_id <- "ATH_comparative_samples"
+		species_id <- "AT_comp"
 
 
     } else if ((is.element("AL", species)) && (is.element("comparative", experiment))) {
 
+		all_genes_counts <- dplyr::select(all_genes_counts, -c(
+			flower_stg11_stamens_8w.10w.25d_.1., 
+			flower_stg11_stamens_8w.10w.25d_.2., 
+			flower_stg11_stamens_8w.10w.25d_.3.,
+			flower_early_stg12_stamens_8w.10w.23d_.1.,
+			flower_early_stg12_stamens_8w.10w.23d_.2.,
+			flower_early_stg12_stamens_8w.10w.23d_.3.,
+			flower_late_stg12_stamens_8w.10w.21d_.1.,
+			flower_late_stg12_stamens_8w.10w.21d_.2.,
+			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samles
+
 		all_genes_tpm <- dplyr::select(all_genes_tpm, -c(
-			flower_stg11_stamens_8w.10w.25d_1, 
-			flower_stg11_stamens_8w.10w.25d_2, 
-			flower_stg11_stamens_8w.10w.25d_3,
-			flower_early_stg12_stamens_8w.10w.23d_1,
-			flower_early_stg12_stamens_8w.10w.23d_2,
-			flower_early_stg12_stamens_8w.10w.23d_3,
-			flower_late_stg12_stamens_8w.10w.21d_1,
-			flower_late_stg12_stamens_8w.10w.21d_2,
-			flower_late_stg12_stamens_8w.10w.21d_3)) #tibble w/o pollen samles
-
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_3'] <- 'flowers_mature_pollen_3'
-
-		species_id <- "AL_comparative_samples"
+			flower_stg11_stamens_8w.10w.25d_.1., 
+			flower_stg11_stamens_8w.10w.25d_.2., 
+			flower_stg11_stamens_8w.10w.25d_.3.,
+			flower_early_stg12_stamens_8w.10w.23d_.1.,
+			flower_early_stg12_stamens_8w.10w.23d_.2.,
+			flower_early_stg12_stamens_8w.10w.23d_.3.,
+			flower_late_stg12_stamens_8w.10w.21d_.1.,
+			flower_late_stg12_stamens_8w.10w.21d_.2.,
+			flower_late_stg12_stamens_8w.10w.21d_.3.)) #tibble w/o pollen samles
 
 
-    } else if (is.element("ATH", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_28d_3'] <- 'flowers_mature_pollen_3'
+		species_id <- "AL_comp"
 
-    } else if (is.element("AL", species)) {
-    	colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_8w.10w.25d_3'] <- 'flowers_mature_pollen_3'
 
-    } else if (is.element("CR", species)) {
-    	colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_6w.7w.22d_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("ES", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w.8w.17d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w.8w.17d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w.8w.17d_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("TH", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_11w_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_11w_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_11w_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("MT", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_7w_3'] <- 'flowers_mature_pollen_3'
-
-    } else if (is.element("BD", species)) {
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_32d_1'] <- 'flowers_mature_pollen_1'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_32d_2'] <- 'flowers_mature_pollen_2'
-		colnames(all_genes_tpm)[colnames(all_genes_tpm) == 'flowers_mature_pollen_32d_3'] <- 'flowers_mature_pollen_3'
     }
 
 
-    # Stop function here to allow specific analysis of a single species
-    # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_tpm" = all_genes_tpm)
+
+    # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_counts" = all_genes_counts, "all_genes_tpm" = all_genes_tpm, "all_orthogroups" = all_orthogroups , "threshold" = threshold)
     # return(return_list)
     # }
-    # return_objects <- getPcPcNO("ATH", "single-species") # read in GTF and expression data for A.thaliana
+    # return_objects <- getPcPcNO("AT", "single-species", 0.5) # read in GTF and expression data for A.thaliana
     # list2env(return_objects, envir = .GlobalEnv)
 
 
@@ -252,29 +252,29 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	GTF_df = as.data.frame(GTF)
 
+
 	# Get all protein-coding genes
 	GTF_df_cd <- subset(GTF_df, gene_biotype == "protein_coding")
 
 	# Remove all chloroplast and mito genes
-	# Reason: RNA-seq prep kit used is Ribo_zero kit, which incompletely removes Pt and
-	# Mt transcripts, so expression estimates of those genes is likely to be wrong
+	# Reason: RNA-seq prep kit used is Ribo_zero, which incompletely removes Pt and
+	# Mt transcripts, so expression estimates of those genes are likely to be wrong
 	GTF_df_cd <- subset(GTF_df_cd, seqnames != "Pt")
 	GTF_df_cd <- subset(GTF_df_cd, seqnames != "Mt")
 
-	# Find nearest protein-coding gene for plus and minus strands
-	GTF_df_cd_GR <- makeGRangesFromDataFrame(GTF_df_cd, keep.extra.columns=FALSE, 
-		ignore.strand=FALSE, seqinfo=NULL, seqnames.field="seqnames",
-		start.field="start", end.field="end", starts.in.df.are.0based=FALSE)
+	# Get positional, chromosome and strand informarmation for protein-coding genes
+	GTF_df_cd_GR <- makeGRangesFromDataFrame(GTF_df_cd, keep.extra.columns = FALSE, 
+		ignore.strand = FALSE, seqinfo = NULL, seqnames.field = "seqnames",
+		start.field = "start", end.field = "end", starts.in.df.are.0based = FALSE)
 
 	# Get nearest protein-coding genes and their distance to each other
 	# a distance <= 0 indicates overlapping genes on same or opposite strand -> remove them afterwards!
-	transcript_pairs <- distanceToNearest(GTF_df_cd_GR, select="arbitrary", ignore.strand=TRUE)
+	transcript_pairs <- distanceToNearest(GTF_df_cd_GR, select = "arbitrary", ignore.strand = TRUE)
 	transcript_pairs_df <- as.data.frame(transcript_pairs)
 	transcript_pairs_df <- subset(transcript_pairs_df, distance != 0)
 
 
 
-	
 	#------- Extract non-overlapping protein coding gene pair descriptions from GTF data --------
 
 
@@ -285,7 +285,7 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	strand_plus_minus_subject <- cbind(as.data.frame(subjectHits), GTF_df_cd)
 
 
-	strand_plus_minus_query_genes <- join(transcript_pairs_df, strand_plus_minus_query, by="queryHits")
+	strand_plus_minus_query_genes <- join(transcript_pairs_df, strand_plus_minus_query, by = "queryHits")
 	strand_plus_minus_query_genes$id  <- seq(1, nrow(strand_plus_minus_query_genes), 1)
 	strand_plus_minus_query_genes = strand_plus_minus_query_genes %>% select(
 		id,
@@ -298,7 +298,7 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		end, 
 		strand)
 
-	strand_plus_minus_subject_genes <- join(transcript_pairs_df, strand_plus_minus_subject, by="subjectHits")
+	strand_plus_minus_subject_genes <- join(transcript_pairs_df, strand_plus_minus_subject, by = "subjectHits")
 	strand_plus_minus_subject_genes$id  <- seq(1, nrow(strand_plus_minus_subject_genes), 1)
 	strand_plus_minus_subject_genes = strand_plus_minus_subject_genes %>% select(
 		id,
@@ -313,29 +313,18 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
-
 	#---------- Merge plus_strand/minus_strand data tables with DevSeq expression data ---------
 
-	strand_plus_minus_query_genes_tpm <- join(strand_plus_minus_query_genes, all_genes_tpm, by="gene_id")
-	strand_plus_minus_subject_genes_tpm <- join(strand_plus_minus_subject_genes, all_genes_tpm, by="gene_id")
+
+	all_genes_counts <- tibble::rownames_to_column(all_genes_counts, "gene_id")
+	all_genes_tpm <- tibble::rownames_to_column(all_genes_tpm, "gene_id")
 
 
+	strand_plus_minus_query_genes_counts <- merge(strand_plus_minus_query_genes, all_genes_counts, by = "gene_id")
+	strand_plus_minus_query_genes_counts <- strand_plus_minus_query_genes_counts[order(strand_plus_minus_query_genes_counts$id),]
 
-
-    #-------------------------- Get expression table w/o pollen data  --------------------------
-
-
-	# Remove pollen triplicates from expression table
-	strand_plus_minus_query_genes_tpm_wo_pollen <- dplyr::select(strand_plus_minus_query_genes_tpm, -c(
-		flowers_mature_pollen_1, 
-		flowers_mature_pollen_2, 
-		flowers_mature_pollen_3)) #tibble w/o pollen samles
-
-	strand_plus_minus_subject_genes_tpm_wo_pollen <- dplyr::select(strand_plus_minus_subject_genes_tpm, -c(
-		flowers_mature_pollen_1, 
-		flowers_mature_pollen_2, 
-		flowers_mature_pollen_3)) #tibble w/o pollen samles
-
+	strand_plus_minus_subject_genes_counts <- merge(strand_plus_minus_subject_genes, all_genes_counts, by = "gene_id")
+	strand_plus_minus_subject_genes_counts <- strand_plus_minus_subject_genes_counts[order(strand_plus_minus_subject_genes_counts$id),]
 
 
 
@@ -353,89 +342,63 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 	   		call. = TRUE
     		)
 
-		# Add keys to data frame
-		key <- seq(1, nrow(df), 1)
-		df <- cbind(as.data.frame(key),df)
-
-		df <- na.omit(df)
-
 		# Define threshold function
 		getThreshold <- function(df) {
 
 			# Split data frame by sample replicates into a list then apply threshold for each subset
 	
-			th_replicates <- do.call(cbind, lapply(split.default(df[13:ncol(df)], #adjust columns
-								rep(seq_along(df), each = 3, length.out = ncol(df)-12)), #adjust columns
+			th_replicates <- do.call(cbind, lapply(split.default(df[2:ncol(df)], #adjust columns
+								rep(seq_along(df), each = 3, length.out = ncol(df)-1)), #adjust columns
 								function(x) {
 									x[rowSums(x > threshold) < 2, ] <- 0; 
 									x
 								}
 							))
 
-			# Bind key/id/prt_id/symbol/biotype/source columns to thresholded data frame
-			th_replicates <- cbind(df[1:12], th_replicates)
+			# Get max and mean expression for each gene
+			th_replicates$max <- apply(X = th_replicates, MARGIN = 1, FUN = max)
+			th_replicates$avg <- apply(X = th_replicates, MARGIN = 1, FUN = mean)
+
+			# Bind key and gene_id columns to thresholded data frame
+			th_replicates <- cbind(df[1], th_replicates)
+
+			# Reorder df
+			th_replicates <- cbind(th_replicates[c("gene_id", "max", "avg")], 
+				th_replicates[2:(ncol(th_replicates)-2)])
 
 			# Remove all rows that only contain "0"
-			th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-12, drop = FALSE] > 0) > 0),]
+			th_replicates <- th_replicates[which(rowSums(th_replicates[,-1:-3, drop = FALSE] > 0) > 0),]
 
 			return(th_replicates)
 		}
 
 		# Apply threshold to data and extract keys ("key")
-		keys_data <- getThreshold(df)
-		keys_data <- keys_data[,1:2]
-		names(keys_data) <- c("key","ID")
-
-		# Generate thresholded data frame based on keys
-		th_df <- merge(keys_data, df, by="key")
-		th_df <- th_df[order(th_df$key),]
-		th_df <- th_df[-1:-2]
+		data <- getThreshold(df)
+		th_df <- data[1:3]
 
 		return(th_df)
 	}
 
 
-	# Apply threshold function
-	strand_plus_minus_query_genes_tpm_0.5 <- applyThreshold(strand_plus_minus_query_genes_tpm_wo_pollen,0.5)
-	strand_plus_minus_subject_genes_tpm_0.5 <- applyThreshold(strand_plus_minus_subject_genes_tpm_wo_pollen,0.5)
-
-	strand_plus_minus_query_genes_tpm_0.5 <- strand_plus_minus_query_genes_tpm_0.5[(
-		strand_plus_minus_query_genes_tpm_0.5$id %in% strand_plus_minus_subject_genes_tpm_0.5$id),]
-	strand_plus_minus_subject_genes_tpm_0.5 <- strand_plus_minus_subject_genes_tpm_0.5[(
-		strand_plus_minus_subject_genes_tpm_0.5$id %in% strand_plus_minus_query_genes_tpm_0.5$id),]
+	# Apply threshold function for expression tables w/ pollen
+	genes_tpm_th <- applyThreshold(all_genes_tpm, threshold)
 
 
+	# Remove all gene pairs that show expression below threshold
+	strand_plus_minus_query_genes_counts_th <- merge(
+		genes_tpm_th, strand_plus_minus_query_genes_counts, by = "gene_id")
+	strand_plus_minus_subject_genes_counts_th <- merge(
+		genes_tpm_th, strand_plus_minus_subject_genes_counts, by = "gene_id")
 
-	#---- Split data to sense-sense (same_strand PCT pairs) and sense-antisense (SAS PCT pairs)  ----
 
-	PCT_pairs_query_plus <- subset(strand_plus_minus_query_genes_tpm_0.5, strand == "+")
-	PCT_pairs_subject_plus <- subset(strand_plus_minus_subject_genes_tpm_0.5, strand == "+")
-	PCT_pairs_query_minus <- subset(strand_plus_minus_query_genes_tpm_0.5, strand == "-")
-	PCT_pairs_subject_minus <- subset(strand_plus_minus_subject_genes_tpm_0.5, strand == "-")
+	# Remove all gene pairs where only one partner shows expression above threshold
+	strand_plus_minus_query_genes_counts_th <- strand_plus_minus_query_genes_counts_th[(
+		strand_plus_minus_query_genes_counts_th$id %in% strand_plus_minus_subject_genes_counts_th$id),]
+	strand_plus_minus_subject_genes_counts_th <- strand_plus_minus_subject_genes_counts_th[(
+		strand_plus_minus_subject_genes_counts_th$id %in% strand_plus_minus_query_genes_counts_th$id),]
 
-	same_strand_PCT_pairs_query_plus <- PCT_pairs_query_plus[(
-		PCT_pairs_query_plus$id %in% PCT_pairs_subject_plus$id),] # query_id/subject on plus
-	same_strand_PCT_pairs_subject_plus <- PCT_pairs_subject_plus[(
-		PCT_pairs_subject_plus$id %in% PCT_pairs_query_plus$id),] # subject_id/query on plus
-	same_strand_PCT_pairs_query_minus <- PCT_pairs_query_minus[(
-		PCT_pairs_query_minus$id %in% PCT_pairs_subject_minus$id),] # query_id/subject on minus
-	same_strand_PCT_pairs_subject_minus <- PCT_pairs_subject_minus[(
-		PCT_pairs_subject_minus$id %in% PCT_pairs_query_minus$id),] # subject_id/query on minus
-
-	same_strand_PCT_pairs_query <- rbind(same_strand_PCT_pairs_query_plus, same_strand_PCT_pairs_query_minus)
-	same_strand_PCT_pairs_subject <- rbind(same_strand_PCT_pairs_subject_plus, same_strand_PCT_pairs_subject_minus)
-
-	SAS_PCT_pairs_query_plus <- PCT_pairs_query_plus[(
-		PCT_pairs_query_plus$id %in% PCT_pairs_subject_minus$id),] # query_id/subject on plus/minus
-	SAS_PCT_pairs_subject_plus <- PCT_pairs_subject_plus[(
-		PCT_pairs_subject_plus$id %in% PCT_pairs_query_minus$id),] # subject_id/subject on plus/minus
-	SAS_PCT_pairs_query_minus <- PCT_pairs_query_minus[(
-		PCT_pairs_query_minus$id %in% PCT_pairs_subject_plus$id),] # query_id/subject on minus/plus
-	SAS_PCT_pairs_subject_minus <- PCT_pairs_subject_minus[(
-		PCT_pairs_subject_minus$id %in% PCT_pairs_query_plus$id),] # subject_id/query on minus/plus
-
-	SAS_PCT_pairs_query <- rbind(SAS_PCT_pairs_query_plus, SAS_PCT_pairs_query_minus)
-	SAS_PCT_pairs_subject <- rbind(SAS_PCT_pairs_subject_minus, SAS_PCT_pairs_subject_plus)
+	strand_plus_minus_query_genes_counts_th <- strand_plus_minus_query_genes_counts_th[order(strand_plus_minus_query_genes_counts_th$id),]
+	strand_plus_minus_subject_genes_counts_th <- strand_plus_minus_subject_genes_counts_th[order(strand_plus_minus_subject_genes_counts_th$id),]
 
 
 
@@ -452,108 +415,86 @@ getPcPcNO <- function(species = c("ATH", "AL", "CR", "ES", "TH", "MT", "BD"),
 		message("Computing correlation...")
 
 		df1$Spearman <- sapply(1:nrow(df1), function(i) 
-	    	cor(as.numeric(df1[i, 12:df1_col]), as.numeric(df2[i, 12:df2_col]), method=c("spearman")))
+	    	cor(as.numeric(df1[i, 12:df1_col]), as.numeric(df2[i, 12:df2_col]), method = c("spearman")))
 
-		# log2-transform TPM values before computing Pearson
-		df1[, 12:df1_col] <- log2(df1[, 12:df1_col] + 1)
-		df2[, 12:df1_col] <- log2(df2[, 12:df2_col] + 1)
+		# no log-transformation of values required before computing Pearson (VST counts)
 
 		df1$Pearson <- sapply(1:nrow(df1), function(i) 
-	    	cor(as.numeric(df1[i, 12:df1_col]), as.numeric(df2[i, 12:df2_col]), method=c("pearson")))
+	    	cor(as.numeric(df1[i, 12:df1_col]), as.numeric(df2[i, 12:df2_col]), method = c("pearson")))
 
 		return(df1)
 	}
 
 
-	same_strand_PCT_pairs_wo_pollen <- getCor(
-		same_strand_PCT_pairs_query, same_strand_PCT_pairs_subject)
-	SAS_PCT_pairs_wo_pollen <- getCor(
-		SAS_PCT_pairs_query, SAS_PCT_pairs_subject)
+	strand_plus_minus_query_genes_cor <- getCor(
+		strand_plus_minus_query_genes_counts_th, strand_plus_minus_subject_genes_counts_th)
+	strand_plus_minus_subject_genes_cor <- getCor(
+		strand_plus_minus_subject_genes_counts_th, strand_plus_minus_query_genes_counts_th)
+
+
+	# Create a single table containing protein-coding/protein-coding and protein-coding/cisNAT pairs
+	all_neighbouring_gene_pairs <- data.frame(
+		id1 = strand_plus_minus_query_genes_cor$id,
+		gene_id1 = strand_plus_minus_query_genes_cor$gene_id,
+		seqnames1 = strand_plus_minus_query_genes_cor$seqnames,
+		start1 = strand_plus_minus_query_genes_cor$start,
+		end1 = strand_plus_minus_query_genes_cor$end,
+		strand1 = strand_plus_minus_query_genes_cor$strand,
+		max_expr1 = strand_plus_minus_query_genes_cor$max,
+		mean_expr1 = strand_plus_minus_query_genes_cor$avg,
+		id2 = strand_plus_minus_subject_genes_cor$id,
+		gene_id2 = strand_plus_minus_subject_genes_cor$gene_id,
+		seqnames2 = strand_plus_minus_subject_genes_cor$seqnames,
+		start2 = strand_plus_minus_subject_genes_cor$start,
+		end2 = strand_plus_minus_subject_genes_cor$end,
+		strand2 = strand_plus_minus_subject_genes_cor$strand,
+		max_expr2 = strand_plus_minus_subject_genes_cor$max,
+		mean_expr2 = strand_plus_minus_subject_genes_cor$avg,
+		distance = strand_plus_minus_query_genes_cor$distance,
+		Spearman = strand_plus_minus_query_genes_cor$Spearman,
+		Pearson = strand_plus_minus_query_genes_cor$Pearson)
 
 
 
-
-#------------------------- Create final data table and write csv file  -------------------------
-
-
-	# Create data table containing both strand plus and minus genes and cor values
-	same_strand_PCT_pairs_subject_descript = same_strand_PCT_pairs_subject %>% select(id, gene_id, start, end, strand, biotype)
-	names(same_strand_PCT_pairs_subject_descript) <- c("key_subject" ,"id_subject", "start_subject", "end_subject", "strand_subject", "biotype_subject")
-	same_strand_PCT_pairs_wo_pollen_descript <- same_strand_PCT_pairs_wo_pollen
-	names(same_strand_PCT_pairs_wo_pollen_descript)[1:10] <- c("key_query", "queryHits", "subjectHits", "distance", "id_query", "seqnames", "start_query", "end_query", "strand_query", "biotype_query")
-	same_strand_PCT_pairs <- cbind(same_strand_PCT_pairs_wo_pollen_descript, same_strand_PCT_pairs_subject_descript)
-	same_strand_PCT_pairs = same_strand_PCT_pairs %>% select(
-		id_query, 
-		start_query, 
-		end_query, 
-		strand_query, 
-		biotype_query, 
-		id_subject, 
-		start_subject, 
-		end_subject, 
-		strand_subject, 
-		biotype_subject, 
-		distance, 
-		seqnames, 
-		queryHits, 
-		subjectHits, 
-		Spearman, 
-		Pearson)
+	# Remove one copy of duplicated gene pairs (based on distance and Pearson cor)
+	dup_pairs <- all_neighbouring_gene_pairs[duplicated(all_neighbouring_gene_pairs[,c(17,19)]),]
+	all_neighbouring_dedup_gene_pairs <- all_neighbouring_gene_pairs[!all_neighbouring_gene_pairs$id1 %in% dup_pairs$id1, ]
+	# 10932 unique gene pairs in AT
 
 
-	SAS_PCT_pairs_subject_descript = SAS_PCT_pairs_subject %>% select(id, gene_id, start, end, strand, biotype)
-	names(SAS_PCT_pairs_subject_descript) <- c("key_subject" ,"id_subject", "start_subject", "end_subject", "strand_subject", "biotype_subject")
-	SAS_PCT_pairs_wo_pollen_descript <- SAS_PCT_pairs_wo_pollen
-	names(SAS_PCT_pairs_wo_pollen_descript)[1:10] <- c("key_query", "queryHits", "subjectHits", "distance", "id_query", "seqnames", "start_query", "end_query", "strand_query", "biotype_query")
-	SAS_PCT_pairs <- cbind(SAS_PCT_pairs_wo_pollen_descript, SAS_PCT_pairs_subject_descript)
-	SAS_PCT_pairs = SAS_PCT_pairs %>% select(
-		id_query, 
-		start_query, 
-		end_query, 
-		strand_query, 
-		biotype_query, 
-		id_subject, 
-		start_subject, 
-		end_subject, 
-		strand_subject, 
-		biotype_subject, 
-		distance, 
-		seqnames, 
-		queryHits, 
-		subjectHits, 
-		Spearman, 
-		Pearson)
+	# Get gene pairs where genes are located on same strand
+	sstr1 <- all_neighbouring_dedup_gene_pairs[all_neighbouring_dedup_gene_pairs$strand1 == "+",]
+	sstr1 <- sstr1[sstr1$strand2 == "+",]
+	sstr2 <- all_neighbouring_dedup_gene_pairs[all_neighbouring_dedup_gene_pairs$strand1 == "-",]
+	sstr2 <- sstr2[sstr2$strand2 == "-",]
+	sstr <- rbind(sstr1, sstr2)
+
+	# Get gene pairs where genes are located on opposite strand
+	osst1 <- all_neighbouring_dedup_gene_pairs[all_neighbouring_dedup_gene_pairs$strand1 == "+",]
+	osst1 <- osst1[osst1$strand2 == "-",]
+	osst2 <- all_neighbouring_dedup_gene_pairs[all_neighbouring_dedup_gene_pairs$strand1 == "-",]
+	osst2 <- osst2[osst2$strand2 == "+",]
+	osst <- rbind(osst1, osst2)
+
+
+# added and changed lines 241, 265, 458-495
+
+#--------------------------------------- Write csv file ---------------------------------------
 
 
 	# Set filename
-    same_strand_fname <- sprintf('%s.csv', paste(species_id, "same_strand_PCT_pairs", sep="_"))
-	SAS_fname <- sprintf('%s.csv', paste(species_id, "SAS_PCT_pairs", sep="_"))
+    fname <- sprintf('%s.csv', paste(species_id, "cd_cd_SAS_cor", threshold, sep = "_"))
 
 
 	# Write final data tables to csv files and store them in /out_dir/output/data_tables
-	if (!dir.exists(file.path(out_dir, "output", "cd_gene_pairs"))) 
-		dir.create(file.path(out_dir, "output", "cd_gene_pairs"), recursive = TRUE)
+	if (!dir.exists(file.path(out_dir, "output", "overlap_pc_genes"))) 
+		dir.create(file.path(out_dir, "output", "overlap_pc_genes"), recursive = TRUE)
+	message("Storing results in: ", file.path("output", "overlap_pc_genes"))
 
-	write.table(same_strand_PCT_pairs, file=file.path(out_dir, "output", "cd_gene_pairs", same_strand_fname), 
-		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
-	write.table(SAS_PCT_pairs, file=file.path(out_dir, "output", "cd_gene_pairs", SAS_fname), 
-		sep=";", dec=".", row.names=FALSE, col.names=TRUE)
+	write.table(all_neighbouring_dedup_gene_pairs, file = file.path(out_dir, "output", "overlap_pc_genes", fname), 
+		sep = ";", dec = ".", row.names = FALSE, col.names = TRUE)
+
 
 }
-
-
-
-# Execute getPcPc function
-getPcPcNO("ATH", "single-species")
-getPcPcNO("ATH", "comparative")
-getPcPcNO("AL", "single-species")
-getPcPcNO("AL", "comparative")
-getPcPcNO("CR", "comparative")
-getPcPcNO("ES", "comparative")
-getPcPcNO("TH", "comparative")
-getPcPcNO("MT", "comparative")
-getPcPcNO("BD", "comparative")
-
-
 
 
