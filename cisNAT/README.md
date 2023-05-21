@@ -13,7 +13,6 @@ This code allows to reproduce the results of the protein-coding protein-coding s
   * [Calculate pairwise non-coding/protein-coding gene correlation](#calculate-pairwise-non-coding-protein-coding-gene-correlation)
   * [Get cisNAT-protein-coding gene overlap length](#get-cisNAT-protein-coding-gene-overlap-length)
   * [Get intergenic distance of neighboring genes](#get-intergenic-distance-of-neighboring-genes)
-  * [Fetch in-paralog genes from OrthoFinder2 output](#fetch-in-paralog-genes-from-orthoFinder2-output)
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
@@ -116,15 +115,6 @@ To generate the data table for _Arabidopsis thaliana_, execute the following fun
 
 ```R
 getPcPcNO("ATH", "single-species")
-
-```
-
-### Fetch in-paralog genes from OrthoFinder2 output
-
-...
-
-```R
-getInParalogs(species = "AT")
 
 ```
 
