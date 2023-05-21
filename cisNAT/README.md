@@ -107,14 +107,14 @@ lapply(species_ls, getNcPcOverlap)
 
 ### Get intergenic distance of neighboring genes
 
-Numerous studies using different model organisms including _Arabidopsis_, _Caenorhabditis_, _Drosophila_, _human_, and _Saccharomyces_ have shown that neighboring genes tend to be coexpressed, e.g. [Cohen  et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/11017073), [Boutanaev et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/12478293), [Lercher et al. (2002)](https://www.ncbi.nlm.nih.gov/pubmed/11992122), [Lercher et al. (2003)](https://www.ncbi.nlm.nih.gov/pubmed/12566401), [Williams and Bowles (2004)](https://www.ncbi.nlm.nih.gov/pubmed/15173112). We wanted to test if a similar trend can be found in the DevSeq data set. The following function will extract all protein-coding gene pairs and their intergenic distance from the GTF file, apply an expression threshold of 0.5 TPM, compute pairwise log2 expression correlations across all samples, and write the results to a CSV file.
+Numerous studies using different model organisms including _Arabidopsis_, _Caenorhabditis_, _Drosophila_, _human_, and _Saccharomyces_ have shown that neighboring genes tend to be coexpressed, e.g. [Cohen  et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/11017073), [Boutanaev et al. (2000)](https://www.ncbi.nlm.nih.gov/pubmed/12478293), [Lercher et al. (2002)](https://www.ncbi.nlm.nih.gov/pubmed/11992122), [Lercher et al. (2003)](https://www.ncbi.nlm.nih.gov/pubmed/12566401), [Williams and Bowles (2004)](https://www.ncbi.nlm.nih.gov/pubmed/15173112). We wanted to test if a similar trend can be found in the DevSeq data set. The following function will extract all neighbouring protein-coding gene pairs and their intergenic distance from the GTF file, apply an expression threshold, compute pairwise Pearson and Spearman expression correlations across all samples, and write the results to a CSV file.
 
 * `getPcPcNO(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"), experiment = c("single-species", "comparative"), threshold)`
 
 To generate the data table for _Arabidopsis thaliana_, execute the following function call: 
 
 ```R
-getPcPcNO("AT", "single-species")
+getPcPcNO("AT", "single-species", 0.5)
 
 ```
 
