@@ -87,49 +87,42 @@ getPcPcNO <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
     	GTFfile = file.path(in_dir, "GTF", "AT_final_annotation.gtf")
         genesCounts = file.path(in_dir, "Expression_data", "AT_genes_inter_norm_count_mat_vsd_sample_names.csv")
         genesTPM = file.path(in_dir, "Expression_data", "AT_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-        inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_AT.csv")
         species_id <- "AT"
 
     } else if (is.element("AL", species)) {
 		GTFfile = file.path(in_dir, "GTF", "AL_final_annotation.gtf")
 		genesCounts = file.path(in_dir, "Expression_data", "AL_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		genesTPM = file.path(in_dir, "Expression_data", "AL_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_AL.csv")
 		species_id <- "AL"
 
     } else if (is.element("CR", species)) {
 		GTFfile = file.path(in_dir, "GTF", "CR_final_annotation.gtf")
 		genesCounts = file.path(in_dir, "Expression_data", "CR_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		genesTPM = file.path(in_dir, "Expression_data", "CR_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_CR.csv")
 		species_id <- "CR"
 
     } else if (is.element("ES", species)) {
 		GTFfile = file.path(in_dir, "GTF", "ES_final_annotation.gtf")
 		genesCounts = file.path(in_dir, "Expression_data", "ES_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		genesTPM = file.path(in_dir, "Expression_data", "ES_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_ES.csv")
 		species_id <- "ES"
 
     } else if (is.element("TH", species)) {
 		GTFfile = file.path(in_dir, "GTF", "TH_final_annotation.gtf")
 		genesCounts = file.path(in_dir, "Expression_data", "TH_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		genesTPM = file.path(in_dir, "Expression_data", "TH_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_TH.csv")
 		species_id <- "TH"
 
     } else if (is.element("MT", species)) {
 		GTFfile = file.path(in_dir, "GTF", "MT_final_annotation.gtf")
 		genesCounts = file.path(in_dir, "Expression_data", "MT_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		genesTPM = file.path(in_dir, "Expression_data", "MT_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_MT.csv")
 		species_id <- "MT"
 
     } else if (is.element("BD", species)) {
 		GTFfile = file.path(in_dir, "GTF", "BD_final_annotation.gtf")
 		genesCounts = file.path(in_dir, "Expression_data", "BD_genes_inter_norm_count_mat_vsd_sample_names.csv")
 		genesTPM = file.path(in_dir, "Expression_data", "BD_genes_inter_norm_tpm_mat_deseq_sample_names.csv")
-		inparalog_ids = file.path(out_dir, "output", "cd_gene_pairs", "All_orthogroups_BD.csv")
 		species_id <- "BD"
     }
 
@@ -140,7 +133,6 @@ getPcPcNO <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	# Read expression data
 	all_genes_counts <- read.table(genesCounts, sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
 	all_genes_tpm <- read.table(genesTPM, sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
-	all_orthogroups <- read.table(inparalog_ids, sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
 
 	# Save threshold in variable
 	threshold <- threshold
@@ -238,7 +230,7 @@ getPcPcNO <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 
 
-    # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_counts" = all_genes_counts, "all_genes_tpm" = all_genes_tpm, "all_orthogroups" = all_orthogroups , "threshold" = threshold)
+    # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_counts" = all_genes_counts, "all_genes_tpm" = all_genes_tpm, "threshold" = threshold)
     # return(return_list)
     # }
     # return_objects <- getPcPcNO("AT", "single-species", 0.5) # read in GTF and expression data for A.thaliana
