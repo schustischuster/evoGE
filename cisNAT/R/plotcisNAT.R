@@ -11,6 +11,13 @@
 in_dir_NAT_cor <- file.path(out_dir, "output", "NAT_expr_cor")
 in_dir_PC_pairs <- file.path(out_dir, "output", "overlap_pc_genes")
 in_dir_NCPC_pairs <- file.path(out_dir, "output", "overlap_nc_genes")
+in_dir_NOPC_pairs <- file.path(out_dir, "output", "cd_gene_pairs")
+
+
+# Read table containing tandem duplicate genes in AT
+# Data from Liu et al., GBE (2011)
+tan_dupl <- read.table(file = file.path(in_dir, "AT_tandem_dupl", "AT_tandem_dupl.csv"), 
+  sep = ";", dec = ".", header = TRUE, stringsAsFactors = FALSE)
 
 
 # Read all csv files in input file path
@@ -22,6 +29,7 @@ readTable <- function(path, pattern = "*.csv") {
 NAT_expr_cor_ls <- readTable(in_dir_NAT_cor)
 overlap_cd_genes_ls <- readTable(in_dir_PC_pairs)
 overlap_nccd_genes_ls <- readTable(in_dir_NCPC_pairs)
+non_overlap_cdcd_genes_ls <- readTable(in_dir_NOPC_pairs)
 
 
 # Get file names and save them in character vector
@@ -34,6 +42,9 @@ coding_gene_tables_names <- gsub('\\.csv$', '', coding_gene_tables_list)
 nc_cd_gene_tables_list <- as.character(list.files(in_dir_NCPC_pairs, pattern = "*.csv"))
 nc_cd_gene_tables_names <- gsub('\\.csv$', '', nc_cd_gene_tables_list)
 
+nopc_gene_tables_list <- as.character(list.files(in_dir_NOPC_pairs, pattern = "*.csv"))
+nopc_gene_tables_names <- gsub('\\.csv$', '', nopc_gene_tables_list)
+
 
 # Change data frame names in list
 names(NAT_expr_cor_ls) <- NAT_gene_tables_names
@@ -44,6 +55,9 @@ list2env(overlap_cd_genes_ls, envir = .GlobalEnv)
 
 names(overlap_nccd_genes_ls) <- nc_cd_gene_tables_names
 list2env(overlap_nccd_genes_ls, envir = .GlobalEnv)
+
+names(non_overlap_cdcd_genes_ls) <- nopc_gene_tables_names
+list2env(non_overlap_cdcd_genes_ls, envir = .GlobalEnv)
 
 
 
@@ -548,6 +562,171 @@ plotCdNcCor <- function(data) {
  plotCdNcCor(data = pc_pc_nc_pc_cor)
 
 
+
+
+#-------------------------- Plots AT coding and non-coding gene data --------------------------
+
+
+# Prepare data
+# AT_cd_cd_NO_cor_0.5 -> PC/PC non-overlapping gene pair correlation all AT samples (10932)
+# AT_cd_cd_SAS_cor_0.5 -> PC/PC overlapping gene pair correlation all AT samples (4183)
+# AT_cd_nc_cor_count -> cisNAT/PC overlapping gene pair correlation all AT samples (3175)
+
+# Remove 466 tandem duplicate gene pairs from neighbouring protein-coding gene list in AT
+AT_cd_cd_NO_cor_0.5 <- filter(AT_cd_cd_NO_cor_0.5, !(gene_id1 %in% unlist(tan_dupl)))
+AT_cd_cd_NO_cor_0.5 <- filter(AT_cd_cd_NO_cor_0.5, !(gene_id2 %in% unlist(tan_dupl)))
+
+
+# Get gene pairs where genes are located on same strand
+sstr1 <- AT_cd_cd_NO_cor_0.5[AT_cd_cd_NO_cor_0.5$strand1 == "+",]
+sstr1 <- sstr1[sstr1$strand2 == "+",]
+sstr2 <- AT_cd_cd_NO_cor_0.5[AT_cd_cd_NO_cor_0.5$strand1 == "-",]
+sstr2 <- sstr2[sstr2$strand2 == "-",]
+sstr <- rbind(sstr1, sstr2)
+
+# Get gene pairs where genes are located on opposite strand
+osst1 <- AT_cd_cd_NO_cor_0.5[AT_cd_cd_NO_cor_0.5$strand1 == "+",]
+osst1 <- osst1[osst1$strand2 == "-",]
+osst2 <- AT_cd_cd_NO_cor_0.5[AT_cd_cd_NO_cor_0.5$strand1 == "-",]
+osst2 <- osst2[osst2$strand2 == "+",]
+ostr <- rbind(osst1, osst2)
+
+
+
+# Prepare data for ggpot2
+row_num <- nrow(AT_cd_cd_NO_cor_0.5) + nrow(AT_cd_cd_SAS_cor_0.5) + nrow(AT_cd_nc_cor_count)
+
+at_all_samples_cd_nc_df <- data.frame(
+
+  Species = rep("AT", row_num),
+
+  Feature = c(rep("PCSS", nrow(sstr)), 
+              rep("PCOS", nrow(ostr)), 
+              rep("PC/PC", nrow(AT_cd_cd_SAS_cor_0.5)), 
+              rep("NAT/PC", nrow(AT_cd_nc_cor_count))),
+
+  Pearson = c(sstr$Pearson, 
+              ostr$Pearson, 
+              AT_cd_cd_SAS_cor_0.5$Pearson, 
+              AT_cd_nc_cor_count$Pearson), 
+
+  Spearman = c(sstr$Spearman, 
+               ostr$Spearman, 
+               AT_cd_cd_SAS_cor_0.5$Spearman, 
+               AT_cd_nc_cor_count$Spearman)
+  )
+
+
+
+# Do Wilcoxon rank sum test between pc/pc and nc/pc of same species
+getWRS <- function(z) {
+
+  pc_ss <- z[z$Feature == "PCSS",]
+  pc_os <- z[z$Feature == "PCOS",]
+  pc_pc <- z[z$Feature == "PC/PC",]
+  nat_pc <- z[z$Feature == "NAT/PC",]
+
+  getPVal <- function(x, y){ 
+
+    p_val <- wilcox.test(x$Pearson, y$Pearson)$p.value
+
+    return(p_val)
+  }
+
+  p_1 <- getPVal(pc_ss, nat_pc)
+  p_2 <- getPVal(pc_os, nat_pc)
+  p_3 <- getPVal(pc_pc, nat_pc)
+
+  mwu_df <- data.frame(comp = c("PCSS_NAT", "PCOS_NAT", "PCPC_NAT"), 
+                       p_value = c(p_1, p_2, p_3))
+
+  return(mwu_df)
+
+  }
+
+p_val_table <- getWRS(at_all_samples_cd_nc_df)
+
+
+
+# Generate plots
+plotATCor <- function(data) {
+
+
+  # Create df for FDR p-value mapping
+  mwu_df <- data.frame(
+    p_val = p_val_table$p_value, 
+    x = c(1, 2, 3),
+    y = rep(c(1.155), 3),
+    label = ifelse(p_val_table$p_value < 1e-07, "**** ", 
+
+      c(paste("italic('P =')~", set_scientific(p_val_table$p_value))))
+  )
+
+  # Create df for gem_segments
+  h_seg_df <- data.frame(
+    x = c(0.75, 1.75, 2.75), 
+    xend = c(1.25, 2.25, 3.25), 
+    y = rep(1.19, 3), 
+    yend = rep(1.19, 3)
+  )
+
+  v_seg_df <- data.frame(
+    x = c(0.75, 1.25, 1.75, 2.25, 2.75, 3.25), 
+    xend = c(0.75, 1.25, 1.75, 2.25, 2.75, 3.25), 
+    y = c(1.12, 1.12, 1.12, 1.12, 1.12, 1.12), 
+    yend = c(1.19, 1.19, 1.19, 1.19, 1.19, 1.19)
+  )
+
+   # Adjust position of p-value labels
+   mwu_df$label <- paste0(mwu_df$label, c("", "              ", ""))
+
+   fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
+   data$Feature <- factor(data$Feature, levels = unique(data$Feature))
+   data$Species <- factor(data$Species, levels = unique(data$Species))
+
+   p <- ggplot(data, aes(x = Feature, y = Pearson, color = Feature)) + 
+   geom_boxplot(aes(fill = Feature), colour = "black", width = 0.65, outlier.shape = NA, 
+    size = 0.8, fatten = 2.8, notch = TRUE, position = position_dodge(width = 0.83), show.legend = FALSE) + 
+   geom_point(size = -1, ) + 
+   scale_x_discrete(expand = c(0.025, 0)) + 
+   scale_y_continuous(limits = c(-1.05, 1.5), expand = c(0, 0), breaks = c(-1, -0.5, 0, 0.5, 1))
+
+   q <- p + 
+   scale_fill_manual(values = c("PCSS" = "white", "PCOS" = "white", "PC/PC" = "#f7ddb0", "NAT/PC" = "#cdbee5")) + 
+   scale_colour_manual(values = c("PCSS" = "white", "PCOS" = "white", "PC/PC" = "#f7ddb0", "NAT/PC" = "#cdbee5")) + 
+   geom_text(data = mwu_df, mapping = aes(x = x, y = y, label = label), 
+    size = 8.9, colour = "black", parse = FALSE, hjust = 0.1, vjust = 0) + 
+   geom_segment(data = h_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
+    size = 0.8, colour = "black") + 
+   geom_segment(data = v_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
+    size = 0.8, colour = "black") + guides(colour = guide_legend(override.aes = list(size = 7, shape = 15))) + 
+   theme_classic() + 
+   xlab("Species") + ylab("Pearson's r     ") + ggtitle("") + labs(colour = 'Gene pair') + 
+   theme(text = element_text(size = 23.5),  
+        axis.ticks.length = unit(0.2, "cm"), 
+        axis.ticks = element_line(colour = "black", size = 0.95), 
+        axis.line = element_line(colour = 'black', size = 0.95), 
+        plot.margin = unit(c(0.25, 32.14, 1.7, 0.1), "cm"), 
+        axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 4, b = 0, l = 1), 
+          colour = "black", face = "plain"), 
+        axis.title.x = element_text(size = 18.4, margin = margin(t = 2.8, r = 0, b = 23.525, l = 0), 
+          colour = "black", face = "plain"), 
+        axis.text.x = element_text(size = 16.25, margin = margin(t = 3.5, b = 2.0), colour = "black", 
+          angle = 0, vjust = 1, hjust = 0.5), 
+        axis.text.y = element_text(size = 16.5, angle = 0, margin = margin(l = 0, r = 1.5), colour = "black"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.minor.y = element_blank(),  
+        legend.position = "top", 
+        legend.title = element_text(size = 18.4, face = "bold"), 
+        legend.text = element_text(size = 18.4), 
+        legend.margin = margin(t = 4, b = -7))
+
+   ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
+    width = 20, height = 5.75, units = c("in"))
+ }
+
+ plotATCor(data = at_all_samples_cd_nc_df)
 
 
 
