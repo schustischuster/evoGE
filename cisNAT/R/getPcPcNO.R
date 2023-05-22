@@ -454,35 +454,20 @@ getPcPcNO <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	# 10932 unique gene pairs in AT
 
 
-	# Get gene pairs where genes are located on same strand
-	sstr1 <- all_neighbouring_dedup_gene_pairs[all_neighbouring_dedup_gene_pairs$strand1 == "+",]
-	sstr1 <- sstr1[sstr1$strand2 == "+",]
-	sstr2 <- all_neighbouring_dedup_gene_pairs[all_neighbouring_dedup_gene_pairs$strand1 == "-",]
-	sstr2 <- sstr2[sstr2$strand2 == "-",]
-	sstr <- rbind(sstr1, sstr2)
-
-	# Get gene pairs where genes are located on opposite strand
-	osst1 <- all_neighbouring_dedup_gene_pairs[all_neighbouring_dedup_gene_pairs$strand1 == "+",]
-	osst1 <- osst1[osst1$strand2 == "-",]
-	osst2 <- all_neighbouring_dedup_gene_pairs[all_neighbouring_dedup_gene_pairs$strand1 == "-",]
-	osst2 <- osst2[osst2$strand2 == "+",]
-	osst <- rbind(osst1, osst2)
-
-
 
 #--------------------------------------- Write csv file ---------------------------------------
 
 
 	# Set filename
-    fname <- sprintf('%s.csv', paste(species_id, "cd_cd_SAS_cor", threshold, sep = "_"))
+    fname <- sprintf('%s.csv', paste(species_id, "cd_cd_NO_cor", threshold, sep = "_"))
 
 
 	# Write final data tables to csv files and store them in /out_dir/output/data_tables
-	if (!dir.exists(file.path(out_dir, "output", "overlap_pc_genes"))) 
-		dir.create(file.path(out_dir, "output", "overlap_pc_genes"), recursive = TRUE)
-	message("Storing results in: ", file.path("output", "overlap_pc_genes"))
+	if (!dir.exists(file.path(out_dir, "output", "cd_gene_pairs"))) 
+		dir.create(file.path(out_dir, "output", "cd_gene_pairs"), recursive = TRUE)
+	message("Storing results in: ", file.path("output", "cd_gene_pairs"))
 
-	write.table(all_neighbouring_dedup_gene_pairs, file = file.path(out_dir, "output", "overlap_pc_genes", fname), 
+	write.table(all_neighbouring_dedup_gene_pairs, file = file.path(out_dir, "output", "cd_gene_pairs", fname), 
 		sep = ";", dec = ".", row.names = FALSE, col.names = TRUE)
 
 
