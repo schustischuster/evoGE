@@ -259,9 +259,22 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 	# Replace TPM expression values by VST counts
 	all_genes_count <- merge(all_genes_count, all_genes_tpm, by = "gene_id")
-	all_genes_count <- all_genes_count[-30:-53]
-	all_genes_count <- cbind(all_genes_count[c("gene_id", "prt_id", "biotype", "source", "info")], 
+
+	if (species_id == "AT") {
+		
+		all_genes_count <- cbind(all_genes_count[c("gene_id", "prt_id", "biotype", "source", "info")], 
+			all_genes_count[2:130])
+	
+	} else if (species_id == "AL") {
+		
+		all_genes_count <- cbind(all_genes_count[c("gene_id", "prt_id", "biotype", "source", "info")], 
+			all_genes_count[2:34])
+	
+	} else {
+
+		all_genes_count <- cbind(all_genes_count[c("gene_id", "prt_id", "biotype", "source", "info")], 
 		all_genes_count[2:25])
+	}
 
 
 	all_genes_tpm_ls <- split(all_genes_tpm, f = all_genes_tpm$prt_id)
