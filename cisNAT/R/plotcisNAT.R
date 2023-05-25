@@ -539,8 +539,8 @@ plotCdNcCor <- function(data) {
         axis.ticks.length = unit(0.2, "cm"), 
         axis.ticks = element_line(colour = "black", size = 0.95), 
         axis.line = element_line(colour = 'black', size = 0.95), 
-        plot.margin = unit(c(0.25, 32.14, 1.7, 0.1), "cm"), 
-        axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 4, b = 0, l = 1), 
+        plot.margin = unit(c(0.25, 31.825, 1.7, 0.1), "cm"), 
+        axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 2.8, b = 0, l = 1), 
           colour = "black", face = "plain"), 
         axis.title.x = element_text(size = 18.4, margin = margin(t = 2.8, r = 0, b = 23.525, l = 0), 
           colour = "black", face = "plain"), 
@@ -558,6 +558,9 @@ plotCdNcCor <- function(data) {
    ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
     width = 20, height = 5.75, units = c("in"))
  }
+
+
+ pc_pc_nc_pc_cor <- pc_pc_nc_pc_cor[!is.na(pc_pc_nc_pc_cor$Pearson), ]
 
  plotCdNcCor(data = pc_pc_nc_pc_cor)
 
@@ -655,8 +658,8 @@ plotATCor <- function(data) {
   # Create df for FDR p-value mapping
   mwu_df <- data.frame(
     p_val = p_val_table$p_value, 
-    x = c(1, 2, 3),
-    y = rep(c(1.155), 3),
+    x = c(2.4, 2.9, 3.4),
+    y = c(1.58, 1.33, 1.08),
     label = ifelse(p_val_table$p_value < 1e-07, "**** ", 
 
       c(paste("italic('P =')~", set_scientific(p_val_table$p_value))))
@@ -664,21 +667,21 @@ plotATCor <- function(data) {
 
   # Create df for gem_segments
   h_seg_df <- data.frame(
-    x = c(0.75, 1.75, 2.75), 
-    xend = c(1.25, 2.25, 3.25), 
-    y = rep(1.19, 3), 
-    yend = rep(1.19, 3)
+    x = c(3, 2, 1), 
+    xend = c(4, 4, 4), 
+    y = c(1.125, 1.375, 1.625), 
+    yend = c(1.125, 1.375, 1.625)
   )
 
   v_seg_df <- data.frame(
-    x = c(0.75, 1.25, 1.75, 2.25, 2.75, 3.25), 
-    xend = c(0.75, 1.25, 1.75, 2.25, 2.75, 3.25), 
-    y = c(1.12, 1.12, 1.12, 1.12, 1.12, 1.12), 
-    yend = c(1.19, 1.19, 1.19, 1.19, 1.19, 1.19)
+    x = c(3, 4, 2, 4, 1, 4), 
+    xend = c(3, 4, 2, 4, 1, 4), 
+    y = c(1.045, 1.045, 1.295, 1.295, 1.545, 1.545), 
+    yend = c(1.125, 1.125, 1.375, 1.375, 1.625, 1.625)
   )
 
    # Adjust position of p-value labels
-   mwu_df$label <- paste0(mwu_df$label, c("", "              ", ""))
+   mwu_df$label <- paste0(mwu_df$label, c("    ", "    ", "    "))
 
    fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
    data$Feature <- factor(data$Feature, levels = unique(data$Feature))
@@ -688,8 +691,8 @@ plotATCor <- function(data) {
    geom_boxplot(aes(fill = Feature), colour = "black", width = 0.65, outlier.shape = NA, 
     size = 0.8, fatten = 2.8, notch = TRUE, position = position_dodge(width = 0.83), show.legend = FALSE) + 
    geom_point(size = -1, ) + 
-   scale_x_discrete(expand = c(0.025, 0)) + 
-   scale_y_continuous(limits = c(-1.05, 1.5), expand = c(0, 0), breaks = c(-1, -0.5, 0, 0.5, 1))
+   scale_x_discrete(expand = c(0.05, 0)) + 
+   scale_y_continuous(limits = c(-1.05, 1.8), expand = c(0, 0), breaks = c(-1, -0.5, 0, 0.5, 1))
 
    q <- p + 
    scale_fill_manual(values = c("PCSS" = "white", "PCOS" = "white", "PC/PC" = "#f7ddb0", "NAT/PC" = "#cdbee5")) + 
@@ -701,26 +704,24 @@ plotATCor <- function(data) {
    geom_segment(data = v_seg_df, mapping = aes(x = x, xend = xend, y = y, yend = yend), 
     size = 0.8, colour = "black") + guides(colour = guide_legend(override.aes = list(size = 7, shape = 15))) + 
    theme_classic() + 
-   xlab("Species") + ylab("Pearson's r     ") + ggtitle("") + labs(colour = 'Gene pair') + 
+   xlab("Gene pair") + ylab("Pearson's r     ") + ggtitle("Pairwise gene correlation in AT") + labs(colour = 'Gene pair') + 
    theme(text = element_text(size = 23.5),  
         axis.ticks.length = unit(0.2, "cm"), 
         axis.ticks = element_line(colour = "black", size = 0.95), 
         axis.line = element_line(colour = 'black', size = 0.95), 
-        plot.margin = unit(c(0.25, 32.14, 1.7, 0.1), "cm"), 
-        axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 4, b = 0, l = 1), 
+        plot.margin = unit(c(0.25, 40.25, 1.7, 0.1), "cm"), 
+        axis.title.y = element_text(size = 18.4, margin = margin(t = 0, r = 2.8, b = 0, l = 1), 
           colour = "black", face = "plain"), 
         axis.title.x = element_text(size = 18.4, margin = margin(t = 2.8, r = 0, b = 23.525, l = 0), 
           colour = "black", face = "plain"), 
         axis.text.x = element_text(size = 16.25, margin = margin(t = 3.5, b = 2.0), colour = "black", 
           angle = 0, vjust = 1, hjust = 0.5), 
         axis.text.y = element_text(size = 16.5, angle = 0, margin = margin(l = 0, r = 1.5), colour = "black"), 
+        plot.title = element_text(size = 18.4, margin = margin(l = 0, r = 0, t = 34, b = 7), hjust = 1), 
         panel.grid.major = element_blank(),
         panel.grid.minor.x = element_blank(), 
         panel.grid.minor.y = element_blank(),  
-        legend.position = "top", 
-        legend.title = element_text(size = 18.4, face = "bold"), 
-        legend.text = element_text(size = 18.4), 
-        legend.margin = margin(t = 4, b = -7))
+        legend.position = "none")
 
    ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
     width = 20, height = 5.75, units = c("in"))
