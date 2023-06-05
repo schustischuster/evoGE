@@ -16,8 +16,9 @@ This code allows to reproduce the results of the protein-coding protein-coding s
 * [Visualization](#visualization)
 * [Session info](#session-info)
 
-
+---
 ## Getting started
+
 
 ### Required Packages
 
@@ -84,7 +85,7 @@ unzipFiles <- function(f) {
 lapply(gtf_file_ls, unzipFiles)
 
 ```
-
+---
 ## Data analysis
 
 Data analysis is performed across all species defined in a species list:
@@ -99,6 +100,14 @@ species_ls <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
 The following function will extract all protein-coding protein-coding sense-antisense (SAS) pairs from the GTF file, apply an expression threshold, retrieve maximum and mean expression values for each gene, compute pairwise SAS correlations across all samples, and write the results to a CSV file. The threshold is set as follows: an expression value of both sense and antisense transcript greater than 0.5 TPM in at least two out of three replicates in at least one sample type. 
 
 * `getPcPc(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"), experiment = c("single-species", "comparative"), threshold)`
+
+
+| Arguments  |  |
+| :---  | :---  |
+| species  | Defines the species to be analyzed. Can be one of "AT" (*Arabidopsis thaliana*), "AL" (*Arabidopsis lyrata*), "CR" (*Capsella rubella*), "ES" (*Eutrema salsugineaum*), "TH" (*Tarenaya hassleriana*), "MT" (*Medicago truncatula*), "BD" (*Brachypodium distachyon*).|
+| experiment  | Type of experiment. Choose "single-species" to run the analysis on all samples, and "comparative" to limit the analysis on the comparative samples. |
+| threshold  | Indicates the TPM threshold above which a gene is considered expressed. |
+
 
 To generate all data tables used in this study, execute the following function calls: 
 
