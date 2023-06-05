@@ -19,14 +19,24 @@ This code allows to reproduce the results of the protein-coding protein-coding s
 
 ## Getting started
 
-
 ### Required Packages
+
+Install Bioconductor core packages, GenomicRanges and rtracklayer:
+
+```R
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install()
+BiocManager::install("GenomicRanges")
+BiocManager::install("rtracklayer")
+
+```
+
 Install and load the following R packages before running the reproducible scripts:
 
 ```R
-
 # Required packages
-lib_List <- c("plyr", "dplyr", "GenomicRanges", "rtracklayer", "ggplot2", "scales", "mgcv", "data.table")
+lib_List <- c("plyr", "dplyr", "GenomicRanges", "rtracklayer", "ggplot2", "scales", "mgcv", "data.table", "R.utils")
 
 # Install missing packages
 instpack <- lib_List %in% installed.packages()[,"Package"]
@@ -49,7 +59,7 @@ path_to_R_files <- file.path("evoGE-master", "cisNAT", "R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
-   for (nm in list.files(path, pattern = "[.][RrSsQq]$")) {
+   for (nm in list.files(path, "^[^plotcisNAT].+[.][RrSsQq]$")) {
       if(trace) cat(nm,":")
       source(file.path(path, nm), ...)
       if(trace) cat("\n")
@@ -60,7 +70,29 @@ sourceDir(path_to_R_files)
 
 ```
 
+Unzip the GTF files:
+
+```R
+gtf_file_ls <- list.files(file.path(in_dir, "GTF"), pattern = "[.][gz]")
+
+unzipFiles <- function(f) {
+  file <- paste(file.path(in_dir, "GTF"), f, sep = "/")
+  gunzip(file, remove = FALSE)
+}
+
+# Unzip GTF files
+lapply(gtf_file_ls, unzipFiles)
+
+```
+
 ## Data analysis
+
+Data analysis is performed across all species defined in a species list:
+
+```R
+species_ls <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
+
+```
 
 ### Retrieve coding-coding gene overlapp and pairwise expression correlation
 
@@ -71,8 +103,6 @@ The following function will extract all protein-coding protein-coding sense-anti
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
-species_ls <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
-
 getPcPc(species = "AT", experiment = "single-species", threshold = 0.5)
 lapply(species_ls, getPcPc, experiment = "comparative", threshold = 0.5)
 
@@ -87,8 +117,6 @@ The following function will compute pairwise cis-natural antisense transcript (c
 To generate all data tables used in this study, execute the following function calls: 
 
 ```R
-species_ls <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
-
 getCorNcPc(species = "AT", experiment = "single-species")
 lapply(species_ls, getCorNcPc, experiment = "comparative")
 
@@ -99,8 +127,6 @@ lapply(species_ls, getCorNcPc, experiment = "comparative")
 The following function will extract the overlap length between cis-natural antisense transcripts (cisNATs) and protein-coding gene pairs from the species GTF files. The results will be written to a CSV file. 
 
 ```R
-species_ls <- list("AT", "AL", "CR", "ES", "TH", "MT", "BD")
-
 lapply(species_ls, getNcPcOverlap)
 
 ```
@@ -123,11 +149,6 @@ getPcPcNO("AT", "single-species", 0.5)
 Set the file path for the data generated in the previous steps and source the R script:
 
 ```R
-in_dir_cd <- file.path("evoGE-master", "cisNAT", "output", "overlap_pc_genes")
-in_dir_nc <- file.path("evoGE-master", "cisNAT", "output", "overlap_nc_genes")
-in_dir_PC_pairs <- file.path("evoGE-master", "cisNAT", "output", "overlap_nc_genes")
-in_dir_NAT_cor <- file.path("evoGE-master", "cisNAT", "output", "NAT_expr_cor")
-
 source(file.path("evoGE-master", "cisNAT", "R", "plotcisNAT.R"))
 
 ```
