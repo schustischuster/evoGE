@@ -104,7 +104,7 @@ The following function will extract all protein-coding protein-coding sense-anti
 
 | Arguments  |  |
 | :---  | :---  |
-| species  | Defines the species to be analyzed. Can be one of "AT" (*Arabidopsis thaliana*), "AL" (*Arabidopsis lyrata*), "CR" (*Capsella rubella*), "ES" (*Eutrema salsugineaum*), "TH" (*Tarenaya hassleriana*), "MT" (*Medicago truncatula*), "BD" (*Brachypodium distachyon*).|
+| species  | Defines the species to be analyzed. Can be one of "AT" (*Arabidopsis thaliana*), "AL" (*Arabidopsis lyrata*), "CR" (*Capsella rubella*), "ES" (*Eutrema salsugineum*), "TH" (*Tarenaya hassleriana*), "MT" (*Medicago truncatula*), "BD" (*Brachypodium distachyon*).|
 | experiment  | Type of experiment. Choose "single-species" to run the analysis on all samples, and "comparative" to limit the analysis on the comparative samples. |
 | threshold  | Indicates the TPM threshold above which a gene is considered expressed. |
 
