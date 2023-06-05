@@ -223,7 +223,6 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	}
 
 
-    # Stop function here to allow specific analysis of a single species
     # return_list <- list("species_id" = species_id, "GTF" = GTF, "all_genes_tpm" = all_genes_tpm, "all_genes_count" = all_genes_count, "experiment" = experiment)
     # return(return_list)
     # }
@@ -281,9 +280,6 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	length(all_genes_tpm_ls[purrr::map(all_genes_tpm_ls, nrow) > 2])
 	# check how many genes have more than one NAT overlapping = 150 for AT
 
-	length(all_genes_tpm_ls[purrr::map(all_genes_tpm_ls, nrow) > 3])
-	# 7 genes overlapping 3 cisNATs for AT
-
 
 	# Show message
 	message("Calculate correlations...")
@@ -300,12 +296,14 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 				df_out <- rbind(spe_df, pea_df)
 			}
 
+		max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
+		avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
+
 		if (nrow(df) == 2) {
 
 			cor_spe <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "spearman")$estimate
 			cor_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "pearson")$estimate
-			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
-			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
+
 			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = cor_spe, Pearson = cor_pea , maxPC = max[1], maxNC = max[2], 
 				meanPC = avg[1], meanNC = avg[2], maxRatio = max[2]/max[1], meanRatio = avg[2]/avg[1], 
 				maxSum = max[2]+max[1], meanSum = avg[2]+avg[1])
@@ -315,9 +313,6 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			r_list <- seq(2, 3)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
-
-			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
-			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
 
 			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
 				maxPC = rep(max[1], 2), maxNC = max[2:3], meanPC = rep(avg[1], 2), meanNC = avg[2:3], 
@@ -330,9 +325,6 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
-			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-
 			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
 				maxPC = rep(max[1], 3), maxNC = max[2:4], meanPC = rep(avg[1], 3), meanNC = avg[2:4], 
 				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1]), 
@@ -343,9 +335,6 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			r_list <- seq(2, 5)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
-
-			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
-			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
 
 			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
 				maxPC = rep(max[1], 4), maxNC = max[2:5], meanPC = rep(avg[1], 4), meanNC = avg[2:5], 
@@ -358,9 +347,6 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
-			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-
 			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
 				maxPC = rep(max[1], 5), maxNC = max[2:6], meanPC = rep(avg[1], 5), meanNC = avg[2:6], 
 				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1], max[6]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1], avg[6]/avg[1]), 
@@ -372,9 +358,6 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
-			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
-
 			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
 				maxPC = rep(max[1], 6), maxNC = max[2:7], meanPC = rep(avg[1], 6), meanNC = avg[2:7], 
 				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1], max[6]/max[1], max[7]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1], avg[6]/avg[1], avg[7]/avg[1]), 
@@ -385,9 +368,6 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			r_list <- seq(2, 8)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
-
-			max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
-			avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
 
 			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
 				maxPC = rep(max[1], 7), maxNC = max[2:8], meanPC = rep(avg[1], 7), meanNC = avg[2:8], 
