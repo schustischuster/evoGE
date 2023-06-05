@@ -90,13 +90,13 @@ AL_cd <- prepareCisNAT(AL_comparative_samples_cd_nc_cor_tpm, AL_comparative_samp
 CR_cd <- prepareCisNAT(CR_cd_nc_cor_tpm, CR_cd_nc_cor_count)
 ES_cd <- prepareCisNAT(ES_cd_nc_cor_tpm, ES_cd_nc_cor_count)
 TH_cd <- prepareCisNAT(TH_cd_nc_cor_tpm, TH_cd_nc_cor_count)
-MT_cd <- prepareCisNAT(MT_cd_nc_cor_tpm, MT_cd_nc_cor_count) # check data!
-BD_cd <- prepareCisNAT(BD_cd_nc_cor_tpm, BD_cd_nc_cor_count) # check data!
+MT_cd <- prepareCisNAT(MT_cd_nc_cor_tpm, MT_cd_nc_cor_count)
+BD_cd <- prepareCisNAT(BD_cd_nc_cor_tpm, BD_cd_nc_cor_count)
 
 
 # Clean up data
-MT_cd <- MT_cd[- grep("ALlnc", MT_cd$gene_id),] # rm one wrong id from list
-BD_cd <- BD_cd[- grep("ALlnc", BD_cd$gene_id),] # rm one wrong id from list
+MT_cd <- MT_cd[grep("ALlnc", MT_cd$gene_id, invert = TRUE),] # rm one wrong id from list
+BD_cd <- BD_cd[grep("ALlnc", BD_cd$gene_id, invert = TRUE),] # rm one wrong id from list
 
 
 # Add overlap length info to data
@@ -211,6 +211,10 @@ scatterDensOverlap <- function(x) {
 
 all_cd_nc_cor_overlap <- do.call("rbind", lapply(all_spec_ls, scatterDensOverlap))
 
+
+# Create plots folder in /out_dir/output/plots
+  if (!dir.exists(file.path(out_dir, "output", "plots"))) 
+  dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
 
 
 # Generate plots
