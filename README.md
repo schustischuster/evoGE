@@ -6,3 +6,4 @@ Finalized and tested folders:
 - ATGE-DevSeq all scripts finalized, tested and figure completed
 - GOslim all scripts finalized, tested and figures completed
 - exprGenes all scripts finalized, tested and figures completed
+- cisNAT all scripts finalized, tested and figures completed
