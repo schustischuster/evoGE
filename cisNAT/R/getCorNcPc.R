@@ -288,13 +288,13 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 	# Compute spearman and pearson correlations
 	getCdNcCor <- function(df) {
 
-		# no log-transformation required for Pearson correlation estimation (VST)
+    # no log-transformation required for Pearson correlation estimation (VST)
 
 		corSP <- function(p) {
-				spe_df <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[p, 6:ncol(df)]), method = "spearman")$estimate
-				pea_df <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[p, 6:ncol(df)]), method = "pearson")$estimate
-				df_out <- rbind(spe_df, pea_df)
-			}
+			spe_df <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[p, 6:ncol(df)]), method = "spearman")$estimate
+			pea_df <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[p, 6:ncol(df)]), method = "pearson")$estimate
+			df_out <- rbind(spe_df, pea_df)
+		}
 
 		max <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = max)
 		avg <- apply(X = df[6:ncol(df)], MARGIN = 1, FUN = mean)
@@ -304,74 +304,74 @@ getCorNcPc <- function(species = c("AT", "AL", "CR", "ES", "TH", "MT", "BD"),
 			cor_spe <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "spearman")$estimate
 			cor_pea <- cor.test(as.numeric(df[1, 6:ncol(df)]), as.numeric(df[2, 6:ncol(df)]), method = "pearson")$estimate
 
-			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = cor_spe, Pearson = cor_pea , maxPC = max[1], maxNC = max[2], 
-				meanPC = avg[1], meanNC = avg[2], maxRatio = max[2]/max[1], meanRatio = avg[2]/avg[1], 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = cor_spe, Pearson = cor_pea , maxPC = max[1], maxNC = max[2],
+				meanPC = avg[1], meanNC = avg[2], maxRatio = max[2]/max[1], meanRatio = avg[2]/avg[1],
 				maxSum = max[2]+max[1], meanSum = avg[2]+avg[1])
-		
+
 		} else if (nrow(df) == 3) {
 
 			r_list <- seq(2, 3)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
-				maxPC = rep(max[1], 2), maxNC = max[2:3], meanPC = rep(avg[1], 2), meanNC = avg[2:3], 
-				maxRatio = c(max[2]/max[1], max[3]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1]), 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"],
+				maxPC = rep(max[1], 2), maxNC = max[2:3], meanPC = rep(avg[1], 2), meanNC = avg[2:3],
+				maxRatio = c(max[2]/max[1], max[3]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1]),
 				maxSum = c(max[2]+max[1], max[3]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1]))
-		
+
 		} else if (nrow(df) == 4) {
 
 			r_list <- seq(2, 4)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
-				maxPC = rep(max[1], 3), maxNC = max[2:4], meanPC = rep(avg[1], 3), meanNC = avg[2:4], 
-				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1]), 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"],
+				maxPC = rep(max[1], 3), maxNC = max[2:4], meanPC = rep(avg[1], 3), meanNC = avg[2:4],
+				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1]),
 				maxSum = c(max[2]+max[1], max[3]+max[1], max[4]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1], avg[4]+avg[1]))
-		
+
 		} else if (nrow(df) == 5) {
 
 			r_list <- seq(2, 5)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
-				maxPC = rep(max[1], 4), maxNC = max[2:5], meanPC = rep(avg[1], 4), meanNC = avg[2:5], 
-				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1]), 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"],
+				maxPC = rep(max[1], 4), maxNC = max[2:5], meanPC = rep(avg[1], 4), meanNC = avg[2:5],
+				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1]),
 				maxSum = c(max[2]+max[1], max[3]+max[1], max[4]+max[1], max[5]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1], avg[4]+avg[1], avg[5]+avg[1]))
-		
+
 		} else if (nrow(df) == 6) {
 
 			r_list <- seq(2, 6)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
-				maxPC = rep(max[1], 5), maxNC = max[2:6], meanPC = rep(avg[1], 5), meanNC = avg[2:6], 
-				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1], max[6]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1], avg[6]/avg[1]), 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"],
+				maxPC = rep(max[1], 5), maxNC = max[2:6], meanPC = rep(avg[1], 5), meanNC = avg[2:6],
+				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1], max[6]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1], avg[6]/avg[1]),
 				maxSum = c(max[2]+max[1], max[3]+max[1], max[4]+max[1], max[5]+max[1], max[6]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1], avg[4]+avg[1], avg[5]+avg[1], avg[6]+avg[1]))
-		
+
 		} else if (nrow(df) == 7) {
 
 			r_list <- seq(2, 7)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
-				maxPC = rep(max[1], 6), maxNC = max[2:7], meanPC = rep(avg[1], 6), meanNC = avg[2:7], 
-				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1], max[6]/max[1], max[7]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1], avg[6]/avg[1], avg[7]/avg[1]), 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"],
+				maxPC = rep(max[1], 6), maxNC = max[2:7], meanPC = rep(avg[1], 6), meanNC = avg[2:7],
+				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1], max[6]/max[1], max[7]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1], avg[6]/avg[1], avg[7]/avg[1]),
 				maxSum = c(max[2]+max[1], max[3]+max[1], max[4]+max[1], max[5]+max[1], max[6]+max[1], max[7]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1], avg[4]+avg[1], avg[5]+avg[1], avg[6]+avg[1], avg[7]+avg[1]))
-		
+
 		} else if (nrow(df) == 8) {
 
 			r_list <- seq(2, 8)
 
 			p_df <- do.call(rbind, lapply(r_list, corSP))
 
-			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"], 
-				maxPC = rep(max[1], 7), maxNC = max[2:8], meanPC = rep(avg[1], 7), meanNC = avg[2:8], 
-				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1], max[6]/max[1], max[7]/max[1], max[8]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1], avg[6]/avg[1], avg[7]/avg[1], avg[8]/avg[1]), 
+			df_out <- data.frame(df[!grepl("protein_coding", df$biotype), 1:5], Spearman = p_df[rownames(p_df) == "spe_df"], Pearson = p_df[rownames(p_df) == "pea_df"],
+				maxPC = rep(max[1], 7), maxNC = max[2:8], meanPC = rep(avg[1], 7), meanNC = avg[2:8],
+				maxRatio = c(max[2]/max[1], max[3]/max[1], max[4]/max[1], max[5]/max[1], max[6]/max[1], max[7]/max[1], max[8]/max[1]), meanRatio = c(avg[2]/avg[1], avg[3]/avg[1], avg[4]/avg[1], avg[5]/avg[1], avg[6]/avg[1], avg[7]/avg[1], avg[8]/avg[1]),
 				maxSum = c(max[2]+max[1], max[3]+max[1], max[4]+max[1], max[5]+max[1], max[6]+max[1], max[7]+max[1], max[8]+max[1]), meanSum = c(avg[2]+avg[1], avg[3]+avg[1], avg[4]+avg[1], avg[5]+avg[1], avg[6]+avg[1], avg[7]+avg[1], avg[8]+avg[1]))
 		
 		}
