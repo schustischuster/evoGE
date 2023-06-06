@@ -105,7 +105,7 @@ The following function will extract all protein-coding protein-coding sense-anti
 | Arguments  |  |
 | :---  | :---  |
 | species  | Defines the species to be analyzed. Can be one of "AT" (*Arabidopsis thaliana*), "AL" (*Arabidopsis lyrata*), "CR" (*Capsella rubella*), "ES" (*Eutrema salsugineum*), "TH" (*Tarenaya hassleriana*), "MT" (*Medicago truncatula*), "BD" (*Brachypodium distachyon*).|
-| experiment  | Type of experiment. Choose "single-species" to run the analysis on all samples, and "comparative" to limit the analysis on the comparative samples. |
+| experiment  | Type of experiment. Choose "single-species" to run the analysis on all samples, and "comparative" to limit the analysis to the comparative samples. |
 | threshold  | Indicates the TPM threshold above which a gene is considered expressed. |
 
 
@@ -165,6 +165,8 @@ source(file.path("evoGE-master", "cisNAT", "R", "plotcisNAT.R"))
 ---
 ## Session info
 
+This code was developed and tested on MacOS X 10.9.5 in R version 3.3.3 and on MacOS 12.3.1 in R version 4.1.3.
+
 ```R
 sessionInfo()
 ```
@@ -194,5 +196,43 @@ sessionInfo()
 #>[21] Matrix_1.2-8               bindrcpp_0.2               bitops_1.0-6               RCurl_1.95-4.10           
 #>[25] glue_1.2.0                 scales_0.5.0               Biostrings_2.42.1          Rsamtools_1.26.2          
 #>[29] XML_3.98-1.9               pkgconfig_2.0.3  
+
+```
+
+```R
+#> R version 4.1.3 (2022-03-10)
+#> Platform: x86_64-apple-darwin17.0 (64-bit)
+#> Running under: macOS Monterey 12.3.1
+
+#> Matrix products: default
+#> BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+#> LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+#> locale:
+#> [1] de_DE.UTF-8/de_DE.UTF-8/de_DE.UTF-8/C/de_DE.UTF-8/de_DE.UTF-8
+
+#> attached base packages:
+#> [1] stats4    stats     graphics  grDevices utils     datasets  methods   base     
+
+#> other attached packages:
+#> [1] R.utils_2.12.2       R.oo_1.25.0          R.methodsS3_1.8.2    data.table_1.14.2    mgcv_1.8-39         
+#> [6] nlme_3.1-155         scales_1.1.1         ggplot2_3.3.5        rtracklayer_1.54.0   GenomicRanges_1.46.1
+#>[11] GenomeInfoDb_1.30.1  IRanges_2.28.0       S4Vectors_0.32.4     BiocGenerics_0.40.0  dplyr_1.0.8         
+#>[16] plyr_1.8.6           BiocManager_1.30.16 
+
+#> loaded via a namespace (and not attached):
+#> [1] SummarizedExperiment_1.24.0 tidyselect_1.1.2            purrr_0.3.4                 splines_4.1.3              
+#> [5] lattice_0.20-45             colorspace_2.0-3            vctrs_0.3.8                 generics_0.1.2             
+#> [9] yaml_2.3.5                  utf8_1.2.2                  XML_3.99-0.14               rlang_1.0.2                
+#>[13] pillar_1.7.0                glue_1.6.2                  withr_2.5.0                 BiocParallel_1.28.3        
+#>[17] matrixStats_0.61.0          GenomeInfoDbData_1.2.7      lifecycle_1.0.1             zlibbioc_1.40.0            
+#>[21] MatrixGenerics_1.6.0        Biostrings_2.62.0           munsell_0.5.0               gtable_0.3.0               
+#>[25] restfulr_0.0.15             labeling_0.4.2              Biobase_2.54.0              parallel_4.1.3             
+#>[29] fansi_1.0.2                 Rcpp_1.0.8.2                KernSmooth_2.23-20          DelayedArray_0.20.0        
+#>[33] XVector_0.34.0              farver_2.1.0                Rsamtools_2.10.0            digest_0.6.29              
+#>[37] rjson_0.2.21                BiocIO_1.4.0                grid_4.1.3                  cli_3.2.0                  
+#>[41] tools_4.1.3                 bitops_1.0-7                magrittr_2.0.2              RCurl_1.98-1.12            
+#>[45] tibble_3.1.6                crayon_1.5.0                pkgconfig_2.0.3             ellipsis_0.3.2             
+#>[49] Matrix_1.4-0                R6_2.5.1                    GenomicAlignments_1.30.0    compiler_4.1.3
 
 ```
