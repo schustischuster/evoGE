@@ -155,7 +155,7 @@ getPcPcNO("AT", "single-species", 0.5)
 
 ## Visualization
 
-Set the file path for the data generated in the previous steps and source the R script:
+To visualize the results generated in the previous steps, source the following R script:
 
 ```R
 source(file.path("evoGE-master", "cisNAT", "R", "plotcisNAT.R"))
