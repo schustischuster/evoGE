@@ -213,7 +213,7 @@ all_cd_nc_cor_overlap <- do.call("rbind", lapply(all_spec_ls, scatterDensOverlap
 
 
 # Create plots folder in /out_dir/output/plots
-  if (!dir.exists(file.path(out_dir, "output", "plots"))) 
+  if (!dir.exists(file.path(out_dir, "output", "plots")))
   dir.create(file.path(out_dir, "output", "plots"), recursive = TRUE)
 
 
