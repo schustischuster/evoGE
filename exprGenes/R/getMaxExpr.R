@@ -1124,9 +1124,6 @@ getMaxExpr <- function(species = c("AT", "all"), ...) {
 
          fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), sep="_"))
 
-         x_lab <- c(Root = "Rt", Hypocotyl = "Hc", Leaf = "Lf", Apex_veg = "Av", 
-            Apex_inf = "Ai", Flower = "Fl", Stamen = "St", Carpel = "Ca")
-
          x_labels = c("coding_all" = expression(atop(NA, atop(textstyle('All'), textstyle('PC')))), 
             "coding_non-core" = expression(atop(NA, atop(textstyle('PC w/o'), textstyle('Ortho')))), 
             "coding_core" = expression(atop(NA, atop(textstyle('Ortho'), textstyle('PC')))), 
