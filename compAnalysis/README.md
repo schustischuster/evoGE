@@ -1,3 +1,4 @@
+## This Readme file and the R scripts in this folder still need to be updated!
 
 ## Perform comparative analysis of DevSeq and Brawand data
 
