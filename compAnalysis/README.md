@@ -61,11 +61,11 @@ library('TreeExp')
 Download and extract the evoGE repository to the working directory on your computer. Then, set the path for input and output files and source the R scripts: 
 
 ```R
-in_dir <- file.path("evoGE", "compAnalysis", "data")
-out_dir <- file.path("evoGE", "compAnalysis")
+in_dir <- file.path("evoGE-master", "compAnalysis", "data")
+out_dir <- file.path("evoGE-master", "compAnalysis")
 
-source(file.path("evoGE", "compAnalysis", "R", "makeCompAnalysis.R"))
-source(file.path("evoGE", "compAnalysis", "R", "getATDiv.R"))
+source(file.path("evoGE-master", "compAnalysis", "R", "makeCompAnalysis.R"))
+source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
 
 ```
 ---
