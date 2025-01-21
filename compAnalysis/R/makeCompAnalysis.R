@@ -460,16 +460,18 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             )
 
         # Get order of rows and rearrange "row_cols" vector
-        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
-        ordinary_order = getRowOrder$rowInd
-        reversal = cbind(ordinary_order, rev(ordinary_order))
-        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T) in R version 3.0.0.1
+        if (packageVersion("gplots") <  "3.0.0.2") {
+            ordinary_order = getRowOrder$rowInd
+            reversal = cbind(ordinary_order, rev(ordinary_order))
+            row_cols = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        }
 
         # Create heatmap with reversed RowSideColors
         heatmap.2(x_cor, 
             revC = T,
             ColSideColors = col_cols, 
-            RowSideColors = rev_col, 
+            RowSideColors = row_cols, 
             density.info = "none",
             trace = "none",
             col = pal(800),
@@ -514,16 +516,18 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             Colv = "Rowv")
 
         # Get order of rows and rearrange "row_cols" vector
-        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
-        ordinary_order = getRowOrder$rowInd
-        reversal = cbind(ordinary_order, rev(ordinary_order))
-        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T) in R version 3.0.0.1
+        if (packageVersion("gplots") <  "3.0.0.2") {
+            ordinary_order = getRowOrder$rowInd
+            reversal = cbind(ordinary_order, rev(ordinary_order))
+            row_cols = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        }
 
         # Create heatmap with reversed RowSideColors
         heatmap.2(x_cor, 
             revC = T,
             ColSideColors = col_cols, 
-            RowSideColors = rev_col, 
+            RowSideColors = row_cols, 
             density.info = "none",
             trace = "none",
             col = pal(800),
@@ -725,7 +729,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
                 width = 7, height = 8.0, units = c("in"), dpi = 300, limitsize = FALSE)
         }
 
-        plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm)
+        # plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm)
 
     }
 
