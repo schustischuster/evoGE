@@ -11,6 +11,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
   * [Required Packages](#required-packages)
   * [Data input](#data-input)
 * [Data analysis and vizualization](#data-analysis-and-vizualization)
+  * [Investigate the relationship between samples](#investigate-the-relationship-between-samples)
 * [Session info](#session-info)
 
 ---
@@ -70,6 +71,8 @@ source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
 ```
 ---
 ## Data analysis and vizualization
+
+### Investigate the relationship between samples
 
 The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots: 
 
