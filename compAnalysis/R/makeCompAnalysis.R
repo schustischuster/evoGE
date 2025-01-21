@@ -739,7 +739,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 #---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
 
 
-   # Use pearson correlation, intra-organ normalization and TPM
+   # Use pearson correlation, inter-organ normalization and TPM
    # Use previously merged replicates of DevSeq data including pollen sampless
 
    if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (expr_estimation == "TPM") && (devseq_organs == "all")) {
@@ -852,6 +852,14 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         fname <- sprintf('%s.jpg', paste("GE_divergence_rates", coefficient, sep="_"))
 
+        if (packageVersion("gplots") <  "3.0.0.2") {
+            cvalues = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
+            "#f2a72f", "#2c8654", "#a63126")
+        } else {
+            cvalues = c("#6a54a9", "#53b0db", "#2c8654", "#96ba37", "#fad819", "#e075af", 
+            "#ee412e", "#f2a72f", "#a63126")
+        }
+
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
         geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
             linetype = 0, show.legend = FALSE) + 
@@ -861,10 +869,9 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         geom_line(size = 3.1) +  
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.4375, 0.9075), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
-            "#f2a72f", "#2c8654", "#a63126"), 
+        scale_color_manual(values = cvalues, 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
-            breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
+            breaks = c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ", "Pollen  ")) + 
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "white", lty = "solid", 
             lwd = 3.1) + # pollen
