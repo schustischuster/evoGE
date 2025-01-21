@@ -94,10 +94,10 @@ makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "co
 For re-analysis of the mammalian data set, biological replicates that showed a sample correlation below 0.85 (Pearson's r) were excluded. To reproduce the results of this study, execute the following function calls:
 
 ```R
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", spec="all", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="Brassicaeae", data_norm="inter-organ")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", spec="all", data_norm="inter-organ")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae", data_norm="inter-organ", devseq_organs="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="subset")
 makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 ```
