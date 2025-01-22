@@ -276,7 +276,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # Set filename
     fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, sep="_"))
 
-    if (devseq_organs == "subset") {
+    if (any(devseq_organs == "subset")) {
 
         fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, devseq_organs, sep="_"))
     }
