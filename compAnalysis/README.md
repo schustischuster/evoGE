@@ -12,6 +12,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
   * [Data input](#data-input)
 * [Data analysis and vizualization](#data-analysis-and-vizualization)
   * [Investigate the relationship between samples](#investigate-the-relationship-between-samples)
+  * [Gene expression divergence)(#gene-expression-divergence)
 * [Session info](#session-info)
 
 ---
@@ -101,14 +102,17 @@ makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearso
 
 ```
 
+### Gene expression divergence
+
+The following function will compare the gene expression divergence rates between Angiosperms (DevSeq data set) and Mammals (Brawand data set). If `pearson` expression correlation is chosen, both metric pearson distance and an expression distance under the stationary Ornstein-Uhlenbeck (OU) model with variable optimal expression level [(Yang et al., 2019)](https://pubmed.ncbi.nlm.nih.gov/31609424/) will be estimated.
+
 To format the ortholog gene expression tables for correct parsing in treeExp2, execute the following command. The results will be stored in ./compAnalysis/output/data.
 
 ```R
 getTaxoInput()
 
 ```
-
-The following function will compare the gene expression divergence rates between Angiosperms (DevSeq data set) and Mammals (Brawand data set). If `pearson` expression correlation is chosen, both metric pearson distance and an expression distance under the stationary Ornstein-Uhlenbeck (OU) model with variable optimal expression level [(Yang et al., 2019)](https://pubmed.ncbi.nlm.nih.gov/31609424/) will be estimated. A detailed description of the variable-µ expression distance including case studies can be found [here](https://jingwyang.github.io/TreeExp-Tutorial/). 
+Now, the rate of expression divergence for angiosperm and mammalian organs can be obtained as follows:
 
 ```R
 getATDiv(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))
