@@ -74,7 +74,7 @@ source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
 
 ### Investigate the relationship between samples
 
-The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots: 
+The following function will perform hierarchical clustering based on expression distances from pairwise comparisons of angiosperm and mammalian organ transcriptomes. It allows to perform Principal Component Analysis (PCA) of protein-coding gene expression levels from 7,003 1-1 orthologs conserved across all analysed angiosperm species, and will calculate intra-organ Pearson correlations between *Arabidopsis thaliana* and the other species: 
 
 * `makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"), data_norm = c("intra-organ", "inter-organ"))`
 
