@@ -114,10 +114,7 @@ getTaxoInput()
 ```
 Now, the rate of expression divergence for angiosperm and mammalian organs can be obtained as follows:
 
-```R
-getATDiv(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))
-
-```
+* `getATDiv(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))`
 
 The arguments of this function are described above. To reproduce the results of this study, execute the following function calls:
 
