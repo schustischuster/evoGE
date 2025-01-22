@@ -1178,7 +1178,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 }
 
 
-getATDiv(expr_estimation = "TPM", coefficient = "pearson")
+
 
 
 
