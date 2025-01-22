@@ -10,7 +10,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 * [Getting Started](#getting-started)
   * [Required Packages](#required-packages)
   * [Data input](#data-input)
-* [Data analysis and vizualization](#data-analysis-and-vizualization)
+* [Data analysis and visualization](#data-analysis-and-visualization)
   * [Investigate the relationship between samples](#investigate-the-relationship-between-samples)
   * [Gene expression divergence](#gene-expression-divergence)
 * [Session info](#session-info)
@@ -71,7 +71,7 @@ source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
 
 ```
 ---
-## Data analysis and vizualization
+## Data analysis and visualization
 
 ### Investigate the relationship between samples
 
