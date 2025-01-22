@@ -76,11 +76,7 @@ source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
 
 The following function will load and analyze the DevSeq and Brawand ortholog expression data and generate the plots: 
 
-* `makeCompAnylsis(dataset = c("Brawand", "DevSeq"),
-     expr_estimation = c("TPM", "counts"), 
-	           <br/> coefficient = c("pearson", "spearman"),
-                   < br / > devseq_spec = c("Brassicaceae", "all"), 
-                   < br / > data_norm = c("intra-organ", "inter-organ"))`
+* `makeCompAnylsis(dataset = c("Brawand", "DevSeq"), expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"), devseq_spec = c("Brassicaceae", "all"), data_norm = c("intra-organ", "inter-organ"))`
 
 
 | Arguments  |  |
