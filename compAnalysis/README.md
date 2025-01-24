@@ -67,6 +67,7 @@ in_dir <- file.path("evoGE-master", "compAnalysis", "data")
 out_dir <- file.path("evoGE-master", "compAnalysis")
 
 source(file.path("evoGE-master", "compAnalysis", "R", "makeCompAnalysis.R"))
+source(file.path("evoGE-master", "compAnalysis", "R", "getTaxoInput.R"))
 source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
 
 ```
@@ -104,7 +105,7 @@ makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearso
 
 ### Gene expression divergence
 
-The following function will compare the gene expression divergence rates between Angiosperms (DevSeq data set) and Mammals (Brawand data set). Both metric pearson distance and an expression distance under the stationary Ornstein-Uhlenbeck (OU) model with variable optimal expression level [(Yang et al., 2019)](https://pubmed.ncbi.nlm.nih.gov/31609424/) will be estimated.
+The following function will run a comparison between the gene expression divergence rates from angiosperm (DevSeq data set) and mammalian organs (Brawand data set). Both metric pearson distance and an expression distance under the stationary Ornstein-Uhlenbeck (OU) model with variable optimal expression level [(Yang et al., 2019)](https://pubmed.ncbi.nlm.nih.gov/31609424/) will be estimated.
 
 To format the ortholog gene expression tables for correct parsing in treeExp2, first execute the following command. The results will be stored in ./compAnalysis/output/data.
 
