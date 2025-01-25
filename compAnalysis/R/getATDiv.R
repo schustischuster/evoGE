@@ -866,7 +866,7 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
    # Make sOU GE divergence plot showing individual organ regressions for SI
-   makeOrgRegPlot <- function(data1, data2, coefficient, expr_estimation, p_value, pos) {
+   makeOrgRegPlot <- function(data1, data2, coefficient, expr_estimation, pos) {
 
       fname <- sprintf('%s.jpg', paste("compSouVDivRates11_loess", expr_estimation, pos, sep="_"))
 
@@ -946,10 +946,10 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
   }
 
   # makeOrgRegPlot(data1 = loessSouV_coor11_AT, data2 = compSouVDivRates11, coefficient = coefficient, 
-  #  expr_estimation = expr_estimation, pos = "ext", p_value = "")
+  #  expr_estimation = expr_estimation, pos = "ext")
 
   makeOrgRegPlot(data1 = loessSouV_coor11_AT, data2 = compSouVDivRates11, coefficient = coefficient, 
-    expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AT_Br11_slope_p)
+    expr_estimation = expr_estimation, pos = "main")
 
 
   }
