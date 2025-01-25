@@ -13,7 +13,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 * [Data analysis and visualization](#data-analysis-and-visualization)
   * [Investigate the relationship between samples](#investigate-the-relationship-between-samples)
   * [Gene expression divergence](#gene-expression-divergence)
-  * [Inter-organ expression distance] (#inter-organ-expression-distance)
+  * [Inter-organ expression distance](#inter-organ-expression-distance)
 * [Session info](#session-info)
 
 ---
@@ -128,7 +128,7 @@ getATDiv(expr_estimation = "TPM", coefficient = "pearson")
 
 ### Inter-organ expression distance
 
-Compute intra-species inter-organ distances based on angiospern and mammalian ortholog gene expression data.
+Compute pairwise intra-species inter-organ distances based on angiospern and mammalian ortholog gene expression data.
 
 * `getOrganDist(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))`
 
