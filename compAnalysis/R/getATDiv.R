@@ -254,13 +254,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
                 return(error)
             } # Use this function to replace sd if reqired
 
-            # Dixon test to statistically test if one value is an outlier
-            # library(outliers)
-            # A single pairwise distance was detected as a significant outlier:
-            # [1] THA_Stamen-BDY_Stamen (value:2.878409)
-                  # dixon.test(as.numeric(unlist(sou_v_distance[7,c(1:6)])))
-                  # Dixon test p-value = 0.04838
-            # THA_Stamen-BDY_Stamen was excluded from downstream analysis
 
             if (organ == "Stamen") {
 
@@ -687,126 +680,6 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
 
 
 
-#------ Compare slopes of regression models and perform analysis of covariance (ANCOVA) ------
-
-
-    # Generate df that contains angiosperm, mammalian (Brawand 2011) and re-analyzed mammalian (Brawand-DevSeq) data
-    compDivRates_sOU_all <- rbind(DevSeq_sou_v_div_rates, Brawand11_sou_v_div_rates, Brawand_sou_v_div_rates)
-
-    model_sOU_lm <- lm(correlation ~ div_times * dataset, data = compDivRates_sOU_all) # model that assumes an interaction between the slopes of the regression lines of the two data sets and the grouping variable
-    # this is same as
-    model_sOU_lm = lm (correlation ~ div_times + dataset + div_times:dataset, data = compDivRates_sOU_all)
-    model_sOU_lst_test <- lstrends(model_sOU_lm, "dataset", var="div_times") # get slopes
-    sOU_pairs_test <- pairs(model_sOU_lst_test) # perform tukey test on all estimates
-
-    sOU_pairs_test_df <- as.data.frame(summary(sOU_pairs_test))
-
-    sOU_tukey_p_value <- paste("p =", formatC(sOU_pairs_test_df$p.value[1], format = "e",  digits = 1))
-    sOU11_tukey_p_value <- paste("p =", formatC(sOU_pairs_test_df$p.value[2], format = "e",  digits = 1))
-    sOUBr_tukey_p_value <- paste("p =", round(sOU_pairs_test_df$p.value[3], 2))
-
-
-
-    # Compare angiosperm and mammalian divergence rates based on individual organ regressions
-    # Prepare data for original and re-analyzed Brawand data
-    organ_names_Br <- rep(c("Brain","Cerebellum","Heart","Kidney","Liver","Testis"), each=6)
-    organ_names_Br11 <- rep(c("Brain.11","Cerebellum.11","Heart.11","Kidney.11","Liver.11","Testis.11"), each=6)
-    organ_names_Br <- as.data.frame(organ_names_Br[-36])
-    organ_names_Br11 <- as.data.frame(organ_names_Br11[-36])
-    names(organ_names_Br) <- "comp_organ"
-    names(organ_names_Br11) <- "comp_organ"
-    organ_names <- rbind(organ_names_Br, organ_names_Br11)
-    compSouVDivRatesBr_io <- rbind(Brawand_sou_v_div_rates, Brawand11_sou_v_div_rates)
-    compSouVDivRatesBr_io[,2] <- organ_names
-    compSouVDivRatesBr_io$comp_organ <- factor(compSouVDivRatesBr_io$comp_organ)
-
-
-    # Retrieve slope value from individual organ regressions and compute p value
-    getTrendsP <- function(corrdata, reg_model = c("lm_reg", "poly2_reg", "log_reg", "sqrt_reg")) {
-
-        if ((missing(reg_model)) || (!is.element(reg_model, c("lm_reg", "poly2_reg", "log_reg", "sqrt_reg")))) 
-
-            stop(
-                "Regression model either missing or not one of: 
-                'lm_reg', 'poly2_reg', 'log_reg', 'sqrt_reg'",
-                call. = TRUE
-                )
-
-        if (reg_model == "lm_reg") {
-
-            model_var <- correlation ~ div_times * comp_organ #linear regression
-
-        } else if (reg_model == "poly2_reg") {
-
-            model_var <- correlation ~ poly(div_times, 2, raw = TRUE) * comp_organ #polynomial regression w/quadratic term
-
-        } else if (reg_model == "log_reg") {
-
-            model_var <- correlation ~ log(div_times) * comp_organ #linear regression with log-x-transform
-
-        } else if (reg_model == "sqrt_reg") {
-
-            model_var <- correlation ~ sqrt(div_times) * comp_organ #linear regression with sqrt-x-transform
-        }
-
-        model_lmp = lm(model_var, data = corrdata)
-
-        div_trend <- lstrends(model_lmp, "comp_organ", var = "div_times") # get slopes for regressions
-        div_trend_df <- summary(div_trend)
-
-        if (deparse(substitute(corrdata)) == "compDivRates" | deparse(substitute(corrdata)) == "compDivRates11"
-            | deparse(substitute(corrdata)) == "compSouVDivRates" | deparse(substitute(corrdata)) == "compSouVDivRates11") {
-
-            trend_stat_welch <- t.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE)
-            trend_stat_wilcox <- wilcox.test(div_trend_df[1:8,2], div_trend_df[9:14,2], paired = FALSE)
-
-        } else if (deparse(substitute(corrdata)) == "compSouVDivRatesBr_io") {
-
-            trend_stat_welch <- t.test(div_trend_df[1:6,2], div_trend_df[7:12,2], paired = FALSE)
-            trend_stat_wilcox <- wilcox.test(div_trend_df[1:6,2], div_trend_df[7:12,2], paired = FALSE)
-        }
-
-        welch_p_value <- as.data.frame(trend_stat_welch$p.value)
-        wilcox_p_value <- as.data.frame(trend_stat_wilcox$p.value)
-
-        colnames(welch_p_value) <- reg_model
-        rownames(welch_p_value) <- "Welch_test"
-
-        colnames(wilcox_p_value) <- reg_model
-        rownames(wilcox_p_value) <- "Wilcox_test"
-
-        slopes <- as.data.frame(div_trend_df[,2])
-        colnames(slopes) <- reg_model
-        rownames(slopes) <- div_trend_df[,1]
-
-        trends_p_value <- rbind(slopes, welch_p_value, wilcox_p_value)
-
-        return(trends_p_value)
-    }
-
-
-    # Create list of models
-    model_list <- list("lm_reg", "poly2_reg", "log_reg", "sqrt_reg")
-
-    # Slopes and p-values for DevSeq angiosperm vs. re-analyzed Brawand mammalian data
-    p_values_compDivRates_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRates)))
-    # Slopes and p-values for DevSeq angiosperm vs. original 2011 Brawand mammalian data
-    p_values_compDivRates11_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compDivRates11)))
-    # Slopes and p-values for DevSeq angiosperm vs. re-analyzed Brawand mammalian data
-    p_values_compSouVDivRates_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compSouVDivRates)))
-    # Slopes and p-values for DevSeq angiosperm vs. original 2011 Brawand mammalian data
-    p_values_compSouVDivRates11_io <- as.data.frame(do.call(cbind, lapply(model_list, getTrendsP, corrdata = compSouVDivRates11)))
-    
-
-    # Get text string of p-values (rank-sum test) for divergence plots with log models
-    p_value_io <- paste("p =", round(p_values_compDivRates_io["Wilcox_test", "log_reg"], 4))
-    p_value11_io <- paste("p =", round(p_values_compDivRates11_io["Wilcox_test", "log_reg"], 4))
-    p_value_SouVio <- paste("p =", round(p_values_compSouVDivRates_io["Wilcox_test", "log_reg"], 4))
-    p_value11_SouVio <- paste("p =", round(p_values_compSouVDivRates11_io["Wilcox_test", "log_reg"], 4))
-
-
-
-
 #---- Apply LOESS regression to sOU and pearson dist expression data and compare slopes -----
 
   if(expr_estimation == "TPM") {
@@ -974,23 +847,12 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
     DS_AT_Br_loess_slopes <- rbind(DS_AT_Br_loess_slopes, DS_AT_Br_loess_stats)
 
 
-    # Get table with slope values and test statistics for log regression
-    DS_AT_Br_log_slopes <- cbind(p_values_compSouVDivRates11_io$log_reg, p_values_compSouVDivRates_io$log_reg, 
-      p_values_compDivRates11_io$log_reg, p_values_compDivRates_io$log_reg)
-    DS_AT_Br_log_slopes <- as.data.frame(DS_AT_Br_log_slopes)
-    DS_AT_Br_log_slopes <- cbind(DS_AT_Br_loess_slopes$sample, DS_AT_Br_log_slopes)
-    colnames(DS_AT_Br_log_slopes) <- c("sample", "DS_AT_Br11_sOU_log", "DS_AT_Br_sOU_log", "DS_AT_Br11_pea_log", "DS_AT_Br_pea_log")
-
 
     # Show message
     message("Writing data tables...")
 
     write.table(DS_AT_Br_loess_slopes, 
       file=file.path(out_dir, "output", "data", "DS_AT_Br_loess_slopes.txt"), sep="\t", 
-      col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
-
-    write.table(DS_AT_Br_log_slopes, 
-      file=file.path(out_dir, "output", "data", "DS_AT_Br_log_slopes.txt"), sep="\t", 
       col.names=TRUE, row.names=FALSE, dec=".", quote = FALSE)
 
 
@@ -1083,8 +945,8 @@ getATDiv <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pear
             width = plot_wdt, height = plot_hdt, dpi = 300, units = c("in"), limitsize = FALSE) 
   }
 
-  makeOrgRegPlot(data1 = loessSouV_coor11_AT, data2 = compSouVDivRates11, coefficient = coefficient, 
-    expr_estimation = expr_estimation, pos = "ext", p_value = "")
+  # makeOrgRegPlot(data1 = loessSouV_coor11_AT, data2 = compSouVDivRates11, coefficient = coefficient, 
+  #  expr_estimation = expr_estimation, pos = "ext", p_value = "")
 
   makeOrgRegPlot(data1 = loessSouV_coor11_AT, data2 = compSouVDivRates11, coefficient = coefficient, 
     expr_estimation = expr_estimation, pos = "main", p_value = sOU_loess_DevSeq_AT_Br11_slope_p)
