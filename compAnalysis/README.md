@@ -13,6 +13,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
 * [Data analysis and visualization](#data-analysis-and-visualization)
   * [Investigate the relationship between samples](#investigate-the-relationship-between-samples)
   * [Gene expression divergence](#gene-expression-divergence)
+  * [Inter-organ expression distance] (#inter-organ-expression-distance)
 * [Session info](#session-info)
 
 ---
@@ -69,6 +70,7 @@ out_dir <- file.path("evoGE-master", "compAnalysis")
 source(file.path("evoGE-master", "compAnalysis", "R", "makeCompAnalysis.R"))
 source(file.path("evoGE-master", "compAnalysis", "R", "getTaxoInput.R"))
 source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
+source(file.path("evoGE-master", "compAnalysis", "R", "getOrganDist.R"))
 
 ```
 ---
@@ -117,10 +119,23 @@ Now, the rate of expression divergence for angiosperm and mammalian organs can b
 
 * `getATDiv(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))`
 
-The arguments of this function are described above. To reproduce the results of this study, execute the following function calls:
+The arguments of this function are described above. To reproduce the results of this study, execute the following function call:
 
 ```R
 getATDiv(expr_estimation = "TPM", coefficient = "pearson")
+
+```
+
+### Inter-organ expression distance
+
+Compute intra-species inter-organ distances based on angiospern and mammalian ortholog gene expression data.
+
+* `getOrganDist(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman"))`
+
+The arguments of this function are described above. To reproduce the results of this study, execute the following function call:
+
+```R
+getOrganDist(expr_estimation="TPM", coefficient="pearson")
 
 ```
 
