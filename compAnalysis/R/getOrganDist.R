@@ -439,7 +439,7 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
 }
 
 
-getOrganDist(expr_estimation="TPM", coefficient="pearson")
+
 
 
 
