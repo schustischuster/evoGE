@@ -74,7 +74,7 @@ getNLMs <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pears
     # "compDivRates" = compDivRates, "compDivRates11" = compDivRates11, "compSouVDivRates" = compSouVDivRates, "compSouVDivRates11" = compSouVDivRates11)
     # return(return_list)
     # }
-    # return_objects <- makeCompAnalysisAL(expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
+    # return_objects <- getNLMs(expr_estimation="TPM", coefficient="pearson") # read in DevSeq expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
 
@@ -102,11 +102,11 @@ getNLMs <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pears
 
 
 
-#---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
+#---------------- Get gene expression divergence rates for AL vs species X -----------------
 
 
    # Use pearson correlation, intra-organ normalization and TPM
-   # Use previously merged replicates of DevSeq data including pollen sampless
+   # Plot AL vs species X GE divergence rates for SI
 
    if (expr_estimation == "TPM") {
 
@@ -219,6 +219,14 @@ getNLMs <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pears
 
         fname <- sprintf('%s.jpg', paste("GE_divergence_rates_AL", coefficient, expr_estimation, "ext", sep="_"))
 
+        if (packageVersion("gplots") <  "3.0.0.2") {
+            cvalues = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
+            "#f2a72f", "#2c8654", "#a63126")
+        } else {
+            cvalues = c("#6a54a9", "#53b0db", "#2c8654", "#96ba37", "#fad819", "#e075af", 
+            "#ee412e", "#f2a72f", "#a63126")
+        }
+
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
         geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
             linetype = 0, show.legend = FALSE) + 
@@ -229,8 +237,7 @@ getNLMs <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pears
         scale_x_continuous(limits = c(5.5,161.5), expand = c(0.02,0), breaks = c(7,9,25,46,106,160), 
           labels = c( "7 ", " 9", 25, 46, 106, 160)) + 
         scale_y_continuous(limits = c(0.4425, 0.907), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
-            "#f2a72f", "#2c8654", "#a63126"), 
+        scale_color_manual(values = cvalues, 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
             breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ", "Pollen  ")) + 
@@ -307,7 +314,7 @@ getNLMs <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pears
       # Compute data points for DevSeq_AL_pearson_dist based on model
       # First try to manually find rough parameters, then use nls to fine tune
       m <- nls(correlation ~ a * exp(div_times * c) + b * (1-(exp(div_times * c))), start = list(
-        a = 0.3, b = 0.5, c = -0.01), data = compDivRates11_AL[1:6,])
+        a = 0.3, b = 0.5, c = -0.01), data = compDivRates11[1:6,])
       # m # get the optimized parameters
 
 
@@ -630,7 +637,8 @@ getNLMs <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pears
 
         fname <- sprintf('%s.jpg', paste(deparse(substitute(data))))
 
-        col_breaks <- c("Mammals.11", "Mammals.ra", "Angiosperms")
+        col_breaks <- factor(c("Angiosperms", "Mammals.11", "Mammals.ra"), 
+            levels=c("Angiosperms", "Mammals.11", "Mammals.ra"))
         y_breaks <- c(0,0.2,0.4,0.6,0.8,1,1.2,1.4)
 
         col_scale <- c('#728acb', 'red', 'red3')
