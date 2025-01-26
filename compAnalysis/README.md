@@ -1,6 +1,6 @@
 ## This Readme file and the R scripts in this folder still need to be updated!
 
-## Perform comparative analysis of DevSeq and Brawand data
+## Perform comparative analysis of angiosperm and mammalian expression data
 
 This code allows to reproduce the inter-organ intra-species, inter-species and cross-kingdom analyses of the DevSeq angiosperm and mammalian organ [(Brawand et al., 2011)](https://pubmed.ncbi.nlm.nih.gov/22012392/) RNA-seq data sets. 
 
