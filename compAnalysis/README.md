@@ -143,9 +143,12 @@ getOrganDist(expr_estimation="TPM", coefficient="pearson")
 
 ### Apply non-linear models
 
-Fit non-linear models (NLMs) to the angiosperm and mammalian ortholog gene expression data. Both locally estimated scatterplot smoothing (LOESS) and negative exponential growth model will be applied, using the 'nlm' function of the 'stats' package in R. Data of the regression slopes will be saved in external files.
+Two measures of non-linear expression distances are retrieved for each organ: the Pearson distance, preserved as a metric, and an expression distance estimated under the Ornstein-Uhlenbeck model. Both distances are calculated between all species pairs across the entire phylogenetic tree.
+Next, non-linear models (NLMs) will be fitted to the angiosperm and mammalian ortholog gene expression data. Both locally estimated scatterplot smoothing (LOESS) and a negative exponential growth model will be applied, using the 'nlm' function of the 'stats' package in R. Finally, the average slope value as a measure of transcriptome evolution will be determined for each regression fit.
 
 * `getNLMs(expression_estimation, coefficient)`
+
+The arguments of this function are described above. To reproduce the results of this study, execute the following function call:
 
 ```R
 getNLMs(expr_estimation="TPM", coefficient="pearson")
