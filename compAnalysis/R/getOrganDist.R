@@ -362,7 +362,7 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
             legend.key.size = unit(1.7, "cm"), 
             legend.background=element_blank()) 
 
-        q <- q + facet_grid(~ Class, scales = "free_x")
+        q <- q + facet_grid(~factor(Class, levels = c("Mammals", "Angiosperms")), scales = "free_x")
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
             width = 23, height = 12, dpi = 300, units = c("in"), limitsize = FALSE) 
@@ -388,6 +388,8 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
         cor_colors <- c(rep(c("#5077b2"), each=115), rep(c("#47972d"), each=196), 
             rep(c("#5077b2"), each=76), rep(c("#47972d"), each=70))
         box_colors <- c(rep(c("#5077b2", "#47972d"), 2))
+
+        data$Class <- factor(data$Class, levels = c("Mammals", "Angiosperms"))
         
         p <- ggplot(data=data, aes(x = Class, y = Distance)) + 
         geom_boxplot(width = 0.75, size=1.5, fatten=2, color="black", fill=box_colors, outlier.shape = NA, alpha = 0.44) + 
@@ -421,7 +423,7 @@ getOrganDist <- function(expr_estimation = c("TPM", "counts"),
             legend.key.size = unit(1.7, "cm"), 
             legend.background=element_blank()) 
 
-        q <- q + facet_grid(~ Data, scales = "free_x")
+        q <- q + facet_grid(~factor(Data, levels = c("All data", "Subset")), scales = "free_x")
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = q, 
             width = 23, height = 12, dpi = 300, units = c("in"), limitsize = FALSE) 
