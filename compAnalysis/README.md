@@ -14,6 +14,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
   * [Investigate the relationship between samples](#investigate-the-relationship-between-samples)
   * [Gene expression divergence](#gene-expression-divergence)
   * [Inter-organ expression distance](#inter-organ-expression-distance)
+  * [Apply non-linear models](#apply-non-linear-models)
 * [Session info](#session-info)
 
 ---
@@ -71,6 +72,7 @@ source(file.path("evoGE-master", "compAnalysis", "R", "makeCompAnalysis.R"))
 source(file.path("evoGE-master", "compAnalysis", "R", "getTaxoInput.R"))
 source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
 source(file.path("evoGE-master", "compAnalysis", "R", "getOrganDist.R"))
+source(file.path("evoGE-master", "compAnalysis", "R", "getNLMs.R"))
 
 ```
 ---
@@ -139,6 +141,15 @@ getOrganDist(expr_estimation="TPM", coefficient="pearson")
 
 ```
 
+### Apply non-linear models
+
+Fit non-linear models (NLMs) to the angiosperm and mammalian ortholog gene expression data. Both locally estimated scatterplot smoothing (LOESS) and negative exponential growth model will be applied, using the 'nlm' function of the 'stats' package in R. Data of the regression slopes will be saved in external files.
+
+* `getNLMs(expression_estimation, coefficient)`
+
+```R
+getNLMs(expr_estimation="TPM", coefficient="pearson")
+```
 
 ---
 ## Session info
