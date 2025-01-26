@@ -67,13 +67,18 @@ Download and extract the evoGE repository to the working directory on your compu
 ```R
 in_dir <- file.path("evoGE-master", "compAnalysis", "data")
 out_dir <- file.path("evoGE-master", "compAnalysis")
+path_to_R_files <- file.path("evoGE-master", "compAnalysis", "R")
 
-source(file.path("evoGE-master", "compAnalysis", "R", "makeCompAnalysis.R"))
-source(file.path("evoGE-master", "compAnalysis", "R", "getTaxoInput.R"))
-source(file.path("evoGE-master", "compAnalysis", "R", "getATDiv.R"))
-source(file.path("evoGE-master", "compAnalysis", "R", "getOrganDist.R"))
-source(file.path("evoGE-master", "compAnalysis", "R", "getNLMs.R"))
-
+# Source R files
+sourceDir <- function(path, trace = TRUE, ...) {
+   for (nm in list.files(path, pattern = "[.][RrSsQq]$")) {
+      if(trace) cat(nm,":")
+      source(file.path(path, nm), ...)
+      if(trace) cat("\n")
+   }
+}
+ 
+sourceDir(path_to_R_files)
 ```
 ---
 ## Data analysis and visualization
