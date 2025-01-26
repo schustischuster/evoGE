@@ -1,3 +1,4 @@
+# Fit non-linear models (NLMs) to angiosperm and mammalian organ transcriptome data 
 # Prepare Brawand and DevSeq AL comparative ortholog gene expression data
 # Thresholds: DevSeq 0.05 ERCC; Brawand 0.5 TPM (no ERCC spike-ins available)
 # Data input: Brawand and DevSeq TPM expression tables of all samples
@@ -7,7 +8,7 @@
 #-------------------------------------- Read data tables ---------------------------------------
 
 
-makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman")) {
+getNLMs <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pearson", "spearman")) {
 
 
    	# Show error message if expression estimation or unknown expression estimation is chosen
@@ -1099,7 +1100,7 @@ makeCompAnalysisAL <- function(expr_estimation = c("TPM", "counts"), coefficient
 }
 
 
-makeCompAnalysisAL(expr_estimation="TPM", coefficient="pearson")
+
 
 
 
