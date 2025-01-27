@@ -15,6 +15,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
   * [Gene expression divergence](#gene-expression-divergence)
   * [Inter-organ expression distance](#inter-organ-expression-distance)
   * [Apply non-linear models](#apply-non-linear-models)
+  * [Plot organ divergence slopes](#plot-organ-divergence-slopes)
 * [Session info](#session-info)
 
 ---
@@ -160,6 +161,16 @@ The arguments of this function are described above. To reproduce the results of 
 ```R
 getNLMs(expr_estimation="TPM", coefficient="pearson")
 ```
+
+### Plot organ divergence slopes
+
+To plot the slope values of the angiosperm and mammalian organ divergence rates, call the following function:
+
+```R
+plotSlopes()
+```
+
+
 
 ---
 ## Session info
