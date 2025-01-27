@@ -1104,8 +1104,6 @@ getNLMs <- function(expr_estimation = c("TPM", "counts"), coefficient = c("pears
 
 
   }
-   
-}
 
 
 
