@@ -69,10 +69,12 @@ in_dir <- file.path("evoGE-master", "compAnalysis", "data")
 out_dir <- file.path("evoGE-master", "compAnalysis")
 path_to_R_files <- file.path("evoGE-master", "compAnalysis", "R")
 
+rfiles <- list("makeCompAnalysis.R", "getTaxoInput.R", "getTaxoInput.R", "getOrganDist.R", "getNLMs.R")
+
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
-   for (nm in list.files(path, pattern = "[.][RrSsQq]$")) {
-      if(trace) cat(nm,":")
+   for (nm in rfiles) {
+      if(trace) cat(nm,":")           
       source(file.path(path, nm), ...)
       if(trace) cat("\n")
    }
