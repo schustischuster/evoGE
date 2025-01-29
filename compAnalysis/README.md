@@ -171,7 +171,7 @@ To plot the average slope values of the non-linear regression fittings for the g
 plotSlopes()
 ```
 
-### Protein-coding gene expression phyllogeniess
+### Protein-coding gene expression phyllogenies
 
 * `makePhyllogenies(expr_estimation, coefficient, devseq_spec)`
 
