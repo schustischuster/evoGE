@@ -16,6 +16,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
   * [Inter-organ expression distance](#inter-organ-expression-distance)
   * [Apply non-linear models](#apply-non-linear-models)
   * [Plot nlm slopes](#plot-nlm-slopes)
+  * [Protein-coding gene expression phyllogeniess](protein-coding-gene-expression-phyllogenies)
 * [Session info](#session-info)
 
 ---
@@ -170,7 +171,22 @@ To plot the average slope values of the non-linear regression fittings for the g
 plotSlopes()
 ```
 
+### Protein-coding gene expression phyllogeniess
 
+* `makePhyllogenies(expr_estimation, coefficient, devseq_spec)`
+
+The arguments of this function are described above, except the last argument, which is defined as follows:
+
+| Argument  |  |
+| :---  | :---  |
+| devseq_spec  | Indicates which data set to use. Can be either `"all"` (data from all seven angiosperms) or `"Brassicaceae"` (Brassicaceae species). |
+
+To reproduce the results of this study, execute the following function calls:
+
+```R
+makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="all")
+makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae")
+```
 
 ---
 ## Session info
