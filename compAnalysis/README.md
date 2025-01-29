@@ -164,7 +164,7 @@ getNLMs(expr_estimation="TPM", coefficient="pearson")
 
 ### Plot nlm slopes
 
-To plot the slope values of the regression fittings for the divergence rates of the angiosperm and mammalian organ transcriptomes, call the following function:
+To plot the average slope values of the non-linear regression fittings for the gene expression divergence rates, use the following function:
 
 ```R
 plotSlopes()
