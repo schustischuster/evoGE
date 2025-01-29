@@ -16,7 +16,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
   * [Inter-organ expression distance](#inter-organ-expression-distance)
   * [Apply non-linear models](#apply-non-linear-models)
   * [Plot nlm slopes](#plot-nlm-slopes)
-  * [Protein-coding gene expression phyllogeniess](protein-coding-gene-expression-phyllogenies)
+  * [Protein-coding gene expression phyllogenies](protein-coding-gene-expression-phyllogenies)
 * [Session info](#session-info)
 
 ---
