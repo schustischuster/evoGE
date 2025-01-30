@@ -173,6 +173,9 @@ plotSlopes()
 
 ### Protein-coding gene expression phyllogenies
 
+Construct neighbour-joining protein-coding gene expression trees based on pairwise expression distances between species. The reliability of the branches in the phylogenetic trees will be assessed by randomly re-sampling the 1–1
+orthologous genes with replacement (1,000 bootstraps).
+
 * `makePhyllogenies(expr_estimation, coefficient, devseq_spec)`
 
 The arguments of this function are described above, except the last argument, which is defined as follows:
