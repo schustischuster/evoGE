@@ -231,7 +231,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(24) %>% rotate(28) %>% rotate(34)
         plot(p2)
@@ -251,7 +251,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- flip(p, 25, 30)
         plot(p2)
@@ -268,7 +268,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- flip(p, 25, 30)
         plot(p2)
@@ -286,7 +286,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- flip(p, 28,30)
         plot(p2)
@@ -304,7 +304,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(24) %>% rotate(34)
         plot(p2)
@@ -323,7 +323,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- rotate(p, 24) %>% rotate(25) %>% rotate(36)
         plot(p2)
@@ -343,7 +343,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(27) %>% rotate(24)
         plot(p2)
@@ -362,7 +362,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- rotate(p, 23) %>% rotate(25)
         plot(p2)
@@ -382,7 +382,7 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
         # geom_text(aes(label=node), hjust=-.3) + 
         xlim(0, 0.671) + 
         theme_tree2(plot.margin=margin(5, 5, 35, 5), text = element_text(size = 12.5), 
-            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"))
+            line = element_line(size = 0.4), axis.ticks.length=unit(.125, "cm"), legend.position = "none")
         # Rotate nodes
         p2 <- flip(p, 25, 32)
         plot(p2)
