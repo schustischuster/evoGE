@@ -196,7 +196,7 @@ Note that newer versions of ggtree may give the following error:
 * `Error in offspring.tbl_tree_item(.data = .data, .node = .node, tiponly = tiponly,  : 
   could not find function "offspring.tbl_tree_item"`
 
-As a workaround, load the following functions manually from the tidytree package before executing the above function calls (look at [Github](https://github.com/YuLab-SMU/enrichplot/issues/249) for details regarding this issue):
+As a workaround, load the following functions manually from the tidytree package before executing the above function calls (look at [enrichplot - open issues](https://github.com/YuLab-SMU/enrichplot/issues/249) for details):
 
 ```R
 nodeid.tbl_tree <- utils::getFromNamespace("nodeid.tbl_tree", "tidytree")
