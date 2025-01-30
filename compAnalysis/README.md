@@ -191,6 +191,23 @@ makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="a
 makePhyllogenies(expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae")
 ```
 
+Note that newer versions of ggtree may give the following error:
+
+* `Error in offspring.tbl_tree_item(.data = .data, .node = .node, tiponly = tiponly,  : 
+  could not find function "offspring.tbl_tree_item"`
+
+As a workaround, load the following functions before executing the above function calls (look at [(Github)](https://github.com/YuLab-SMU/enrichplot/issues/249) for details regarding this issue):
+
+```R
+nodeid.tbl_tree <- utils::getFromNamespace("nodeid.tbl_tree", "tidytree")
+rootnode.tbl_tree <- utils::getFromNamespace("rootnode.tbl_tree", "tidytree")
+offspring.tbl_tree <- utils::getFromNamespace("offspring.tbl_tree", "tidytree")
+offspring.tbl_tree_item <- utils::getFromNamespace(".offspring.tbl_tree_item", "tidytree")
+child.tbl_tree <- utils::getFromNamespace("child.tbl_tree", "tidytree")
+parent.tbl_tree <- utils::getFromNamespace("parent.tbl_tree", "tidytree")
+```
+
+
 ---
 ## Session info
 
