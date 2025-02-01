@@ -71,7 +71,7 @@ in_dir <- file.path("evoGE-master", "compAnalysis", "data")
 out_dir <- file.path("evoGE-master", "compAnalysis")
 path_to_R_files <- file.path("evoGE-master", "compAnalysis", "R")
 
-rfiles <- list("makeCompAnalysis.R", "getTaxoInput.R", "getATDiv.R", "getOrganDist.R", "getNLMs.R", "plotSlopes.R", "makePhyllogenies.R")
+rfiles <- list("makeCompAnalysis.R", "getTaxoInput.R", "getATDiv.R", "getOrganDist.R", "getNLMs.R", "plotSlopes.R", "makePhyllogenies.R", "plotTreeLength.R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
@@ -207,6 +207,11 @@ child.tbl_tree <- utils::getFromNamespace("child.tbl_tree", "tidytree")
 parent.tbl_tree <- utils::getFromNamespace("parent.tbl_tree", "tidytree")
 ```
 
+To visualize variations in total tree length from gene expression phyllogenies among angiosperm organs, run the following function. It will produce boxplots for the angiosperm (7,003 protein-coding orthologs, 7 species) and the Brassicaceae data set (17,445 protein-coding othologs, 4 species). The boxplots show the distribution of the total tree length from 1,000 bootstrap phylogenies. Red points mark the tree length of expression trees derived from unsampled expression data.
+
+```R
+plotTreeLength()
+```
 
 ---
 ## Session info
