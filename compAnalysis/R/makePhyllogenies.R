@@ -124,6 +124,8 @@ makePhyllogenies <- function(expr_estimation = c("TPM", "counts"),
 
     }
 
+    assignInNamespace("dist.pea", dist.pea, ns="TreeExp")
+
 
 
     # Construct distance matrix
