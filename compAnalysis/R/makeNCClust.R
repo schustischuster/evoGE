@@ -240,7 +240,7 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
     # Rotate leaves of dendrogram so that clusters appear in evolutionary order wherevever possible
     # This also re-orders the colors of the colorbar where possible to make them more distinguishable 
     if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
-        is.element("subset", devseq_organs) && is.element("non-coding", transcripttype)) {
+        is.element("all", devseq_organs) && is.element("non-coding", transcripttype)) {
 
         dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(1:6,10:12,7:9,13:24,31:36,28:30,25:27,43:48,40:42,37:39,55:60,52:54,49:51))
 
@@ -272,15 +272,17 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
 
     # Get order of rows and rearrange "row_cols" vector
     # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
-    ordinary_order = getRowOrder$rowInd
-    reversal = cbind(ordinary_order, rev(ordinary_order))
-    rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+    if (packageVersion("gplots") <  "3.0.0.2") {
+        ordinary_order = getRowOrder$rowInd
+        reversal = cbind(ordinary_order, rev(ordinary_order))
+        row_cols = row_cols[reversal[,2]]; row_cols = row_cols[order(reversal[,1])];
+    }
 
     # Create heatmap with reversed RowSideColors
     heatmap.2(x_cor, 
         revC = T,
         ColSideColors = col_cols, 
-        RowSideColors = rev_col, 
+        RowSideColors = row_cols, 
         density.info = "none",
         trace = "none",
         col = pal(800),
