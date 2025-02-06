@@ -67,7 +67,7 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
     
 
 
-	# Define simplified Brawand and DevSeq column names
+	# Define simplified DevSeq column names
     col_names <- rep(c("Root", "Hypocotyl", "Leaf", "veg_apex", "inf_apex", 
             "Flower", "Stamen", "Carpel"), each=12)
     replicate_tag_samples <- rep(c(".1",".2",".3"), times=4)
@@ -184,7 +184,7 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
 
 
 
-#------------------------ Prepare DevSeq and Brawand data for corrplot -------------------------
+#----------------------------- Prepare DevSeq data for corrplot ------------------------------
 
 
     if (is.element("pearson", coefficient) && is.element("counts", expr_estimation)) {
@@ -679,14 +679,6 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
  }
 
 }
-
-
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae", data_norm="inter-organ", devseq_organs="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="subset")
-makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
-
 
 
 
