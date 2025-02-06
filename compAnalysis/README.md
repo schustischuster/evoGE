@@ -228,9 +228,8 @@ The arguments of this function are described above, except the last two argument
 To reproduce the results of this study, execute the following function calls:
 
 ```R
-makeNCClust(expr_estimation = "counts", coefficient = "pearson", devseq_organs = "all", transcripttype = "non-coding")
-makeNCClust(expr_estimation = "counts", coefficient = "spearman", devseq_organs = "all", transcripttype = "non-coding")
-makeNCClust(expr_estimation = "counts", coefficient = "spearman", devseq_organs = "subset", transcripttype = "coding")
+makeNCClust(expr_estimation="counts", coefficient="spearman", devseq_organs="all", transcripttype="non-coding")
+makeNCClust(expr_estimation="counts", coefficient="spearman", devseq_organs="subset", transcripttype="coding")
 ```
 
 ---
