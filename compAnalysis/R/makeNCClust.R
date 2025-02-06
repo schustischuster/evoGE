@@ -85,7 +85,7 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
     # return_list <- list("expr_estimation" = expr_estimation, "x" = x, "coefficient" = coefficient, "col_names" = col_names, "devseq_organs" = devseq_organs, "transcripttype" = transcripttype)
     # return(return_list)
     # }
-    # return_objects <- makeNCClust(expr_estimation="counts", coefficient="pearson", devseq_organs="all", transcripttype="non-coding") # read in DevSeq expression data
+    # return_objects <- makeNCClust(expr_estimation="counts", coefficient="spearman", devseq_organs="all", transcripttype="non-coding") # read in DevSeq expression data
     # list2env(return_objects, envir = .GlobalEnv)
 
     if (transcripttype == "coding") x <- x[,1:97]
@@ -240,11 +240,6 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
     # Rotate leaves of dendrogram so that clusters appear in evolutionary order wherevever possible
     # This also re-orders the colors of the colorbar where possible to make them more distinguishable 
     if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
-        is.element("all", devseq_organs) && is.element("non-coding", transcripttype)) {
-
-        dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(1:6,10:12,7:9,13:24,31:36,28:30,25:27,43:48,40:42,37:39,55:60,52:54,49:51))
-
-    } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
         is.element("subset", devseq_organs) && is.element("coding", transcripttype)) {
 
         dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(1:3,10:12,7:9,4:6,25:36,13:24,37:42,46:48,43:45,49:54,58:60,55:57))
