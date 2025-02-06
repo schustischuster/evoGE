@@ -17,6 +17,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
   * [Apply non-linear models](#apply-non-linear-models)
   * [Plot nlm slopes](#plot-nlm-slopes)
   * [Protein-coding gene expression phyllogenies](#protein-coding-gene-expression-phyllogenies)
+  * [Evolutionary conservation of lncRNA expression](#evolutionary-conservation-of-lncRNA-expression)
 * [Session info](#session-info)
 
 ---
@@ -211,6 +212,25 @@ To visualize variations in total tree length from gene expression phyllogenies a
 
 ```R
 plotTreeLength()
+```
+
+### Evolutionary conservation of lncRNA expression
+
+* `makeNCClust(expr_estimation, coefficient, devseq_organs, transcripttype)`
+
+The arguments of this function are described above, except the last two argument, which are defined as follows:
+
+| Argument  |  |
+| :---  | :---  |
+| devseq_organs  | Indicates which organ data to use. Can be either `"all"` or `"subset"`. |
+| transcripttype  | Indicates which transcriptome data to use. Can be either `"coding"` or `"non-coding"`. |
+
+To reproduce the results of this study, execute the following function calls:
+
+```R
+makeNCClust(expr_estimation = "counts", coefficient = "pearson", devseq_organs = "all", transcripttype = "non-coding")
+makeNCClust(expr_estimation = "counts", coefficient = "spearman", devseq_organs = "all", transcripttype = "non-coding")
+makeNCClust(expr_estimation = "counts", coefficient = "spearman", devseq_organs = "subset", transcripttype = "coding")
 ```
 
 ---
