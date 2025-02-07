@@ -244,6 +244,11 @@ makeNCClust <- function(expr_estimation = c("TPM", "counts"), coefficient = c("p
 
         dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(1:3,10:12,7:9,4:6,25:36,13:24,37:42,46:48,43:45,49:54,58:60,55:57))
 
+    } else if (is.element("spearman", coefficient) && is.element("counts", expr_estimation) && 
+        is.element("subset", devseq_organs) && is.element("non-coding", transcripttype)) {
+
+        dend_order=dendextend::rotate(as.dendrogram(df_clust.res),c(1:6,10:12,7:9,13:24,31:36,28:30,25:27,43:48,40:42,37:39,55:60,52:54,49:51)) 
+
     } else dend_order = TRUE 
 
 
