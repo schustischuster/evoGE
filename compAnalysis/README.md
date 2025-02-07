@@ -229,6 +229,7 @@ To reproduce the results of this study, execute the following function calls:
 
 ```R
 makeNCClust(expr_estimation="counts", coefficient="spearman", devseq_organs="all", transcripttype="non-coding")
+makeNCClust(expr_estimation="counts", coefficient="spearman", devseq_organs="subset", transcripttype="non-coding")
 makeNCClust(expr_estimation="counts", coefficient="spearman", devseq_organs="subset", transcripttype="coding")
 ```
 
