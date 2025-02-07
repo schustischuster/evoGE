@@ -244,6 +244,22 @@ To reproduce the results of this study, execute the following function calls:
 getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="non-coding")
 getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="coding")
 ```
+Again, note that newer versions of ggtree may give the following error:
+
+* `Error in offspring.tbl_tree_item(.data = .data, .node = .node, tiponly = tiponly,  : 
+  could not find function "offspring.tbl_tree_item"`
+
+As a workaround, load the following functions manually from the tidytree package before executing the above function calls.
+
+```R
+nodeid.tbl_tree <- utils::getFromNamespace("nodeid.tbl_tree", "tidytree")
+rootnode.tbl_tree <- utils::getFromNamespace("rootnode.tbl_tree", "tidytree")
+offspring.tbl_tree <- utils::getFromNamespace("offspring.tbl_tree", "tidytree")
+offspring.tbl_tree_item <- utils::getFromNamespace(".offspring.tbl_tree_item", "tidytree")
+child.tbl_tree <- utils::getFromNamespace("child.tbl_tree", "tidytree")
+parent.tbl_tree <- utils::getFromNamespace("parent.tbl_tree", "tidytree")
+```
+
 
 ---
 ## Session info
