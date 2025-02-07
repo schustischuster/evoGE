@@ -262,6 +262,8 @@ parent.tbl_tree <- utils::getFromNamespace("parent.tbl_tree", "tidytree")
 ---
 ## Session info
 
+This code was developed and tested on MacOS X 10.9.5 in R version 3.3.3 and on MacOS 13.5.2 in R version 4.1.3.
+
 ```R
 sessionInfo()
 ```
