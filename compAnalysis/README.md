@@ -18,6 +18,7 @@ This code allows to reproduce the inter-organ intra-species, inter-species and c
   * [Plot nlm slopes](#plot-nlm-slopes)
   * [Protein-coding gene expression phyllogenies](#protein-coding-gene-expression-phyllogenies)
   * [Evolutionary conservation of lncRNA expression](#evolutionary-conservation-of-lncRNA-expression)
+  * [lncRNA expression phyllogenies](#lncRNA-expression-phyllogenies)
 * [Session info](#session-info)
 
 ---
@@ -230,6 +231,18 @@ To reproduce the results of this study, execute the following function calls:
 ```R
 makeNCClust(expr_estimation="counts", coefficient="spearman", devseq_organs="subset", transcripttype="non-coding")
 makeNCClust(expr_estimation="counts", coefficient="spearman", devseq_organs="subset", transcripttype="coding")
+```
+
+### lncRNA expression phyllogenies
+
+* `getNCPhyllogenies(expr_estimation, coefficient, transcripttype)`
+
+The arguments of this function are described above.
+To reproduce the results of this study, execute the following function calls:
+
+```R
+getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="non-coding")
+getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="coding")
 ```
 
 ---
