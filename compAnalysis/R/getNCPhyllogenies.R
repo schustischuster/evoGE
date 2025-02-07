@@ -122,6 +122,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
 
     }
 
+    assignInNamespace("dist.pea", dist.pea, ns="TreeExp")
+
     dist.spe = function (expMat = NULL) {
 
       object_n <- ncol(expMat)
@@ -147,6 +149,8 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
       dis.mat  + t(dis.mat)
 
     }
+
+    assignInNamespace("dist.spe", dist.spe, ns="TreeExp")
 
 
     # Construct distance matrix
@@ -453,8 +457,7 @@ getNCPhyllogenies <- function(expr_estimation = c("TPM", "counts"),
 
 
 
-getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="non-coding")
-getNCPhyllogenies(expr_estimation="counts", coefficient="spearman", transcripttype="coding")
+
 
 
 
