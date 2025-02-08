@@ -71,7 +71,7 @@ in_dir <- file.path("evoGE-master", "compAnalysis", "data")
 out_dir <- file.path("evoGE-master", "compAnalysis")
 path_to_R_files <- file.path("evoGE-master", "compAnalysis", "R")
 
-rfiles <- list("makeCompAnalysis.R", "getTaxoInput.R", "getATDiv.R", "getOrganDist.R", "getNLMs.R", "plotSlopes.R", "makePhyllogenies.R", "plotTreeLength.R", "makeNCClust.R", "getNCPhyllogenies.R")
+rfiles <- list("makeCompAnalysis.R", "getTaxoInput.R", "getATDiv.R", "getOrganDist.R", "getNLMs.R", "plotSlopes.R", "makePhyllogenies.R", "plotTreeLength.R", "makeNCClust.R", "getNCPhyllogenies.R", "plotNCTLength.R")
 
 # Source R files
 sourceDir <- function(path, trace = TRUE, ...) {
