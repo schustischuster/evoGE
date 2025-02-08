@@ -273,6 +273,51 @@ sessionInfo()
 ```
 
 ```R
+#> R version 4.1.3 (2022-03-10)
+#> Platform: x86_64-apple-darwin17.0 (64-bit)
+#> Running under: macOS 13.5.2
+
+#> Matrix products: default
+#> BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+#> LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+#> locale:
+#> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+
+#> other attached packages:
+#>  [1] TreeExp_0.99.3     ggtree_3.2.1       ape_5.7-1          matrixStats_0.63.0 scales_1.3.0      
+#>  [6] lsmeans_2.30-0     emmeans_1.10.6     ggbeeswarm_0.7.2   dendextend_1.17.1  factoextra_1.0.7  
+#> [11] ggplot2_3.5.1      gplots_3.2.0       dplyr_1.1.2       
+
+#> loaded via a namespace (and not attached):
+#>  [1] viridis_0.6.3           maps_3.4.1              DEoptim_2.2-8           tidyr_1.3.0            
+#>  [5] jsonlite_1.8.4          viridisLite_0.4.2       foreach_1.5.2           gtools_3.9.4           
+#>  [9] expm_0.999-7            yulab.utils_0.1.9       vipor_0.4.5             ggrepel_0.9.3          
+#> [13] numDeriv_2016.8-1.1     pillar_1.10.1           lattice_0.21-8          glue_1.6.2             
+#> [17] quadprog_1.5-8          phangorn_2.11.1         digest_0.6.31           colorspace_2.1-0       
+#> [21] ggfun_0.0.9             Matrix_1.4-0            plyr_1.8.8              pkgconfig_2.0.3        
+#> [25] purrr_1.0.1             xtable_1.8-4            mvtnorm_1.1-3           patchwork_1.3.0        
+#> [29] tidytree_0.4.6.002      ggplotify_0.1.2         optimParallel_1.0-2     tibble_3.2.1           
+#> [33] combinat_0.0-8          generics_0.1.3          farver_2.1.1            withr_3.0.2            
+#> [37] lazyeval_0.2.2          cli_3.6.1               mnormt_2.1.1            crayon_1.5.2           
+#> [41] magrittr_2.0.3          estimability_1.5.1      fs_1.6.2                doParallel_1.0.17      
+#> [45] nlme_3.1-162            MASS_7.3-55             beeswarm_0.4.0          textshaping_0.3.6      
+#> [49] tools_4.1.3             lifecycle_1.0.4         stringr_1.5.1           phytools_2.4-4         
+#> [53] aplot_0.1.10            munsell_0.5.1           compiler_4.1.3          systemfonts_1.0.4      
+#> [57] clusterGeneration_1.3.8 caTools_1.18.2          gridGraphics_0.5-1      rlang_1.1.1            
+#> [61] grid_4.1.3              iterators_1.0.14        igraph_1.4.2            labeling_0.4.3         
+#> [65] bitops_1.0-7            gtable_0.3.6            codetools_0.2-20        reshape2_1.4.4         
+#> [69] R6_2.5.1                gridExtra_2.3           fastmatch_1.1-3         ragg_1.2.5             
+#> [73] treeio_1.18.1           KernSmooth_2.23-21      stringi_1.7.12          parallel_4.1.3         
+#> [77] Rcpp_1.0.10             vctrs_0.6.2             scatterplot3d_0.3-44    tidyselect_1.2.0       
+#> [81] coda_0.19-4.1   
+```
+
+
+```R
 #> R version 3.3.3 (2017-03-06)
 #> Platform: x86_64-apple-darwin13.4.0 (64-bit)
 #> Running under: OS X Mavericks 10.9.5
