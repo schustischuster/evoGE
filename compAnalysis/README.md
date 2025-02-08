@@ -257,7 +257,11 @@ offspring.tbl_tree_item <- utils::getFromNamespace(".offspring.tbl_tree_item", "
 child.tbl_tree <- utils::getFromNamespace("child.tbl_tree", "tidytree")
 parent.tbl_tree <- utils::getFromNamespace("parent.tbl_tree", "tidytree")
 ```
+To visualize variations in total tree length from lncRNA expression phyllogenies in Brassicaceae (307 lncRNA orthologs, 4 species), run the function below. It will also generate boxplots of the total tree length from Brassicaceae protein-coding gene expression phyllogenies (17,445 protein-coding othologs, 4 species) for comparison.
 
+```R
+plotNCTLength()
+```
 
 ---
 ## Session info
