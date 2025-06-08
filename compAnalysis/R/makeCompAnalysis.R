@@ -276,7 +276,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # Set filename
     fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, sep="_"))
 
-    if (any(devseq_organs == "subset")) {
+    if (devseq_organs == "subset") {
 
         fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, devseq_organs, sep="_"))
     }
@@ -460,18 +460,16 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             )
 
         # Get order of rows and rearrange "row_cols" vector
-        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T) in R version 3.0.0.1
-        if (packageVersion("gplots") <  "3.0.0.2") {
-            ordinary_order = getRowOrder$rowInd
-            reversal = cbind(ordinary_order, rev(ordinary_order))
-            row_cols = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
-        }
+        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
+        ordinary_order = getRowOrder$rowInd
+        reversal = cbind(ordinary_order, rev(ordinary_order))
+        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
 
         # Create heatmap with reversed RowSideColors
         heatmap.2(x_cor, 
             revC = T,
             ColSideColors = col_cols, 
-            RowSideColors = row_cols, 
+            RowSideColors = rev_col, 
             density.info = "none",
             trace = "none",
             col = pal(800),
@@ -516,18 +514,16 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             Colv = "Rowv")
 
         # Get order of rows and rearrange "row_cols" vector
-        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T) in R version 3.0.0.1
-        if (packageVersion("gplots") <  "3.0.0.2") {
-            ordinary_order = getRowOrder$rowInd
-            reversal = cbind(ordinary_order, rev(ordinary_order))
-            row_cols = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
-        }
+        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
+        ordinary_order = getRowOrder$rowInd
+        reversal = cbind(ordinary_order, rev(ordinary_order))
+        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
 
         # Create heatmap with reversed RowSideColors
         heatmap.2(x_cor, 
             revC = T,
             ColSideColors = col_cols, 
-            RowSideColors = row_cols, 
+            RowSideColors = rev_col, 
             density.info = "none",
             trace = "none",
             col = pal(800),
@@ -729,7 +725,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
                 width = 7, height = 8.0, units = c("in"), dpi = 300, limitsize = FALSE)
         }
 
-        # plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm)
+        plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm)
 
     }
 
@@ -739,7 +735,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 #---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
 
 
-   # Use pearson correlation, inter-organ normalization and TPM
+   # Use pearson correlation, intra-organ normalization and TPM
    # Use previously merged replicates of DevSeq data including pollen sampless
 
    if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (expr_estimation == "TPM") && (devseq_organs == "all")) {
@@ -852,14 +848,6 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         fname <- sprintf('%s.jpg', paste("GE_divergence_rates", coefficient, sep="_"))
 
-        if (packageVersion("gplots") <  "3.0.0.2") {
-            cvalues = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
-            "#f2a72f", "#2c8654", "#a63126")
-        } else {
-            cvalues = c("#6a54a9", "#53b0db", "#2c8654", "#96ba37", "#fad819", "#e075af", 
-            "#ee412e", "#f2a72f", "#a63126")
-        }
-
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
         geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
             linetype = 0, show.legend = FALSE) + 
@@ -869,9 +857,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         geom_line(size = 3.1) +  
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.4375, 0.9075), expand = c(0.02, 0)) + 
-        scale_color_manual(values = cvalues, 
+        scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
+            "#f2a72f", "#2c8654", "#a63126"), 
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
-            breaks = c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
+            breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
                 "Stamen  ", "Carpel  ", "Pollen  ")) + 
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "white", lty = "solid", 
             lwd = 3.1) + # pollen
@@ -935,7 +924,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         # Get highly variable genes
         x_mat <- data.matrix(x_df[,2:ncol(x_df)])
-        rv <- rowVars(x_mat)
+        rv <- matrixStats::rowVars(x_mat)
         rv <- as.data.frame(rv)
         colnames(rv) <- "rowVars"
 
@@ -1058,7 +1047,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         # Replace species abbreviations by more detailed names
         DevSeq_pca_1_2_w_stamen$Species <- DevSeq_pca_1_2_w_stamen$Species %>% gsub('AT', 'A.thaliana', .) %>% 
         gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsug.', .)  %>% 
-        gsub('TH', 'T.hassler.', .) %>% gsub('MT', 'M.truncat.', .) %>% gsub('BD', 'B.distach.', .)
+        gsub('TH', 'T.hassleriana', .) %>% gsub('MT', 'M.truncatula', .) %>% gsub('BD', 'B.distachyon', .)
 
         DevSeq_pca_2_3_w_stamen$Species <- DevSeq_pca_2_3_w_stamen$Species %>% gsub('AT', 'A.thaliana', .) %>% 
         gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsugineum', .)  %>% 
@@ -1067,6 +1056,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         DevSeq_pca_1_3_w_stamen$Species <- DevSeq_pca_1_3_w_stamen$Species %>% gsub('AT', 'A.thaliana', .) %>% 
         gsub('AL', 'A.lyrata', .) %>% gsub('CR', 'C.rubella', .) %>% gsub('ES', 'E.salsugineum', .)  %>% 
         gsub('TH', 'T.hassleriana', .) %>% gsub('MT', 'M.truncatula', .) %>% gsub('BD', 'B.distachyon', .)
+
+        DevSeq_pca_1_2_w_stamen$Species <- factor(DevSeq_pca_1_2_w_stamen$Species, levels=c('A.thaliana', 'A.lyrata', 'C.rubella', 'E.salsug.', 'T.hassleriana', 'M.truncatula', 'B.distachyon'))
 
         # Modify organ names
         DevSeq_pca_1_2_w_stamen$Organ <- DevSeq_pca_1_2_w_stamen$Organ %>% gsub('veg_apex', 'Apex veg', .) %>% 
@@ -1235,7 +1226,8 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     plotPCA <- function(data, pc_var1, pc_var2, set=c("pc1_2", "pc2_3", "pc1_3"), 
         spec=c("Brassicaceae", "all"), data_norm) {
 
-        fname <- sprintf('%s.png', paste(deparse(substitute(data)), "pca", expr_estimation, spec, data_scale, sep="_"))
+        fname <- sprintf('%s.pdf', paste(deparse(substitute(data)), "pca", expr_estimation, spec, data_scale, sep="_"))
+        # Changed file format from png to pdf for better resolution
         
         if(set == "pc1_2") {
             x_coord <- "PC1 ("
@@ -1249,43 +1241,54 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         }
 
         if(spec == "all") {
-            spec_shape <- c(16, 17, 0, 18, 15, 2, 6)
-            spec_shape_size <- c(5.0, 4.5, 3.5, 6.75, 4.5, 3.15, 3.15)
+            spec_shape <- c(17, 16, 18, 15, 6, 2, 0) # was (16, 17, 0, 18, 15, 2, 6)
+            spec_shape_size <- c(6.25, 5.625, 5.625, 8.125, 5.0, 5.0, 5.5) # Changed shape size for Cell revision here
+            # spec_shape_size <- c(5.0, 4.5, 3.15, 6.5, 4.5, 3.15, 3.15) # Previous dimensions pre revision (factor 1.375)
             legend_title <- element_blank()
             col_guide <- FALSE
             order_guide <- 0
-            legend_spacing <- 15
+            legend_spacing <- 15.0
         } else if(spec == "Brassicaceae") {
             spec_shape <- c(16, 17, 18, 15)
-            spec_shape_size <- c(5.0, 4.5, 6.75, 4.5)
+            spec_shape_size <- c(6.25, 5.625, 8.125, 5.625)
+            # spec_shape_size <- c(5.0, 4.5, 6.5, 4.5) # Previous dimensions pre revision (factor 1.375)
             legend_title <- element_blank()
             col_guide <- "legend"
         }
 
         if((spec == "all") && (data_norm == "inter-organ") && (data_scale == "scaled")) {
             legend_col <- 1
-            legend_pos <- c(0.154, 0.8728)
+            legend_p <- "none"
+            legend_pos <- c(0, 0) # Changed this from c(0.154, 0.8728) for Cell revision plot
+            legend_key_spacing = unit(0, "cm")
             x_lim <- NULL
             y_title_mrg <- margin(t = 0, r = 8.0, b = 0, l = 7.0)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.9),"cm")
         } else if((spec == "all") && (data_norm == "inter-organ") && (data_scale == "raw")) {
             legend_col <- 1
-            legend_pos <- c(0.154, 0.8728)
+            legend_p <- "inside" # Added this for Cell rev
+            legend_pos <- c(0.8, 1.315) # Changed this from c(0.154, 0.8728) for Cell revision plot
+            legend_key_spacing = unit(0.2, "cm") # Added this for Cell rev
+            legend_spacing <- 1 # Added this for Cell rev
             x_lim <- NULL
             y_title_mrg <- margin(t = 0, r = 3.5, b = 0, l = 6.75)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.9),"cm")
         } else if((spec == "Brassicaceae") && (data_norm == "inter-organ") && (data_scale == "scaled")) {
             legend_col <- 1
-            legend_pos <- "none"
+            legend_p <- "none"
+            legend_pos <- c(0, 0)
             legend_spacing <- 0
+            legend_key_spacing = unit(0.05, "cm")
             order_guide <- 0
             x_lim <- NULL
             y_title_mrg <- margin(t = 0, r = -3.5, b = 0, l = 18.0)
             plot_margin <- unit(c(0.55, 0.55, 0.5, 0.5),"cm")
         } else if((spec == "Brassicaceae") && (data_norm == "inter-organ") && (data_scale == "raw")) {
             legend_col <- 1
-            legend_pos <- c(0.849, 0.505)
-            legend_spacing <- 5.2
+            legend_p <- "inside"
+            legend_pos <- c(0.835, 0.505)
+            legend_spacing <- 4.75 # Changed this from 5.2 for Cell revision plot
+            legend_key_spacing = unit(0.05, "cm")
             order_guide <- 1
             x_lim <- NULL
             y_title_mrg <- margin(t = 0, r = -3.5, b = 0, l = 18.0)
@@ -1293,9 +1296,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         }
 
         if (((devseq_spec == "Brassicaceae") && (set == "pc2_3")) || 
-            (devseq_spec == "all")) {
+            ((devseq_spec == "all") && (set == "pc1_3")) || 
+            ((devseq_spec == "all") && (set == "pc2_3"))) { 
 
-            legend_pos <- "none"
+            legend_p <- "none"
         }
 
         x_lab <- paste(x_coord, pc_var1, "%)", sep="")
@@ -1320,21 +1324,24 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         labs(x = x_lab, y = y_lab) + 
         theme(panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(), 
-            panel.border = element_rect(colour = "black", fill=NA, size=1.75), 
+            panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.75), 
+            # The `size` argument of `element_rect()` is deprecated as of ggplot2 3.4.0. Please use the `linewidth` argument instead.
             panel.background = element_blank(), 
             axis.title.y = element_text(size=24, margin = y_title_mrg, colour="black"), 
             axis.title.x = element_text(size=24, margin = margin(t = 12.75, r = 0, b = 4.5, l = 0), colour="black"), 
             axis.text.x = element_text(size=21.25, angle=0, margin = margin(t = 5), colour="black"), 
             axis.text.y = element_text(size=21.25, angle=0, margin = margin(r = 5), colour="black"), 
             axis.ticks.length=unit(0.35, "cm"), 
-            axis.ticks = element_line(colour = "black", size = 0.7), 
+            axis.ticks = element_line(colour = "black", linewidth = 0.7), 
             legend.key = element_rect(colour = "transparent", fill = "white"), 
             legend.key.size = unit(1.65,"line"), # default is 1.2
-            legend.text = element_text(size=21.25), 
+            legend.key.spacing.y = legend_key_spacing,
+            legend.text = element_text(size = 22.75),  # was 21.25 before Cell revision plot
             legend.background = element_rect(fill = "transparent"),
             legend.title = legend_title,
             legend.spacing.y = unit(legend_spacing,'cm'), 
-            legend.position = legend_pos,
+            legend.position = legend_p,
+            legend.position.inside = legend_pos, # Changed for Cell revision plot
             plot.margin = plot_margin)
 
         ggsave(file = file.path(out_dir, "output", "plots", fname), plot = plot,
@@ -1387,12 +1394,16 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
   }
 
- }
+ } # Close Make PCA here
 
 }
 
 
-
+makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae", data_norm="inter-organ", devseq_organs="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
+makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="subset")
+makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
 
 
 
