@@ -276,7 +276,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
     # Set filename
     fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, sep="_"))
 
-    if (devseq_organs == "subset") {
+    if (any(devseq_organs == "subset")) {
 
         fname <- sprintf('%s.png', paste(dataset_id, expr_estimation, coefficient, devseq_organs, sep="_"))
     }
@@ -461,15 +461,17 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         # Get order of rows and rearrange "row_cols" vector
         # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
-        ordinary_order = getRowOrder$rowInd
-        reversal = cbind(ordinary_order, rev(ordinary_order))
-        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        if (packageVersion("gplots") <  "3.0.0.2") {
+            ordinary_order = getRowOrder$rowInd
+            reversal = cbind(ordinary_order, rev(ordinary_order))
+            row_cols = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        }
 
         # Create heatmap with reversed RowSideColors
         heatmap.2(x_cor, 
             revC = T,
             ColSideColors = col_cols, 
-            RowSideColors = rev_col, 
+            RowSideColors = row_cols, 
             density.info = "none",
             trace = "none",
             col = pal(800),
@@ -514,16 +516,18 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
             Colv = "Rowv")
 
         # Get order of rows and rearrange "row_cols" vector
-        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T)
-        ordinary_order = getRowOrder$rowInd
-        reversal = cbind(ordinary_order, rev(ordinary_order))
-        rev_col = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        # fixes gplots heatmap.2 RowSideColors bug (colorbar does not reverse when revC=T) in R version 3.0.0.1
+        if (packageVersion("gplots") <  "3.0.0.2") {
+            ordinary_order = getRowOrder$rowInd
+            reversal = cbind(ordinary_order, rev(ordinary_order))
+            row_cols = row_cols[reversal[,2]]; rev_col = rev_col[order(reversal[,1])];
+        }
 
         # Create heatmap with reversed RowSideColors
         heatmap.2(x_cor, 
             revC = T,
             ColSideColors = col_cols, 
-            RowSideColors = rev_col, 
+            RowSideColors = row_cols, 
             density.info = "none",
             trace = "none",
             col = pal(800),
@@ -725,7 +729,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
                 width = 7, height = 8.0, units = c("in"), dpi = 300, limitsize = FALSE)
         }
 
-        plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm)
+        # plotOrganDist(data=cor_df, data_m=cor_df_m, data_norm=data_norm)
 
     }
 
@@ -735,7 +739,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 #---------------- Get gene expression divergence rates for ATH/AL vs species X -----------------
 
 
-   # Use pearson correlation, intra-organ normalization and TPM
+   # Use pearson correlation, inter-organ normalization and TPM
    # Use previously merged replicates of DevSeq data including pollen sampless
 
    if ((dataset_id == "DevSeq") && (devseq_spec == "all") && (expr_estimation == "TPM") && (devseq_organs == "all")) {
@@ -848,6 +852,14 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 
         fname <- sprintf('%s.jpg', paste("GE_divergence_rates", coefficient, sep="_"))
 
+        if (packageVersion("gplots") <  "3.0.0.2") {
+            cvalues = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
+                "#f2a72f", "#2c8654", "#a63126")
+        } else {
+            cvalues = c("#6a54a9", "#53b0db", "#2c8654", "#96ba37", "#fad819", "#e075af", 
+                "#ee412e", "#f2a72f", "#a63126")
+        }
+
         p <- ggplot(data=data1, aes(x=div_times, y=correlation, group=comp_organ, colour=comp_organ)) + 
         geom_ribbon(aes(ymin = data1$lower, ymax = data1$upper, fill= comp_organ), alpha = 0.25, 
             linetype = 0, show.legend = FALSE) + 
@@ -857,11 +869,10 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
         geom_line(size = 3.1) +  
         scale_x_continuous(limits = c(7,160), expand = c(0.02,0), breaks = c(7,9,25,46,106,160)) + 
         scale_y_continuous(limits = c(0.4375, 0.9075), expand = c(0.02, 0)) + 
-        scale_color_manual(values = c("#53b0db", "#ee412e", "#e075af", "#6a54a9", "#96ba37", "#fad819", 
-            "#f2a72f", "#2c8654", "#a63126"), 
+        scale_color_manual(values = cvalues,  
             # organ order: hypocotyl/stamen/flower/root/veg_apex/inf_apex/carpel/leaf
-            breaks=c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
-                "Stamen  ", "Carpel  ", "Pollen  ")) + 
+            breaks = c("Root  ", "Hypocotyl  ", "Leaf  ", "Apex veg  ", "Apex inf  ", "Flower  ", 
+                "Stamen  ", "Carpel  ", "Pollen  ")) +
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "white", lty = "solid", 
             lwd = 3.1) + # pollen
         geom_line(aes(x=div_times, y=correlation), data=data2, color = "#a63126", lty = "22", 
@@ -1399,11 +1410,7 @@ makeCompAnylsis <- function(dataset = c("Brawand", "DevSeq"), expr_estimation = 
 }
 
 
-makeCompAnylsis(dataset="DevSeq", expr_estimation="TPM", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="Brassicaceae", data_norm="inter-organ", devseq_organs="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="all")
-makeCompAnylsis(dataset="DevSeq", expr_estimation="counts", coefficient="pearson", devseq_spec="all", data_norm="inter-organ", devseq_organs="subset")
-makeCompAnylsis(dataset="Brawand", expr_estimation="counts", coefficient="pearson", data_norm="inter-organ")
+
 
 
 
